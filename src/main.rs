@@ -3,5 +3,5 @@ mod gameplay;
 use bevy::prelude::*;
 
 fn main() {
-    println!("Hello, world!");
+    App::build().add_plugins(DefaultPlugins).run()
 }

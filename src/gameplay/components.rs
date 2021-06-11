@@ -1,3 +1,4 @@
+use crate::gameplay::Direction;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -20,8 +21,15 @@ pub struct InputBlock {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
 pub struct Goal;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct MoveTable {
-    pub table: [[bool; 4]; 4],
+    pub table: [[Option<KeyCode>; 4]; 4],
     pub player: Entity,
+}
+
+#[derive(Clone, Eq, PartialEq, Debug, Hash)]
+pub enum PlayerState {
+    Waiting,
+    RankMove(KeyCode),
+    FileMove(KeyCode),
 }
