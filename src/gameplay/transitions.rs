@@ -27,7 +27,7 @@ pub fn test_level_setup(
         d_block: materials.add(assets.load("textures/d_block.png").into()),
     };
     commands.spawn_bundle(WallBundle::new(IVec2::new(0, 0), &sprite_handles));
-    commands.spawn_bundle(PlayerBundle::new(IVec2::new(1, 0), &sprite_handles));
+    commands.spawn_bundle(PlayerBundle::new(IVec2::new(44, 9), &sprite_handles));
     commands.spawn_bundle(DirectionTileBundle::new(
         Direction::Up,
         IVec2::new(0, 1),
@@ -43,10 +43,21 @@ pub fn test_level_setup(
 
 pub fn create_camera(mut commands: Commands, level_size: Res<LevelSize>) {
     let mut camera_bundle = OrthographicCameraBundle::new_2d();
-    let scale = level_size.size.max_element() as f32;
-    camera_bundle.transform.translation =
-        Vec3::new((16.0 * UNIT_LENGTH) / 2.0, (9.0 * UNIT_LENGTH) / 2.0, 0.0);
-    camera_bundle.orthographic_projection.far = 1000.0 / scale;
+    let scale = if (9.0 / 16.0) > ((level_size.size.y as f32) / (level_size.size.x as f32)) {
+        (level_size.size.x as f32) / UNIT_LENGTH
+    } else {
+        (level_size.size.y as f32) / UNIT_LENGTH * (16. / 9.)
+    };
+    println!("{}", scale);
+    println!("{}", camera_bundle.transform.translation.z);
+    camera_bundle.transform.translation = Vec3::new(
+        ((level_size.size.x as f32) * UNIT_LENGTH) / 2. - (UNIT_LENGTH / 2.),
+        ((level_size.size.y as f32) * UNIT_LENGTH) / 2. - (UNIT_LENGTH / 2.),
+        camera_bundle.transform.translation.z,
+    );
+    camera_bundle.orthographic_projection.far = 1000. / (scale);
     camera_bundle.orthographic_projection.scale = scale;
+    //camera_bundle.orthographic_projection.scale = 0.5;
+    println!("{}", camera_bundle.orthographic_projection.scale);
     commands.spawn().insert_bundle(camera_bundle);
 }
