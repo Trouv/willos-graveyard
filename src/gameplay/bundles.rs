@@ -14,7 +14,7 @@ pub struct WallBundle {
 
 impl WallBundle {
     pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> WallBundle {
-        let xy = xy_translation(coords) * UNIT_LENGTH;
+        let xy = xy_translation(coords);
         WallBundle {
             tile: Tile { coords },
             blocker: Blocker,
@@ -41,7 +41,7 @@ impl DirectionTileBundle {
         coords: IVec2,
         sprite_handles: &SpriteHandles,
     ) -> DirectionTileBundle {
-        let xy = xy_translation(coords) * UNIT_LENGTH;
+        let xy = xy_translation(coords);
         DirectionTileBundle {
             tile: Tile { coords },
             sprite_bundle: SpriteBundle {
@@ -75,7 +75,7 @@ impl InputBlockBundle {
         coords: IVec2,
         sprite_handles: &SpriteHandles,
     ) -> InputBlockBundle {
-        let xy = xy_translation(coords) * UNIT_LENGTH;
+        let xy = xy_translation(coords);
         InputBlockBundle {
             tile: Tile { coords },
             blocker: Blocker,
@@ -112,7 +112,7 @@ pub struct GoalBundle {
 
 impl GoalBundle {
     pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> GoalBundle {
-        let xy = xy_translation(coords) * UNIT_LENGTH;
+        let xy = xy_translation(coords);
         GoalBundle {
             tile: Tile { coords },
             sprite_bundle: SpriteBundle {
@@ -137,7 +137,7 @@ pub struct PlayerBundle {
 
 impl PlayerBundle {
     pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> PlayerBundle {
-        let xy = xy_translation(coords) * UNIT_LENGTH;
+        let xy = xy_translation(coords);
         PlayerBundle {
             tile: Tile { coords },
             blocker: Blocker,

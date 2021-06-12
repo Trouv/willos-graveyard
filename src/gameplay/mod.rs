@@ -1,3 +1,4 @@
+use crate::UNIT_LENGTH;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 pub mod bundles;
@@ -6,7 +7,7 @@ pub mod systems;
 pub mod transitions;
 
 pub fn xy_translation(coords: IVec2) -> Vec2 {
-    Vec2::new(coords.x as f32, coords.y as f32)
+    Vec2::new(coords.x as f32, coords.y as f32) * UNIT_LENGTH
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
@@ -37,5 +38,6 @@ impl From<Direction> for IVec2 {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
 pub struct MovementEvent {
+    player: Entity,
     direction: Direction,
 }
