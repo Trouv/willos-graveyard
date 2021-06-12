@@ -41,3 +41,5 @@ pub struct MovementEvent {
     player: Entity,
     direction: Direction,
 }
+
+pub struct ActionEvent;

@@ -10,6 +10,7 @@ pub const UNIT_LENGTH: f32 = 32.;
 pub enum SystemLabels {
     LoadAssets,
     Input,
+    MoveTableUpdate,
 }
 pub struct LevelSize {
     size: IVec2,
@@ -30,6 +31,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_event::<gameplay::MovementEvent>()
+        .add_event::<gameplay::ActionEvent>()
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         .insert_resource(LevelNum(0))
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
@@ -58,11 +60,19 @@ fn main() {
         )
         .add_system(gameplay::systems::ease_movement.system())
         .add_system(
-            gameplay::systems::perform_tile_movement
+            gameplay::systems::store_current_position
                 .system()
-                .after(SystemLabels::Input),
+                .before(SystemLabels::MoveTableUpdate),
         )
         .add_system(gameplay::systems::move_player_by_table.system())
+        .add_system(
+            gameplay::systems::perform_tile_movement
+                .system()
+                .before(SystemLabels::Input)
+                .label(SystemLabels::MoveTableUpdate),
+        )
+        .add_system(gameplay::systems::rewind.system())
+        .add_system(gameplay::systems::reset.system())
         .run()
 }
 

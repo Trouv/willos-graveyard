@@ -62,6 +62,7 @@ impl DirectionTileBundle {
 #[derive(Clone, Bundle)]
 pub struct InputBlockBundle {
     tile: Tile,
+    history: History,
     rigid_body: RigidBody,
     input_block: InputBlock,
     #[bundle]
@@ -77,6 +78,7 @@ impl InputBlockBundle {
         let xy = xy_translation(coords);
         InputBlockBundle {
             tile: Tile { coords },
+            history: History { tiles: Vec::new() },
             rigid_body: RigidBody::Dynamic,
             input_block: InputBlock {
                 key_code: match direction {
@@ -126,6 +128,7 @@ impl GoalBundle {
 #[derive(Clone, Bundle)]
 pub struct PlayerBundle {
     pub tile: Tile,
+    pub history: History,
     pub rigid_body: RigidBody,
     pub player_state: PlayerState,
     pub timer: Timer,
@@ -138,6 +141,7 @@ impl PlayerBundle {
         let xy = xy_translation(coords);
         PlayerBundle {
             tile: Tile { coords },
+            history: History { tiles: Vec::new() },
             rigid_body: RigidBody::Dynamic,
             player_state: PlayerState::Waiting,
             timer: Timer::from_seconds(0.2, false),

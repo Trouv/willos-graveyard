@@ -1,5 +1,7 @@
 use crate::{
-    gameplay::{components::*, xy_translation, Direction, MovementEvent, DIRECTION_ORDER},
+    gameplay::{
+        components::*, xy_translation, ActionEvent, Direction, MovementEvent, DIRECTION_ORDER,
+    },
     LevelSize,
 };
 use bevy::prelude::*;
@@ -149,7 +151,8 @@ pub fn player_state_input(mut player_query: Query<&mut PlayerState>, input: Res<
 pub fn move_player_by_table(
     table_query: Query<&MoveTable>,
     mut player_query: Query<(&mut Timer, &mut PlayerState)>,
-    mut writer: EventWriter<MovementEvent>,
+    mut movement_writer: EventWriter<MovementEvent>,
+    mut action_writer: EventWriter<ActionEvent>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
@@ -161,9 +164,10 @@ pub fn move_player_by_table(
         if timer.finished() {
             match *player {
                 PlayerState::RankMove(key) => {
+                    action_writer.send(ActionEvent);
                     for (i, rank) in table.table.iter().enumerate() {
                         if rank.contains(&Some(key)) {
-                            writer.send(MovementEvent {
+                            movement_writer.send(MovementEvent {
                                 player: table.player,
                                 direction: DIRECTION_ORDER[i],
                             });
@@ -176,7 +180,7 @@ pub fn move_player_by_table(
                     for rank in table.table.iter() {
                         for (i, cell) in rank.iter().enumerate() {
                             if *cell == Some(key) {
-                                writer.send(MovementEvent {
+                                movement_writer.send(MovementEvent {
                                     player: table.player,
                                     direction: DIRECTION_ORDER[i],
                                 });
@@ -187,6 +191,50 @@ pub fn move_player_by_table(
                     timer.reset();
                 }
                 _ => {}
+            }
+        }
+    }
+}
+
+pub fn store_current_position(
+    mut reader: EventReader<ActionEvent>,
+    mut objects_query: Query<(&mut History, &Tile)>,
+) {
+    for event in reader.iter() {
+        for (mut history, tile) in objects_query.iter_mut() {
+            history.tiles.push(*tile)
+        }
+    }
+}
+
+pub fn rewind(
+    player_query: Query<&PlayerState>,
+    input: Res<Input<KeyCode>>,
+    mut objects_query: Query<(&mut History, &mut Tile)>,
+) {
+    if *player_query.single().unwrap() == PlayerState::Waiting {
+        if input.just_pressed(KeyCode::Z) {
+            for (mut history, mut tile) in objects_query.iter_mut() {
+                if let Some(prev_state) = history.tiles.pop() {
+                    *tile = prev_state
+                }
+            }
+        }
+    }
+}
+
+pub fn reset(
+    player_query: Query<&PlayerState>,
+    input: Res<Input<KeyCode>>,
+    mut objects_query: Query<(&mut History, &mut Tile)>,
+) {
+    if *player_query.single().unwrap() == PlayerState::Waiting {
+        if input.just_pressed(KeyCode::R) {
+            for (mut history, mut tile) in objects_query.iter_mut() {
+                if let Some(initial_state) = history.tiles.get(0) {
+                    *tile = *initial_state;
+                    history.tiles = vec![*initial_state]
+                }
             }
         }
     }
