@@ -4,8 +4,19 @@ use bevy::prelude::*;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
+pub enum SystemLabels {
+    LoadAssets,
+    Input,
+}
+
 fn main() {
-    App::build().add_plugins(DefaultPlugins).run()
+    App::build()
+        .add_plugins(DefaultPlugins)
+        //.add_startup_system(sprite_load.system().label(SystemLabels::LoadAssets))
+        .add_startup_system(gameplay::transitions::simple_camera_setup.system())
+        .add_startup_system(gameplay::transitions::test_level_setup.system())
+        .run()
 }
 
 pub struct SpriteHandles {
@@ -28,16 +39,16 @@ pub fn sprite_load(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.insert_resource(SpriteHandles {
-        up: materials.add(assets.load("assets/textures/up.png").into()),
-        left: materials.add(assets.load("assets/textures/left.png").into()),
-        right: materials.add(assets.load("assets/textures/right.png").into()),
-        down: materials.add(assets.load("assets/textures/down.png").into()),
-        goal: materials.add(assets.load("assets/textures/goal.png").into()),
-        player: materials.add(assets.load("assets/textures/player.png").into()),
-        wall: materials.add(assets.load("assets/textures/wall.png").into()),
-        w_block: materials.add(assets.load("assets/textures/w_block.png").into()),
-        a_block: materials.add(assets.load("assets/textures/a_block.png").into()),
-        s_block: materials.add(assets.load("assets/textures/s_block.png").into()),
-        d_block: materials.add(assets.load("assets/textures/d_block.png").into()),
+        up: materials.add(assets.load("textures/up.png").into()),
+        left: materials.add(assets.load("textures/left.png").into()),
+        right: materials.add(assets.load("textures/right.png").into()),
+        down: materials.add(assets.load("textures/down.png").into()),
+        goal: materials.add(assets.load("textures/goal.png").into()),
+        player: materials.add(assets.load("textures/player.png").into()),
+        wall: materials.add(assets.load("textures/wall.png").into()),
+        w_block: materials.add(assets.load("textures/w_block.png").into()),
+        a_block: materials.add(assets.load("textures/a_block.png").into()),
+        s_block: materials.add(assets.load("textures/s_block.png").into()),
+        d_block: materials.add(assets.load("textures/d_block.png").into()),
     });
 }

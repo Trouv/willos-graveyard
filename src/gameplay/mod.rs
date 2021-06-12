@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
-mod bundles;
-mod components;
-mod systems;
-mod transitions;
+pub mod bundles;
+pub mod components;
+pub mod systems;
+pub mod transitions;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
 pub enum Direction {
