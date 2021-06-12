@@ -4,8 +4,21 @@ use bevy::prelude::*;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
+pub struct LevelSize {
+    size: IVec2,
+}
+
+impl LevelSize {
+    fn new(&self, size: IVec2) -> Self {
+        LevelSize { size: size }
+    }
+}
+
 fn main() {
-    App::build().add_plugins(DefaultPlugins).run()
+    App::build()
+        .add_plugins(DefaultPlugins)
+        .add_startup_system(gameplay::create_camera.system())
+        .run()
 }
 
 pub struct SpriteHandles {
