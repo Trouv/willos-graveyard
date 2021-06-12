@@ -16,7 +16,7 @@ pub fn ease_movement(
             Transform::from_xyz(xy.x, xy.y, transform.translation.z),
             EaseFunction::CubicOut,
             EasingType::Once {
-                duration: std::time::Duration::from_millis(200),
+                duration: std::time::Duration::from_millis(150),
             },
         ));
     }

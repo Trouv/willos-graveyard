@@ -20,18 +20,23 @@ impl LevelSize {
     }
 }
 
+pub const LEVEL_ORDER: [&str; 1] = ["hello.txt"];
+
+pub struct LevelNum(usize);
+
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_event::<gameplay::MovementEvent>()
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
-        //.add_startup_system(sprite_load.system().label(SystemLabels::LoadAssets))
+        .insert_resource(LevelNum(0))
+        .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
         .add_startup_system(gameplay::transitions::create_camera.system())
         // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
         .add_startup_system(gameplay::transitions::test_level_setup.system())
+        .add_startup_system(gameplay::transitions::load_level.system())
         .add_system(gameplay::transitions::spawn_table_edges.system())
-        .add_system(gameplay::systems::ease_movement.system())
         //.add_system(
         //gameplay::systems::simple_movement
         //.system()
@@ -43,15 +48,24 @@ fn main() {
                 .label(SystemLabels::Input),
         )
         .add_system(
+            gameplay::systems::move_table_update
+                .system()
+                .before(SystemLabels::Input),
+        )
+        .add_system(
+            gameplay::systems::ease_movement
+                .system()
+                .after(SystemLabels::Input),
+        )
+        .add_system(
             gameplay::systems::perform_tile_movement
                 .system()
                 .after(SystemLabels::Input),
         )
-        .add_system(gameplay::systems::move_player_by_table.system())
         .add_system(
-            gameplay::systems::move_table_update
+            gameplay::systems::move_player_by_table
                 .system()
-                .before(SystemLabels::Input),
+                .after(SystemLabels::Input),
         )
         .run()
 }
