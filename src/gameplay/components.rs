@@ -33,3 +33,8 @@ pub enum PlayerState {
     RankMove(KeyCode),
     FileMove(KeyCode),
 }
+
+#[derive(Clone, PartialEq, Debug, Default, Serialize, Deserialize)]
+pub struct History {
+    pub tiles: Vec<Tile>,
+}
