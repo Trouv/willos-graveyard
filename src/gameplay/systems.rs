@@ -111,3 +111,21 @@ pub fn perform_tile_movement(
         }
     }
 }
+
+pub fn move_table_update(
+    mut table_query: Query<(&Tile, &mut MoveTable)>,
+    input_block_query: Query<(&Tile, &InputBlock)>,
+) {
+    for (table_tile, mut table) in table_query.iter_mut() {
+        table.table = [[None; 4]; 4];
+        for (input_tile, input_block) in input_block_query.iter() {
+            let diff = input_tile.coords - table_tile.coords;
+            let x_index = diff.x - 1;
+            let y_index = -1 - diff.y;
+            if x_index >= 0 && x_index < 4 && y_index >= 0 && y_index < 4 {
+                // key block is in table
+                table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
+            }
+        }
+    }
+}
