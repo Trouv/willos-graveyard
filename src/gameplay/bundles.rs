@@ -128,6 +128,7 @@ pub struct PlayerBundle {
     pub tile: Tile,
     pub rigid_body: RigidBody,
     pub player_state: PlayerState,
+    pub timer: Timer,
     #[bundle]
     pub sprite_bundle: SpriteBundle,
 }
@@ -139,6 +140,7 @@ impl PlayerBundle {
             tile: Tile { coords },
             rigid_body: RigidBody::Dynamic,
             player_state: PlayerState::Waiting,
+            timer: Timer::from_seconds(0.2, false),
             sprite_bundle: SpriteBundle {
                 material: sprite_handles.player.clone_weak(),
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),

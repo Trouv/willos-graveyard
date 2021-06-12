@@ -36,8 +36,18 @@ pub fn test_level_setup(
         &sprite_handles,
     ));
     commands.spawn_bundle(InputBlockBundle::new(
+        Direction::Left,
+        IVec2::new(3, 5),
+        &sprite_handles,
+    ));
+    commands.spawn_bundle(InputBlockBundle::new(
+        Direction::Down,
+        IVec2::new(4, 4),
+        &sprite_handles,
+    ));
+    commands.spawn_bundle(InputBlockBundle::new(
         Direction::Right,
-        IVec2::new(3, 6),
+        IVec2::new(5, 3),
         &sprite_handles,
     ));
     commands.spawn_bundle(MoveTableBundle::new(

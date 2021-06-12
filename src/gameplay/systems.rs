@@ -148,40 +148,46 @@ pub fn player_state_input(mut player_query: Query<&mut PlayerState>, input: Res<
 
 pub fn move_player_by_table(
     table_query: Query<&MoveTable>,
-    mut player_query: Query<&mut PlayerState>,
+    mut player_query: Query<(&mut Timer, &mut PlayerState)>,
     mut writer: EventWriter<MovementEvent>,
+    time: Res<Time>,
 ) {
     for table in table_query.iter() {
-        let mut player = player_query
-            .get_component_mut::<PlayerState>(table.player)
+        let (mut timer, mut player) = player_query
+            .get_mut(table.player)
             .expect("Table's player should exist");
+        timer.tick(time.delta());
 
-        match *player {
-            PlayerState::RankMove(key) => {
-                for (i, rank) in table.table.iter().enumerate() {
-                    if rank.contains(&Some(key)) {
-                        writer.send(MovementEvent {
-                            player: table.player,
-                            direction: DIRECTION_ORDER[i],
-                        });
-                    }
-                }
-                *player = PlayerState::FileMove(key);
-            }
-            PlayerState::FileMove(key) => {
-                for rank in table.table.iter() {
-                    for (i, cell) in rank.iter().enumerate() {
-                        if *cell == Some(key) {
+        if timer.finished() {
+            match *player {
+                PlayerState::RankMove(key) => {
+                    for (i, rank) in table.table.iter().enumerate() {
+                        if rank.contains(&Some(key)) {
                             writer.send(MovementEvent {
                                 player: table.player,
                                 direction: DIRECTION_ORDER[i],
                             });
                         }
                     }
+                    *player = PlayerState::FileMove(key);
+                    timer.reset();
                 }
-                *player = PlayerState::Waiting;
+                PlayerState::FileMove(key) => {
+                    for rank in table.table.iter() {
+                        for (i, cell) in rank.iter().enumerate() {
+                            if *cell == Some(key) {
+                                writer.send(MovementEvent {
+                                    player: table.player,
+                                    direction: DIRECTION_ORDER[i],
+                                });
+                            }
+                        }
+                    }
+                    *player = PlayerState::Waiting;
+                    timer.reset();
+                }
+                _ => {}
             }
-            _ => {}
         }
     }
 }
