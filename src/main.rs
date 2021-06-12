@@ -2,7 +2,7 @@ mod gameplay;
 
 use bevy::prelude::*;
 
-pub const UNIT_LENGTH: i32 = 32;
+pub const UNIT_LENGTH: f32 = 32.;
 
 fn main() {
     App::build().add_plugins(DefaultPlugins).run()
