@@ -1,12 +1,8 @@
 use crate::{
-    gameplay::{components::*, Direction},
+    gameplay::{components::*, xy_translation, Direction},
     SpriteHandles, UNIT_LENGTH,
 };
 use bevy::prelude::*;
-
-pub fn xy_translation(coords: IVec2) -> Vec2 {
-    Vec2::new(coords.x as f32, coords.y as f32)
-}
 
 #[derive(Clone, Default, Bundle)]
 pub struct WallBundle {
