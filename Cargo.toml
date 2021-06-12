@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 serde = {version = "1.0.126", features = ["derive"]}
 bevy = "0.5"
+bevy_easings = "0.4"

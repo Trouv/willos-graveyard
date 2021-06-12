@@ -148,7 +148,7 @@ impl PlayerBundle {
             pushable: Pushable,
             player_state: PlayerState::Waiting,
             sprite_bundle: SpriteBundle {
-                material: sprite_handles.goal.clone_weak(),
+                material: sprite_handles.player.clone_weak(),
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
                 transform: Transform::from_xyz(xy.x, xy.y, 0.),
                 ..Default::default()

@@ -1,6 +1,7 @@
 mod gameplay;
 
 use bevy::prelude::*;
+use bevy_easings::EasingsPlugin;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
@@ -22,10 +23,11 @@ impl LevelSize {
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
+        .add_plugin(EasingsPlugin)
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         //.add_startup_system(sprite_load.system().label(SystemLabels::LoadAssets))
-        .add_startup_system(gameplay::transitions::create_camera.system())
-        //.add_startup_system(gameplay::transitions::simple_camera_setup.system())
+        //.add_startup_system(gameplay::transitions::create_camera.system())
+        .add_startup_system(gameplay::transitions::simple_camera_setup.system())
         .add_startup_system(gameplay::transitions::test_level_setup.system())
         .run()
 }
