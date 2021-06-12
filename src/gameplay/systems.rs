@@ -61,6 +61,13 @@ fn push_tile_recurse(
         .expect("pusher should exist")
         .0;
     let destination = pusher_coords + direction.into();
+    if destination.x < 0
+        || destination.y < 0
+        || destination.y as usize >= collision_map.len()
+        || destination.y as usize >= collision_map[0].len()
+    {
+        return Vec::new();
+    }
     match collision_map[destination.y as usize][destination.x as usize] {
         None => vec![pusher],
         Some((_, RigidBody::Static)) => Vec::new(),

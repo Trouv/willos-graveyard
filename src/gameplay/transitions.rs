@@ -38,6 +38,11 @@ pub fn test_level_setup(
         IVec2::new(1, 1),
         &sprite_handles,
     ));
+    commands.spawn_bundle(InputBlockBundle::new(
+        Direction::Right,
+        IVec2::new(2, 2),
+        &sprite_handles,
+    ));
     commands.insert_resource(sprite_handles);
 }
 
