@@ -22,7 +22,7 @@ impl LevelSize {
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
-        .insert_resource(LevelSize::new(IVec2::new(12, 4)))
+        .insert_resource(LevelSize::new(IVec2::new(16, 10)))
         //.add_startup_system(sprite_load.system().label(SystemLabels::LoadAssets))
         .add_startup_system(gameplay::transitions::create_camera.system())
         //.add_startup_system(gameplay::transitions::simple_camera_setup.system())
