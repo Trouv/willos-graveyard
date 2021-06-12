@@ -1,5 +1,5 @@
 use crate::{
-    gameplay::{bundles::*, Direction},
+    gameplay::{bundles::*, components::*, Direction, DIRECTION_ORDER},
     LevelSize, SpriteHandles, UNIT_LENGTH,
 };
 use bevy::prelude::*;
@@ -27,7 +27,9 @@ pub fn test_level_setup(
         d_block: materials.add(assets.load("textures/d_block.png").into()),
     };
     commands.spawn_bundle(WallBundle::new(IVec2::new(0, 0), &sprite_handles));
-    commands.spawn_bundle(PlayerBundle::new(IVec2::new(15, 9), &sprite_handles));
+    let player = commands
+        .spawn_bundle(PlayerBundle::new(IVec2::new(1, 0), &sprite_handles))
+        .id();
     commands.spawn_bundle(DirectionTileBundle::new(
         Direction::Up,
         IVec2::new(0, 1),
@@ -38,7 +40,38 @@ pub fn test_level_setup(
         IVec2::new(1, 1),
         &sprite_handles,
     ));
+    commands.spawn_bundle(InputBlockBundle::new(
+        Direction::Right,
+        IVec2::new(2, 2),
+        &sprite_handles,
+    ));
+    commands.spawn_bundle(MoveTableBundle::new(
+        player,
+        IVec2::new(1, 7),
+        &sprite_handles,
+    ));
     commands.insert_resource(sprite_handles);
+}
+
+pub fn spawn_table_edges(
+    mut commands: Commands,
+    table_query: Query<&Tile, Added<MoveTable>>,
+    sprite_handles: Res<SpriteHandles>,
+) {
+    for tile in table_query.iter() {
+        for (i, direction) in DIRECTION_ORDER.iter().enumerate() {
+            commands.spawn_bundle(DirectionTileBundle::new(
+                *direction,
+                tile.coords + (i as i32 + 1) * IVec2::from(Direction::Right),
+                &sprite_handles,
+            ));
+            commands.spawn_bundle(DirectionTileBundle::new(
+                *direction,
+                tile.coords + (i as i32 + 1) * IVec2::from(Direction::Down),
+                &sprite_handles,
+            ));
+        }
+    }
 }
 
 pub fn create_camera(mut commands: Commands, level_size: Res<LevelSize>) {
