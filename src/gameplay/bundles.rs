@@ -4,10 +4,10 @@ use crate::{
 };
 use bevy::prelude::*;
 
-#[derive(Clone, Default, Bundle)]
+#[derive(Clone, Bundle)]
 pub struct WallBundle {
     pub tile: Tile,
-    pub blocker: Blocker,
+    pub rigid_body: RigidBody,
     #[bundle]
     pub sprite_bundle: SpriteBundle,
 }
@@ -17,7 +17,7 @@ impl WallBundle {
         let xy = xy_translation(coords);
         WallBundle {
             tile: Tile { coords },
-            blocker: Blocker,
+            rigid_body: RigidBody::Static,
             sprite_bundle: SpriteBundle {
                 material: sprite_handles.wall.clone_weak(),
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
@@ -62,8 +62,7 @@ impl DirectionTileBundle {
 #[derive(Clone, Bundle)]
 pub struct InputBlockBundle {
     tile: Tile,
-    blocker: Blocker,
-    pushable: Pushable,
+    rigid_body: RigidBody,
     input_block: InputBlock,
     #[bundle]
     sprite_bundle: SpriteBundle,
@@ -78,8 +77,7 @@ impl InputBlockBundle {
         let xy = xy_translation(coords);
         InputBlockBundle {
             tile: Tile { coords },
-            blocker: Blocker,
-            pushable: Pushable,
+            rigid_body: RigidBody::Dynamic,
             input_block: InputBlock {
                 key_code: match direction {
                     Direction::Up => KeyCode::W,
@@ -128,8 +126,7 @@ impl GoalBundle {
 #[derive(Clone, Bundle)]
 pub struct PlayerBundle {
     pub tile: Tile,
-    pub blocker: Blocker,
-    pub pushable: Pushable,
+    pub rigid_body: RigidBody,
     pub player_state: PlayerState,
     #[bundle]
     pub sprite_bundle: SpriteBundle,
@@ -140,8 +137,7 @@ impl PlayerBundle {
         let xy = xy_translation(coords);
         PlayerBundle {
             tile: Tile { coords },
-            blocker: Blocker,
-            pushable: Pushable,
+            rigid_body: RigidBody::Dynamic,
             player_state: PlayerState::Waiting,
             sprite_bundle: SpriteBundle {
                 material: sprite_handles.player.clone_weak(),
