@@ -129,7 +129,7 @@ impl GoalBundle {
     }
 }
 
-#[derive(Clone, Default, Bundle)]
+#[derive(Clone, Bundle)]
 pub struct PlayerBundle {
     pub tile: Tile,
     pub blocker: Blocker,
