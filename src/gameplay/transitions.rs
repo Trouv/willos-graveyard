@@ -126,6 +126,9 @@ pub fn load_level(
             }
         }
     }
+    commands.insert_resource(LevelSize {
+        size: IVec2::new(width as i32, height as i32),
+    });
 }
 
 pub fn test_level_setup(mut commands: Commands, sprite_handles: Res<SpriteHandles>) {

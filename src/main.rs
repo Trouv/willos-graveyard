@@ -33,7 +33,10 @@ fn main() {
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         .insert_resource(LevelNum(0))
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
-        .add_startup_system(gameplay::transitions::create_camera.system())
+        .add_startup_system_to_stage(
+            StartupStage::PostStartup,
+            gameplay::transitions::create_camera.system(),
+        )
         // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
         //.add_startup_system(gameplay::transitions::test_level_setup.system())
         .add_startup_system(gameplay::transitions::load_level.system())
