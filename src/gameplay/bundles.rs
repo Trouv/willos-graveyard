@@ -21,7 +21,7 @@ impl WallBundle {
             sprite_bundle: SpriteBundle {
                 material: sprite_handles.wall.clone_weak(),
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
-                transform: Transform::from_xyz(xy.x, xy.y, 0.),
+                transform: Transform::from_xyz(xy.x, xy.y, 1.),
                 ..Default::default()
             },
         }
@@ -94,7 +94,7 @@ impl InputBlockBundle {
                     Direction::Right => sprite_handles.d_block.clone_weak(),
                 },
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
-                transform: Transform::from_xyz(xy.x, xy.y, 0.),
+                transform: Transform::from_xyz(xy.x, xy.y, 1.),
                 ..Default::default()
             },
         }
@@ -139,6 +139,33 @@ impl PlayerBundle {
             tile: Tile { coords },
             rigid_body: RigidBody::Dynamic,
             player_state: PlayerState::Waiting,
+            sprite_bundle: SpriteBundle {
+                material: sprite_handles.player.clone_weak(),
+                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                transform: Transform::from_xyz(xy.x, xy.y, 2.),
+                ..Default::default()
+            },
+        }
+    }
+}
+
+#[derive(Clone, Bundle)]
+pub struct MoveTableBundle {
+    pub tile: Tile,
+    pub move_table: MoveTable,
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+}
+
+impl MoveTableBundle {
+    pub fn new(player: Entity, coords: IVec2, sprite_handles: &SpriteHandles) -> MoveTableBundle {
+        let xy = xy_translation(coords);
+        MoveTableBundle {
+            tile: Tile { coords },
+            move_table: MoveTable {
+                table: [[None; 4]; 4],
+                player,
+            },
             sprite_bundle: SpriteBundle {
                 material: sprite_handles.player.clone_weak(),
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
