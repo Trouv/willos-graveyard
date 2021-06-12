@@ -1,4 +1,5 @@
 mod gameplay;
+mod utils;
 
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -52,21 +53,13 @@ fn main() {
                 .system()
                 .before(SystemLabels::Input),
         )
-        .add_system(
-            gameplay::systems::ease_movement
-                .system()
-                .after(SystemLabels::Input),
-        )
+        .add_system(gameplay::systems::ease_movement.system())
         .add_system(
             gameplay::systems::perform_tile_movement
                 .system()
                 .after(SystemLabels::Input),
         )
-        .add_system(
-            gameplay::systems::move_player_by_table
-                .system()
-                .after(SystemLabels::Input),
-        )
+        .add_system(gameplay::systems::move_player_by_table.system())
         .run()
 }
 
