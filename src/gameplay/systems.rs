@@ -52,7 +52,7 @@ pub fn simple_movement(
     }
 }
 
-fn push_tile_recurse(
+fn push_tile_recursively(
     collision_map: Vec<Vec<Option<(Entity, RigidBody)>>>,
     pusher_coords: IVec2,
     direction: Direction,
@@ -72,7 +72,7 @@ fn push_tile_recurse(
         None => vec![pusher],
         Some((_, RigidBody::Static)) => Vec::new(),
         Some((_, RigidBody::Dynamic)) => {
-            let mut pushed_entities = push_tile_recurse(collision_map, destination, direction);
+            let mut pushed_entities = push_tile_recursively(collision_map, destination, direction);
             if pushed_entities.is_empty() {
                 Vec::new()
             } else {
@@ -101,7 +101,7 @@ pub fn perform_tile_movement(
             .unwrap();
 
         let pushed_entities =
-            push_tile_recurse(collision_map, player_tile.coords, movement_event.direction);
+            push_tile_recursively(collision_map, player_tile.coords, movement_event.direction);
 
         for entity in pushed_entities {
             tile_query
