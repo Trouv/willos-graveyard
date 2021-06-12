@@ -1,12 +1,21 @@
 use crate::{
     gameplay::{bundles::*, components::*, Direction, DIRECTION_ORDER},
     utils::application_root_dir,
-    LevelNum, LevelSize, SpriteHandles, UNIT_LENGTH,
+    LevelNum, LevelSize, SpriteHandles, LEVEL_ORDER, UNIT_LENGTH,
 };
 use bevy::prelude::*;
+use std::{
+    fs::File,
+    io::{BufRead, BufReader},
+    path::Path,
+};
 
 pub fn simple_camera_setup(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+}
+
+fn file_to_tile_coords(i: usize, j: usize, height: usize) -> IVec2 {
+    IVec2::new(j as i32, height as i32 - i as i32 - 1)
 }
 
 pub fn load_level(
@@ -14,6 +23,109 @@ pub fn load_level(
     sprite_handles: Res<SpriteHandles>,
     level_num: Res<LevelNum>,
 ) {
+    let level_path = application_root_dir()
+        .unwrap()
+        .join(Path::new("assets/levels/"))
+        .join(Path::new(LEVEL_ORDER[level_num.0]));
+
+    let mut lines =
+        BufReader::new(File::open(level_path).expect("level file should exist")).lines();
+
+    let title = lines.next().unwrap();
+
+    let line_strings = lines.map(|x| x.unwrap()).collect::<Vec<String>>();
+
+    let mut willow = None;
+    let mut chester = None;
+    let mut width = 0;
+    let mut height = 0;
+    // Player pass, and get width and height
+    for (i, line) in line_strings.clone().iter().enumerate() {
+        for (j, tile_char) in line.chars().enumerate() {
+            if tile_char == 'I' {
+                willow = Some((i, j))
+            } else if tile_char == 'C' {
+                chester = Some((i, j))
+            }
+            if j + 1 > width {
+                width = j + 1
+            };
+        }
+        if i + 1 > height {
+            height = i + 1
+        };
+    }
+
+    let willow_id = match willow {
+        Some(w) => Some(
+            commands
+                .spawn_bundle(PlayerBundle::new(
+                    file_to_tile_coords(w.0, w.1, height),
+                    &&sprite_handles,
+                ))
+                .id(),
+        ),
+        None => None,
+    };
+    let chester_id = match chester {
+        Some(c) => Some(
+            commands
+                .spawn_bundle(PlayerBundle::new(
+                    file_to_tile_coords(c.0, c.1, height),
+                    &&sprite_handles,
+                ))
+                .id(),
+        ),
+        None => None,
+    };
+
+    // Second pass, all other entities other than players
+    for (i, line) in line_strings.iter().enumerate() {
+        for (j, tile_char) in line.chars().enumerate() {
+            let coords = file_to_tile_coords(i, j, height);
+            if "fFbBtT".contains(tile_char) {
+                commands.spawn_bundle(WallBundle::new(coords, &sprite_handles));
+            } else if "wW".contains(tile_char) {
+                commands.spawn_bundle(InputBlockBundle::new(
+                    Direction::Up,
+                    coords,
+                    &sprite_handles,
+                ));
+            } else if "aA".contains(tile_char) {
+                commands.spawn_bundle(InputBlockBundle::new(
+                    Direction::Left,
+                    coords,
+                    &sprite_handles,
+                ));
+            } else if "sS".contains(tile_char) {
+                commands.spawn_bundle(InputBlockBundle::new(
+                    Direction::Down,
+                    coords,
+                    &sprite_handles,
+                ));
+            } else if "dD".contains(tile_char) {
+                commands.spawn_bundle(InputBlockBundle::new(
+                    Direction::Right,
+                    coords,
+                    &sprite_handles,
+                ));
+            } else if "gG".contains(tile_char) {
+                commands.spawn_bundle(GoalBundle::new(coords, &sprite_handles));
+            } else if tile_char == 'i' {
+                commands.spawn_bundle(MoveTableBundle::new(
+                    willow_id.expect("Willow table exists, but not Willow"),
+                    coords,
+                    &sprite_handles,
+                ));
+            } else if tile_char == 'c' {
+                commands.spawn_bundle(MoveTableBundle::new(
+                    chester_id.expect("Chester table exists, but not Chester"),
+                    coords,
+                    &sprite_handles,
+                ));
+            }
+        }
+    }
 }
 
 pub fn test_level_setup(mut commands: Commands, sprite_handles: Res<SpriteHandles>) {

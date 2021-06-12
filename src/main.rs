@@ -35,7 +35,7 @@ fn main() {
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
         .add_startup_system(gameplay::transitions::create_camera.system())
         // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
-        .add_startup_system(gameplay::transitions::test_level_setup.system())
+        //.add_startup_system(gameplay::transitions::test_level_setup.system())
         .add_startup_system(gameplay::transitions::load_level.system())
         .add_system(gameplay::transitions::spawn_table_edges.system())
         //.add_system(
