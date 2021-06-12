@@ -9,12 +9,23 @@ pub enum SystemLabels {
     LoadAssets,
     Input,
 }
+pub struct LevelSize {
+    size: IVec2,
+}
+
+impl LevelSize {
+    fn new(size: IVec2) -> Self {
+        LevelSize { size: size }
+    }
+}
 
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
+        .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         //.add_startup_system(sprite_load.system().label(SystemLabels::LoadAssets))
-        .add_startup_system(gameplay::transitions::simple_camera_setup.system())
+        .add_startup_system(gameplay::transitions::create_camera.system())
+        //.add_startup_system(gameplay::transitions::simple_camera_setup.system())
         .add_startup_system(gameplay::transitions::test_level_setup.system())
         .run()
 }
