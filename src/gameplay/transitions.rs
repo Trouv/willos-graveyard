@@ -30,19 +30,14 @@ pub fn test_level_setup(
     let player = commands
         .spawn_bundle(PlayerBundle::new(IVec2::new(1, 0), &sprite_handles))
         .id();
-    commands.spawn_bundle(DirectionTileBundle::new(
-        Direction::Up,
-        IVec2::new(0, 1),
-        &sprite_handles,
-    ));
     commands.spawn_bundle(InputBlockBundle::new(
         Direction::Up,
-        IVec2::new(1, 1),
+        IVec2::new(2, 6),
         &sprite_handles,
     ));
     commands.spawn_bundle(InputBlockBundle::new(
         Direction::Right,
-        IVec2::new(2, 2),
+        IVec2::new(3, 6),
         &sprite_handles,
     ));
     commands.spawn_bundle(MoveTableBundle::new(

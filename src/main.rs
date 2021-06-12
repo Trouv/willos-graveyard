@@ -32,8 +32,13 @@ fn main() {
         .add_startup_system(gameplay::transitions::test_level_setup.system())
         .add_system(gameplay::transitions::spawn_table_edges.system())
         .add_system(gameplay::systems::ease_movement.system())
+        //.add_system(
+        //gameplay::systems::simple_movement
+        //.system()
+        //.label(SystemLabels::Input),
+        //)
         .add_system(
-            gameplay::systems::simple_movement
+            gameplay::systems::player_state_input
                 .system()
                 .label(SystemLabels::Input),
         )
@@ -42,6 +47,7 @@ fn main() {
                 .system()
                 .after(SystemLabels::Input),
         )
+        .add_system(gameplay::systems::move_player_by_table.system())
         .add_system(
             gameplay::systems::move_table_update
                 .system()

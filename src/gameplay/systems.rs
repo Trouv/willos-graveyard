@@ -1,5 +1,5 @@
 use crate::{
-    gameplay::{components::*, xy_translation, Direction, MovementEvent},
+    gameplay::{components::*, xy_translation, Direction, MovementEvent, DIRECTION_ORDER},
     LevelSize,
 };
 use bevy::prelude::*;
@@ -126,6 +126,62 @@ pub fn move_table_update(
                 // key block is in table
                 table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
             }
+        }
+    }
+}
+
+pub fn player_state_input(mut player_query: Query<&mut PlayerState>, input: Res<Input<KeyCode>>) {
+    for mut player in player_query.iter_mut() {
+        if *player == PlayerState::Waiting {
+            if input.just_pressed(KeyCode::W) {
+                *player = PlayerState::RankMove(KeyCode::W)
+            } else if input.just_pressed(KeyCode::A) {
+                *player = PlayerState::RankMove(KeyCode::A)
+            } else if input.just_pressed(KeyCode::S) {
+                *player = PlayerState::RankMove(KeyCode::S)
+            } else if input.just_pressed(KeyCode::D) {
+                *player = PlayerState::RankMove(KeyCode::D)
+            }
+        }
+    }
+}
+
+pub fn move_player_by_table(
+    table_query: Query<&MoveTable>,
+    mut player_query: Query<&mut PlayerState>,
+    mut writer: EventWriter<MovementEvent>,
+) {
+    for table in table_query.iter() {
+        let mut player = player_query
+            .get_component_mut::<PlayerState>(table.player)
+            .expect("Table's player should exist");
+
+        match *player {
+            PlayerState::RankMove(key) => {
+                for (i, rank) in table.table.iter().enumerate() {
+                    if rank.contains(&Some(key)) {
+                        writer.send(MovementEvent {
+                            player: table.player,
+                            direction: DIRECTION_ORDER[i],
+                        });
+                    }
+                }
+                *player = PlayerState::FileMove(key);
+            }
+            PlayerState::FileMove(key) => {
+                for rank in table.table.iter() {
+                    for (i, cell) in rank.iter().enumerate() {
+                        if *cell == Some(key) {
+                            writer.send(MovementEvent {
+                                player: table.player,
+                                direction: DIRECTION_ORDER[i],
+                            });
+                        }
+                    }
+                }
+                *player = PlayerState::Waiting;
+            }
+            _ => {}
         }
     }
 }
