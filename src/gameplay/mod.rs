@@ -14,15 +14,15 @@ pub fn xy_translation(coords: IVec2) -> Vec2 {
 pub enum Direction {
     Up,
     Left,
-    Right,
     Down,
+    Right,
 }
 
 pub const DIRECTION_ORDER: [Direction; 4] = [
     Direction::Up,
     Direction::Left,
-    Direction::Right,
     Direction::Down,
+    Direction::Right,
 ];
 
 impl From<Direction> for IVec2 {
