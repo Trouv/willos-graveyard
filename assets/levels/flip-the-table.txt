@@ -1,11 +1,11 @@
 Flip the table
-     b   
- I   b   
-     b   
-     b   
-     b   
-     b  
-     b   
+     b        
+ I   b        
+     b        
+     b        
+     b        
+     b        
+     b        
      fffffffff
     i    b    
    w     b ag 

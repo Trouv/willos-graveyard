@@ -218,7 +218,7 @@ pub fn reset(
 
 pub fn check_goal(
     goal_query: Query<&Tile, With<Goal>>,
-    block_query: Query<&Tile, (Changed<Tile>, With<InputBlock>)>,
+    block_query: Query<&Tile, With<InputBlock>>,
     mut writer: EventWriter<LevelCompleteEvent>,
     mut level_state: ResMut<LevelState>,
     mut level_num: ResMut<LevelNum>,

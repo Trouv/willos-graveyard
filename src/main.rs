@@ -43,6 +43,11 @@ pub enum LevelState {
 }
 
 fn main() {
+    let mut level_num = 0;
+    if std::env::args().count() > 1 {
+        level_num = std::env::args().last().unwrap().parse::<usize>().unwrap();
+    }
+
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
@@ -52,7 +57,7 @@ fn main() {
         .add_event::<gameplay::CardUpEvent>()
         .add_event::<gameplay::LevelStartEvent>()
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
-        .insert_resource(LevelNum(0))
+        .insert_resource(LevelNum(level_num))
         .insert_resource(LevelEntities(Vec::new()))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
@@ -117,6 +122,7 @@ pub struct SpriteHandles {
     pub goal: Handle<ColorMaterial>,
     pub player: Handle<ColorMaterial>,
     pub wall: Handle<ColorMaterial>,
+    pub rope: Handle<ColorMaterial>,
     pub w_block: Vec<Handle<ColorMaterial>>,
     pub a_block: Vec<Handle<ColorMaterial>>,
     pub s_block: Vec<Handle<ColorMaterial>>,
@@ -174,6 +180,7 @@ pub fn sprite_load(
         goal: materials.add(assets.load("textures/goal.png").into()),
         player: materials.add(assets.load("textures/player.png").into()),
         wall: materials.add(assets.load("textures/wall.png").into()),
+        rope: materials.add(assets.load("textures/rope.png").into()),
         w_block: vec![materials.add(w_0.into()), materials.add(w_1.into())],
         a_block: vec![materials.add(a_0.into()), materials.add(a_1.into())],
         s_block: vec![materials.add(s_0.into()), materials.add(s_1.into())],
