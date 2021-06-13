@@ -178,14 +178,17 @@ pub fn load_level(
                 }
                 //Create Background Grass
                 let xy = xy_translation(coords);
-                commands
-                    .spawn_bundle(SpriteSheetBundle {
-                        texture_atlas: sprite_handles.get_rand_grass(),
-                        transform: Transform::from_translation(Vec3::new(xy.x, xy.y, 0.)),
-                        ..Default::default()
-                    })
-                    .insert(Timer::from_seconds(0.1, true))
-                    .insert(FrameIndex { index: 0 });
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(SpriteSheetBundle {
+                            texture_atlas: sprite_handles.get_rand_grass(),
+                            transform: Transform::from_translation(Vec3::new(xy.x, xy.y, 0.)),
+                            ..Default::default()
+                        })
+                        .insert(Timer::from_seconds(0.1, true))
+                        .insert(FrameIndex { index: 0 })
+                        .id(),
+                );
             }
         }
         let level_size = LevelSize {
