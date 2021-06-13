@@ -186,7 +186,6 @@ pub fn load_level(
                             ..Default::default()
                         })
                         .insert(Timer::from_seconds(0.1, true))
-                        .insert(FrameIndex { index: 0 })
                         .id(),
                 );
             }
