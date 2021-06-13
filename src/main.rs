@@ -44,15 +44,20 @@ fn main() {
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         .insert_resource(LevelNum(0))
         .insert_resource(LevelEntities(Vec::new()))
-        .insert_resource(LevelState::Gameplay)
+        .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
-        .add_startup_system_to_stage(
-            StartupStage::PostStartup,
-            gameplay::transitions::create_camera.system(),
+        .add_system(
+            gameplay::transitions::create_camera
+                .system()
+                .after(SystemLabels::LoadAssets),
         )
         // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
         //.add_startup_system(gameplay::transitions::test_level_setup.system())
-        .add_startup_system(gameplay::transitions::load_level.system())
+        .add_system(
+            gameplay::transitions::load_level
+                .system()
+                .label(SystemLabels::LoadAssets),
+        )
         .add_system(gameplay::transitions::spawn_table_edges.system())
         //.add_system(
         //gameplay::systems::simple_movement
@@ -89,6 +94,7 @@ fn main() {
         .add_system(gameplay::systems::move_player_by_table.system())
         .add_system(gameplay::systems::ease_movement.system())
         .add_system(gameplay::transitions::spawn_level_card.system())
+        .add_system(gameplay::transitions::level_card_update.system())
         .run()
 }
 
@@ -110,6 +116,7 @@ pub fn sprite_load(
     mut commands: Commands,
     assets: Res<AssetServer>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    mut writer: EventWriter<gameplay::LevelCompleteEvent>,
 ) {
     commands.spawn_bundle(UiCameraBundle::default());
 
@@ -126,6 +133,8 @@ pub fn sprite_load(
         s_block: materials.add(assets.load("textures/s_block.png").into()),
         d_block: materials.add(assets.load("textures/d_block.png").into()),
     });
+
+    writer.send(gameplay::LevelCompleteEvent);
 }
 
 pub struct LevelEntities(Vec<Entity>);

@@ -1,4 +1,3 @@
-use crate::gameplay::Direction;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -39,5 +38,9 @@ pub struct History {
     pub tiles: Vec<Tile>,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
-pub struct LevelCard;
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
+pub enum LevelCard {
+    Rising,
+    Holding,
+    Falling,
+}
