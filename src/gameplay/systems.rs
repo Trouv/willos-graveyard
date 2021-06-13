@@ -36,8 +36,8 @@ fn push_tile_recursively(
     let destination = pusher_coords + direction.into();
     if destination.x < 0
         || destination.y < 0
-        || destination.x as usize >= collision_map.len()
-        || destination.y as usize >= collision_map[0].len()
+        || destination.y as usize >= collision_map.len()
+        || destination.x as usize >= collision_map[0].len()
     {
         return Vec::new();
     }

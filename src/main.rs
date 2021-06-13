@@ -24,7 +24,14 @@ impl LevelSize {
     }
 }
 
-pub const LEVEL_ORDER: [&str; 2] = ["hello.txt", "stuck.txt"];
+pub const LEVEL_ORDER: [&str; 6] = [
+    "who-put-this.txt",
+    "getting-used-to.txt",
+    "set-the-table.txt",
+    "claustrophobic.txt",
+    "flip-the-table.txt",
+    "stuck.txt",
+];
 
 pub struct LevelNum(usize);
 

@@ -1,0 +1,14 @@
+Claustrophobic
+b  sg        
+b fff        
+   b b       
+bb   b       
+  bb  fffffff
+    b        
+    b i      
+    b  w     
+    b   a    
+    b        
+    b    Id  
+    b        
+    b        
