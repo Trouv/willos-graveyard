@@ -106,6 +106,7 @@ impl InputBlockBundle {
 #[derive(Clone, Default, Bundle)]
 pub struct GoalBundle {
     pub tile: Tile,
+    pub goal: Goal,
     #[bundle]
     pub sprite_bundle: SpriteBundle,
 }
@@ -115,6 +116,7 @@ impl GoalBundle {
         let xy = xy_translation(coords);
         GoalBundle {
             tile: Tile { coords },
+            goal: Goal,
             sprite_bundle: SpriteBundle {
                 material: sprite_handles.goal.clone_weak(),
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),

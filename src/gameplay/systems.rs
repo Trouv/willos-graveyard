@@ -1,8 +1,9 @@
 use crate::{
     gameplay::{
-        components::*, xy_translation, ActionEvent, Direction, MovementEvent, DIRECTION_ORDER,
+        components::*, xy_translation, ActionEvent, Direction, LevelCompleteEvent, MovementEvent,
+        DIRECTION_ORDER,
     },
-    LevelSize,
+    LevelNum, LevelSize, LevelState,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
@@ -59,27 +60,30 @@ pub fn perform_tile_movement(
     mut tile_query: Query<(Entity, &mut Tile, &RigidBody)>,
     mut reader: EventReader<MovementEvent>,
     level_size: Res<LevelSize>,
+    level_state: Res<LevelState>,
 ) {
-    for movement_event in reader.iter() {
-        let mut collision_map: Vec<Vec<Option<(Entity, RigidBody)>>> =
-            vec![vec![None; level_size.size.x as usize]; level_size.size.y as usize];
-        for (entity, tile, rigid_body) in tile_query.iter_mut() {
-            collision_map[tile.coords.y as usize][tile.coords.x as usize] =
-                Some((entity, *rigid_body));
-        }
+    if *level_state == LevelState::Gameplay {
+        for movement_event in reader.iter() {
+            let mut collision_map: Vec<Vec<Option<(Entity, RigidBody)>>> =
+                vec![vec![None; level_size.size.x as usize]; level_size.size.y as usize];
+            for (entity, tile, rigid_body) in tile_query.iter_mut() {
+                collision_map[tile.coords.y as usize][tile.coords.x as usize] =
+                    Some((entity, *rigid_body));
+            }
 
-        let player_tile = tile_query
-            .get_component::<Tile>(movement_event.player)
-            .unwrap();
+            let player_tile = tile_query
+                .get_component::<Tile>(movement_event.player)
+                .unwrap();
 
-        let pushed_entities =
-            push_tile_recursively(collision_map, player_tile.coords, movement_event.direction);
+            let pushed_entities =
+                push_tile_recursively(collision_map, player_tile.coords, movement_event.direction);
 
-        for entity in pushed_entities {
-            tile_query
-                .get_component_mut::<Tile>(entity)
-                .expect("Pushed should have Tile component")
-                .coords += movement_event.direction.into();
+            for entity in pushed_entities {
+                tile_query
+                    .get_component_mut::<Tile>(entity)
+                    .expect("Pushed should have Tile component")
+                    .coords += movement_event.direction.into();
+            }
         }
     }
 }
@@ -207,5 +211,32 @@ pub fn reset(
                 }
             }
         }
+    }
+}
+
+pub fn check_goal(
+    goal_query: Query<&Tile, With<Goal>>,
+    block_query: Query<&Tile, (Changed<Tile>, With<InputBlock>)>,
+    mut writer: EventWriter<LevelCompleteEvent>,
+    mut level_state: ResMut<LevelState>,
+    mut level_num: ResMut<LevelNum>,
+) {
+    if *level_state == LevelState::Gameplay {
+        for goal_tile in goal_query.iter() {
+            let mut goal_met = false;
+            for block_tile in block_query.iter() {
+                if goal_tile.coords == block_tile.coords {
+                    goal_met = true;
+                    break;
+                }
+            }
+            if !goal_met {
+                return ();
+            }
+        }
+
+        *level_state = LevelState::Inbetween;
+        level_num.0 += 1;
+        writer.send(LevelCompleteEvent);
     }
 }

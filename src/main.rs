@@ -22,9 +22,15 @@ impl LevelSize {
     }
 }
 
-pub const LEVEL_ORDER: [&str; 1] = ["hello.txt"];
+pub const LEVEL_ORDER: [&str; 2] = ["hello.txt", "stuck.txt"];
 
 pub struct LevelNum(usize);
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum LevelState {
+    Gameplay,
+    Inbetween,
+}
 
 fn main() {
     App::build()
@@ -32,9 +38,13 @@ fn main() {
         .add_plugin(EasingsPlugin)
         .add_event::<gameplay::MovementEvent>()
         .add_event::<gameplay::ActionEvent>()
+        .add_event::<gameplay::LevelCompleteEvent>()
+        .add_event::<gameplay::CardUpEvent>()
+        .add_event::<gameplay::LevelStartEvent>()
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         .insert_resource(LevelNum(0))
         .insert_resource(LevelEntities(Vec::new()))
+        .insert_resource(LevelState::Gameplay)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
         .add_startup_system_to_stage(
             StartupStage::PostStartup,
@@ -69,10 +79,16 @@ fn main() {
                 .system()
                 .before(SystemLabels::MoveTableUpdate),
         )
+        .add_system(
+            gameplay::systems::check_goal
+                .system()
+                .after(SystemLabels::MoveTableUpdate),
+        )
         .add_system(gameplay::systems::rewind.system())
         .add_system(gameplay::systems::reset.system())
         .add_system(gameplay::systems::move_player_by_table.system())
         .add_system(gameplay::systems::ease_movement.system())
+        .add_system(gameplay::transitions::spawn_level_card.system())
         .run()
 }
 
@@ -95,6 +111,8 @@ pub fn sprite_load(
     assets: Res<AssetServer>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
+    commands.spawn_bundle(UiCameraBundle::default());
+
     commands.insert_resource(SpriteHandles {
         up: materials.add(assets.load("textures/up.png").into()),
         left: materials.add(assets.load("textures/left.png").into()),

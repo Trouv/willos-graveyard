@@ -38,3 +38,6 @@ pub enum PlayerState {
 pub struct History {
     pub tiles: Vec<Tile>,
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
+pub struct LevelCard;

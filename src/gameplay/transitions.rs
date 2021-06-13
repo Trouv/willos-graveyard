@@ -1,17 +1,34 @@
 use crate::{
-    gameplay::{bundles::*, components::*, Direction, DIRECTION_ORDER},
+    gameplay::{
+        bundles::*, components::*, CardUpEvent, Direction, LevelCompleteEvent, LevelStartEvent,
+        DIRECTION_ORDER,
+    },
     utils::application_root_dir,
     LevelEntities, LevelNum, LevelSize, SpriteHandles, LEVEL_ORDER, UNIT_LENGTH,
 };
 use bevy::prelude::*;
+use bevy_easings::*;
 use std::{
     fs::File,
     io::{BufRead, BufReader},
     path::Path,
+    time::Duration,
 };
 
 fn file_to_tile_coords(i: usize, j: usize, height: usize) -> IVec2 {
     IVec2::new(j as i32, height as i32 - i as i32 - 1)
+}
+
+fn get_level_title_data(level_num: &LevelNum) -> (String, Vec<String>) {
+    let level_path = application_root_dir()
+        .unwrap()
+        .join(Path::new("assets/levels/"))
+        .join(Path::new(LEVEL_ORDER[level_num.0]));
+
+    let mut lines =
+        BufReader::new(File::open(level_path).expect("level file should exist")).lines();
+    let title = lines.next().unwrap().unwrap();
+    (title, lines.map(|x| x.unwrap()).collect::<Vec<String>>())
 }
 
 pub fn load_level(
@@ -25,17 +42,7 @@ pub fn load_level(
         commands.entity(entity).despawn_recursive();
     }
 
-    let level_path = application_root_dir()
-        .unwrap()
-        .join(Path::new("assets/levels/"))
-        .join(Path::new(LEVEL_ORDER[level_num.0]));
-
-    let mut lines =
-        BufReader::new(File::open(level_path).expect("level file should exist")).lines();
-    // Skip the title
-    lines.next();
-
-    let line_strings = lines.map(|x| x.unwrap()).collect::<Vec<String>>();
+    let (_, line_strings) = get_level_title_data(&level_num);
 
     let mut willow = None;
     let mut chester = None;
@@ -214,4 +221,88 @@ pub fn create_camera(
     level_entities
         .0
         .push(commands.spawn().insert_bundle(camera_bundle).id());
+}
+
+pub fn spawn_level_card(
+    mut commands: Commands,
+    mut reader: EventReader<LevelCompleteEvent>,
+    level_num: Res<LevelNum>,
+    assets: Res<AssetServer>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    for _ in reader.iter() {
+        let (title, _) = get_level_title_data(&level_num);
+        commands
+            .spawn_bundle(NodeBundle {
+                material: materials.add(ColorMaterial::color(Color::BLACK)),
+                ..Default::default()
+            })
+            .insert(
+                Style {
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    position_type: PositionType::Absolute,
+                    flex_direction: FlexDirection::ColumnReverse,
+                    size: Size {
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                    },
+                    position: Rect {
+                        top: Val::Percent(100.),
+                        left: Val::Percent(0.),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                }
+                .ease_to(
+                    Style {
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        position_type: PositionType::Absolute,
+                        flex_direction: FlexDirection::ColumnReverse,
+                        size: Size {
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                        },
+                        position: Rect {
+                            top: Val::Percent(0.),
+                            left: Val::Percent(0.),
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    },
+                    EaseFunction::QuadraticOut,
+                    EasingType::Once {
+                        duration: Duration::from_secs(1),
+                    },
+                ),
+            )
+            .insert(LevelCard)
+            .with_children(|parent| {
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        format!("#{}", level_num.0),
+                        TextStyle {
+                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                            font_size: 50.,
+                            color: Color::WHITE,
+                        },
+                        TextAlignment::default(),
+                    ),
+                    ..Default::default()
+                });
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        title,
+                        TextStyle {
+                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                            font_size: 30.,
+                            color: Color::WHITE,
+                        },
+                        TextAlignment::default(),
+                    ),
+                    ..Default::default()
+                });
+            });
+    }
 }
