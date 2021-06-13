@@ -3,6 +3,7 @@ use crate::{
     SpriteHandles, UNIT_LENGTH,
 };
 use bevy::prelude::*;
+use rand::seq::SliceRandom;
 
 #[derive(Clone, Bundle)]
 pub struct WallBundle {
@@ -75,6 +76,7 @@ impl InputBlockBundle {
         coords: IVec2,
         sprite_handles: &SpriteHandles,
     ) -> InputBlockBundle {
+        let mut rng = rand::thread_rng();
         let xy = xy_translation(coords);
         InputBlockBundle {
             tile: Tile { coords },
@@ -90,10 +92,26 @@ impl InputBlockBundle {
             },
             sprite_bundle: SpriteBundle {
                 material: match direction {
-                    Direction::Up => sprite_handles.w_block.clone_weak(),
-                    Direction::Left => sprite_handles.a_block.clone_weak(),
-                    Direction::Down => sprite_handles.s_block.clone_weak(),
-                    Direction::Right => sprite_handles.d_block.clone_weak(),
+                    Direction::Up => sprite_handles
+                        .w_block
+                        .choose(&mut rng)
+                        .unwrap()
+                        .clone_weak(),
+                    Direction::Left => sprite_handles
+                        .a_block
+                        .choose(&mut rng)
+                        .unwrap()
+                        .clone_weak(),
+                    Direction::Down => sprite_handles
+                        .s_block
+                        .choose(&mut rng)
+                        .unwrap()
+                        .clone_weak(),
+                    Direction::Right => sprite_handles
+                        .d_block
+                        .choose(&mut rng)
+                        .unwrap()
+                        .clone_weak(),
                 },
                 sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
                 transform: Transform::from_xyz(xy.x, xy.y, 1.),

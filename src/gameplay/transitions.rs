@@ -15,6 +15,8 @@ use std::{
     time::Duration,
 };
 
+use super::xy_translation;
+
 fn file_to_tile_coords(i: usize, j: usize, height: usize) -> IVec2 {
     IVec2::new(j as i32, height as i32 - i as i32 - 1)
 }
@@ -174,6 +176,16 @@ pub fn load_level(
                             .id(),
                     );
                 }
+                //Create Background Grass
+                let xy = xy_translation(coords);
+                commands
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: sprite_handles.get_rand_grass(),
+                        transform: Transform::from_translation(Vec3::new(xy.x, xy.y, 0.)),
+                        ..Default::default()
+                    })
+                    .insert(Timer::from_seconds(0.1, true))
+                    .insert(FrameIndex { index: 0 });
             }
         }
         let level_size = LevelSize {

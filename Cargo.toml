@@ -11,3 +11,4 @@ serde = {version = "1.0.126", features = ["derive"]}
 dunce = "1.0"
 bevy = "0.5"
 bevy_easings = "0.4"
+rand = "0.8.3"

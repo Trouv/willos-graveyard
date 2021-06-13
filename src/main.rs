@@ -3,6 +3,7 @@ mod utils;
 
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
+use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
@@ -109,6 +110,7 @@ fn main() {
         .add_system(gameplay::systems::ease_movement.system())
         .add_system(gameplay::transitions::spawn_level_card.system())
         .add_system(gameplay::transitions::level_card_update.system())
+        .add_system(gameplay::systems::animate_grass_system.system())
         .run()
 }
 
@@ -120,18 +122,53 @@ pub struct SpriteHandles {
     pub goal: Handle<ColorMaterial>,
     pub player: Handle<ColorMaterial>,
     pub wall: Handle<ColorMaterial>,
-    pub w_block: Handle<ColorMaterial>,
-    pub a_block: Handle<ColorMaterial>,
-    pub s_block: Handle<ColorMaterial>,
-    pub d_block: Handle<ColorMaterial>,
+    pub w_block: Vec<Handle<ColorMaterial>>,
+    pub a_block: Vec<Handle<ColorMaterial>>,
+    pub s_block: Vec<Handle<ColorMaterial>>,
+    pub d_block: Vec<Handle<ColorMaterial>>,
+    pub grass_plain: Handle<TextureAtlas>,
+    pub grass_tufts: Handle<TextureAtlas>,
+    pub grass_stone: Handle<TextureAtlas>,
+}
+
+impl SpriteHandles {
+    pub fn get_rand_grass(&self) -> Handle<TextureAtlas> {
+        let mut rng = rand::thread_rng();
+        let chance = rng.gen::<f32>();
+        if chance < 0.9 {
+            self.grass_plain.clone_weak()
+        } else if chance > 0.9 && chance < 0.95 {
+            self.grass_stone.clone_weak()
+        } else {
+            self.grass_tufts.clone_weak()
+        }
+    }
 }
 
 pub fn sprite_load(
     mut commands: Commands,
     assets: Res<AssetServer>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut writer: EventWriter<gameplay::LevelCompleteEvent>,
 ) {
+    let w_0 = assets.load("textures/w_0.png");
+    let w_1 = assets.load("textures/w_1.png");
+    let a_0 = assets.load("textures/a_0.png");
+    let a_1 = assets.load("textures/a_1.png");
+    let s_0 = assets.load("textures/s_0.png");
+    let s_1 = assets.load("textures/s_1.png");
+    let d_0 = assets.load("textures/d_0.png");
+    let d_1 = assets.load("textures/d_1.png");
+    let grass_plain_handle = assets.load("textures/grass_plain.png");
+    let grass_plain_atlas =
+        TextureAtlas::from_grid(grass_plain_handle, Vec2::new(32.0, 32.0), 4, 1);
+    let grass_stone_handle = assets.load("textures/grass_stone.png");
+    let grass_stone_atlas =
+        TextureAtlas::from_grid(grass_stone_handle, Vec2::new(32.0, 32.0), 4, 1);
+    let grass_tufts_handle = assets.load("textures/grass_tufts.png");
+    let grass_tufts_atlas =
+        TextureAtlas::from_grid(grass_tufts_handle, Vec2::new(32.0, 32.0), 4, 1);
     commands.spawn_bundle(UiCameraBundle::default());
 
     commands.insert_resource(SpriteHandles {
@@ -142,10 +179,13 @@ pub fn sprite_load(
         goal: materials.add(assets.load("textures/goal.png").into()),
         player: materials.add(assets.load("textures/player.png").into()),
         wall: materials.add(assets.load("textures/wall.png").into()),
-        w_block: materials.add(assets.load("textures/w_block.png").into()),
-        a_block: materials.add(assets.load("textures/a_block.png").into()),
-        s_block: materials.add(assets.load("textures/s_block.png").into()),
-        d_block: materials.add(assets.load("textures/d_block.png").into()),
+        w_block: vec![materials.add(w_0.into()), materials.add(w_1.into())],
+        a_block: vec![materials.add(a_0.into()), materials.add(a_1.into())],
+        s_block: vec![materials.add(s_0.into()), materials.add(s_1.into())],
+        d_block: vec![materials.add(d_0.into()), materials.add(d_1.into())],
+        grass_plain: texture_atlases.add(grass_plain_atlas),
+        grass_tufts: texture_atlases.add(grass_tufts_atlas),
+        grass_stone: texture_atlases.add(grass_stone_atlas),
     });
 
     writer.send(gameplay::LevelCompleteEvent);

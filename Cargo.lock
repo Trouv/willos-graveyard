@@ -2858,6 +2858,7 @@ dependencies = [
  "bevy",
  "bevy_easings",
  "dunce",
+ "rand",
  "serde",
 ]
 
