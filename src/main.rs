@@ -179,7 +179,7 @@ pub fn sprite_load(
         down: materials.add(assets.load("textures/down.png").into()),
         goal: materials.add(assets.load("textures/goal.png").into()),
         player: materials.add(assets.load("textures/player.png").into()),
-        wall: materials.add(assets.load("textures/wall.png").into()),
+        wall: materials.add(assets.load("textures/fence.png").into()),
         rope: materials.add(assets.load("textures/rope.png").into()),
         w_block: vec![materials.add(w_0.into()), materials.add(w_1.into())],
         a_block: vec![materials.add(a_0.into()), materials.add(a_1.into())],
