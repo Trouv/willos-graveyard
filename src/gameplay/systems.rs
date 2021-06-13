@@ -226,7 +226,6 @@ pub fn check_goal(
             let mut goal_met = false;
             for block_tile in block_query.iter() {
                 if goal_tile.coords == block_tile.coords {
-                    println!("TRUE");
                     goal_met = true;
                     break;
                 }
