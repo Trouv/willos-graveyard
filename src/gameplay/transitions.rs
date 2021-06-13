@@ -274,7 +274,7 @@ pub fn spawn_level_card(
         } else {
             ("Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string(), Vec::new())
         };
-        let mut card = commands
+        commands
             .spawn_bundle(NodeBundle {
                 material: materials.add(ColorMaterial::color(Color::BLACK)),
                 ..Default::default()
@@ -319,7 +319,7 @@ pub fn spawn_level_card(
                     },
                 ),
             )
-            .insert(Timer::new(Duration::from_secs(1), false))
+            .insert(Timer::new(Duration::from_millis(1500), false))
             .with_children(|parent| {
                 if not_final {
                     parent.spawn_bundle(TextBundle {
@@ -370,7 +370,6 @@ pub fn level_card_update(
     for (entity, mut card, style, mut timer) in card_query.iter_mut() {
         timer.tick(time.delta());
         if timer.finished() {
-            timer.reset();
             match *card {
                 LevelCard::Rising => {
                     card_up_writer.send(CardUpEvent);
@@ -403,6 +402,7 @@ pub fn level_card_update(
                 }
                 _ => {}
             }
+            timer.reset();
         }
     }
 }

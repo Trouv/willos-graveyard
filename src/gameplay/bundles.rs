@@ -216,8 +216,7 @@ impl MoveTableBundle {
                 player,
             },
             sprite_bundle: SpriteBundle {
-                material: sprite_handles.player.clone_weak(),
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                sprite: Sprite::new(Vec2::splat(0.)),
                 transform: Transform::from_xyz(xy.x, xy.y, 0.),
                 ..Default::default()
             },
