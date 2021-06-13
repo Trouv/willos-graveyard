@@ -43,3 +43,12 @@ pub struct MovementEvent {
 }
 
 pub struct ActionEvent;
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
+pub struct LevelCompleteEvent;
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
+pub struct CardUpEvent;
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
+pub struct LevelStartEvent;

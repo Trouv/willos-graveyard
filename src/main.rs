@@ -34,6 +34,7 @@ fn main() {
         .add_event::<gameplay::ActionEvent>()
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
         .insert_resource(LevelNum(0))
+        .insert_resource(LevelEntities(Vec::new()))
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
         .add_startup_system_to_stage(
             StartupStage::PostStartup,
@@ -68,10 +69,10 @@ fn main() {
                 .system()
                 .before(SystemLabels::MoveTableUpdate),
         )
-        .add_system(gameplay::systems::ease_movement.system())
-        .add_system(gameplay::systems::move_player_by_table.system())
         .add_system(gameplay::systems::rewind.system())
         .add_system(gameplay::systems::reset.system())
+        .add_system(gameplay::systems::move_player_by_table.system())
+        .add_system(gameplay::systems::ease_movement.system())
         .run()
 }
 
@@ -108,3 +109,5 @@ pub fn sprite_load(
         d_block: materials.add(assets.load("textures/d_block.png").into()),
     });
 }
+
+pub struct LevelEntities(Vec<Entity>);

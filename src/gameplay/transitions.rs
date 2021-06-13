@@ -1,7 +1,7 @@
 use crate::{
     gameplay::{bundles::*, components::*, Direction, DIRECTION_ORDER},
     utils::application_root_dir,
-    LevelNum, LevelSize, SpriteHandles, LEVEL_ORDER, UNIT_LENGTH,
+    LevelEntities, LevelNum, LevelSize, SpriteHandles, LEVEL_ORDER, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use std::{
@@ -9,10 +9,6 @@ use std::{
     io::{BufRead, BufReader},
     path::Path,
 };
-
-pub fn simple_camera_setup(mut commands: Commands) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-}
 
 fn file_to_tile_coords(i: usize, j: usize, height: usize) -> IVec2 {
     IVec2::new(j as i32, height as i32 - i as i32 - 1)
@@ -22,7 +18,13 @@ pub fn load_level(
     mut commands: Commands,
     sprite_handles: Res<SpriteHandles>,
     level_num: Res<LevelNum>,
+    mut level_entities: ResMut<LevelEntities>,
 ) {
+    // Unload last level
+    while let Some(entity) = level_entities.0.pop() {
+        commands.entity(entity).despawn_recursive();
+    }
+
     let level_path = application_root_dir()
         .unwrap()
         .join(Path::new("assets/levels/"))
@@ -30,8 +32,8 @@ pub fn load_level(
 
     let mut lines =
         BufReader::new(File::open(level_path).expect("level file should exist")).lines();
-
-    let title = lines.next().unwrap();
+    // Skip the title
+    lines.next();
 
     let line_strings = lines.map(|x| x.unwrap()).collect::<Vec<String>>();
 
@@ -67,6 +69,10 @@ pub fn load_level(
         ),
         None => None,
     };
+    if let Some(entity) = willow_id {
+        level_entities.0.push(entity)
+    }
+
     let chester_id = match chester {
         Some(c) => Some(
             commands
@@ -78,89 +84,92 @@ pub fn load_level(
         ),
         None => None,
     };
+    if let Some(entity) = chester_id {
+        level_entities.0.push(entity)
+    }
 
     // Second pass, all other entities other than players
     for (i, line) in line_strings.iter().enumerate() {
         for (j, tile_char) in line.chars().enumerate() {
             let coords = file_to_tile_coords(i, j, height);
             if "fFbBtT".contains(tile_char) {
-                commands.spawn_bundle(WallBundle::new(coords, &sprite_handles));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(WallBundle::new(coords, &sprite_handles))
+                        .id(),
+                );
             } else if "wW".contains(tile_char) {
-                commands.spawn_bundle(InputBlockBundle::new(
-                    Direction::Up,
-                    coords,
-                    &sprite_handles,
-                ));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(InputBlockBundle::new(
+                            Direction::Up,
+                            coords,
+                            &sprite_handles,
+                        ))
+                        .id(),
+                );
             } else if "aA".contains(tile_char) {
-                commands.spawn_bundle(InputBlockBundle::new(
-                    Direction::Left,
-                    coords,
-                    &sprite_handles,
-                ));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(InputBlockBundle::new(
+                            Direction::Left,
+                            coords,
+                            &sprite_handles,
+                        ))
+                        .id(),
+                );
             } else if "sS".contains(tile_char) {
-                commands.spawn_bundle(InputBlockBundle::new(
-                    Direction::Down,
-                    coords,
-                    &sprite_handles,
-                ));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(InputBlockBundle::new(
+                            Direction::Down,
+                            coords,
+                            &sprite_handles,
+                        ))
+                        .id(),
+                );
             } else if "dD".contains(tile_char) {
-                commands.spawn_bundle(InputBlockBundle::new(
-                    Direction::Right,
-                    coords,
-                    &sprite_handles,
-                ));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(InputBlockBundle::new(
+                            Direction::Right,
+                            coords,
+                            &sprite_handles,
+                        ))
+                        .id(),
+                );
             } else if "gG".contains(tile_char) {
-                commands.spawn_bundle(GoalBundle::new(coords, &sprite_handles));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(GoalBundle::new(coords, &sprite_handles))
+                        .id(),
+                );
             } else if tile_char == 'i' {
-                commands.spawn_bundle(MoveTableBundle::new(
-                    willow_id.expect("Willow table exists, but not Willow"),
-                    coords,
-                    &sprite_handles,
-                ));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(MoveTableBundle::new(
+                            willow_id.expect("Willow table exists, but not Willow"),
+                            coords,
+                            &sprite_handles,
+                        ))
+                        .id(),
+                );
             } else if tile_char == 'c' {
-                commands.spawn_bundle(MoveTableBundle::new(
-                    chester_id.expect("Chester table exists, but not Chester"),
-                    coords,
-                    &sprite_handles,
-                ));
+                level_entities.0.push(
+                    commands
+                        .spawn_bundle(MoveTableBundle::new(
+                            chester_id.expect("Chester table exists, but not Chester"),
+                            coords,
+                            &sprite_handles,
+                        ))
+                        .id(),
+                );
             }
         }
     }
     commands.insert_resource(LevelSize {
         size: IVec2::new(width as i32, height as i32),
     });
-}
-
-pub fn test_level_setup(mut commands: Commands, sprite_handles: Res<SpriteHandles>) {
-    commands.spawn_bundle(WallBundle::new(IVec2::new(0, 0), &sprite_handles));
-    let player = commands
-        .spawn_bundle(PlayerBundle::new(IVec2::new(1, 0), &sprite_handles))
-        .id();
-    commands.spawn_bundle(InputBlockBundle::new(
-        Direction::Up,
-        IVec2::new(2, 6),
-        &sprite_handles,
-    ));
-    commands.spawn_bundle(InputBlockBundle::new(
-        Direction::Left,
-        IVec2::new(3, 5),
-        &sprite_handles,
-    ));
-    commands.spawn_bundle(InputBlockBundle::new(
-        Direction::Down,
-        IVec2::new(4, 4),
-        &sprite_handles,
-    ));
-    commands.spawn_bundle(InputBlockBundle::new(
-        Direction::Right,
-        IVec2::new(5, 3),
-        &sprite_handles,
-    ));
-    commands.spawn_bundle(MoveTableBundle::new(
-        player,
-        IVec2::new(1, 7),
-        &sprite_handles,
-    ));
 }
 
 pub fn spawn_table_edges(
@@ -184,7 +193,11 @@ pub fn spawn_table_edges(
     }
 }
 
-pub fn create_camera(mut commands: Commands, level_size: Res<LevelSize>) {
+pub fn create_camera(
+    mut commands: Commands,
+    level_size: Res<LevelSize>,
+    mut level_entities: ResMut<LevelEntities>,
+) {
     let mut camera_bundle = OrthographicCameraBundle::new_2d();
     let scale =
         if (9.0 / 16.0) > ((level_size.size.y as f32 + 2.) / (level_size.size.x as f32 + 2.)) {
@@ -198,5 +211,7 @@ pub fn create_camera(mut commands: Commands, level_size: Res<LevelSize>) {
         camera_bundle.transform.translation.z,
     );
     camera_bundle.orthographic_projection.scale = scale;
-    commands.spawn().insert_bundle(camera_bundle);
+    level_entities
+        .0
+        .push(commands.spawn().insert_bundle(camera_bundle).id());
 }

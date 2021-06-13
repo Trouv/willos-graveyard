@@ -24,36 +24,6 @@ pub fn ease_movement(
     }
 }
 
-pub fn simple_movement(
-    player_query: Query<Entity, With<PlayerState>>,
-    input: Res<Input<KeyCode>>,
-    mut writer: EventWriter<MovementEvent>,
-) {
-    for player in player_query.iter() {
-        if input.just_pressed(KeyCode::W) {
-            writer.send(MovementEvent {
-                player,
-                direction: Direction::Up,
-            });
-        } else if input.just_pressed(KeyCode::A) {
-            writer.send(MovementEvent {
-                player,
-                direction: Direction::Left,
-            });
-        } else if input.just_pressed(KeyCode::S) {
-            writer.send(MovementEvent {
-                player,
-                direction: Direction::Down,
-            });
-        } else if input.just_pressed(KeyCode::D) {
-            writer.send(MovementEvent {
-                player,
-                direction: Direction::Right,
-            });
-        }
-    }
-}
-
 fn push_tile_recursively(
     collision_map: Vec<Vec<Option<(Entity, RigidBody)>>>,
     pusher_coords: IVec2,
