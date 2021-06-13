@@ -43,4 +43,5 @@ pub enum LevelCard {
     Rising,
     Holding,
     Falling,
+    End,
 }

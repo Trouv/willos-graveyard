@@ -262,8 +262,13 @@ pub fn spawn_level_card(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     for _ in reader.iter() {
-        let (title, _) = get_level_title_data(&level_num);
-        commands
+        let not_final = level_num.0 < LEVEL_ORDER.len();
+        let (title, _) = if not_final {
+            get_level_title_data(&level_num)
+        } else {
+            ("Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string(), Vec::new())
+        };
+        let mut card = commands
             .spawn_bundle(NodeBundle {
                 material: materials.add(ColorMaterial::color(Color::BLACK)),
                 ..Default::default()
@@ -308,21 +313,25 @@ pub fn spawn_level_card(
                     },
                 ),
             )
-            .insert(LevelCard::Rising)
             .insert(Timer::new(Duration::from_secs(1), false))
             .with_children(|parent| {
-                parent.spawn_bundle(TextBundle {
-                    text: Text::with_section(
-                        format!("#{}", level_num.0),
-                        TextStyle {
-                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                            font_size: 50.,
-                            color: Color::WHITE,
-                        },
-                        TextAlignment::default(),
-                    ),
-                    ..Default::default()
-                });
+                if not_final {
+                    parent.spawn_bundle(TextBundle {
+                        text: Text::with_section(
+                            format!("#{}", level_num.0),
+                            TextStyle {
+                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                font_size: 50.,
+                                color: Color::WHITE,
+                            },
+                            TextAlignment {
+                                vertical: VerticalAlign::Center,
+                                horizontal: HorizontalAlign::Center,
+                            },
+                        ),
+                        ..Default::default()
+                    });
+                }
                 parent.spawn_bundle(TextBundle {
                     text: Text::with_section(
                         title,
@@ -335,6 +344,11 @@ pub fn spawn_level_card(
                     ),
                     ..Default::default()
                 });
+            })
+            .insert(if not_final {
+                LevelCard::Rising
+            } else {
+                LevelCard::End
             });
     }
 }
@@ -381,6 +395,7 @@ pub fn level_card_update(
                     // SELF DESTRUCT
                     commands.entity(entity).despawn_recursive();
                 }
+                _ => {}
             }
         }
     }
