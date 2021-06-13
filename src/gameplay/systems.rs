@@ -233,7 +233,7 @@ pub fn reset(
             for (mut history, mut tile) in objects_query.iter_mut() {
                 if let Some(initial_state) = history.tiles.get(0) {
                     *tile = *initial_state;
-                    history.tiles = vec![*initial_state]
+                    history.tiles = Vec::new();
                 }
             }
         }

@@ -58,19 +58,18 @@ fn main() {
                 .system()
                 .before(SystemLabels::Input),
         )
-        .add_system(gameplay::systems::ease_movement.system())
+        .add_system(
+            gameplay::systems::perform_tile_movement
+                .system()
+                .label(SystemLabels::MoveTableUpdate),
+        )
         .add_system(
             gameplay::systems::store_current_position
                 .system()
                 .before(SystemLabels::MoveTableUpdate),
         )
+        .add_system(gameplay::systems::ease_movement.system())
         .add_system(gameplay::systems::move_player_by_table.system())
-        .add_system(
-            gameplay::systems::perform_tile_movement
-                .system()
-                .before(SystemLabels::Input)
-                .label(SystemLabels::MoveTableUpdate),
-        )
         .add_system(gameplay::systems::rewind.system())
         .add_system(gameplay::systems::reset.system())
         .run()
