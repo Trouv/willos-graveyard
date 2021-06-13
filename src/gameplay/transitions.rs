@@ -184,8 +184,7 @@ pub fn load_level(
                         transform: Transform::from_translation(Vec3::new(xy.x, xy.y, 0.)),
                         ..Default::default()
                     })
-                    .insert(Timer::from_seconds(0.1, true))
-                    .insert(FrameIndex { index: 0 });
+                    .insert(Timer::from_seconds(0.1, true));
             }
         }
         let level_size = LevelSize {
