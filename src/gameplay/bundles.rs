@@ -29,6 +29,29 @@ impl WallBundle {
     }
 }
 
+#[derive(Clone, Bundle)]
+pub struct BushBundle {
+    pub tile: Tile,
+    pub rigid_body: RigidBody,
+    #[bundle]
+    pub sprite_bundle: SpriteBundle,
+}
+
+impl BushBundle {
+    pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> BushBundle {
+        let xy = xy_translation(coords);
+        BushBundle {
+            tile: Tile { coords },
+            rigid_body: RigidBody::Static,
+            sprite_bundle: SpriteBundle {
+                material: sprite_handles.bush.clone_weak(),
+                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                transform: Transform::from_xyz(xy.x, xy.y, 1.),
+                ..Default::default()
+            },
+        }
+    }
+}
 #[derive(Clone, Default, Bundle)]
 pub struct DirectionTileBundle {
     tile: Tile,

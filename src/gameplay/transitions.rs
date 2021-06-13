@@ -103,10 +103,16 @@ pub fn load_level(
         for (i, line) in line_strings.iter().enumerate() {
             for (j, tile_char) in line.chars().enumerate() {
                 let coords = file_to_tile_coords(i, j, height);
-                if "fFbBtT".contains(tile_char) {
+                if "fF".contains(tile_char) {
                     level_entities.0.push(
                         commands
                             .spawn_bundle(WallBundle::new(coords, &sprite_handles))
+                            .id(),
+                    );
+                } else if "bBtT".contains(tile_char) {
+                    level_entities.0.push(
+                        commands
+                            .spawn_bundle(BushBundle::new(coords, &sprite_handles))
                             .id(),
                     );
                 } else if "wW".contains(tile_char) {

@@ -1,5 +1,5 @@
 Claustrophobic
-b  sg        
+b  sg          
 b fffff        
    b b b       
 bb     b       
