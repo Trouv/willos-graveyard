@@ -111,6 +111,11 @@ fn main() {
         .add_system(gameplay::transitions::spawn_level_card.system())
         .add_system(gameplay::transitions::level_card_update.system())
         .add_system(gameplay::systems::animate_grass_system.system())
+        .add_system(
+            gameplay::systems::render_rope
+                .system()
+                .before(SystemLabels::MoveTableUpdate),
+        )
         .run()
 }
 

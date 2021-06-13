@@ -3,7 +3,7 @@ use crate::{
         components::*, xy_translation, ActionEvent, Direction, LevelCompleteEvent, MovementEvent,
         DIRECTION_ORDER,
     },
-    LevelNum, LevelSize, LevelState,
+    LevelNum, LevelSize, LevelState, SpriteHandles,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
@@ -256,6 +256,44 @@ pub fn animate_grass_system(
         if timer.finished() {
             sprite.index = GRASS_FRAMES[frame_index.index];
             frame_index.index = (frame_index.index + 1) % GRASS_FRAMES.len();
+        }
+    }
+}
+
+pub fn render_rope(
+    mut commands: Commands,
+    table_query: Query<(Entity, &MoveTable)>,
+    mut rope_entities: Local<Vec<Entity>>,
+    sprite_handles: Res<SpriteHandles>,
+) {
+    while let Some(entity) = rope_entities.pop() {
+        commands.entity(entity).despawn_recursive();
+    }
+
+    for (entity, table) in table_query.iter() {
+        for (i, row) in table.table.iter().enumerate() {
+            for (j, cell) in row.iter().enumerate() {
+                if cell.is_some() {
+                    let adjusted = IVec2::new(j as i32 + 1, -1 - i as i32);
+                    let xy = xy_translation(adjusted);
+                    let mut transform = Transform::from_xyz(xy.x / 2., xy.y / 2., 3.);
+                    transform.rotate(Quat::from_rotation_z((-1. * xy.y / xy.x).atan()));
+                    transform.scale.x = (xy.x.powi(2) + xy.y.powi(2)).sqrt() / 32. - 0.5;
+
+                    commands.entity(entity).with_children(|parent| {
+                        rope_entities.push(
+                            parent
+                                .spawn_bundle(SpriteBundle {
+                                    sprite: Sprite::new(Vec2::new(32., 16.)),
+                                    material: sprite_handles.rope.clone_weak(),
+                                    transform,
+                                    ..Default::default()
+                                })
+                                .id(),
+                        );
+                    });
+                }
+            }
         }
     }
 }
