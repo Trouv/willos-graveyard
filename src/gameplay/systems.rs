@@ -240,3 +240,22 @@ pub fn check_goal(
         writer.send(LevelCompleteEvent);
     }
 }
+
+pub fn animate_grass_system(
+    time: Res<Time>,
+    texture_atlases: Res<Assets<TextureAtlas>>,
+    mut query: Query<(
+        &mut Timer,
+        &mut TextureAtlasSprite,
+        &Handle<TextureAtlas>,
+        &mut FrameIndex,
+    )>,
+) {
+    for (mut timer, mut sprite, texture_atlas_handle, mut frame_index) in query.iter_mut() {
+        timer.tick(time.delta());
+        if timer.finished() {
+            sprite.index = GRASS_FRAMES[frame_index.index];
+            frame_index.index = (frame_index.index + 1) % GRASS_FRAMES.len();
+        }
+    }
+}

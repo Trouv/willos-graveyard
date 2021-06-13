@@ -44,3 +44,9 @@ pub enum LevelCard {
     Holding,
     Falling,
 }
+
+pub struct FrameIndex {
+    pub index: usize,
+}
+
+pub const GRASS_FRAMES: [u32; 20] = [0, 1, 2, 3, 2, 2, 1, 2, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0];

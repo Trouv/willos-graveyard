@@ -1,8 +1,9 @@
 mod gameplay;
 mod utils;
 
-use bevy::{prelude::*, sprite::TextureAtlasBuilder};
+use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
+use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
@@ -104,6 +105,7 @@ fn main() {
         .add_system(gameplay::systems::ease_movement.system())
         .add_system(gameplay::transitions::spawn_level_card.system())
         .add_system(gameplay::transitions::level_card_update.system())
+        .add_system(gameplay::systems::animate_grass_system.system())
         .run()
 }
 
@@ -125,8 +127,16 @@ pub struct SpriteHandles {
 }
 
 impl SpriteHandles {
-    pub fn get_rand_grass(&self) {
-        false;
+    pub fn get_rand_grass(&self) -> Handle<TextureAtlas> {
+        let mut rng = rand::thread_rng();
+        let chance = rng.gen::<f32>();
+        if chance < 0.9 {
+            self.grass_plain.clone_weak()
+        } else if chance > 0.9 && chance < 0.95 {
+            self.grass_stone.clone_weak()
+        } else {
+            self.grass_tufts.clone_weak()
+        }
     }
 }
 
@@ -147,7 +157,7 @@ pub fn sprite_load(
     let d_1 = assets.load("textures/d_1.png");
     let grass_plain_handle = assets.load("textures/grass_plain.png");
     let grass_plain_atlas =
-        TextureAtlas::from_grid(grass_plain_handle, Vec2::new(32.0, 32.0), 1, 1);
+        TextureAtlas::from_grid(grass_plain_handle, Vec2::new(32.0, 32.0), 4, 1);
     let grass_stone_handle = assets.load("textures/grass_stone.png");
     let grass_stone_atlas =
         TextureAtlas::from_grid(grass_stone_handle, Vec2::new(32.0, 32.0), 4, 1);
