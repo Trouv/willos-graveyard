@@ -61,6 +61,7 @@ fn main() {
         .insert_resource(LevelEntities(Vec::new()))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
+        .add_startup_system_to_stage(StartupStage::PreStartup, sound_load.system())
         // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
         //.add_startup_system(gameplay::transitions::test_level_setup.system())
         .add_system(
@@ -199,3 +200,17 @@ pub fn sprite_load(
 }
 
 pub struct LevelEntities(Vec<Entity>);
+
+pub struct SoundEffects {
+    pub victory: Handle<AudioSource>,
+    pub push: Handle<AudioSource>,
+    pub undo: Handle<AudioSource>,
+}
+
+pub fn sound_load(mut commands: Commands, assets: Res<AssetServer>) {
+    commands.insert_resource(SoundEffects {
+        victory: assets.load("sfx/victory.wav"),
+        push: assets.load("sfx/push.wav"),
+        undo: assets.load("sfx/undo.wav"),
+    })
+}
