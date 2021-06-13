@@ -42,6 +42,11 @@ pub enum LevelState {
 }
 
 fn main() {
+    let mut level_num = 0;
+    if std::env::args().count() > 1 {
+        level_num = std::env::args().last().unwrap().parse::<usize>().unwrap();
+    }
+
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
@@ -51,7 +56,7 @@ fn main() {
         .add_event::<gameplay::CardUpEvent>()
         .add_event::<gameplay::LevelStartEvent>()
         .insert_resource(LevelSize::new(IVec2::new(16, 9)))
-        .insert_resource(LevelNum(0))
+        .insert_resource(LevelNum(level_num))
         .insert_resource(LevelEntities(Vec::new()))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
