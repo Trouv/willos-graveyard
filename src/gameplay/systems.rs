@@ -3,7 +3,7 @@ use crate::{
         components::*, xy_translation, ActionEvent, Direction, LevelCompleteEvent, MovementEvent,
         DIRECTION_ORDER,
     },
-    LevelNum, LevelSize, LevelState, SpriteHandles,
+    LevelNum, LevelSize, LevelState, SoundEffects, SpriteHandles,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
@@ -63,6 +63,8 @@ pub fn perform_tile_movement(
     mut reader: EventReader<MovementEvent>,
     level_size: Res<LevelSize>,
     level_state: Res<LevelState>,
+    audio: Res<Audio>,
+    sfx: Res<SoundEffects>,
 ) {
     if *level_state == LevelState::Gameplay {
         for movement_event in reader.iter() {
@@ -79,6 +81,10 @@ pub fn perform_tile_movement(
 
             let pushed_entities =
                 push_tile_recursively(collision_map, player_tile.coords, movement_event.direction);
+
+            if pushed_entities.len() > 1 {
+                audio.play(sfx.push.clone_weak());
+            }
 
             for entity in pushed_entities {
                 tile_query
@@ -187,12 +193,15 @@ pub fn rewind(
     player_query: Query<&PlayerState>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut Tile)>,
+    audio: Res<Audio>,
+    sfx: Res<SoundEffects>,
 ) {
     if let Ok(PlayerState::Waiting) = player_query.single() {
         if input.just_pressed(KeyCode::Z) {
             for (mut history, mut tile) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
                     *tile = prev_state;
+                    audio.play(sfx.undo.clone_weak());
                 }
             }
         }
@@ -203,6 +212,8 @@ pub fn reset(
     player_query: Query<&PlayerState>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut Tile)>,
+    audio: Res<Audio>,
+    sfx: Res<SoundEffects>,
 ) {
     if let Ok(PlayerState::Waiting) = player_query.single() {
         if input.just_pressed(KeyCode::R) {
@@ -210,6 +221,7 @@ pub fn reset(
                 if let Some(initial_state) = history.tiles.get(0) {
                     *tile = *initial_state;
                     history.tiles = Vec::new();
+                    audio.play(sfx.undo.clone_weak());
                 }
             }
         }
@@ -222,6 +234,8 @@ pub fn check_goal(
     mut writer: EventWriter<LevelCompleteEvent>,
     mut level_state: ResMut<LevelState>,
     mut level_num: ResMut<LevelNum>,
+    audio: Res<Audio>,
+    sfx: Res<SoundEffects>,
 ) {
     if *level_state == LevelState::Gameplay {
         for goal_tile in goal_query.iter() {
@@ -240,6 +254,7 @@ pub fn check_goal(
         *level_state = LevelState::Inbetween;
         level_num.0 += 1;
         writer.send(LevelCompleteEvent);
+        audio.play(sfx.victory.clone_weak());
     }
 }
 
