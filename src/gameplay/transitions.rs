@@ -37,7 +37,7 @@ pub fn load_level(
     level_num: Res<LevelNum>,
     mut level_entities: ResMut<LevelEntities>,
     mut reader: EventReader<CardUpEvent>,
-) {
+) -> Option<LevelSize> {
     for _ in reader.iter() {
         // Unload last level
         while let Some(entity) = level_entities.0.pop() {
@@ -176,10 +176,13 @@ pub fn load_level(
                 }
             }
         }
-        commands.insert_resource(LevelSize {
+        let level_size = LevelSize {
             size: IVec2::new(width as i32, height as i32),
-        });
+        };
+        commands.insert_resource(level_size);
+        return Some(level_size);
     }
+    return None;
 }
 
 pub fn spawn_table_edges(
@@ -213,12 +216,11 @@ pub fn spawn_table_edges(
 }
 
 pub fn create_camera(
+    In(level_size_input): In<Option<LevelSize>>,
     mut commands: Commands,
-    level_size: Res<LevelSize>,
     mut level_entities: ResMut<LevelEntities>,
-    mut reader: EventReader<CardUpEvent>,
 ) {
-    for _ in reader.iter() {
+    if let Some(level_size) = level_size_input {
         let mut camera_bundle = OrthographicCameraBundle::new_2d();
         let scale =
             if (9.0 / 16.0) > ((level_size.size.y as f32 + 2.) / (level_size.size.x as f32 + 2.)) {
