@@ -12,6 +12,8 @@ pub enum SystemLabels {
     Input,
     MoveTableUpdate,
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash)]
 pub struct LevelSize {
     size: IVec2,
 }
@@ -46,16 +48,12 @@ fn main() {
         .insert_resource(LevelEntities(Vec::new()))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
-        .add_system(
-            gameplay::transitions::create_camera
-                .system()
-                .after(SystemLabels::LoadAssets),
-        )
         // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
         //.add_startup_system(gameplay::transitions::test_level_setup.system())
         .add_system(
             gameplay::transitions::load_level
                 .system()
+                .chain(gameplay::transitions::create_camera.system())
                 .label(SystemLabels::LoadAssets),
         )
         .add_system(gameplay::transitions::spawn_table_edges.system())
