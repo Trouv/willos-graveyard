@@ -89,9 +89,13 @@ fn main() {
                 .system()
                 .after(SystemLabels::MoveTableUpdate),
         )
+        .add_system(
+            gameplay::systems::move_player_by_table
+                .system()
+                .after(SystemLabels::MoveTableUpdate),
+        )
         .add_system(gameplay::systems::rewind.system())
         .add_system(gameplay::systems::reset.system())
-        .add_system(gameplay::systems::move_player_by_table.system())
         .add_system(gameplay::systems::ease_movement.system())
         .add_system(gameplay::transitions::spawn_level_card.system())
         .add_system(gameplay::transitions::level_card_update.system())

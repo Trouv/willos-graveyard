@@ -176,7 +176,7 @@ pub fn store_current_position(
 ) {
     for _ in reader.iter() {
         for (mut history, tile) in objects_query.iter_mut() {
-            history.tiles.push(*tile)
+            history.tiles.push(*tile);
         }
     }
 }
@@ -190,7 +190,7 @@ pub fn rewind(
         if input.just_pressed(KeyCode::Z) {
             for (mut history, mut tile) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
-                    *tile = prev_state
+                    *tile = prev_state;
                 }
             }
         }
