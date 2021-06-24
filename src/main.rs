@@ -3,6 +3,7 @@ mod utils;
 
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
+use bevy_ecs_tilemap::prelude::*;
 use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
@@ -51,6 +52,8 @@ fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
+        .add_plugin(TilemapPlugin)
+        .add_plugin(LdtkPlugin)
         .add_event::<gameplay::MovementEvent>()
         .add_event::<gameplay::ActionEvent>()
         .add_event::<gameplay::LevelCompleteEvent>()
@@ -96,11 +99,11 @@ fn main() {
                 .system()
                 .before(SystemLabels::MoveTableUpdate),
         )
-        .add_system(
-            gameplay::systems::check_goal
-                .system()
-                .after(SystemLabels::MoveTableUpdate),
-        )
+        //.add_system(
+        //gameplay::systems::check_goal
+        //.system()
+        //.after(SystemLabels::MoveTableUpdate),
+        //)
         .add_system(
             gameplay::systems::move_player_by_table
                 .system()

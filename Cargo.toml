@@ -7,8 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = {version = "1.0.126", features = ["derive"]}
+serde = { version = "1.0.126", features = ["derive"] }
 dunce = "1.0"
-bevy = {version = "0.5", features = ["wav"]}
+bevy = { version = "0.5", features = ["wav"] }
 bevy_easings = "0.4"
+bevy_ecs_tilemap = { git = "https://github.com/StarArawn/bevy_ecs_tilemap", branch = "main", features = ["ldtk"] }
 rand = "0.8.3"
