@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 29,
+	"nextUid": 30,
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -346,7 +346,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "1111111111111111", "averageColors": "f020f122f233f555f020f020f020f020f020f020f020f020f777f777f777f777" }
+			"cachedPixelData": { "opaqueTiles": "1110111111111111", "averageColors": "f020f122f233f555f020f020f020f020f020f020f020f020f777f777f777f777" }
 		},
 		{
 			"__cWid": 2,
@@ -435,7 +435,36 @@
 				}]
 			}],
 			"layerInstances": null,
-			"__neighbours": []
+			"__neighbours": [{ "levelUid": 29, "dir": "e" }]
+		},
+		{
+			"identifier": "Level_1",
+			"uid": 29,
+			"worldX": 384,
+			"worldY": 0,
+			"pxWid": 544,
+			"pxHei": 544,
+			"__bgColor": "#696A79",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__bgPos": null,
+			"externalRelPath": "levels/0001-Level_1.ldtkl",
+			"fieldInstances": [{
+				"__identifier": "Title",
+				"__value": "It takes some getting used to.",
+				"__type": "String",
+				"defUid": 28,
+				"realEditorValues": [{
+					"id": "V_String",
+					"params": ["It takes some getting used to."]
+				}]
+			}],
+			"layerInstances": null,
+			"__neighbours": [{ "levelUid": 0, "dir": "w" }]
 		}
 	]
 }
