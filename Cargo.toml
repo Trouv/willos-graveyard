@@ -2,13 +2,13 @@
 name = "sokoban-sokoban"
 version = "0.1.0"
 authors = ["TLovell <trevorlovelldesign@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = {version = "1.0.126", features = ["derive"]}
+serde = {version = "1.0", features = ["derive"]}
 dunce = "1.0"
-bevy = {version = "0.5", features = ["wav"]}
-bevy_easings = "0.4"
-rand = "0.8.3"
+bevy = {version = "0.6", features = ["wav"]}
+bevy_easings = "0.5"
+rand = "0.8"

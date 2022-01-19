@@ -21,7 +21,7 @@ pub struct LevelSize {
 
 impl LevelSize {
     fn new(size: IVec2) -> Self {
-        LevelSize { size: size }
+        LevelSize { size }
     }
 }
 
@@ -48,7 +48,7 @@ fn main() {
         level_num = std::env::args().last().unwrap().parse::<usize>().unwrap();
     }
 
-    App::build()
+    App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_event::<gameplay::MovementEvent>()
@@ -60,80 +60,51 @@ fn main() {
         .insert_resource(LevelNum(level_num))
         .insert_resource(LevelEntities(Vec::new()))
         .insert_resource(LevelState::Inbetween)
-        .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load.system())
-        .add_startup_system_to_stage(StartupStage::PreStartup, sound_load.system())
-        // .add_startup_system(gameplay::transitions::simple_camera_setup.system())
-        //.add_startup_system(gameplay::transitions::test_level_setup.system())
+        .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
+        .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
+        // .add_startup_system(gameplay::transitions::simple_camera_setup)
+        //.add_startup_system(gameplay::transitions::test_level_setup)
         .add_system(
             gameplay::transitions::load_level
-                .system()
-                .chain(gameplay::transitions::create_camera.system())
+                .chain(gameplay::transitions::create_camera)
                 .label(SystemLabels::LoadAssets),
         )
-        .add_system(gameplay::transitions::spawn_table_edges.system())
+        .add_system(gameplay::transitions::spawn_table_edges)
         //.add_system(
         //gameplay::systems::simple_movement
-        //.system()
+        //
         //.label(SystemLabels::Input),
         //)
-        .add_system(
-            gameplay::systems::player_state_input
-                .system()
-                .label(SystemLabels::Input),
-        )
-        .add_system(
-            gameplay::systems::move_table_update
-                .system()
-                .before(SystemLabels::Input),
-        )
-        .add_system(
-            gameplay::systems::perform_tile_movement
-                .system()
-                .label(SystemLabels::MoveTableUpdate),
-        )
-        .add_system(
-            gameplay::systems::store_current_position
-                .system()
-                .before(SystemLabels::MoveTableUpdate),
-        )
-        .add_system(
-            gameplay::systems::check_goal
-                .system()
-                .after(SystemLabels::MoveTableUpdate),
-        )
-        .add_system(
-            gameplay::systems::move_player_by_table
-                .system()
-                .after(SystemLabels::MoveTableUpdate),
-        )
-        .add_system(gameplay::systems::rewind.system())
-        .add_system(gameplay::systems::reset.system())
-        .add_system(gameplay::systems::ease_movement.system())
-        .add_system(gameplay::transitions::spawn_level_card.system())
-        .add_system(gameplay::transitions::level_card_update.system())
-        .add_system(gameplay::systems::animate_grass_system.system())
-        .add_system(
-            gameplay::systems::render_rope
-                .system()
-                .before(SystemLabels::MoveTableUpdate),
-        )
+        .add_system(gameplay::systems::player_state_input.label(SystemLabels::Input))
+        .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
+        .add_system(gameplay::systems::perform_tile_movement.label(SystemLabels::MoveTableUpdate))
+        .add_system(gameplay::systems::store_current_position.before(SystemLabels::MoveTableUpdate))
+        .add_system(gameplay::systems::check_goal.after(SystemLabels::MoveTableUpdate))
+        .add_system(gameplay::systems::move_player_by_table.after(SystemLabels::MoveTableUpdate))
+        .add_system(gameplay::systems::rewind)
+        .add_system(gameplay::systems::reset)
+        .add_system(gameplay::systems::ease_movement)
+        .add_system(gameplay::transitions::spawn_level_card)
+        .add_system(gameplay::transitions::level_card_update)
+        .add_system(gameplay::systems::animate_grass_system)
+        .add_system(gameplay::systems::render_rope.before(SystemLabels::MoveTableUpdate))
         .run()
 }
 
 pub struct SpriteHandles {
-    pub up: Handle<ColorMaterial>,
-    pub left: Handle<ColorMaterial>,
-    pub right: Handle<ColorMaterial>,
-    pub down: Handle<ColorMaterial>,
-    pub goal: Handle<ColorMaterial>,
-    pub player: Handle<ColorMaterial>,
-    pub wall: Handle<ColorMaterial>,
-    pub bush: Handle<ColorMaterial>,
-    pub rope: Handle<ColorMaterial>,
-    pub w_block: Vec<Handle<ColorMaterial>>,
-    pub a_block: Vec<Handle<ColorMaterial>>,
-    pub s_block: Vec<Handle<ColorMaterial>>,
-    pub d_block: Vec<Handle<ColorMaterial>>,
+    pub up: Handle<Image>,
+    pub left: Handle<Image>,
+    pub right: Handle<Image>,
+    pub down: Handle<Image>,
+    pub goal: Handle<Image>,
+    pub player: Handle<Image>,
+    pub wall: Handle<Image>,
+    pub bush: Handle<Image>,
+    pub rope: Handle<Image>,
+    pub w_block: Vec<Handle<Image>>,
+    pub a_block: Vec<Handle<Image>>,
+    pub s_block: Vec<Handle<Image>>,
+    pub d_block: Vec<Handle<Image>>,
     pub grass_plain: Handle<TextureAtlas>,
     pub grass_tufts: Handle<TextureAtlas>,
     pub grass_stone: Handle<TextureAtlas>,
@@ -156,7 +127,6 @@ impl SpriteHandles {
 pub fn sprite_load(
     mut commands: Commands,
     assets: Res<AssetServer>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut writer: EventWriter<gameplay::LevelCompleteEvent>,
 ) {
@@ -180,19 +150,19 @@ pub fn sprite_load(
     commands.spawn_bundle(UiCameraBundle::default());
 
     commands.insert_resource(SpriteHandles {
-        up: materials.add(assets.load("textures/up.png").into()),
-        left: materials.add(assets.load("textures/left.png").into()),
-        right: materials.add(assets.load("textures/right.png").into()),
-        down: materials.add(assets.load("textures/down.png").into()),
-        goal: materials.add(assets.load("textures/goal.png").into()),
-        player: materials.add(assets.load("textures/player.png").into()),
-        wall: materials.add(assets.load("textures/fence.png").into()),
-        bush: materials.add(assets.load("textures/bush.png").into()),
-        rope: materials.add(assets.load("textures/rope.png").into()),
-        w_block: vec![materials.add(w_0.into()), materials.add(w_1.into())],
-        a_block: vec![materials.add(a_0.into()), materials.add(a_1.into())],
-        s_block: vec![materials.add(s_0.into()), materials.add(s_1.into())],
-        d_block: vec![materials.add(d_0.into()), materials.add(d_1.into())],
+        up: assets.load("textures/up.png"),
+        left: assets.load("textures/left.png"),
+        right: assets.load("textures/right.png"),
+        down: assets.load("textures/down.png"),
+        goal: assets.load("textures/goal.png"),
+        player: assets.load("textures/player.png"),
+        wall: assets.load("textures/fence.png"),
+        bush: assets.load("textures/bush.png"),
+        rope: assets.load("textures/rope.png"),
+        w_block: vec![w_0, w_1],
+        a_block: vec![a_0, a_1],
+        s_block: vec![s_0, s_1],
+        d_block: vec![d_0, d_1],
         grass_plain: texture_atlases.add(grass_plain_atlas),
         grass_tufts: texture_atlases.add(grass_tufts_atlas),
         grass_stone: texture_atlases.add(grass_stone_atlas),

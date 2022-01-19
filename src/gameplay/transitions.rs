@@ -276,7 +276,7 @@ pub fn spawn_level_card(
         };
         commands
             .spawn_bundle(NodeBundle {
-                material: materials.add(ColorMaterial::color(Color::BLACK)),
+                color: UiColor(Color::BLACK),
                 ..Default::default()
             })
             .insert(

@@ -35,7 +35,7 @@ fn push_tile_recursively(
     let pusher = collision_map[pusher_coords.y as usize][pusher_coords.x as usize]
         .expect("pusher should exist")
         .0;
-    let destination = pusher_coords + direction.into();
+    let destination = pusher_coords + IVec2::from(direction);
     if destination.x < 0
         || destination.y < 0
         || destination.y as usize >= collision_map.len()
@@ -90,7 +90,7 @@ pub fn perform_tile_movement(
                 tile_query
                     .get_component_mut::<Tile>(entity)
                     .expect("Pushed should have Tile component")
-                    .coords += movement_event.direction.into();
+                    .coords += IVec2::from(movement_event.direction);
             }
         }
     }
@@ -196,7 +196,7 @@ pub fn rewind(
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if let Ok(PlayerState::Waiting) = player_query.single() {
+    if let Ok(PlayerState::Waiting) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
             for (mut history, mut tile) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
@@ -215,7 +215,7 @@ pub fn reset(
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if let Ok(PlayerState::Waiting) = player_query.single() {
+    if let Ok(PlayerState::Waiting) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
             for (mut history, mut tile) in objects_query.iter_mut() {
                 if let Some(initial_state) = history.tiles.get(0) {
@@ -270,9 +270,9 @@ pub fn animate_grass_system(
             let mut rng = rand::thread_rng();
             let chance = rng.gen::<f32>();
             if chance <= 0.2 {
-                sprite.index = cmp::min(sprite.index + 1, texture_atlas.len() as u32 - 1);
+                sprite.index = cmp::min(sprite.index + 1, texture_atlas.len() - 1);
             } else if chance > 0.2 && chance <= 0.6 {
-                sprite.index = cmp::max(sprite.index as i32 - 1, 0) as u32;
+                sprite.index = cmp::max(sprite.index as i32 - 1, 0) as usize;
             }
         }
     }
@@ -302,8 +302,11 @@ pub fn render_rope(
                         rope_entities.push(
                             parent
                                 .spawn_bundle(SpriteBundle {
-                                    sprite: Sprite::new(Vec2::new(32., 16.)),
-                                    material: sprite_handles.rope.clone_weak(),
+                                    sprite: Sprite {
+                                        custom_size: Some(Vec2::new(32., 16.)),
+                                        ..Default::default()
+                                    },
+                                    texture: sprite_handles.rope.clone_weak(),
                                     transform,
                                     ..Default::default()
                                 })

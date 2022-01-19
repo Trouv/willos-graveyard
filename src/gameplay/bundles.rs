@@ -20,8 +20,7 @@ impl WallBundle {
             tile: Tile { coords },
             rigid_body: RigidBody::Static,
             sprite_bundle: SpriteBundle {
-                material: sprite_handles.wall.clone_weak(),
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                texture: sprite_handles.wall.clone_weak(),
                 transform: Transform::from_xyz(xy.x, xy.y, 1.),
                 ..Default::default()
             },
@@ -44,8 +43,7 @@ impl BushBundle {
             tile: Tile { coords },
             rigid_body: RigidBody::Static,
             sprite_bundle: SpriteBundle {
-                material: sprite_handles.bush.clone_weak(),
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                texture: sprite_handles.bush.clone_weak(),
                 transform: Transform::from_xyz(xy.x, xy.y, 1.),
                 ..Default::default()
             },
@@ -69,13 +67,12 @@ impl DirectionTileBundle {
         DirectionTileBundle {
             tile: Tile { coords },
             sprite_bundle: SpriteBundle {
-                material: match direction {
+                texture: match direction {
                     Direction::Up => sprite_handles.up.clone_weak(),
                     Direction::Left => sprite_handles.left.clone_weak(),
                     Direction::Right => sprite_handles.right.clone_weak(),
                     Direction::Down => sprite_handles.down.clone_weak(),
                 },
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
                 transform: Transform::from_xyz(xy.x, xy.y, 0.),
                 ..Default::default()
             },
@@ -114,7 +111,7 @@ impl InputBlockBundle {
                 },
             },
             sprite_bundle: SpriteBundle {
-                material: match direction {
+                texture: match direction {
                     Direction::Up => sprite_handles
                         .w_block
                         .choose(&mut rng)
@@ -136,7 +133,6 @@ impl InputBlockBundle {
                         .unwrap()
                         .clone_weak(),
                 },
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
                 transform: Transform::from_xyz(xy.x, xy.y, 1.),
                 ..Default::default()
             },
@@ -159,8 +155,7 @@ impl GoalBundle {
             tile: Tile { coords },
             goal: Goal,
             sprite_bundle: SpriteBundle {
-                material: sprite_handles.goal.clone_weak(),
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                texture: sprite_handles.goal.clone_weak(),
                 transform: Transform::from_xyz(xy.x, xy.y, 0.),
                 ..Default::default()
             },
@@ -189,8 +184,7 @@ impl PlayerBundle {
             player_state: PlayerState::Waiting,
             timer: Timer::from_seconds(0.2, false),
             sprite_bundle: SpriteBundle {
-                material: sprite_handles.player.clone_weak(),
-                sprite: Sprite::new(Vec2::splat(UNIT_LENGTH)),
+                texture: sprite_handles.player.clone_weak(),
                 transform: Transform::from_xyz(xy.x, xy.y, 2.),
                 ..Default::default()
             },
@@ -216,7 +210,6 @@ impl MoveTableBundle {
                 player,
             },
             sprite_bundle: SpriteBundle {
-                sprite: Sprite::new(Vec2::splat(0.)),
                 transform: Transform::from_xyz(xy.x, xy.y, 0.),
                 ..Default::default()
             },
