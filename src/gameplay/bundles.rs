@@ -1,16 +1,9 @@
 use crate::{
-    gameplay::{components::*, xy_translation, Direction},
-    SpriteHandles, UNIT_LENGTH,
+    gameplay::{components::*, xy_translation},
+    SpriteHandles,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use rand::seq::SliceRandom;
-
-#[derive(Clone, Bundle, LdtkIntCell)]
-pub struct WallBundle {
-    #[from_int_grid_cell]
-    pub rigid_body: RigidBody,
-}
 
 #[derive(Clone, Default, Bundle, LdtkEntity)]
 pub struct TableBundle {
@@ -63,25 +56,8 @@ pub struct PlayerBundle {
 pub struct MoveTableBundle {
     #[ldtk_entity]
     pub tile: Tile,
-    //pub move_table: MoveTable,
+    pub move_table: MoveTable,
     #[sprite_bundle]
     #[bundle]
     pub sprite_bundle: SpriteBundle,
-}
-
-impl MoveTableBundle {
-    pub fn new(player: Entity, coords: IVec2, sprite_handles: &SpriteHandles) -> MoveTableBundle {
-        let xy = xy_translation(coords);
-        MoveTableBundle {
-            tile: Tile { coords },
-            move_table: MoveTable {
-                table: [[None; 4]; 4],
-                player,
-            },
-            sprite_bundle: SpriteBundle {
-                transform: Transform::from_xyz(xy.x, xy.y, 0.),
-                ..Default::default()
-            },
-        }
-    }
 }
