@@ -87,7 +87,7 @@ fn main() {
         .add_system(gameplay::transitions::spawn_level_card)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::systems::animate_grass_system)
-        .add_system(gameplay::systems::render_rope.before(SystemLabels::MoveTableUpdate))
+        //.add_system(gameplay::systems::render_rope.before(SystemLabels::MoveTableUpdate))
         .run()
 }
 
