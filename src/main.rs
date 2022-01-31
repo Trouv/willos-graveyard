@@ -3,6 +3,7 @@ mod utils;
 
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
+use bevy_ecs_ldtk::prelude::*;
 use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
@@ -51,6 +52,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
+        .add_plugin(LdtkPlugin)
         .add_event::<gameplay::MovementEvent>()
         .add_event::<gameplay::ActionEvent>()
         .add_event::<gameplay::LevelCompleteEvent>()

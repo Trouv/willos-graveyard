@@ -3,199 +3,68 @@ use crate::{
     SpriteHandles, UNIT_LENGTH,
 };
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use rand::seq::SliceRandom;
 
-#[derive(Clone, Bundle)]
+#[derive(Clone, Bundle, LdtkIntCell)]
 pub struct WallBundle {
-    pub tile: Tile,
+    #[from_int_grid_cell]
     pub rigid_body: RigidBody,
-    #[bundle]
-    pub sprite_bundle: SpriteBundle,
 }
 
-impl WallBundle {
-    pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> WallBundle {
-        let xy = xy_translation(coords);
-        WallBundle {
-            tile: Tile { coords },
-            rigid_body: RigidBody::Static,
-            sprite_bundle: SpriteBundle {
-                texture: sprite_handles.wall.clone_weak(),
-                transform: Transform::from_xyz(xy.x, xy.y, 1.),
-                ..Default::default()
-            },
-        }
-    }
-}
-
-#[derive(Clone, Bundle)]
-pub struct BushBundle {
-    pub tile: Tile,
-    pub rigid_body: RigidBody,
-    #[bundle]
-    pub sprite_bundle: SpriteBundle,
-}
-
-impl BushBundle {
-    pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> BushBundle {
-        let xy = xy_translation(coords);
-        BushBundle {
-            tile: Tile { coords },
-            rigid_body: RigidBody::Static,
-            sprite_bundle: SpriteBundle {
-                texture: sprite_handles.bush.clone_weak(),
-                transform: Transform::from_xyz(xy.x, xy.y, 1.),
-                ..Default::default()
-            },
-        }
-    }
-}
-#[derive(Clone, Default, Bundle)]
-pub struct DirectionTileBundle {
+#[derive(Clone, Default, Bundle, LdtkEntity)]
+pub struct TableBundle {
+    #[ldtk_entity]
     tile: Tile,
+    #[sprite_bundle]
     #[bundle]
     sprite_bundle: SpriteBundle,
 }
 
-impl DirectionTileBundle {
-    pub fn new(
-        direction: Direction,
-        coords: IVec2,
-        sprite_handles: &SpriteHandles,
-    ) -> DirectionTileBundle {
-        let xy = xy_translation(coords);
-        DirectionTileBundle {
-            tile: Tile { coords },
-            sprite_bundle: SpriteBundle {
-                texture: match direction {
-                    Direction::Up => sprite_handles.up.clone_weak(),
-                    Direction::Left => sprite_handles.left.clone_weak(),
-                    Direction::Right => sprite_handles.right.clone_weak(),
-                    Direction::Down => sprite_handles.down.clone_weak(),
-                },
-                transform: Transform::from_xyz(xy.x, xy.y, 0.),
-                ..Default::default()
-            },
-        }
-    }
-}
-
-#[derive(Clone, Bundle)]
+#[derive(Clone, Bundle, LdtkEntity)]
 pub struct InputBlockBundle {
+    #[ldtk_entity]
     tile: Tile,
     history: History,
+    #[from_entity_instance]
     rigid_body: RigidBody,
+    #[from_entity_instance]
     input_block: InputBlock,
+    #[sprite_sheet_bundle]
     #[bundle]
-    sprite_bundle: SpriteBundle,
+    sprite_sheet_bundle: SpriteSheetBundle,
 }
 
-impl InputBlockBundle {
-    pub fn new(
-        direction: Direction,
-        coords: IVec2,
-        sprite_handles: &SpriteHandles,
-    ) -> InputBlockBundle {
-        let mut rng = rand::thread_rng();
-        let xy = xy_translation(coords);
-        InputBlockBundle {
-            tile: Tile { coords },
-            history: History { tiles: Vec::new() },
-            rigid_body: RigidBody::Dynamic,
-            input_block: InputBlock {
-                key_code: match direction {
-                    Direction::Up => KeyCode::W,
-                    Direction::Left => KeyCode::A,
-                    Direction::Down => KeyCode::S,
-                    Direction::Right => KeyCode::D,
-                },
-            },
-            sprite_bundle: SpriteBundle {
-                texture: match direction {
-                    Direction::Up => sprite_handles
-                        .w_block
-                        .choose(&mut rng)
-                        .unwrap()
-                        .clone_weak(),
-                    Direction::Left => sprite_handles
-                        .a_block
-                        .choose(&mut rng)
-                        .unwrap()
-                        .clone_weak(),
-                    Direction::Down => sprite_handles
-                        .s_block
-                        .choose(&mut rng)
-                        .unwrap()
-                        .clone_weak(),
-                    Direction::Right => sprite_handles
-                        .d_block
-                        .choose(&mut rng)
-                        .unwrap()
-                        .clone_weak(),
-                },
-                transform: Transform::from_xyz(xy.x, xy.y, 1.),
-                ..Default::default()
-            },
-        }
-    }
-}
-
-#[derive(Clone, Default, Bundle)]
+#[derive(Clone, Default, Bundle, LdtkEntity)]
 pub struct GoalBundle {
+    #[ldtk_entity]
     pub tile: Tile,
     pub goal: Goal,
+    #[sprite_sheet_bundle]
     #[bundle]
-    pub sprite_bundle: SpriteBundle,
+    pub sprite_sheet_bundle: SpriteSheetBundle,
 }
 
-impl GoalBundle {
-    pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> GoalBundle {
-        let xy = xy_translation(coords);
-        GoalBundle {
-            tile: Tile { coords },
-            goal: Goal,
-            sprite_bundle: SpriteBundle {
-                texture: sprite_handles.goal.clone_weak(),
-                transform: Transform::from_xyz(xy.x, xy.y, 0.),
-                ..Default::default()
-            },
-        }
-    }
-}
-
-#[derive(Clone, Bundle)]
+#[derive(Clone, Bundle, LdtkEntity)]
 pub struct PlayerBundle {
+    #[ldtk_entity]
     pub tile: Tile,
     pub history: History,
+    #[from_entity_instance]
     pub rigid_body: RigidBody,
     pub player_state: PlayerState,
     pub timer: Timer,
+    #[sprite_sheet_bundle]
     #[bundle]
-    pub sprite_bundle: SpriteBundle,
+    pub sprite_sheet_bundle: SpriteSheetBundle,
 }
 
-impl PlayerBundle {
-    pub fn new(coords: IVec2, sprite_handles: &SpriteHandles) -> PlayerBundle {
-        let xy = xy_translation(coords);
-        PlayerBundle {
-            tile: Tile { coords },
-            history: History { tiles: Vec::new() },
-            rigid_body: RigidBody::Dynamic,
-            player_state: PlayerState::Waiting,
-            timer: Timer::from_seconds(0.2, false),
-            sprite_bundle: SpriteBundle {
-                texture: sprite_handles.player.clone_weak(),
-                transform: Transform::from_xyz(xy.x, xy.y, 2.),
-                ..Default::default()
-            },
-        }
-    }
-}
-
-#[derive(Clone, Bundle)]
+#[derive(Clone, Bundle, LdtkEntity)]
 pub struct MoveTableBundle {
+    #[ldtk_entity]
     pub tile: Tile,
-    pub move_table: MoveTable,
+    //pub move_table: MoveTable,
+    #[sprite_bundle]
     #[bundle]
     pub sprite_bundle: SpriteBundle,
 }
