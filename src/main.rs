@@ -53,25 +53,25 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
-        .add_event::<gameplay::MovementEvent>()
+        .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<gameplay::ActionEvent>()
         .add_event::<gameplay::LevelCompleteEvent>()
         .add_event::<gameplay::CardUpEvent>()
         .add_event::<gameplay::LevelStartEvent>()
-        .insert_resource(LevelSize::new(IVec2::new(16, 9)))
-        .insert_resource(LevelNum(level_num))
+        .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelEntities(Vec::new()))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
+        .add_startup_system(gameplay::transitions::world_setup)
         // .add_startup_system(gameplay::transitions::simple_camera_setup)
         //.add_startup_system(gameplay::transitions::test_level_setup)
-        .add_system(
-            gameplay::transitions::load_level
-                .chain(gameplay::transitions::create_camera)
-                .label(SystemLabels::LoadAssets),
-        )
-        .add_system(gameplay::transitions::spawn_table_edges)
+        //.add_system(
+        //gameplay::transitions::load_level
+        //.chain(gameplay::transitions::create_camera)
+        //.label(SystemLabels::LoadAssets),
+        //)
+        //.add_system(gameplay::transitions::spawn_table_edges)
         //.add_system(
         //gameplay::systems::simple_movement
         //
@@ -79,7 +79,9 @@ fn main() {
         //)
         .add_system(gameplay::systems::player_state_input.label(SystemLabels::Input))
         .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
-        .add_system(gameplay::systems::perform_tile_movement.label(SystemLabels::MoveTableUpdate))
+        .add_system(
+            gameplay::systems::perform_grid_coords_movement.label(SystemLabels::MoveTableUpdate),
+        )
         .add_system(gameplay::systems::store_current_position.before(SystemLabels::MoveTableUpdate))
         .add_system(gameplay::systems::check_goal.after(SystemLabels::MoveTableUpdate))
         .add_system(gameplay::systems::move_player_by_table.after(SystemLabels::MoveTableUpdate))
@@ -90,6 +92,14 @@ fn main() {
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::systems::animate_grass_system)
         //.add_system(gameplay::systems::render_rope.before(SystemLabels::MoveTableUpdate))
+        .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
+        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
+        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")
+        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("S")
+        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("D")
+        .register_ldtk_entity::<gameplay::bundles::GoalBundle>("Goal")
+        .register_ldtk_entity::<gameplay::bundles::MoveTableBundle>("Table")
+        .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(1)
         .run()
 }
 

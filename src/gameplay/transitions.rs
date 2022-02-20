@@ -8,6 +8,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
+use bevy_ecs_ldtk::prelude::*;
 use std::{
     fs::File,
     io::{BufRead, BufReader},
@@ -33,207 +34,216 @@ fn get_level_title_data(level_num: &LevelNum) -> (String, Vec<String>) {
     (title, lines.map(|x| x.unwrap()).collect::<Vec<String>>())
 }
 
-pub fn load_level(
-    mut commands: Commands,
-    sprite_handles: Res<SpriteHandles>,
-    level_num: Res<LevelNum>,
-    mut level_entities: ResMut<LevelEntities>,
-    mut reader: EventReader<CardUpEvent>,
-) -> Option<LevelSize> {
-    for _ in reader.iter() {
-        // Unload last level
-        while let Some(entity) = level_entities.0.pop() {
-            commands.entity(entity).despawn_recursive();
-        }
+pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
-        let (_, line_strings) = get_level_title_data(&level_num);
-
-        let mut willow = None;
-        let mut chester = None;
-        let mut width = 0;
-        let mut height = 0;
-        // Player pass, and get width and height
-        for (i, line) in line_strings.clone().iter().enumerate() {
-            for (j, tile_char) in line.chars().enumerate() {
-                if tile_char == 'I' {
-                    willow = Some((i, j))
-                } else if tile_char == 'C' {
-                    chester = Some((i, j))
-                }
-                if j + 1 > width {
-                    width = j + 1
-                };
-            }
-            if i + 1 > height {
-                height = i + 1
-            };
-        }
-
-        let willow_id = match willow {
-            Some(w) => Some(
-                commands
-                    .spawn_bundle(PlayerBundle::new(
-                        file_to_tile_coords(w.0, w.1, height),
-                        &&sprite_handles,
-                    ))
-                    .id(),
-            ),
-            None => None,
-        };
-        if let Some(entity) = willow_id {
-            level_entities.0.push(entity)
-        }
-
-        let chester_id = match chester {
-            Some(c) => Some(
-                commands
-                    .spawn_bundle(PlayerBundle::new(
-                        file_to_tile_coords(c.0, c.1, height),
-                        &&sprite_handles,
-                    ))
-                    .id(),
-            ),
-            None => None,
-        };
-        if let Some(entity) = chester_id {
-            level_entities.0.push(entity)
-        }
-
-        // Second pass, all other entities other than players
-        for (i, line) in line_strings.iter().enumerate() {
-            for (j, tile_char) in line.chars().enumerate() {
-                let coords = file_to_tile_coords(i, j, height);
-                if "fF".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(WallBundle::new(coords, &sprite_handles))
-                            .id(),
-                    );
-                } else if "bBtT".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(BushBundle::new(coords, &sprite_handles))
-                            .id(),
-                    );
-                } else if "wW".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(InputBlockBundle::new(
-                                Direction::Up,
-                                coords,
-                                &sprite_handles,
-                            ))
-                            .id(),
-                    );
-                } else if "aA".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(InputBlockBundle::new(
-                                Direction::Left,
-                                coords,
-                                &sprite_handles,
-                            ))
-                            .id(),
-                    );
-                } else if "sS".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(InputBlockBundle::new(
-                                Direction::Down,
-                                coords,
-                                &sprite_handles,
-                            ))
-                            .id(),
-                    );
-                } else if "dD".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(InputBlockBundle::new(
-                                Direction::Right,
-                                coords,
-                                &sprite_handles,
-                            ))
-                            .id(),
-                    );
-                } else if "gG".contains(tile_char) {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(GoalBundle::new(coords, &sprite_handles))
-                            .id(),
-                    );
-                } else if tile_char == 'i' {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(MoveTableBundle::new(
-                                willow_id.expect("Willow table exists, but not Willow"),
-                                coords,
-                                &sprite_handles,
-                            ))
-                            .id(),
-                    );
-                } else if tile_char == 'c' {
-                    level_entities.0.push(
-                        commands
-                            .spawn_bundle(MoveTableBundle::new(
-                                chester_id.expect("Chester table exists, but not Chester"),
-                                coords,
-                                &sprite_handles,
-                            ))
-                            .id(),
-                    );
-                }
-                //Create Background Grass
-                let xy = xy_translation(coords);
-                level_entities.0.push(
-                    commands
-                        .spawn_bundle(SpriteSheetBundle {
-                            texture_atlas: sprite_handles.get_rand_grass(),
-                            transform: Transform::from_translation(Vec3::new(xy.x, xy.y, 0.)),
-                            ..Default::default()
-                        })
-                        .insert(Timer::from_seconds(0.1, true))
-                        .id(),
-                );
-            }
-        }
-        let level_size = LevelSize {
-            size: IVec2::new(width as i32, height as i32),
-        };
-        commands.insert_resource(level_size);
-        return Some(level_size);
-    }
-    return None;
+    commands.spawn_bundle(LdtkWorldBundle {
+        ldtk_handle: asset_server.load("levels/sokoban-sokoban.ldtk"),
+        ..Default::default()
+    });
 }
 
-pub fn spawn_table_edges(
-    mut commands: Commands,
-    table_query: Query<&Tile, Added<MoveTable>>,
-    sprite_handles: Res<SpriteHandles>,
-    mut level_entities: ResMut<LevelEntities>,
-) {
-    for tile in table_query.iter() {
-        for (i, direction) in DIRECTION_ORDER.iter().enumerate() {
-            level_entities.0.push(
-                commands
-                    .spawn_bundle(DirectionTileBundle::new(
-                        *direction,
-                        tile.coords + (i as i32 + 1) * IVec2::from(Direction::Right),
-                        &sprite_handles,
-                    ))
-                    .id(),
-            );
-            level_entities.0.push(
-                commands
-                    .spawn_bundle(DirectionTileBundle::new(
-                        *direction,
-                        tile.coords + (i as i32 + 1) * IVec2::from(Direction::Down),
-                        &sprite_handles,
-                    ))
-                    .id(),
-            );
-        }
-    }
-}
+//pub fn load_level(
+//mut commands: Commands,
+//sprite_handles: Res<SpriteHandles>,
+//level_num: Res<LevelNum>,
+//mut level_entities: ResMut<LevelEntities>,
+//mut reader: EventReader<CardUpEvent>,
+//) -> Option<LevelSize> {
+//for _ in reader.iter() {
+//// Unload last level
+//while let Some(entity) = level_entities.0.pop() {
+//commands.entity(entity).despawn_recursive();
+//}
+
+//let (_, line_strings) = get_level_title_data(&level_num);
+
+//let mut willow = None;
+//let mut chester = None;
+//let mut width = 0;
+//let mut height = 0;
+//// Player pass, and get width and height
+//for (i, line) in line_strings.clone().iter().enumerate() {
+//for (j, tile_char) in line.chars().enumerate() {
+//if tile_char == 'I' {
+//willow = Some((i, j))
+//} else if tile_char == 'C' {
+//chester = Some((i, j))
+//}
+//if j + 1 > width {
+//width = j + 1
+//};
+//}
+//if i + 1 > height {
+//height = i + 1
+//};
+//}
+
+//let willow_id = match willow {
+//Some(w) => Some(
+//commands
+//.spawn_bundle(PlayerBundle::new(
+//file_to_tile_coords(w.0, w.1, height),
+//&&sprite_handles,
+//))
+//.id(),
+//),
+//None => None,
+//};
+//if let Some(entity) = willow_id {
+//level_entities.0.push(entity)
+//}
+
+//let chester_id = match chester {
+//Some(c) => Some(
+//commands
+//.spawn_bundle(PlayerBundle::new(
+//file_to_tile_coords(c.0, c.1, height),
+//&&sprite_handles,
+//))
+//.id(),
+//),
+//None => None,
+//};
+//if let Some(entity) = chester_id {
+//level_entities.0.push(entity)
+//}
+
+//// Second pass, all other entities other than players
+//for (i, line) in line_strings.iter().enumerate() {
+//for (j, tile_char) in line.chars().enumerate() {
+//let coords = file_to_tile_coords(i, j, height);
+//if "fF".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(WallBundle::new(coords, &sprite_handles))
+//.id(),
+//);
+//} else if "bBtT".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(BushBundle::new(coords, &sprite_handles))
+//.id(),
+//);
+//} else if "wW".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(InputBlockBundle::new(
+//Direction::Up,
+//coords,
+//&sprite_handles,
+//))
+//.id(),
+//);
+//} else if "aA".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(InputBlockBundle::new(
+//Direction::Left,
+//coords,
+//&sprite_handles,
+//))
+//.id(),
+//);
+//} else if "sS".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(InputBlockBundle::new(
+//Direction::Down,
+//coords,
+//&sprite_handles,
+//))
+//.id(),
+//);
+//} else if "dD".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(InputBlockBundle::new(
+//Direction::Right,
+//coords,
+//&sprite_handles,
+//))
+//.id(),
+//);
+//} else if "gG".contains(tile_char) {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(GoalBundle::new(coords, &sprite_handles))
+//.id(),
+//);
+//} else if tile_char == 'i' {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(MoveTableBundle::new(
+//willow_id.expect("Willow table exists, but not Willow"),
+//coords,
+//&sprite_handles,
+//))
+//.id(),
+//);
+//} else if tile_char == 'c' {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(MoveTableBundle::new(
+//chester_id.expect("Chester table exists, but not Chester"),
+//coords,
+//&sprite_handles,
+//))
+//.id(),
+//);
+//}
+////Create Background Grass
+//let xy = xy_translation(coords);
+//level_entities.0.push(
+//commands
+//.spawn_bundle(SpriteSheetBundle {
+//texture_atlas: sprite_handles.get_rand_grass(),
+//transform: Transform::from_translation(Vec3::new(xy.x, xy.y, 0.)),
+//..Default::default()
+//})
+//.insert(Timer::from_seconds(0.1, true))
+//.id(),
+//);
+//}
+//}
+//let level_size = LevelSize {
+//size: IVec2::new(width as i32, height as i32),
+//};
+//commands.insert_resource(level_size);
+//return Some(level_size);
+//}
+//return None;
+//}
+
+//pub fn spawn_table_edges(
+//mut commands: Commands,
+//table_query: Query<&Tile, Added<MoveTable>>,
+//sprite_handles: Res<SpriteHandles>,
+//mut level_entities: ResMut<LevelEntities>,
+//) {
+//for tile in table_query.iter() {
+//for (i, direction) in DIRECTION_ORDER.iter().enumerate() {
+//level_entities.0.push(
+//commands
+//.spawn_bundle(DirectionTileBundle::new(
+//*direction,
+//tile.coords + (i as i32 + 1) * IVec2::from(Direction::Right),
+//&sprite_handles,
+//))
+//.id(),
+//);
+//level_entities.0.push(
+//commands
+//.spawn_bundle(DirectionTileBundle::new(
+//*direction,
+//tile.coords + (i as i32 + 1) * IVec2::from(Direction::Down),
+//&sprite_handles,
+//))
+//.id(),
+//);
+//}
+//}
+//}
 
 pub fn create_camera(
     In(level_size_input): In<Option<LevelSize>>,
@@ -263,16 +273,17 @@ pub fn create_camera(
 pub fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCompleteEvent>,
-    level_num: Res<LevelNum>,
+    level_selection: Res<LevelSelection>,
     assets: Res<AssetServer>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     for _ in reader.iter() {
-        let not_final = level_num.0 < LEVEL_ORDER.len();
-        let (title, _) = if not_final {
-            get_level_title_data(&level_num)
-        } else {
-            ("Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string(), Vec::new())
+        //let not_final = level_selection.0 < LEVEL_ORDER.len();
+        let title = //if not_final {
+         //   get_level_title_data(&level_selection)
+        //} else 
+        {
+            "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string()
         };
         commands
             .spawn_bundle(NodeBundle {
@@ -321,23 +332,23 @@ pub fn spawn_level_card(
             )
             .insert(Timer::new(Duration::from_millis(1500), false))
             .with_children(|parent| {
-                if not_final {
-                    parent.spawn_bundle(TextBundle {
-                        text: Text::with_section(
-                            format!("#{}", level_num.0),
-                            TextStyle {
-                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                font_size: 50.,
-                                color: Color::WHITE,
-                            },
-                            TextAlignment {
-                                vertical: VerticalAlign::Center,
-                                horizontal: HorizontalAlign::Center,
-                            },
-                        ),
-                        ..Default::default()
-                    });
-                }
+                //if not_final {
+                //parent.spawn_bundle(TextBundle {
+                //text: Text::with_section(
+                //format!("#{}", level_selection.0),
+                //TextStyle {
+                //font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                //font_size: 50.,
+                //color: Color::WHITE,
+                //},
+                //TextAlignment {
+                //vertical: VerticalAlign::Center,
+                //horizontal: HorizontalAlign::Center,
+                //},
+                //),
+                //..Default::default()
+                //});
+                //}
                 parent.spawn_bundle(TextBundle {
                     text: Text::with_section(
                         title,
@@ -351,11 +362,13 @@ pub fn spawn_level_card(
                     ..Default::default()
                 });
             })
-            .insert(if not_final {
-                LevelCard::Rising
-            } else {
-                LevelCard::End
-            });
+            .insert(
+                //if not_final {
+                LevelCard::Rising,
+            );
+        //} else {
+        //LevelCard::End
+        //});
     }
 }
 

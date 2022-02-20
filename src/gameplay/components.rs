@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_ecs_ldtk::{prelude::*, utils::ldtk_grid_coords_to_tile_pos};
+use bevy_ecs_ldtk::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component, Serialize, Deserialize)]
@@ -17,27 +17,6 @@ impl From<EntityInstance> for RigidBody {
 impl From<IntGridCell> for RigidBody {
     fn from(_: IntGridCell) -> RigidBody {
         RigidBody::Static
-    }
-}
-
-#[derive(Copy, Clone, PartialEq, Debug, Default, Component, Serialize, Deserialize)]
-pub struct Tile {
-    pub coords: IVec2,
-}
-
-impl LdtkEntity for Tile {
-    fn bundle_entity(
-        entity_instance: &EntityInstance,
-        layer_instance: &LayerInstance,
-        _: Option<&Handle<Image>>,
-        _: Option<&TilesetDefinition>,
-        _: &AssetServer,
-        _: &mut Assets<TextureAtlas>,
-    ) -> Self {
-        let tile_pos = ldtk_grid_coords_to_tile_pos(entity_instance.grid, layer_instance.c_hei);
-        Tile {
-            coords: IVec2::new(tile_pos.0 as i32, tile_pos.1 as i32),
-        }
     }
 }
 
@@ -80,9 +59,9 @@ impl Default for PlayerState {
     }
 }
 
-#[derive(Clone, PartialEq, Debug, Default, Component, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Debug, Default, Component)]
 pub struct History {
-    pub tiles: Vec<Tile>,
+    pub tiles: Vec<GridCoords>,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component, Serialize, Deserialize)]
