@@ -2088,24 +2088,24 @@
 						},
 						{
 							"__identifier": "A",
-							"__grid": [6,2],
+							"__grid": [4,7],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 21, "srcRect": [0,32,32,32] },
 							"width": 32,
 							"height": 32,
 							"defUid": 22,
-							"px": [192,64],
+							"px": [128,224],
 							"fieldInstances": []
 						},
 						{
 							"__identifier": "S",
-							"__grid": [4,7],
+							"__grid": [5,3],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 21, "srcRect": [0,64,32,32] },
 							"width": 32,
 							"height": 32,
 							"defUid": 24,
-							"px": [128,224],
+							"px": [160,96],
 							"fieldInstances": []
 						}
 					]
@@ -4144,24 +4144,24 @@
 						},
 						{
 							"__identifier": "A",
-							"__grid": [13,4],
+							"__grid": [8,3],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 21, "srcRect": [0,32,32,32] },
 							"width": 32,
 							"height": 32,
 							"defUid": 22,
-							"px": [416,128],
+							"px": [256,96],
 							"fieldInstances": []
 						},
 						{
 							"__identifier": "S",
-							"__grid": [8,3],
+							"__grid": [13,4],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 21, "srcRect": [0,64,32,32] },
 							"width": 32,
 							"height": 32,
 							"defUid": 24,
-							"px": [256,96],
+							"px": [416,128],
 							"fieldInstances": []
 						}
 					]
