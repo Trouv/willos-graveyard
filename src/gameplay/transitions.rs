@@ -35,10 +35,13 @@ fn get_level_title_data(level_num: &LevelNum) -> (String, Vec<String>) {
 }
 
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands
+        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .insert(OrthographicCamera);
 
     commands.spawn_bundle(LdtkWorldBundle {
         ldtk_handle: asset_server.load("levels/sokoban-sokoban.ldtk"),
+        transform: Transform::from_xyz(32., 32., 0.),
         ..Default::default()
     });
 }
@@ -416,6 +419,79 @@ pub fn level_card_update(
                 _ => {}
             }
             timer.reset();
+        }
+    }
+}
+
+const PLAY_ZONE_RATIO: Size<i32> = Size {
+    width: 4,
+    height: 3,
+};
+
+const ASPECT_RATIO: Size<i32> = Size {
+    width: 16,
+    height: 9,
+};
+
+pub fn fit_camera_around_play_zone_padded(
+    mut camera_query: Query<
+        (&mut Transform, &mut OrthographicProjection),
+        With<OrthographicCamera>,
+    >,
+    mut level_events: EventReader<LevelEvent>,
+    level_query: Query<&Handle<LdtkLevel>>,
+    levels: Res<Assets<LdtkLevel>>,
+) {
+    for level_event in level_events.iter() {
+        match level_event {
+            LevelEvent::Transformed(_) => {
+                let level_handle = level_query.single();
+                if let Some(level) = levels.get(level_handle) {
+                    let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
+                    let padded_level_size = level_size + IVec2::splat(32 * 2);
+
+                    let padded_level_ratio =
+                        padded_level_size.x as f32 / padded_level_size.y as f32;
+                    let play_zone_ratio =
+                        PLAY_ZONE_RATIO.width as f32 / PLAY_ZONE_RATIO.height as f32;
+                    let aspect_ratio = ASPECT_RATIO.width as f32 / ASPECT_RATIO.height as f32;
+
+                    let (mut transform, mut projection) = camera_query.single_mut();
+                    projection.scaling_mode = bevy::render::camera::ScalingMode::None;
+                    projection.bottom = 0.;
+                    projection.left = 0.;
+
+                    let play_zone_size = if padded_level_ratio > play_zone_ratio {
+                        // Level is "wide"
+                        Size {
+                            width: padded_level_size.x as f32,
+                            height: padded_level_size.x as f32 / play_zone_ratio,
+                        }
+                    } else {
+                        // Level is "tall"
+                        Size {
+                            width: padded_level_size.y as f32 * play_zone_ratio,
+                            height: padded_level_size.y as f32,
+                        }
+                    };
+
+                    if play_zone_ratio > aspect_ratio {
+                        // Play zone is "wide"
+                        projection.right = play_zone_size.width;
+                        projection.top = play_zone_size.width / aspect_ratio;
+                    } else {
+                        // Play zone is "tall"
+                        projection.right = play_zone_size.height * aspect_ratio;
+                        projection.top = play_zone_size.height;
+                    };
+
+                    transform.translation.x = (projection.right - padded_level_size.x as f32) / -2.;
+                    transform.translation.y = (projection.top - padded_level_size.y as f32) / -2.;
+
+                    println!("{projection:?}")
+                }
+            }
+            _ => (),
         }
     }
 }

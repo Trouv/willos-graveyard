@@ -90,6 +90,7 @@ fn main() {
         .add_system(gameplay::systems::ease_movement)
         .add_system(gameplay::transitions::spawn_level_card)
         .add_system(gameplay::transitions::level_card_update)
+        .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
         .add_system(gameplay::systems::animate_grass_system)
         //.add_system(gameplay::systems::render_rope.before(SystemLabels::MoveTableUpdate))
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")

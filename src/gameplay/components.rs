@@ -73,14 +73,13 @@ pub enum LevelCard {
 }
 
 #[derive(Clone, Debug, Component)]
-pub struct MovementTimer {
-    pub timer: Timer,
-}
+pub struct MovementTimer(pub Timer);
 
 impl Default for MovementTimer {
     fn default() -> MovementTimer {
-        MovementTimer {
-            timer: Timer::from_seconds(0.14, false),
-        }
+        MovementTimer(Timer::from_seconds(0.14, false))
     }
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
+pub struct OrthographicCamera;

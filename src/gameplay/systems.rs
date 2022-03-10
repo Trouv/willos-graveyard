@@ -163,9 +163,9 @@ pub fn move_player_by_table(
 ) {
     for table in table_query.iter() {
         let (mut timer, mut player) = player_query.single_mut();
-        timer.timer.tick(time.delta());
+        timer.0.tick(time.delta());
 
-        if timer.timer.finished() {
+        if timer.0.finished() {
             match *player {
                 PlayerState::RankMove(key) => {
                     action_writer.send(ActionEvent);
@@ -177,7 +177,7 @@ pub fn move_player_by_table(
                         }
                     }
                     *player = PlayerState::FileMove(key);
-                    timer.timer.reset();
+                    timer.0.reset();
                 }
                 PlayerState::FileMove(key) => {
                     for rank in table.table.iter() {
@@ -190,7 +190,7 @@ pub fn move_player_by_table(
                         }
                     }
                     *player = PlayerState::Waiting;
-                    timer.timer.reset();
+                    timer.0.reset();
                 }
                 _ => {}
             }
