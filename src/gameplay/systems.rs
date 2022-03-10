@@ -25,7 +25,7 @@ pub fn ease_movement(
             Transform::from_xyz(xy.x, xy.y, transform.translation.z),
             EaseFunction::CubicOut,
             EasingType::Once {
-                duration: std::time::Duration::from_millis(150),
+                duration: std::time::Duration::from_millis(110),
             },
         ));
     }
@@ -156,16 +156,16 @@ pub fn player_state_input(mut player_query: Query<&mut PlayerState>, input: Res<
 
 pub fn move_player_by_table(
     table_query: Query<&MoveTable>,
-    mut player_query: Query<(&mut Timer, &mut PlayerState)>,
+    mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
     mut movement_writer: EventWriter<PlayerMovementEvent>,
     mut action_writer: EventWriter<ActionEvent>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
         let (mut timer, mut player) = player_query.single_mut();
-        timer.tick(time.delta());
+        timer.timer.tick(time.delta());
 
-        if timer.finished() {
+        if timer.timer.finished() {
             match *player {
                 PlayerState::RankMove(key) => {
                     action_writer.send(ActionEvent);
@@ -177,7 +177,7 @@ pub fn move_player_by_table(
                         }
                     }
                     *player = PlayerState::FileMove(key);
-                    timer.reset();
+                    timer.timer.reset();
                 }
                 PlayerState::FileMove(key) => {
                     for rank in table.table.iter() {
@@ -190,7 +190,7 @@ pub fn move_player_by_table(
                         }
                     }
                     *player = PlayerState::Waiting;
-                    timer.reset();
+                    timer.timer.reset();
                 }
                 _ => {}
             }

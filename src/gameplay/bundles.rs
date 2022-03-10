@@ -40,7 +40,7 @@ pub struct PlayerBundle {
     #[from_entity_instance]
     pub rigid_body: RigidBody,
     pub player_state: PlayerState,
-    pub timer: Timer,
+    pub movement_timer: MovementTimer,
     #[sprite_sheet_bundle]
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,

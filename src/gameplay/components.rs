@@ -71,3 +71,16 @@ pub enum LevelCard {
     Falling,
     End,
 }
+
+#[derive(Clone, Debug, Component)]
+pub struct MovementTimer {
+    pub timer: Timer,
+}
+
+impl Default for MovementTimer {
+    fn default() -> MovementTimer {
+        MovementTimer {
+            timer: Timer::from_seconds(0.14, false),
+        }
+    }
+}
