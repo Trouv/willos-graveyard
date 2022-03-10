@@ -8,7 +8,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::prelude::*;
+use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use std::{
     fs::File,
     io::{BufRead, BufReader},
@@ -276,18 +276,51 @@ pub fn create_camera(
 pub fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCompleteEvent>,
+    mut level_event: EventReader<LevelEvent>,
+    mut ldtk_loaded: Local<bool>,
     level_selection: Res<LevelSelection>,
+    ldtk_assets: Res<Assets<LdtkAsset>>,
     assets: Res<AssetServer>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    for _ in reader.iter() {
-        //let not_final = level_selection.0 < LEVEL_ORDER.len();
-        let title = //if not_final {
-         //   get_level_title_data(&level_selection)
-        //} else 
-        {
-            "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string()
-        };
+    let create_card = if !*ldtk_loaded {
+        if  level_event.iter().count() > 0 {
+            *ldtk_loaded = true;
+            true
+        } else {
+            false
+        }
+    } else {
+        reader.iter().count() > 0
+    };
+
+    if create_card {
+        let mut title = 
+            "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
+        let mut level_num = None;
+
+        if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
+
+            if let LevelSelection::Index(level_index) = *level_selection {
+                if level_index < ldtk_asset.project.levels.len() {
+                    level_num = Some(level_index);
+
+                    let level = ldtk_asset.project.levels.get(level_index).unwrap();
+
+                    if let Some(FieldInstance {
+                        value: FieldValue::String(Some(level_title)),
+                        ..
+                    }) = level
+                        .field_instances
+                        .iter()
+                        .find(|f| f.identifier == "Title")
+                    {
+                        title = level_title.clone();
+                    }
+                }
+            }
+        }
+
+            
         commands
             .spawn_bundle(NodeBundle {
                 color: UiColor(Color::BLACK),
@@ -335,23 +368,23 @@ pub fn spawn_level_card(
             )
             .insert(Timer::new(Duration::from_millis(1500), false))
             .with_children(|parent| {
-                //if not_final {
-                //parent.spawn_bundle(TextBundle {
-                //text: Text::with_section(
-                //format!("#{}", level_selection.0),
-                //TextStyle {
-                //font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                //font_size: 50.,
-                //color: Color::WHITE,
-                //},
-                //TextAlignment {
-                //vertical: VerticalAlign::Center,
-                //horizontal: HorizontalAlign::Center,
-                //},
-                //),
-                //..Default::default()
-                //});
-                //}
+                if let Some(level_num) = level_num {
+                    parent.spawn_bundle(TextBundle {
+                        text: Text::with_section(
+                            format!("#{}", level_num),
+                            TextStyle {
+                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                font_size: 50.,
+                                color: Color::WHITE,
+                            },
+                            TextAlignment {
+                                vertical: VerticalAlign::Center,
+                                horizontal: HorizontalAlign::Center,
+                            },
+                        ),
+                        ..Default::default()
+                    });
+                }
                 parent.spawn_bundle(TextBundle {
                     text: Text::with_section(
                         title,
@@ -366,12 +399,12 @@ pub fn spawn_level_card(
                 });
             })
             .insert(
-                //if not_final {
-                LevelCard::Rising,
+                if level_num.is_some() {
+                    LevelCard::Rising
+                } else {
+                    LevelCard::End
+                }
             );
-        //} else {
-        //LevelCard::End
-        //});
     }
 }
 
@@ -487,8 +520,6 @@ pub fn fit_camera_around_play_zone_padded(
 
                     transform.translation.x = (projection.right - padded_level_size.x as f32) / -2.;
                     transform.translation.y = (projection.top - padded_level_size.y as f32) / -2.;
-
-                    println!("{projection:?}")
                 }
             }
             _ => (),
