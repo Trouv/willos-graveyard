@@ -100,6 +100,7 @@ fn main() {
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("D")
         .register_ldtk_entity::<gameplay::bundles::GoalBundle>("Goal")
         .register_ldtk_entity::<gameplay::bundles::MoveTableBundle>("Table")
+        .register_ldtk_entity::<gameplay::bundles::GrassBundle>("Grass")
         .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(1)
         .run()
 }

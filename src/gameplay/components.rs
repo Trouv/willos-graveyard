@@ -83,3 +83,12 @@ impl Default for MovementTimer {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
 pub struct OrthographicCamera;
+
+#[derive(Clone, Debug, Component)]
+pub struct WindTimer(pub Timer);
+
+impl Default for WindTimer {
+    fn default() -> WindTimer {
+        WindTimer(Timer::from_seconds(0.2, true))
+    }
+}

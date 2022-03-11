@@ -55,3 +55,11 @@ pub struct MoveTableBundle {
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,
 }
+
+#[derive(Clone, Bundle, LdtkEntity)]
+pub struct GrassBundle {
+    #[sprite_sheet_bundle]
+    #[bundle]
+    pub sprite_sheet_bundle: SpriteSheetBundle,
+    pub wind_timer: WindTimer,
+}

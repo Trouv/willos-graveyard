@@ -283,11 +283,15 @@ pub fn check_goal(
 pub fn animate_grass_system(
     time: Res<Time>,
     texture_atlases: Res<Assets<TextureAtlas>>,
-    mut query: Query<(&mut Timer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>,
+    mut query: Query<(
+        &mut WindTimer,
+        &mut TextureAtlasSprite,
+        &Handle<TextureAtlas>,
+    )>,
 ) {
     for (mut timer, mut sprite, texture_atlas_handle) in query.iter_mut() {
-        timer.tick(time.delta());
-        if timer.finished() {
+        timer.0.tick(time.delta());
+        if timer.0.finished() {
             let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
             let mut rng = rand::thread_rng();
             let chance = rng.gen::<f32>();
