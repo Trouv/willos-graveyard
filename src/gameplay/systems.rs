@@ -3,7 +3,7 @@ use crate::{
         components::*, xy_translation, ActionEvent, Direction, LevelCompleteEvent,
         PlayerMovementEvent, DIRECTION_ORDER,
     },
-    LevelNum, LevelSize, LevelState, SoundEffects, SpriteHandles,
+    LevelState, SoundEffects,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
@@ -253,7 +253,7 @@ pub fn check_goal(
     block_query: Query<&GridCoords, With<InputBlock>>,
     mut writer: EventWriter<LevelCompleteEvent>,
     mut level_state: ResMut<LevelState>,
-    mut level_selection: ResMut<LevelSelection>,
+    level_selection: ResMut<LevelSelection>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
@@ -299,47 +299,6 @@ pub fn animate_grass_system(
                 sprite.index = cmp::min(sprite.index + 1, texture_atlas.len() - 1);
             } else if chance > 0.2 && chance <= 0.6 {
                 sprite.index = cmp::max(sprite.index as i32 - 1, 0) as usize;
-            }
-        }
-    }
-}
-
-pub fn render_rope(
-    mut commands: Commands,
-    table_query: Query<(Entity, &MoveTable)>,
-    mut rope_entities: Local<Vec<Entity>>,
-    sprite_handles: Res<SpriteHandles>,
-) {
-    while let Some(entity) = rope_entities.pop() {
-        commands.entity(entity).despawn_recursive();
-    }
-
-    for (entity, table) in table_query.iter() {
-        for (i, row) in table.table.iter().enumerate() {
-            for (j, cell) in row.iter().enumerate() {
-                if cell.is_some() {
-                    let adjusted = IVec2::new(j as i32 + 1, -1 - i as i32);
-                    let xy = xy_translation(adjusted);
-                    let mut transform = Transform::from_xyz(xy.x / 2., xy.y / 2., 3.);
-                    transform.rotate(Quat::from_rotation_z((-1. * xy.y / xy.x).atan()));
-                    transform.scale.x = (xy.x.powi(2) + xy.y.powi(2)).sqrt() / 32. - 0.5;
-
-                    commands.entity(entity).with_children(|parent| {
-                        rope_entities.push(
-                            parent
-                                .spawn_bundle(SpriteBundle {
-                                    sprite: Sprite {
-                                        custom_size: Some(Vec2::new(32., 16.)),
-                                        ..Default::default()
-                                    },
-                                    texture: sprite_handles.rope.clone_weak(),
-                                    transform,
-                                    ..Default::default()
-                                })
-                                .id(),
-                        );
-                    });
-                }
             }
         }
     }
