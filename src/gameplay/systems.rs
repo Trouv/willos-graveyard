@@ -1,7 +1,7 @@
 use crate::{
     gameplay::{
-        components::*, xy_translation, ActionEvent, Direction, LevelCompleteEvent,
-        PlayerMovementEvent, DIRECTION_ORDER,
+        components::*, xy_translation, ActionEvent, Direction, LevelCardEvent, PlayerMovementEvent,
+        DIRECTION_ORDER,
     },
     LevelState, SoundEffects,
 };
@@ -257,12 +257,14 @@ pub fn check_death(
 ) {
     if *level_state == LevelState::Gameplay {
         let (player_coords, mut player_state) = player_query.single_mut();
-        if exorcism_query
-            .iter()
-            .find(|&e| e == player_coords)
-            .is_some()
-        {
-            *player_state = PlayerState::Dead;
+        if *player_state != PlayerState::Dead {
+            if exorcism_query
+                .iter()
+                .find(|&e| e == player_coords)
+                .is_some()
+            {
+                *player_state = PlayerState::Dead;
+            }
         }
     }
 }
@@ -270,7 +272,7 @@ pub fn check_death(
 pub fn check_goal(
     goal_query: Query<&GridCoords, With<Goal>>,
     block_query: Query<&GridCoords, With<InputBlock>>,
-    mut writer: EventWriter<LevelCompleteEvent>,
+    mut writer: EventWriter<LevelCardEvent>,
     mut level_state: ResMut<LevelState>,
     level_selection: ResMut<LevelSelection>,
     audio: Res<Audio>,
@@ -294,7 +296,7 @@ pub fn check_goal(
         if let LevelSelection::Index(num) = level_selection.into_inner() {
             *num += 1;
         }
-        writer.send(LevelCompleteEvent);
+        writer.send(LevelCardEvent::Rise);
         audio.play(sfx.victory.clone_weak());
     }
 }

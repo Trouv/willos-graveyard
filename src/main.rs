@@ -33,9 +33,7 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<gameplay::ActionEvent>()
-        .add_event::<gameplay::LevelCompleteEvent>()
-        .add_event::<gameplay::CardUpEvent>()
-        .add_event::<gameplay::LevelStartEvent>()
+        .add_event::<gameplay::LevelCardEvent>()
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
@@ -94,7 +92,7 @@ pub fn sprite_load(
     mut commands: Commands,
     assets: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    mut writer: EventWriter<gameplay::LevelCompleteEvent>,
+    mut writer: EventWriter<gameplay::LevelCardEvent>,
 ) {
     let grass_plain_handle = assets.load("textures/grass_plain.png");
     let grass_plain_atlas =
@@ -113,7 +111,7 @@ pub fn sprite_load(
         grass_stone: texture_atlases.add(grass_stone_atlas),
     });
 
-    writer.send(gameplay::LevelCompleteEvent);
+    //writer.send(gameplay::LevelCardEvent::Rise)
 }
 
 pub struct SoundEffects {

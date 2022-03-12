@@ -1,6 +1,6 @@
 use crate::{
     gameplay::{
-        components::*, CardUpEvent, LevelCompleteEvent, LevelStartEvent,
+        components::*, LevelCardEvent,
     },
     LevelState, 
 };
@@ -24,7 +24,7 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 pub fn spawn_level_card(
     mut commands: Commands,
-    mut reader: EventReader<LevelCompleteEvent>,
+    mut reader: EventReader<LevelCardEvent>,
     mut level_event: EventReader<LevelEvent>,
     mut ldtk_loaded: Local<bool>,
     level_selection: Res<LevelSelection>,
@@ -39,7 +39,7 @@ pub fn spawn_level_card(
             false
         }
     } else {
-        reader.iter().count() > 0
+        reader.iter().filter(|e| **e == LevelCardEvent::Rise).count() > 0
     };
 
     if create_card {
@@ -160,8 +160,7 @@ pub fn spawn_level_card(
 pub fn level_card_update(
     mut commands: Commands,
     mut card_query: Query<(Entity, &mut LevelCard, &mut Style, &mut Timer)>,
-    mut card_up_writer: EventWriter<CardUpEvent>,
-    mut level_start_writer: EventWriter<LevelStartEvent>,
+    mut level_card_event_writer: EventWriter<LevelCardEvent>,
     mut level_state: ResMut<LevelState>,
     time: Res<Time>,
 ) {
@@ -170,11 +169,11 @@ pub fn level_card_update(
         if timer.finished() {
             match *card {
                 LevelCard::Rising => {
-                    card_up_writer.send(CardUpEvent);
+                    level_card_event_writer.send(LevelCardEvent::Block);
                     *card = LevelCard::Holding;
                 }
                 LevelCard::Holding => {
-                    level_start_writer.send(LevelStartEvent);
+                    level_card_event_writer.send(LevelCardEvent::Fall);
 
                     commands.entity(entity).insert(style.clone().ease_to(
                         Style {

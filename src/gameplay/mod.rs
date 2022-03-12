@@ -43,11 +43,9 @@ pub struct PlayerMovementEvent {
 
 pub struct ActionEvent;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
-pub struct LevelCompleteEvent;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
-pub struct CardUpEvent;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize)]
-pub struct LevelStartEvent;
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
+pub enum LevelCardEvent {
+    Rise,
+    Block,
+    Fall,
+}
