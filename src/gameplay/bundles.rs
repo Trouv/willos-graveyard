@@ -63,3 +63,8 @@ pub struct GrassBundle {
     pub sprite_sheet_bundle: SpriteSheetBundle,
     pub wind_timer: WindTimer,
 }
+
+#[derive(Clone, Bundle, LdtkIntCell)]
+pub struct ExorcismBlockBundle {
+    pub exorcism_block: ExorcismBlock,
+}

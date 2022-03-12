@@ -72,7 +72,7 @@ pub fn perform_grid_coords_movement(
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if *level_state == LevelState::Gameplay {
+    if *level_state == LevelState::Alive {
         for movement_event in reader.iter() {
             let level = levels
                 .get(level_query.single())
@@ -215,12 +215,14 @@ pub fn rewind(
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
+    mut level_state: ResMut<LevelState>,
 ) {
     if let Ok(PlayerState::Waiting) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
                     *grid_coords = prev_state;
+                    *level_state = LevelState::Alive;
                     audio.play(sfx.undo.clone_weak());
                 }
             }
@@ -234,6 +236,7 @@ pub fn reset(
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
+    mut level_state: ResMut<LevelState>,
 ) {
     if let Ok(PlayerState::Waiting) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
@@ -241,9 +244,27 @@ pub fn reset(
                 if let Some(initial_state) = history.tiles.get(0) {
                     *grid_coords = *initial_state;
                     history.tiles = Vec::new();
+                    *level_state = LevelState::Alive;
                     audio.play(sfx.undo.clone_weak());
                 }
             }
+        }
+    }
+}
+
+pub fn check_death(
+    player_query: Query<&GridCoords, With<PlayerState>>,
+    exorcism_query: Query<&GridCoords, With<ExorcismBlock>>,
+    mut level_state: ResMut<LevelState>,
+) {
+    if *level_state == LevelState::Alive {
+        let player_coords = player_query.single();
+        if exorcism_query
+            .iter()
+            .find(|&e| e == player_coords)
+            .is_some()
+        {
+            *level_state = LevelState::Dead;
         }
     }
 }
@@ -257,7 +278,7 @@ pub fn check_goal(
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if *level_state == LevelState::Gameplay {
+    if *level_state == LevelState::Alive {
         for goal_grid_coords in goal_query.iter() {
             let mut goal_met = false;
             for block_grid_coords in block_query.iter() {

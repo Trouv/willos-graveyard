@@ -41,6 +41,9 @@ impl From<EntityInstance> for InputBlock {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component, Serialize, Deserialize)]
 pub struct Goal;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component, Serialize, Deserialize)]
+pub struct ExorcismBlock;
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct MoveTable {
     pub table: [[Option<KeyCode>; 4]; 4],

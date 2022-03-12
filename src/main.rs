@@ -12,11 +12,13 @@ pub enum SystemLabels {
     LoadAssets,
     Input,
     MoveTableUpdate,
+    CheckDeath,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum LevelState {
-    Gameplay,
+    Alive,
+    Dead,
     Inbetween,
 }
 
@@ -46,7 +48,8 @@ fn main() {
             gameplay::systems::perform_grid_coords_movement.label(SystemLabels::MoveTableUpdate),
         )
         .add_system(gameplay::systems::store_current_position.before(SystemLabels::MoveTableUpdate))
-        .add_system(gameplay::systems::check_goal.after(SystemLabels::MoveTableUpdate))
+        .add_system(gameplay::systems::check_death.label(SystemLabels::CheckDeath))
+        .add_system(gameplay::systems::check_goal.after(SystemLabels::CheckDeath))
         .add_system(gameplay::systems::move_player_by_table.after(SystemLabels::MoveTableUpdate))
         .add_system(gameplay::systems::rewind)
         .add_system(gameplay::systems::reset)
@@ -64,6 +67,7 @@ fn main() {
         .register_ldtk_entity::<gameplay::bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<gameplay::bundles::GrassBundle>("Grass")
         .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(1)
+        .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2)
         .run()
 }
 
