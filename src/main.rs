@@ -17,8 +17,7 @@ pub enum SystemLabels {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum LevelState {
-    Alive,
-    Dead,
+    Gameplay,
     Inbetween,
 }
 

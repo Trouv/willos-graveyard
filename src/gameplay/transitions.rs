@@ -191,7 +191,7 @@ pub fn level_card_update(
                         },
                     ));
 
-                    *level_state = LevelState::Alive;
+                    *level_state = LevelState::Gameplay;
                     *card = LevelCard::Falling;
                 }
                 LevelCard::Falling => {

@@ -52,6 +52,7 @@ pub struct MoveTable {
 #[derive(Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum PlayerState {
     Waiting,
+    Dead,
     RankMove(KeyCode),
     FileMove(KeyCode),
 }

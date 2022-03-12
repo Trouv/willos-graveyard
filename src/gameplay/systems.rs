@@ -72,7 +72,7 @@ pub fn perform_grid_coords_movement(
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if *level_state == LevelState::Alive {
+    if *level_state == LevelState::Gameplay {
         for movement_event in reader.iter() {
             let level = levels
                 .get(level_query.single())
@@ -210,19 +210,18 @@ pub fn store_current_position(
 }
 
 pub fn rewind(
-    player_query: Query<&PlayerState>,
+    mut player_query: Query<&mut PlayerState>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
-    mut level_state: ResMut<LevelState>,
 ) {
-    if let Ok(PlayerState::Waiting) = player_query.get_single() {
+    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
                     *grid_coords = prev_state;
-                    *level_state = LevelState::Alive;
+                    *player_query.single_mut() = PlayerState::Waiting;
                     audio.play(sfx.undo.clone_weak());
                 }
             }
@@ -231,20 +230,19 @@ pub fn rewind(
 }
 
 pub fn reset(
-    player_query: Query<&PlayerState>,
+    mut player_query: Query<&mut PlayerState>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
-    mut level_state: ResMut<LevelState>,
 ) {
-    if let Ok(PlayerState::Waiting) = player_query.get_single() {
+    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(initial_state) = history.tiles.get(0) {
                     *grid_coords = *initial_state;
                     history.tiles = Vec::new();
-                    *level_state = LevelState::Alive;
+                    *player_query.single_mut() = PlayerState::Waiting;
                     audio.play(sfx.undo.clone_weak());
                 }
             }
@@ -253,18 +251,18 @@ pub fn reset(
 }
 
 pub fn check_death(
-    player_query: Query<&GridCoords, With<PlayerState>>,
+    mut player_query: Query<(&GridCoords, &mut PlayerState)>,
     exorcism_query: Query<&GridCoords, With<ExorcismBlock>>,
-    mut level_state: ResMut<LevelState>,
+    level_state: Res<LevelState>,
 ) {
-    if *level_state == LevelState::Alive {
-        let player_coords = player_query.single();
+    if *level_state == LevelState::Gameplay {
+        let (player_coords, mut player_state) = player_query.single_mut();
         if exorcism_query
             .iter()
             .find(|&e| e == player_coords)
             .is_some()
         {
-            *level_state = LevelState::Dead;
+            *player_state = PlayerState::Dead;
         }
     }
 }
@@ -278,7 +276,7 @@ pub fn check_goal(
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if *level_state == LevelState::Alive {
+    if *level_state == LevelState::Gameplay {
         for goal_grid_coords in goal_query.iter() {
             let mut goal_met = false;
             for block_grid_coords in block_query.iter() {
