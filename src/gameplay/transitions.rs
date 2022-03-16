@@ -205,8 +205,8 @@ pub fn level_card_update(
 }
 
 const PLAY_ZONE_RATIO: Size<i32> = Size {
-    width: 4,
-    height: 3,
+    width: 1,
+    height: 1,
 };
 
 const ASPECT_RATIO: Size<i32> = Size {
