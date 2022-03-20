@@ -338,6 +338,14 @@ pub fn update_control_display(
             .entity(control_display_entity)
             .despawn_descendants();
 
+        let font = assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf");
+
+        let style = TextStyle {
+            font,
+            font_size: 30.,
+            color: Color::WHITE,
+        };
+
         for (i, rank) in move_table.table.iter().enumerate() {
             for (j, key) in rank.iter().enumerate() {
                 if let Some(key) = key {
@@ -349,11 +357,7 @@ pub fn update_control_display(
                             parent.spawn_bundle(TextBundle {
                                 text: Text::with_section(
                                     format!("{rule:?}"),
-                                    TextStyle {
-                                        font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                        font_size: 30.,
-                                        color: Color::WHITE,
-                                    },
+                                    style.clone(),
                                     TextAlignment::default(),
                                 ),
                                 ..Default::default()
@@ -362,5 +366,22 @@ pub fn update_control_display(
                 }
             }
         }
+
+        commands
+            .entity(control_display_entity)
+            .with_children(|parent| {
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        "R = restart",
+                        style.clone(),
+                        TextAlignment::default(),
+                    ),
+                    ..Default::default()
+                });
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section("Z = undo", style, TextAlignment::default()),
+                    ..Default::default()
+                });
+            });
     }
 }

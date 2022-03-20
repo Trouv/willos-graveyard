@@ -1,15 +1,11 @@
 use crate::{
-    gameplay::{
-        components::*, LevelCardEvent,
-    },
-    LevelState, 
-    PLAY_ZONE_RATIO, ASPECT_RATIO,
+    gameplay::{components::*, LevelCardEvent},
+    LevelState, ASPECT_RATIO, PLAY_ZONE_RATIO,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use std::time::Duration;
-
 
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
@@ -23,59 +19,54 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-pub fn spawn_ui_root(
-    mut commands: Commands,
-)
-{
-    commands.spawn_bundle(NodeBundle {
-        color: UiColor(Color::NONE),
-        style: Style {
-            size: Size {
-                width: Val::Percent(100.),
-                height: Val::Percent(100.),
-            },
-        ..Default::default()
-        },
-        ..Default::default()
-    }).insert(UiRoot);
-}
-
-pub fn spawn_control_display(
-    mut commands: Commands,
-    ui_root_query: Query<Entity, Added<UiRoot>>,
-) {
-
-    for ui_root_entity in ui_root_query.iter() {
-
-    let aspect_ratio = ASPECT_RATIO.width as f32/ ASPECT_RATIO.height as f32;
-    let play_zone_ratio = PLAY_ZONE_RATIO.width as f32/ PLAY_ZONE_RATIO.height as f32;
-    let control_zone_ratio = aspect_ratio - play_zone_ratio;
-
-    commands.spawn_bundle(NodeBundle {
-        color: UiColor(Color::NONE),
-        style: Style {
-            flex_direction: FlexDirection::ColumnReverse,
-            align_items: AlignItems::Center,
-            position_type: PositionType::Absolute,
-            justify_content: JustifyContent::Center,
-            align_content: AlignContent::FlexStart,
-            size: Size {
-                width: Val::Percent(100. * control_zone_ratio),
-                height: Val::Percent(100.),
-            },
-            position: Rect {
-                top: Val::Percent(0.),
-                left: Val::Percent(100. - 100. * control_zone_ratio),
+pub fn spawn_ui_root(mut commands: Commands) {
+    commands
+        .spawn_bundle(NodeBundle {
+            color: UiColor(Color::NONE),
+            style: Style {
+                size: Size {
+                    width: Val::Percent(100.),
+                    height: Val::Percent(100.),
+                },
                 ..Default::default()
             },
             ..Default::default()
-        },
-                                transform: Transform::from_xyz(0., 0., 1.),
-        ..Default::default()
-    })
-    .insert(ControlDisplayNode)
-    .insert(Parent(ui_root_entity));
-        }
+        })
+        .insert(UiRoot);
+}
+
+pub fn spawn_control_display(mut commands: Commands, ui_root_query: Query<Entity, Added<UiRoot>>) {
+    for ui_root_entity in ui_root_query.iter() {
+        let aspect_ratio = ASPECT_RATIO.width as f32 / ASPECT_RATIO.height as f32;
+        let play_zone_ratio = PLAY_ZONE_RATIO.width as f32 / PLAY_ZONE_RATIO.height as f32;
+        let control_zone_ratio = aspect_ratio - play_zone_ratio;
+
+        commands
+            .spawn_bundle(NodeBundle {
+                color: UiColor(Color::NONE),
+                style: Style {
+                    flex_direction: FlexDirection::ColumnReverse,
+                    align_items: AlignItems::Center,
+                    position_type: PositionType::Absolute,
+                    justify_content: JustifyContent::Center,
+                    align_content: AlignContent::FlexStart,
+                    size: Size {
+                        width: Val::Percent(100. * control_zone_ratio),
+                        height: Val::Percent(100.),
+                    },
+                    position: Rect {
+                        top: Val::Percent(0.),
+                        left: Val::Percent(100. - 100. * control_zone_ratio),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                },
+                transform: Transform::from_xyz(0., 0., 1.),
+                ..Default::default()
+            })
+            .insert(ControlDisplayNode)
+            .insert(Parent(ui_root_entity));
+    }
 }
 
 pub fn spawn_death_card(
@@ -85,33 +76,16 @@ pub fn spawn_death_card(
     death_cards: Query<Entity, With<DeathCard>>,
     mut last_state: Local<PlayerState>,
     ui_root_query: Query<Entity, With<UiRoot>>,
-
 ) {
     for state in player_query.iter() {
         if *state == PlayerState::Dead && *last_state != PlayerState::Dead {
             // Player just died
-            commands.spawn_bundle(NodeBundle {
-                color: UiColor(Color::rgba(0., 0., 0., 0.9)),
-                ..Default::default()
-            })
-            .insert(
-                Style {
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    position_type: PositionType::Absolute,
-                    flex_direction: FlexDirection::ColumnReverse,
-                    size: Size {
-                        width: Val::Percent(100.),
-                        height: Val::Percent(100.),
-                    },
-                    position: Rect {
-                        top: Val::Percent(100.),
-                        left: Val::Percent(0.),
-                        ..Default::default()
-                    },
+            commands
+                .spawn_bundle(NodeBundle {
+                    color: UiColor(Color::rgba(0., 0., 0., 0.9)),
                     ..Default::default()
-                }
-                .ease_to(
+                })
+                .insert(
                     Style {
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
@@ -122,38 +96,54 @@ pub fn spawn_death_card(
                             height: Val::Percent(100.),
                         },
                         position: Rect {
-                            top: Val::Percent(0.),
+                            top: Val::Percent(100.),
                             left: Val::Percent(0.),
                             ..Default::default()
                         },
                         ..Default::default()
-                    },
-                    EaseFunction::QuadraticOut,
-                    EasingType::Once {
-                        duration: Duration::from_millis(600),
-                    },
-                ),
-            )
-            .insert(DeathCard)
-            .with_children(|parent| {
-                parent.spawn_bundle(TextBundle {
-                    text: Text::with_section(
-                        "EXORCISED\n\nR to restart\nZ to undo",
-                        TextStyle {
-                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                            font_size: 30.,
-                            color: Color::WHITE,
+                    }
+                    .ease_to(
+                        Style {
+                            justify_content: JustifyContent::Center,
+                            align_items: AlignItems::Center,
+                            position_type: PositionType::Absolute,
+                            flex_direction: FlexDirection::ColumnReverse,
+                            size: Size {
+                                width: Val::Percent(100.),
+                                height: Val::Percent(100.),
+                            },
+                            position: Rect {
+                                top: Val::Percent(0.),
+                                left: Val::Percent(0.),
+                                ..Default::default()
+                            },
+                            ..Default::default()
                         },
-                        TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
+                        EaseFunction::QuadraticOut,
+                        EasingType::Once {
+                            duration: Duration::from_millis(600),
                         },
                     ),
-                    ..Default::default()
-                });
-            })
-    .insert(Parent(ui_root_query.single()));
-
+                )
+                .insert(DeathCard)
+                .with_children(|parent| {
+                    parent.spawn_bundle(TextBundle {
+                        text: Text::with_section(
+                            "EXORCISED\n\nR to restart\nZ to undo",
+                            TextStyle {
+                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                font_size: 30.,
+                                color: Color::WHITE,
+                            },
+                            TextAlignment {
+                                horizontal: HorizontalAlign::Center,
+                                vertical: VerticalAlign::Center,
+                            },
+                        ),
+                        ..Default::default()
+                    });
+                })
+                .insert(Parent(ui_root_query.single()));
         } else if *state != PlayerState::Dead && *last_state == PlayerState::Dead {
             // Player just un-died
             if let Ok(entity) = death_cards.get_single() {
@@ -176,23 +166,25 @@ pub fn spawn_level_card(
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
     let create_card = if !*ldtk_loaded {
-        if  level_event.iter().count() > 0 {
+        if level_event.iter().count() > 0 {
             *ldtk_loaded = true;
             true
         } else {
             false
         }
     } else {
-        reader.iter().filter(|e| **e == LevelCardEvent::Rise).count() > 0
+        reader
+            .iter()
+            .filter(|e| **e == LevelCardEvent::Rise)
+            .count()
+            > 0
     };
 
     if create_card {
-        let mut title = 
-            "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
+        let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
         let mut level_num = None;
 
         if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
-
             if let LevelSelection::Index(level_index) = *level_selection {
                 if level_index < ldtk_asset.project.levels.len() {
                     level_num = Some(level_index);
@@ -213,7 +205,6 @@ pub fn spawn_level_card(
             }
         }
 
-            
         commands
             .spawn_bundle(NodeBundle {
                 color: UiColor(Color::BLACK),
@@ -291,14 +282,12 @@ pub fn spawn_level_card(
                     ..Default::default()
                 });
             })
-            .insert(
-                if level_num.is_some() {
-                    LevelCard::Rising
-                } else {
-                    LevelCard::End
-                }
-            )
-    .insert(Parent(ui_root_query.single()));
+            .insert(if level_num.is_some() {
+                LevelCard::Rising
+            } else {
+                LevelCard::End
+            })
+            .insert(Parent(ui_root_query.single()));
     }
 }
 
@@ -401,8 +390,10 @@ pub fn fit_camera_around_play_zone_padded(
                         projection.top = play_zone_size.height;
                     };
 
-                    transform.translation.x = (play_zone_size.width - padded_level_size.x as f32) / -2.;
-                    transform.translation.y = (play_zone_size.height - padded_level_size.y as f32) / -2.;
+                    transform.translation.x =
+                        (play_zone_size.width - padded_level_size.x as f32) / -2.;
+                    transform.translation.y =
+                        (play_zone_size.height - padded_level_size.y as f32) / -2.;
                 }
             }
             _ => (),
