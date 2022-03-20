@@ -3,22 +3,13 @@ use crate::{
         components::*, LevelCardEvent,
     },
     LevelState, 
+    PLAY_ZONE_RATIO, ASPECT_RATIO,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use std::time::Duration;
 
-
-const PLAY_ZONE_RATIO: Size<i32> = Size {
-    width: 4,
-    height: 3,
-};
-
-const ASPECT_RATIO: Size<i32> = Size {
-    width: 16,
-    height: 9,
-};
 
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
@@ -32,9 +23,29 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
+pub fn spawn_ui_root(
+    mut commands: Commands,
+)
+{
+    commands.spawn_bundle(NodeBundle {
+        color: UiColor(Color::NONE),
+        style: Style {
+            size: Size {
+                width: Val::Percent(100.),
+                height: Val::Percent(100.),
+            },
+        ..Default::default()
+        },
+        ..Default::default()
+    }).insert(UiRoot);
+}
+
 pub fn spawn_control_display(
     mut commands: Commands,
+    ui_root_query: Query<Entity, Added<UiRoot>>,
 ) {
+
+    for ui_root_entity in ui_root_query.iter() {
 
     let aspect_ratio = ASPECT_RATIO.width as f32/ ASPECT_RATIO.height as f32;
     let play_zone_ratio = PLAY_ZONE_RATIO.width as f32/ PLAY_ZONE_RATIO.height as f32;
@@ -59,8 +70,12 @@ pub fn spawn_control_display(
             },
             ..Default::default()
         },
+                                transform: Transform::from_xyz(0., 0., 1.),
         ..Default::default()
-    }).insert(ControlDisplayNode);
+    })
+    .insert(ControlDisplayNode)
+    .insert(Parent(ui_root_entity));
+        }
 }
 
 pub fn spawn_death_card(
@@ -69,6 +84,8 @@ pub fn spawn_death_card(
     player_query: Query<&PlayerState, Changed<PlayerState>>,
     death_cards: Query<Entity, With<DeathCard>>,
     mut last_state: Local<PlayerState>,
+    ui_root_query: Query<Entity, With<UiRoot>>,
+
 ) {
     for state in player_query.iter() {
         if *state == PlayerState::Dead && *last_state != PlayerState::Dead {
@@ -134,7 +151,8 @@ pub fn spawn_death_card(
                     ),
                     ..Default::default()
                 });
-            });
+            })
+    .insert(Parent(ui_root_query.single()));
 
         } else if *state != PlayerState::Dead && *last_state == PlayerState::Dead {
             // Player just un-died
@@ -155,6 +173,7 @@ pub fn spawn_level_card(
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     assets: Res<AssetServer>,
+    ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
     let create_card = if !*ldtk_loaded {
         if  level_event.iter().count() > 0 {
@@ -278,7 +297,8 @@ pub fn spawn_level_card(
                 } else {
                     LevelCard::End
                 }
-            );
+            )
+    .insert(Parent(ui_root_query.single()));
     }
 }
 

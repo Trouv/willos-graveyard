@@ -356,7 +356,6 @@ pub fn update_control_display(
                                     },
                                     TextAlignment::default(),
                                 ),
-                                transform: Transform::from_xyz(0., 0., 1.),
                                 ..Default::default()
                             });
                         });

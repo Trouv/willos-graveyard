@@ -7,6 +7,16 @@ use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
+pub const PLAY_ZONE_RATIO: Size<i32> = Size {
+    width: 4,
+    height: 3,
+};
+
+pub const ASPECT_RATIO: Size<i32> = Size {
+    width: 16,
+    height: 9,
+};
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum SystemLabels {
     LoadAssets,
@@ -39,6 +49,7 @@ fn main() {
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
+        .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_system(gameplay::systems::player_state_input.label(SystemLabels::Input))
         .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
         .add_system(
@@ -52,7 +63,7 @@ fn main() {
         .add_system(gameplay::systems::reset)
         .add_system(gameplay::systems::ease_movement)
         .add_system(gameplay::systems::update_control_display)
-        .add_startup_system(gameplay::transitions::spawn_control_display)
+        .add_system(gameplay::transitions::spawn_control_display)
         .add_system(gameplay::transitions::spawn_death_card)
         .add_system(gameplay::transitions::spawn_level_card)
         .add_system(gameplay::transitions::level_card_update)

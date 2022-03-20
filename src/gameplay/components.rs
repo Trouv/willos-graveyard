@@ -102,3 +102,6 @@ impl Default for WindTimer {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
 pub struct ControlDisplayNode;
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
+pub struct UiRoot;
