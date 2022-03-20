@@ -3624,12 +3624,12 @@
 			"fieldInstances": [
 				{
 					"__identifier": "Title",
-					"__value": "Shift change at the graveyard",
+					"__value": "Graveyard shift change",
 					"__type": "String",
 					"defUid": 28,
 					"realEditorValues": [{
 						"id": "V_String",
-						"params": ["Shift change at the graveyard"]
+						"params": ["Graveyard shift change"]
 					}]
 				},
 				{

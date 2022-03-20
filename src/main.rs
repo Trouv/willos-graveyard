@@ -51,6 +51,7 @@ fn main() {
         .add_system(gameplay::systems::rewind)
         .add_system(gameplay::systems::reset)
         .add_system(gameplay::systems::ease_movement)
+        .add_system(gameplay::transitions::spawn_death_card)
         .add_system(gameplay::transitions::spawn_level_card)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
@@ -92,7 +93,6 @@ pub fn sprite_load(
     mut commands: Commands,
     assets: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    mut writer: EventWriter<gameplay::LevelCardEvent>,
 ) {
     let grass_plain_handle = assets.load("textures/grass_plain.png");
     let grass_plain_atlas =
@@ -110,8 +110,6 @@ pub fn sprite_load(
         grass_tufts: texture_atlases.add(grass_tufts_atlas),
         grass_stone: texture_atlases.add(grass_stone_atlas),
     });
-
-    //writer.send(gameplay::LevelCardEvent::Rise)
 }
 
 pub struct SoundEffects {

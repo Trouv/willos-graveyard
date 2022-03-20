@@ -49,7 +49,7 @@ pub struct MoveTable {
     pub table: [[Option<KeyCode>; 4]; 4],
 }
 
-#[derive(Clone, Eq, PartialEq, Debug, Hash, Component)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum PlayerState {
     Waiting,
     Dead,
@@ -75,6 +75,9 @@ pub enum LevelCard {
     Falling,
     End,
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
+pub struct DeathCard;
 
 #[derive(Clone, Debug, Component)]
 pub struct MovementTimer(pub Timer);

@@ -22,6 +22,90 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
+pub fn spawn_death_card(
+    mut commands: Commands,
+    assets: Res<AssetServer>,
+    player_query: Query<&PlayerState, Changed<PlayerState>>,
+    death_cards: Query<Entity, With<DeathCard>>,
+    mut last_state: Local<PlayerState>,
+) {
+    for state in player_query.iter() {
+        if *state == PlayerState::Dead && *last_state != PlayerState::Dead {
+            // Player just died
+            commands.spawn_bundle(NodeBundle {
+                color: UiColor(Color::rgba(0., 0., 0., 0.8)),
+                ..Default::default()
+            })
+            .insert(
+                Style {
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    position_type: PositionType::Absolute,
+                    flex_direction: FlexDirection::ColumnReverse,
+                    size: Size {
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                    },
+                    position: Rect {
+                        top: Val::Percent(100.),
+                        left: Val::Percent(0.),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                }
+                .ease_to(
+                    Style {
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        position_type: PositionType::Absolute,
+                        flex_direction: FlexDirection::ColumnReverse,
+                        size: Size {
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                        },
+                        position: Rect {
+                            top: Val::Percent(0.),
+                            left: Val::Percent(0.),
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    },
+                    EaseFunction::QuadraticOut,
+                    EasingType::Once {
+                        duration: Duration::from_millis(600),
+                    },
+                ),
+            )
+            .insert(DeathCard)
+            .with_children(|parent| {
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        "EXORCISED\n\nR to restart\nZ to undo",
+                        TextStyle {
+                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                            font_size: 30.,
+                            color: Color::WHITE,
+                        },
+                        TextAlignment {
+                            horizontal: HorizontalAlign::Center,
+                            vertical: VerticalAlign::Center,
+                        },
+                    ),
+                    ..Default::default()
+                });
+            });
+
+        } else if *state != PlayerState::Dead && *last_state == PlayerState::Dead {
+            // Player just un-died
+            if let Ok(entity) = death_cards.get_single() {
+                commands.entity(entity).despawn_recursive();
+            }
+        }
+
+        *last_state = *state;
+    }
+}
+
 pub fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCardEvent>,
@@ -205,8 +289,8 @@ pub fn level_card_update(
 }
 
 const PLAY_ZONE_RATIO: Size<i32> = Size {
-    width: 1,
-    height: 1,
+    width: 4,
+    height: 3,
 };
 
 const ASPECT_RATIO: Size<i32> = Size {
@@ -266,8 +350,8 @@ pub fn fit_camera_around_play_zone_padded(
                         projection.top = play_zone_size.height;
                     };
 
-                    transform.translation.x = (projection.right - padded_level_size.x as f32) / -2.;
-                    transform.translation.y = (projection.top - padded_level_size.y as f32) / -2.;
+                    transform.translation.x = (play_zone_size.width - padded_level_size.x as f32) / -2.;
+                    transform.translation.y = (play_zone_size.height - padded_level_size.y as f32) / -2.;
                 }
             }
             _ => (),
