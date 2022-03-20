@@ -33,7 +33,7 @@ pub fn spawn_death_card(
         if *state == PlayerState::Dead && *last_state != PlayerState::Dead {
             // Player just died
             commands.spawn_bundle(NodeBundle {
-                color: UiColor(Color::rgba(0., 0., 0., 0.8)),
+                color: UiColor(Color::rgba(0., 0., 0., 0.9)),
                 ..Default::default()
             })
             .insert(
