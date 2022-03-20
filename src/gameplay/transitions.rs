@@ -10,6 +10,16 @@ use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use std::time::Duration;
 
 
+const PLAY_ZONE_RATIO: Size<i32> = Size {
+    width: 4,
+    height: 3,
+};
+
+const ASPECT_RATIO: Size<i32> = Size {
+    width: 16,
+    height: 9,
+};
+
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn_bundle(OrthographicCameraBundle::new_2d())
@@ -20,6 +30,37 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         transform: Transform::from_xyz(32., 32., 0.),
         ..Default::default()
     });
+}
+
+pub fn spawn_control_display(
+    mut commands: Commands,
+) {
+
+    let aspect_ratio = ASPECT_RATIO.width as f32/ ASPECT_RATIO.height as f32;
+    let play_zone_ratio = PLAY_ZONE_RATIO.width as f32/ PLAY_ZONE_RATIO.height as f32;
+    let control_zone_ratio = aspect_ratio - play_zone_ratio;
+
+    commands.spawn_bundle(NodeBundle {
+        color: UiColor(Color::NONE),
+        style: Style {
+            flex_direction: FlexDirection::ColumnReverse,
+            align_items: AlignItems::Center,
+            position_type: PositionType::Absolute,
+            justify_content: JustifyContent::Center,
+            align_content: AlignContent::FlexStart,
+            size: Size {
+                width: Val::Percent(100. * control_zone_ratio),
+                height: Val::Percent(100.),
+            },
+            position: Rect {
+                top: Val::Percent(0.),
+                left: Val::Percent(100. - 100. * control_zone_ratio),
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+        ..Default::default()
+    }).insert(ControlDisplayNode);
 }
 
 pub fn spawn_death_card(
@@ -287,16 +328,6 @@ pub fn level_card_update(
         }
     }
 }
-
-const PLAY_ZONE_RATIO: Size<i32> = Size {
-    width: 4,
-    height: 3,
-};
-
-const ASPECT_RATIO: Size<i32> = Size {
-    width: 16,
-    height: 9,
-};
 
 pub fn fit_camera_around_play_zone_padded(
     mut camera_query: Query<

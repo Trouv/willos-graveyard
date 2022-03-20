@@ -324,3 +324,44 @@ pub fn animate_grass_system(
         }
     }
 }
+
+pub fn update_control_display(
+    mut commands: Commands,
+    move_table_query: Query<&MoveTable, Changed<MoveTable>>,
+    control_display_query: Query<Entity, With<ControlDisplayNode>>,
+    assets: Res<AssetServer>,
+) {
+    for move_table in move_table_query.iter() {
+        let control_display_entity = control_display_query.single();
+
+        commands
+            .entity(control_display_entity)
+            .despawn_descendants();
+
+        for (i, rank) in move_table.table.iter().enumerate() {
+            for (j, key) in rank.iter().enumerate() {
+                if let Some(key) = key {
+                    let rule = (key, DIRECTION_ORDER[i], DIRECTION_ORDER[j]);
+
+                    commands
+                        .entity(control_display_entity)
+                        .with_children(|parent| {
+                            parent.spawn_bundle(TextBundle {
+                                text: Text::with_section(
+                                    format!("{rule:?}"),
+                                    TextStyle {
+                                        font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                        font_size: 30.,
+                                        color: Color::WHITE,
+                                    },
+                                    TextAlignment::default(),
+                                ),
+                                transform: Transform::from_xyz(0., 0., 1.),
+                                ..Default::default()
+                            });
+                        });
+                }
+            }
+        }
+    }
+}

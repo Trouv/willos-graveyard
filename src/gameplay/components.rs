@@ -99,3 +99,6 @@ impl Default for WindTimer {
         WindTimer(Timer::from_seconds(0.2, true))
     }
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
+pub struct ControlDisplayNode;

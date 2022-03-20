@@ -51,6 +51,8 @@ fn main() {
         .add_system(gameplay::systems::rewind)
         .add_system(gameplay::systems::reset)
         .add_system(gameplay::systems::ease_movement)
+        .add_system(gameplay::systems::update_control_display)
+        .add_startup_system(gameplay::transitions::spawn_control_display)
         .add_system(gameplay::transitions::spawn_death_card)
         .add_system(gameplay::transitions::spawn_level_card)
         .add_system(gameplay::transitions::level_card_update)
