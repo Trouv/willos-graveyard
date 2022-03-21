@@ -39,24 +39,24 @@ pub fn spawn_control_display(mut commands: Commands, ui_root_query: Query<Entity
     for ui_root_entity in ui_root_query.iter() {
         let aspect_ratio = ASPECT_RATIO.width as f32 / ASPECT_RATIO.height as f32;
         let play_zone_ratio = PLAY_ZONE_RATIO.width as f32 / PLAY_ZONE_RATIO.height as f32;
-        let control_zone_ratio = aspect_ratio - play_zone_ratio;
+        let control_zone_ratio = (aspect_ratio - play_zone_ratio) / aspect_ratio;
 
         commands
             .spawn_bundle(NodeBundle {
                 color: UiColor(Color::NONE),
                 style: Style {
                     flex_direction: FlexDirection::ColumnReverse,
-                    align_items: AlignItems::Center,
-                    position_type: PositionType::Absolute,
+                    align_items: AlignItems::FlexStart,
                     justify_content: JustifyContent::Center,
-                    align_content: AlignContent::FlexStart,
+                    align_content: AlignContent::Center,
+                    position_type: PositionType::Absolute,
                     size: Size {
                         width: Val::Percent(100. * control_zone_ratio),
                         height: Val::Percent(100.),
                     },
                     position: Rect {
                         top: Val::Percent(0.),
-                        left: Val::Percent(100. - 100. * control_zone_ratio),
+                        right: Val::Percent(0.),
                         ..Default::default()
                     },
                     ..Default::default()
