@@ -331,6 +331,11 @@ pub fn update_control_display(
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
     assets: Res<AssetServer>,
 ) {
+    enum ControlNode {
+        Text(String),
+        Image(Handle<Image>),
+    }
+
     for move_table in move_table_query.iter() {
         let control_display_entity = control_display_query.single();
 
@@ -345,43 +350,117 @@ pub fn update_control_display(
             font_size: 30.,
             color: Color::WHITE,
         };
-
-        for (i, rank) in move_table.table.iter().enumerate() {
-            for (j, key) in rank.iter().enumerate() {
-                if let Some(key) = key {
-                    let rule = (key, DIRECTION_ORDER[i], DIRECTION_ORDER[j]);
-
-                    commands
-                        .entity(control_display_entity)
-                        .with_children(|parent| {
-                            parent.spawn_bundle(TextBundle {
-                                text: Text::with_section(
-                                    format!("{rule:?}"),
-                                    style.clone(),
-                                    TextAlignment::default(),
-                                ),
-                                ..Default::default()
-                            });
-                        });
-                }
-            }
-        }
-
         commands
             .entity(control_display_entity)
             .with_children(|parent| {
-                parent.spawn_bundle(TextBundle {
-                    text: Text::with_section(
-                        "R = restart",
-                        style.clone(),
-                        TextAlignment::default(),
-                    ),
-                    ..Default::default()
-                });
-                parent.spawn_bundle(TextBundle {
-                    text: Text::with_section("Z = undo", style, TextAlignment::default()),
-                    ..Default::default()
-                });
+                let mut add_row = |nodes: Vec<ControlNode>| {
+                    parent
+                        .spawn_bundle(NodeBundle {
+                            style: Style {
+                                size: Size {
+                                    height: Val::Percent(100. / 18.),
+                                    ..Default::default()
+                                },
+                                margin: Rect {
+                                    bottom: Val::Px(16.),
+                                    ..Default::default()
+                                },
+                                ..Default::default()
+                            },
+                            color: UiColor(Color::NONE),
+                            ..Default::default()
+                        })
+                        .with_children(|parent| {
+                            for node in nodes {
+                                match node {
+                                    ControlNode::Text(s) => {
+                                        parent.spawn_bundle(TextBundle {
+                                            text: Text::with_section(
+                                                s,
+                                                style.clone(),
+                                                TextAlignment {
+                                                    vertical: VerticalAlign::Center,
+                                                    horizontal: HorizontalAlign::Center,
+                                                },
+                                            ),
+                                            style: Style {
+                                                size: Size {
+                                                    height: Val::Percent(100.),
+                                                    ..Default::default()
+                                                },
+                                                margin: Rect {
+                                                    right: Val::Px(16.),
+                                                    ..Default::default()
+                                                },
+                                                ..Default::default()
+                                            },
+                                            ..Default::default()
+                                        });
+                                    }
+                                    ControlNode::Image(h) => {
+                                        parent.spawn_bundle(ImageBundle {
+                                            image: UiImage(h),
+                                            style: Style {
+                                                size: Size {
+                                                    height: Val::Percent(100.),
+                                                    ..Default::default()
+                                                },
+                                                margin: Rect {
+                                                    right: Val::Px(16.),
+                                                    ..Default::default()
+                                                },
+                                                ..Default::default()
+                                            },
+                                            ..Default::default()
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                };
+
+                for (i, rank) in move_table.table.iter().enumerate() {
+                    for (j, key) in rank.iter().enumerate() {
+                        if let Some(key) = key {
+                            let first_dir = DIRECTION_ORDER[i];
+                            let second_dir = DIRECTION_ORDER[j];
+
+                            let key_handle = match key {
+                                KeyCode::W => assets.load("textures/w_0.png"),
+                                KeyCode::A => assets.load("textures/a_0.png"),
+                                KeyCode::S => assets.load("textures/s_0.png"),
+                                _ => assets.load("textures/d_0.png"),
+                            };
+
+                            let direction_handle = |d: Direction| -> Handle<Image> {
+                                match d {
+                                    Direction::Up => assets.load("textures/up.png"),
+                                    Direction::Left => assets.load("textures/left.png"),
+                                    Direction::Down => assets.load("textures/down.png"),
+                                    Direction::Right => assets.load("textures/right.png"),
+                                }
+                            };
+
+                            add_row(vec![
+                                ControlNode::Image(key_handle),
+                                ControlNode::Text("=".to_string()),
+                                ControlNode::Image(direction_handle(first_dir)),
+                                ControlNode::Image(direction_handle(second_dir)),
+                            ]);
+                        }
+                    }
+                }
+
+                add_row(vec![
+                    ControlNode::Text(format!("R")),
+                    ControlNode::Text("=".to_string()),
+                    ControlNode::Text("restart".to_string()),
+                ]);
+                add_row(vec![
+                    ControlNode::Text(format!("Z")),
+                    ControlNode::Text("=".to_string()),
+                    ControlNode::Text("undo".to_string()),
+                ]);
             });
     }
 }
