@@ -1,3 +1,4 @@
+mod event_scheduler;
 mod gameplay;
 
 use bevy::prelude::*;
