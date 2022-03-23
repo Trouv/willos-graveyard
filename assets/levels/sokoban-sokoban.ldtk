@@ -447,7 +447,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "4777" }
+			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "1fff" }
 		},
 		{
 			"__cWid": 1,
@@ -4424,7 +4424,16 @@
 						"params": ["T Spin"]
 					}]
 				},
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "defUid": 64, "realEditorValues": [] }
+				{
+					"__identifier": "Notes",
+					"__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?",
+					"__type": "String",
+					"defUid": 64,
+					"realEditorValues": [{
+						"id": "V_String",
+						"params": ["Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?"]
+					}]
+				}
 			],
 			"layerInstances": [
 				{
@@ -5699,7 +5708,18 @@
 						"params": ["Two Zs"]
 					}]
 				},
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "defUid": 64, "realEditorValues": [] }
+				{
+					"__identifier": "Notes",
+					"__value": "This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working.",
+					"__type": "String",
+					"defUid": 64,
+					"realEditorValues": [{
+						"id": "V_String",
+						"params": [
+							"This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working."
+						]
+					}]
+				}
 			],
 			"layerInstances": [
 				{

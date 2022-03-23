@@ -1,4 +1,5 @@
 use crate::{
+    event_scheduler::EventScheduler,
     gameplay::{
         components::*, xy_translation, ActionEvent, Direction, LevelCardEvent, PlayerMovementEvent,
         DIRECTION_ORDER,
@@ -9,7 +10,7 @@ use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use rand::Rng;
-use std::cmp;
+use std::{cmp, time::Duration};
 
 pub fn ease_movement(
     mut commands: Commands,
@@ -269,10 +270,17 @@ pub fn check_death(
     }
 }
 
+pub fn schedule_level_card(level_card_events: &mut EventScheduler<LevelCardEvent>) {
+    level_card_events.schedule(LevelCardEvent::Rise, Duration::from_millis(500));
+    level_card_events.schedule(LevelCardEvent::Block, Duration::from_millis(2000));
+    level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3500));
+    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(5000));
+}
+
 pub fn check_goal(
     goal_query: Query<&GridCoords, With<Goal>>,
     block_query: Query<&GridCoords, With<InputBlock>>,
-    mut writer: EventWriter<LevelCardEvent>,
+    mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut level_state: ResMut<LevelState>,
     level_selection: ResMut<LevelSelection>,
     audio: Res<Audio>,
@@ -296,7 +304,9 @@ pub fn check_goal(
         if let LevelSelection::Index(num) = level_selection.into_inner() {
             *num += 1;
         }
-        writer.send(LevelCardEvent::Rise);
+
+        schedule_level_card(&mut level_card_events);
+
         audio.play(sfx.victory.clone_weak());
     }
 }

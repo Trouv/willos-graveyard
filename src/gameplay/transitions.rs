@@ -1,5 +1,6 @@
 use crate::{
-    gameplay::{components::*, LevelCardEvent},
+    event_scheduler::EventScheduler,
+    gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
     LevelState, ASPECT_RATIO, PLAY_ZONE_RATIO,
 };
 use bevy::prelude::*;
@@ -155,30 +156,23 @@ pub fn spawn_death_card(
     }
 }
 
+pub fn schedule_first_level_card(mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>) {
+    schedule_level_card(&mut level_card_events);
+}
+
 pub fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCardEvent>,
-    mut level_event: EventReader<LevelEvent>,
-    mut ldtk_loaded: Local<bool>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     assets: Res<AssetServer>,
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
-    let create_card = if !*ldtk_loaded {
-        if level_event.iter().count() > 0 {
-            *ldtk_loaded = true;
-            true
-        } else {
-            false
-        }
-    } else {
-        reader
-            .iter()
-            .filter(|e| **e == LevelCardEvent::Rise)
-            .count()
-            > 0
-    };
+    let create_card = reader
+        .iter()
+        .filter(|e| **e == LevelCardEvent::Rise)
+        .count()
+        > 0;
 
     if create_card {
         let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
@@ -250,7 +244,6 @@ pub fn spawn_level_card(
                     },
                 ),
             )
-            .insert(Timer::new(Duration::from_millis(1500), false))
             .with_children(|parent| {
                 if let Some(level_num) = level_num {
                     parent.spawn_bundle(TextBundle {
@@ -293,22 +286,17 @@ pub fn spawn_level_card(
 
 pub fn level_card_update(
     mut commands: Commands,
-    mut card_query: Query<(Entity, &mut LevelCard, &mut Style, &mut Timer)>,
-    mut level_card_event_writer: EventWriter<LevelCardEvent>,
+    mut card_query: Query<(Entity, &mut LevelCard, &mut Style)>,
     mut level_state: ResMut<LevelState>,
-    time: Res<Time>,
+    mut level_card_events: EventReader<LevelCardEvent>,
 ) {
-    for (entity, mut card, style, mut timer) in card_query.iter_mut() {
-        timer.tick(time.delta());
-        if timer.finished() {
-            match *card {
-                LevelCard::Rising => {
-                    level_card_event_writer.send(LevelCardEvent::Block);
+    for event in level_card_events.iter() {
+        for (entity, mut card, style) in card_query.iter_mut() {
+            match event {
+                LevelCardEvent::Block => {
                     *card = LevelCard::Holding;
                 }
-                LevelCard::Holding => {
-                    level_card_event_writer.send(LevelCardEvent::Fall);
-
+                LevelCardEvent::Fall => {
                     commands.entity(entity).insert(style.clone().ease_to(
                         Style {
                             position: Rect {
@@ -327,13 +315,12 @@ pub fn level_card_update(
                     *level_state = LevelState::Gameplay;
                     *card = LevelCard::Falling;
                 }
-                LevelCard::Falling => {
+                LevelCardEvent::Despawn => {
                     // SELF DESTRUCT
                     commands.entity(entity).despawn_recursive();
                 }
                 _ => {}
             }
-            timer.reset();
         }
     }
 }

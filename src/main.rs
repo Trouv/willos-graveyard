@@ -44,13 +44,16 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<gameplay::ActionEvent>()
-        .add_event::<gameplay::LevelCardEvent>()
+        .add_plugin(event_scheduler::EventSchedulerPlugin::<
+            gameplay::LevelCardEvent,
+        >::new())
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
+        .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_system(gameplay::systems::player_state_input.label(SystemLabels::Input))
         .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
         .add_system(

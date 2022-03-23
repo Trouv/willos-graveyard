@@ -48,4 +48,5 @@ pub enum LevelCardEvent {
     Rise,
     Block,
     Fall,
+    Despawn,
 }

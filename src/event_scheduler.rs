@@ -16,6 +16,15 @@ where
     }
 }
 
+impl<E> EventSchedulerPlugin<E>
+where
+    E: 'static + Send + Sync,
+{
+    pub fn new() -> Self {
+        EventSchedulerPlugin::<E> { data: PhantomData }
+    }
+}
+
 #[derive(Clone, Debug, Component)]
 pub struct EventScheduler<E>
 where
@@ -40,7 +49,7 @@ impl<E> EventScheduler<E>
 where
     E: 'static + Send + Sync,
 {
-    pub fn schedule_event(&mut self, event: E, duration: Duration) {
+    pub fn schedule(&mut self, event: E, duration: Duration) {
         self.events.push_back((event, Timer::new(duration, false)));
     }
 }
