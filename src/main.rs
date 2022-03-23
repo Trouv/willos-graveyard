@@ -70,6 +70,7 @@ fn main() {
         .add_system(gameplay::transitions::spawn_control_display)
         .add_system(gameplay::transitions::spawn_death_card)
         .add_system(gameplay::transitions::spawn_level_card)
+        .add_system(gameplay::transitions::load_next_level)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
         .add_system(gameplay::systems::animate_grass_system)

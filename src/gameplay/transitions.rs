@@ -160,6 +160,31 @@ pub fn schedule_first_level_card(mut level_card_events: ResMut<EventScheduler<Le
     schedule_level_card(&mut level_card_events);
 }
 
+pub fn load_next_level(
+    mut level_card_events: EventReader<LevelCardEvent>,
+    level_selection: ResMut<LevelSelection>,
+    mut first_card_skipped: Local<bool>,
+) {
+    let mut update_level = false;
+
+    for event in level_card_events.iter() {
+        if *event == LevelCardEvent::Block {
+            if *first_card_skipped {
+                update_level = true;
+            } else {
+                *first_card_skipped = true;
+            }
+        }
+    }
+
+    if update_level {
+        println!("Loading level");
+        if let LevelSelection::Index(num) = level_selection.into_inner() {
+            *num += 1;
+        }
+    }
+}
+
 pub fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCardEvent>,
@@ -180,10 +205,11 @@ pub fn spawn_level_card(
 
         if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
             if let LevelSelection::Index(level_index) = *level_selection {
-                if level_index < ldtk_asset.project.levels.len() {
-                    level_num = Some(level_index);
+                let next_level_index = level_index + 1;
+                if next_level_index < ldtk_asset.project.levels.len() {
+                    level_num = Some(next_level_index);
 
-                    let level = ldtk_asset.project.levels.get(level_index).unwrap();
+                    let level = ldtk_asset.project.levels.get(next_level_index).unwrap();
 
                     if let Some(FieldInstance {
                         value: FieldValue::String(Some(level_title)),

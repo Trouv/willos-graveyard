@@ -271,10 +271,10 @@ pub fn check_death(
 }
 
 pub fn schedule_level_card(level_card_events: &mut EventScheduler<LevelCardEvent>) {
-    level_card_events.schedule(LevelCardEvent::Rise, Duration::from_millis(500));
-    level_card_events.schedule(LevelCardEvent::Block, Duration::from_millis(2000));
-    level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3500));
-    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(5000));
+    level_card_events.schedule(LevelCardEvent::Rise, Duration::from_millis(100));
+    level_card_events.schedule(LevelCardEvent::Block, Duration::from_millis(1600));
+    level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3100));
+    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(46000));
 }
 
 pub fn check_goal(
@@ -282,7 +282,6 @@ pub fn check_goal(
     block_query: Query<&GridCoords, With<InputBlock>>,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut level_state: ResMut<LevelState>,
-    level_selection: ResMut<LevelSelection>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
@@ -301,9 +300,6 @@ pub fn check_goal(
         }
 
         *level_state = LevelState::Inbetween;
-        if let LevelSelection::Index(num) = level_selection.into_inner() {
-            *num += 1;
-        }
 
         schedule_level_card(&mut level_card_events);
 
