@@ -156,31 +156,25 @@ pub fn spawn_death_card(
     }
 }
 
-pub fn schedule_first_level_card(mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>) {
-    schedule_level_card(&mut level_card_events);
+pub fn schedule_first_level_card(
+    mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
+    level_selection: Res<LevelSelection>,
+) {
+    schedule_level_card(&mut level_card_events, level_selection.clone());
 }
 
 pub fn load_next_level(
     mut level_card_events: EventReader<LevelCardEvent>,
-    level_selection: ResMut<LevelSelection>,
+    mut level_selection: ResMut<LevelSelection>,
     mut first_card_skipped: Local<bool>,
 ) {
-    let mut update_level = false;
-
     for event in level_card_events.iter() {
-        if *event == LevelCardEvent::Block {
+        if let LevelCardEvent::Block(new_level_selection) = event {
             if *first_card_skipped {
-                update_level = true;
+                *level_selection = new_level_selection.clone()
             } else {
                 *first_card_skipped = true;
             }
-        }
-    }
-
-    if update_level {
-        println!("Loading level");
-        if let LevelSelection::Index(num) = level_selection.into_inner() {
-            *num += 1;
         }
     }
 }
@@ -188,66 +182,42 @@ pub fn load_next_level(
 pub fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCardEvent>,
-    level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     assets: Res<AssetServer>,
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
-    let create_card = reader
-        .iter()
-        .filter(|e| **e == LevelCardEvent::Rise)
-        .count()
-        > 0;
+    for event in reader.iter() {
+        if let LevelCardEvent::Rise(level_selection) = event {
+            let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
+            let mut level_num = None;
 
-    if create_card {
-        let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
-        let mut level_num = None;
+            if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
+                if let LevelSelection::Index(level_index) = *level_selection {
+                    if level_index < ldtk_asset.project.levels.len() {
+                        level_num = Some(level_index);
 
-        if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
-            if let LevelSelection::Index(level_index) = *level_selection {
-                let next_level_index = level_index + 1;
-                if next_level_index < ldtk_asset.project.levels.len() {
-                    level_num = Some(next_level_index);
+                        let level = ldtk_asset.project.levels.get(level_index).unwrap();
 
-                    let level = ldtk_asset.project.levels.get(next_level_index).unwrap();
-
-                    if let Some(FieldInstance {
-                        value: FieldValue::String(Some(level_title)),
-                        ..
-                    }) = level
-                        .field_instances
-                        .iter()
-                        .find(|f| f.identifier == "Title")
-                    {
-                        title = level_title.clone();
+                        if let Some(FieldInstance {
+                            value: FieldValue::String(Some(level_title)),
+                            ..
+                        }) = level
+                            .field_instances
+                            .iter()
+                            .find(|f| f.identifier == "Title")
+                        {
+                            title = level_title.clone();
+                        }
                     }
                 }
             }
-        }
 
-        commands
-            .spawn_bundle(NodeBundle {
-                color: UiColor(Color::BLACK),
-                ..Default::default()
-            })
-            .insert(
-                Style {
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    position_type: PositionType::Absolute,
-                    flex_direction: FlexDirection::ColumnReverse,
-                    size: Size {
-                        width: Val::Percent(100.),
-                        height: Val::Percent(100.),
-                    },
-                    position: Rect {
-                        top: Val::Percent(100.),
-                        left: Val::Percent(0.),
-                        ..Default::default()
-                    },
+            commands
+                .spawn_bundle(NodeBundle {
+                    color: UiColor(Color::BLACK),
                     ..Default::default()
-                }
-                .ease_to(
+                })
+                .insert(
                     Style {
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
@@ -258,55 +228,73 @@ pub fn spawn_level_card(
                             height: Val::Percent(100.),
                         },
                         position: Rect {
-                            top: Val::Percent(0.),
+                            top: Val::Percent(100.),
                             left: Val::Percent(0.),
                             ..Default::default()
                         },
                         ..Default::default()
-                    },
-                    EaseFunction::QuadraticOut,
-                    EasingType::Once {
-                        duration: Duration::from_secs(1),
-                    },
-                ),
-            )
-            .with_children(|parent| {
-                if let Some(level_num) = level_num {
+                    }
+                    .ease_to(
+                        Style {
+                            justify_content: JustifyContent::Center,
+                            align_items: AlignItems::Center,
+                            position_type: PositionType::Absolute,
+                            flex_direction: FlexDirection::ColumnReverse,
+                            size: Size {
+                                width: Val::Percent(100.),
+                                height: Val::Percent(100.),
+                            },
+                            position: Rect {
+                                top: Val::Percent(0.),
+                                left: Val::Percent(0.),
+                                ..Default::default()
+                            },
+                            ..Default::default()
+                        },
+                        EaseFunction::QuadraticOut,
+                        EasingType::Once {
+                            duration: Duration::from_secs(1),
+                        },
+                    ),
+                )
+                .with_children(|parent| {
+                    if let Some(level_num) = level_num {
+                        parent.spawn_bundle(TextBundle {
+                            text: Text::with_section(
+                                format!("#{}", level_num),
+                                TextStyle {
+                                    font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                    font_size: 50.,
+                                    color: Color::WHITE,
+                                },
+                                TextAlignment {
+                                    vertical: VerticalAlign::Center,
+                                    horizontal: HorizontalAlign::Center,
+                                },
+                            ),
+                            ..Default::default()
+                        });
+                    }
                     parent.spawn_bundle(TextBundle {
                         text: Text::with_section(
-                            format!("#{}", level_num),
+                            title,
                             TextStyle {
                                 font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                font_size: 50.,
+                                font_size: 30.,
                                 color: Color::WHITE,
                             },
-                            TextAlignment {
-                                vertical: VerticalAlign::Center,
-                                horizontal: HorizontalAlign::Center,
-                            },
+                            TextAlignment::default(),
                         ),
                         ..Default::default()
                     });
-                }
-                parent.spawn_bundle(TextBundle {
-                    text: Text::with_section(
-                        title,
-                        TextStyle {
-                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                            font_size: 30.,
-                            color: Color::WHITE,
-                        },
-                        TextAlignment::default(),
-                    ),
-                    ..Default::default()
-                });
-            })
-            .insert(if level_num.is_some() {
-                LevelCard::Rising
-            } else {
-                LevelCard::End
-            })
-            .insert(Parent(ui_root_query.single()));
+                })
+                .insert(if level_num.is_some() {
+                    LevelCard::Rising
+                } else {
+                    LevelCard::End
+                })
+                .insert(Parent(ui_root_query.single()));
+        }
     }
 }
 
@@ -319,7 +307,7 @@ pub fn level_card_update(
     for event in level_card_events.iter() {
         for (entity, mut card, style) in card_query.iter_mut() {
             match event {
-                LevelCardEvent::Block => {
+                LevelCardEvent::Block(_) => {
                     *card = LevelCard::Holding;
                 }
                 LevelCardEvent::Fall => {

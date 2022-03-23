@@ -1,5 +1,6 @@
 use crate::UNIT_LENGTH;
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use serde::{Deserialize, Serialize};
 pub mod bundles;
 pub mod components;
@@ -43,10 +44,10 @@ pub struct PlayerMovementEvent {
 
 pub struct ActionEvent;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
+#[derive(Clone, Eq, PartialEq, Debug)]
 pub enum LevelCardEvent {
-    Rise,
-    Block,
+    Rise(LevelSelection),
+    Block(LevelSelection),
     Fall,
     Despawn,
 }

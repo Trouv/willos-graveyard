@@ -270,9 +270,18 @@ pub fn check_death(
     }
 }
 
-pub fn schedule_level_card(level_card_events: &mut EventScheduler<LevelCardEvent>) {
-    level_card_events.schedule(LevelCardEvent::Rise, Duration::from_millis(100));
-    level_card_events.schedule(LevelCardEvent::Block, Duration::from_millis(1600));
+pub fn schedule_level_card(
+    level_card_events: &mut EventScheduler<LevelCardEvent>,
+    level_selection: LevelSelection,
+) {
+    level_card_events.schedule(
+        LevelCardEvent::Rise(level_selection.clone()),
+        Duration::from_millis(100),
+    );
+    level_card_events.schedule(
+        LevelCardEvent::Block(level_selection),
+        Duration::from_millis(1600),
+    );
     level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3100));
     level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(46000));
 }
@@ -282,6 +291,7 @@ pub fn check_goal(
     block_query: Query<&GridCoords, With<InputBlock>>,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut level_state: ResMut<LevelState>,
+    level_selection: Res<LevelSelection>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
@@ -301,7 +311,9 @@ pub fn check_goal(
 
         *level_state = LevelState::Inbetween;
 
-        schedule_level_card(&mut level_card_events);
+        if let LevelSelection::Index(num) = *level_selection {
+            schedule_level_card(&mut level_card_events, LevelSelection::Index(num + 1));
+        }
 
         audio.play(sfx.victory.clone_weak());
     }
