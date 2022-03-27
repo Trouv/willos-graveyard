@@ -383,18 +383,27 @@ pub fn fit_camera_around_play_zone_padded(
 
                     if play_zone_ratio > aspect_ratio {
                         // Play zone is "wide"
-                        projection.right = play_zone_size.width;
-                        projection.top = play_zone_size.width / aspect_ratio;
+                        let pixel_perfect_width = (play_zone_size.width / ASPECT_RATIO.width as f32)
+                            .round() as i32
+                            * ASPECT_RATIO.width;
+
+                        projection.right = pixel_perfect_width as f32;
+                        projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
                     } else {
                         // Play zone is "tall"
-                        projection.right = play_zone_size.height * aspect_ratio;
-                        projection.top = play_zone_size.height;
+
+                        let pixel_perfect_height =
+                            (play_zone_size.height / ASPECT_RATIO.height as f32).round() as i32
+                                * ASPECT_RATIO.height;
+
+                        projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
+                        projection.top = pixel_perfect_height as f32;
                     };
 
                     transform.translation.x =
-                        (play_zone_size.width - padded_level_size.x as f32) / -2.;
+                        ((play_zone_size.width - padded_level_size.x as f32) / -2.).round();
                     transform.translation.y =
-                        (play_zone_size.height - padded_level_size.y as f32) / -2.;
+                        ((play_zone_size.height - padded_level_size.y as f32) / -2.).round();
                 }
             }
             _ => (),

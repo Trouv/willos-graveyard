@@ -283,7 +283,7 @@ pub fn schedule_level_card(
         Duration::from_millis(1600),
     );
     level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3100));
-    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(46000));
+    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(4600));
 }
 
 pub fn check_goal(
