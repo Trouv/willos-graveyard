@@ -5979,6 +5979,61 @@
 							"defUid": 19,
 							"px": [64,224],
 							"fieldInstances": []
+						},
+						{
+							"__identifier": "Grass",
+							"__grid": [1,1],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 50, "srcRect": [0,0,32,32] },
+							"width": 32,
+							"height": 32,
+							"defUid": 52,
+							"px": [32,32],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Grass",
+							"__grid": [7,7],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 50, "srcRect": [0,0,32,32] },
+							"width": 32,
+							"height": 32,
+							"defUid": 52,
+							"px": [224,224],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Grass",
+							"__grid": [2,13],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 50, "srcRect": [0,0,32,32] },
+							"width": 32,
+							"height": 32,
+							"defUid": 52,
+							"px": [64,416],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Grass",
+							"__grid": [3,6],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 50, "srcRect": [0,0,32,32] },
+							"width": 32,
+							"height": 32,
+							"defUid": 52,
+							"px": [96,192],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "Grass",
+							"__grid": [8,3],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 50, "srcRect": [0,0,32,32] },
+							"width": 32,
+							"height": 32,
+							"defUid": 52,
+							"px": [256,96],
+							"fieldInstances": []
 						}
 					]
 				},
