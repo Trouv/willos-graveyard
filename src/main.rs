@@ -38,8 +38,9 @@ fn main() {
         level_num = std::env::args().last().unwrap().parse::<usize>().unwrap();
     }
 
-    App::new()
-        .add_plugins(DefaultPlugins)
+    let mut app = App::new();
+
+    app.add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
@@ -83,8 +84,14 @@ fn main() {
         .register_ldtk_entity::<gameplay::bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<gameplay::bundles::GrassBundle>("Grass")
         .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(1)
-        .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2)
-        .run()
+        .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2);
+
+    #[cfg(feature = "hot")]
+    {
+        app.add_startup_system(enable_hot_reloading);
+    }
+
+    app.run()
 }
 
 pub struct SpriteHandles {
@@ -142,4 +149,9 @@ pub fn sound_load(mut commands: Commands, assets: Res<AssetServer>) {
         push: assets.load("sfx/push.wav"),
         undo: assets.load("sfx/undo.wav"),
     })
+}
+
+#[cfg(feature = "hot")]
+pub fn enable_hot_reloading(asset_server: ResMut<AssetServer>) {
+    asset_server.watch_for_changes().unwrap();
 }

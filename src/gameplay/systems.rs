@@ -163,37 +163,38 @@ pub fn move_player_by_table(
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
-        let (mut timer, mut player) = player_query.single_mut();
-        timer.0.tick(time.delta());
+        if let Ok((mut timer, mut player)) = player_query.get_single_mut() {
+            timer.0.tick(time.delta());
 
-        if timer.0.finished() {
-            match *player {
-                PlayerState::RankMove(key) => {
-                    action_writer.send(ActionEvent);
-                    for (i, rank) in table.table.iter().enumerate() {
-                        if rank.contains(&Some(key)) {
-                            movement_writer.send(PlayerMovementEvent {
-                                direction: DIRECTION_ORDER[i],
-                            });
-                        }
-                    }
-                    *player = PlayerState::FileMove(key);
-                    timer.0.reset();
-                }
-                PlayerState::FileMove(key) => {
-                    for rank in table.table.iter() {
-                        for (i, cell) in rank.iter().enumerate() {
-                            if *cell == Some(key) {
+            if timer.0.finished() {
+                match *player {
+                    PlayerState::RankMove(key) => {
+                        action_writer.send(ActionEvent);
+                        for (i, rank) in table.table.iter().enumerate() {
+                            if rank.contains(&Some(key)) {
                                 movement_writer.send(PlayerMovementEvent {
                                     direction: DIRECTION_ORDER[i],
                                 });
                             }
                         }
+                        *player = PlayerState::FileMove(key);
+                        timer.0.reset();
                     }
-                    *player = PlayerState::Waiting;
-                    timer.0.reset();
+                    PlayerState::FileMove(key) => {
+                        for rank in table.table.iter() {
+                            for (i, cell) in rank.iter().enumerate() {
+                                if *cell == Some(key) {
+                                    movement_writer.send(PlayerMovementEvent {
+                                        direction: DIRECTION_ORDER[i],
+                                    });
+                                }
+                            }
+                        }
+                        *player = PlayerState::Waiting;
+                        timer.0.reset();
+                    }
+                    _ => {}
                 }
-                _ => {}
             }
         }
     }
@@ -257,14 +258,15 @@ pub fn check_death(
     level_state: Res<LevelState>,
 ) {
     if *level_state == LevelState::Gameplay {
-        let (player_coords, mut player_state) = player_query.single_mut();
-        if *player_state != PlayerState::Dead {
-            if exorcism_query
-                .iter()
-                .find(|&e| e == player_coords)
-                .is_some()
-            {
-                *player_state = PlayerState::Dead;
+        if let Ok((player_coords, mut player_state)) = player_query.get_single_mut() {
+            if *player_state != PlayerState::Dead {
+                if exorcism_query
+                    .iter()
+                    .find(|&e| e == player_coords)
+                    .is_some()
+                {
+                    *player_state = PlayerState::Dead;
+                }
             }
         }
     }
@@ -296,6 +298,13 @@ pub fn check_goal(
     sfx: Res<SoundEffects>,
 ) {
     if *level_state == LevelState::Gameplay {
+        // If the goal is not loaded for whatever reason (for example when hot-reloading levels),
+        // the goal will automatically be "met", loading the next level.
+        // This if statement prevents that.
+        if goal_query.iter().count() == 0 {
+            return ();
+        }
+
         for goal_grid_coords in goal_query.iter() {
             let mut goal_met = false;
             for block_grid_coords in block_query.iter() {
