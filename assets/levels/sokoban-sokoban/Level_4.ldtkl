@@ -205,20 +205,6 @@
 					"defUid": 17,
 					"px": [96,96],
 					"fieldInstances": []
-				},
-				{
-					"__identifier": "Goal",
-					"__grid": [3,9],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 4, "x": 64, "y": 32, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "4e1ac3a5-b4d0-11ec-885f-1ff3bb38509c",
-					"width": 32,
-					"height": 32,
-					"defUid": 18,
-					"px": [96,288],
-					"fieldInstances": []
 				}
 			]
 		},
@@ -320,7 +306,7 @@
 			"entityInstances": []
 		},
 		{
-			"__identifier": "Grass",
+			"__identifier": "Background_Entities",
 			"__type": "Entities",
 			"__cWid": 19,
 			"__cHei": 16,
@@ -1153,6 +1139,20 @@
 					"height": 160,
 					"defUid": 19,
 					"px": [224,320],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Goal",
+					"__grid": [3,9],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 4, "x": 64, "y": 32, "w": 32, "h": 32 },
+					"__smartColor": "#FFFFFF",
+					"iid": "b284a780-b4d0-11ec-885f-79081ae5f60e",
+					"width": 32,
+					"height": 32,
+					"defUid": 18,
+					"px": [96,288],
 					"fieldInstances": []
 				}
 			]

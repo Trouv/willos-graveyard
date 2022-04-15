@@ -241,7 +241,7 @@
 			"entityInstances": []
 		},
 		{
-			"__identifier": "Grass",
+			"__identifier": "Background_Entities",
 			"__type": "Entities",
 			"__cWid": 15,
 			"__cHei": 11,
