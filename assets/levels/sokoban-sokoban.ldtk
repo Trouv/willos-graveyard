@@ -1475,12 +1475,7 @@
 					"id": "V_String",
 					"params": ["Graveyard shift change"]
 				}] },
-				{ "__identifier": "Notes", "__value": "This level might be okay.\nWith the current order, it's the first level where the player seriously contends with the move table.\nTrial and error should get them into an okay set of movement options, but then actually solving the puzzle may be a bit hard at this stage.\nThough, I don't want to underestimate the player.\nI think it's okay to go ahead with this into the next play test, but I wouldn't be surprised if it's a bit too difficult.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"This level might be okay.\nWith the current order, it's the first level where the player seriously contends with the move table.\nTrial and error should get them into an okay set of movement options, but then actually solving the puzzle may be a bit hard at this stage.\nThough, I don't want to underestimate the player.\nI think it's okay to go ahead with this into the next play test, but I wouldn't be surprised if it's a bit too difficult."
-					]
-				}] }
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [null] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
