@@ -156,20 +156,6 @@
 					"fieldInstances": []
 				},
 				{
-					"__identifier": "Willo",
-					"__grid": [2,7],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "4e1d34a9-b4d0-11ec-885f-0f6c8604449d",
-					"width": 32,
-					"height": 32,
-					"defUid": 17,
-					"px": [64,224],
-					"fieldInstances": []
-				},
-				{
 					"__identifier": "A",
 					"__grid": [4,7],
 					"__pivot": [0,0],
@@ -195,6 +181,20 @@
 					"height": 32,
 					"defUid": 24,
 					"px": [128,96],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Willo",
+					"__grid": [2,7],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#FFFFFF",
+					"iid": "4e1d34a9-b4d0-11ec-885f-0f6c8604449d",
+					"width": 32,
+					"height": 32,
+					"defUid": 17,
+					"px": [64,224],
 					"fieldInstances": []
 				}
 			]

@@ -128,20 +128,6 @@
 			"gridTiles": [],
 			"entityInstances": [
 				{
-					"__identifier": "Willo",
-					"__grid": [2,7],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "4e2264c6-b4d0-11ec-885f-a5c57c09dcd2",
-					"width": 32,
-					"height": 32,
-					"defUid": 17,
-					"px": [64,224],
-					"fieldInstances": []
-				},
-				{
 					"__identifier": "W",
 					"__grid": [4,1],
 					"__pivot": [0,0],
@@ -181,6 +167,20 @@
 					"height": 32,
 					"defUid": 25,
 					"px": [224,128],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Willo",
+					"__grid": [2,7],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#FFFFFF",
+					"iid": "4e2264c6-b4d0-11ec-885f-a5c57c09dcd2",
+					"width": 32,
+					"height": 32,
+					"defUid": 17,
+					"px": [64,224],
 					"fieldInstances": []
 				}
 			]

@@ -143,6 +143,7 @@ pub fn player_state_input(mut player_query: Query<&mut PlayerState>, input: Res<
     for mut player in player_query.iter_mut() {
         if *player == PlayerState::Waiting {
             if input.just_pressed(KeyCode::W) {
+                dbg!("W");
                 *player = PlayerState::RankMove(KeyCode::W)
             } else if input.just_pressed(KeyCode::A) {
                 *player = PlayerState::RankMove(KeyCode::A)
@@ -163,12 +164,15 @@ pub fn move_player_by_table(
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
+        dbg!(&table);
         if let Ok((mut timer, mut player)) = player_query.get_single_mut() {
             timer.0.tick(time.delta());
+            dbg!(&player);
 
             if timer.0.finished() {
                 match *player {
                     PlayerState::RankMove(key) => {
+                        dbg!(&key);
                         action_writer.send(ActionEvent);
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
@@ -181,6 +185,7 @@ pub fn move_player_by_table(
                         timer.0.reset();
                     }
                     PlayerState::FileMove(key) => {
+                        dbg!(&key);
                         for rank in table.table.iter() {
                             for (i, cell) in rank.iter().enumerate() {
                                 if *cell == Some(key) {

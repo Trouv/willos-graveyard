@@ -334,20 +334,6 @@
 					"defUid": 18,
 					"px": [288,64],
 					"fieldInstances": []
-				},
-				{
-					"__identifier": "Willo",
-					"__grid": [2,9],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "4e159386-b4d0-11ec-885f-3f669756b6f0",
-					"width": 32,
-					"height": 32,
-					"defUid": 17,
-					"px": [64,288],
-					"fieldInstances": []
 				}
 			]
 		},
