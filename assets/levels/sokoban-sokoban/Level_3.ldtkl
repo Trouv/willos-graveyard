@@ -255,7 +255,7 @@
 			"entityInstances": [
 				{
 					"__identifier": "Grass",
-					"__grid": [4,6],
+					"__grid": [3,7],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 4, "x": 64, "y": 0, "w": 32, "h": 32 },
@@ -264,7 +264,7 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 52,
-					"px": [128,192],
+					"px": [96,224],
 					"fieldInstances": []
 				},
 				{
@@ -293,6 +293,34 @@
 					"height": 32,
 					"defUid": 18,
 					"px": [256,256],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [8,4],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 4, "x": 64, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "4bdcde50-b4d0-11ec-88b3-7d1a2dcaa761",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [256,128],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [1,2],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 4, "x": 64, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "4dd245b0-b4d0-11ec-88b3-6d5b94613f32",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [32,64],
 					"fieldInstances": []
 				}
 			]
