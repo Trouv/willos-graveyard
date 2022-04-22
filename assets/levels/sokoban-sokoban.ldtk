@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.1",
 	"appBuildId": 458278,
-	"nextUid": 108,
+	"nextUid": 109,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
@@ -339,7 +339,7 @@
 							"tileMode": "Single",
 							"pivotX": 0,
 							"pivotY": 0,
-							"outOfBoundsValue": null,
+							"outOfBoundsValue": 0,
 							"perlinActive": false,
 							"perlinSeed": 8205860,
 							"perlinScale": 0.2,
@@ -515,7 +515,7 @@
 							"tileMode": "Single",
 							"pivotX": 0,
 							"pivotY": 0,
-							"outOfBoundsValue": null,
+							"outOfBoundsValue": 0,
 							"perlinActive": false,
 							"perlinSeed": 8205860,
 							"perlinScale": 0.2,
@@ -1611,6 +1611,35 @@
 		},
 		{
 			"identifier": "Level_12",
+			"iid": "3e8979e0-b4d0-11ec-88b3-bb85270add56",
+			"uid": 108,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 288,
+			"pxHei": 288,
+			"__bgColor": "#D8DAEA",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#EAEBF3",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Martyr", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Martyr"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_13",
 			"iid": "4e21ef90-b4d0-11ec-885f-41d8e5c591e4",
 			"uid": 67,
 			"worldX": -1,
@@ -1627,7 +1656,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#EAEBF3",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "A simple variation", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1644,7 +1673,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_13",
+			"identifier": "Level_14",
 			"iid": "4e2264c0-b4d0-11ec-885f-19c010fcf197",
 			"uid": 62,
 			"worldX": -1,
@@ -1661,7 +1690,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#EAEBF3",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_14.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "No stone unturned", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
