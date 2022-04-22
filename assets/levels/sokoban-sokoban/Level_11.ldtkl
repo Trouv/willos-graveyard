@@ -139,7 +139,7 @@
 			"entityInstances": [
 				{
 					"__identifier": "D",
-					"__grid": [9,5],
+					"__grid": [8,5],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 21, "x": 0, "y": 96, "w": 32, "h": 32 },
@@ -148,12 +148,12 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 25,
-					"px": [288,160],
+					"px": [256,160],
 					"fieldInstances": []
 				},
 				{
 					"__identifier": "W",
-					"__grid": [7,2],
+					"__grid": [9,2],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 21, "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -162,12 +162,12 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 20,
-					"px": [224,64],
+					"px": [288,64],
 					"fieldInstances": []
 				},
 				{
 					"__identifier": "S",
-					"__grid": [7,4],
+					"__grid": [2,5],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 21, "x": 0, "y": 64, "w": 32, "h": 32 },
@@ -176,12 +176,12 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 24,
-					"px": [224,128],
+					"px": [64,160],
 					"fieldInstances": []
 				},
 				{
 					"__identifier": "A",
-					"__grid": [2,5],
+					"__grid": [7,3],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 21, "x": 0, "y": 32, "w": 32, "h": 32 },
@@ -190,7 +190,7 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 22,
-					"px": [64,160],
+					"px": [224,96],
 					"fieldInstances": []
 				},
 				{
