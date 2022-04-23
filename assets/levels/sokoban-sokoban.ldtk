@@ -1500,9 +1500,9 @@
 			"__bgPos": null,
 			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Flipsi", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__value": "Origami fortune teller", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Flipsi"]
+					"params": ["Origami fortune teller"]
 				}] },
 				{ "__identifier": "Notes", "__value": "Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level?\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level?", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
