@@ -1487,8 +1487,8 @@
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 672,
-			"pxHei": 480,
+			"pxWid": 576,
+			"pxHei": 448,
 			"__bgColor": "#D8DAEA",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -1504,10 +1504,10 @@
 					"id": "V_String",
 					"params": ["Origami fortune teller"]
 				}] },
-				{ "__identifier": "Notes", "__value": "Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level?\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level?", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+				{ "__identifier": "Notes", "__value": "Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level? - probably not, as you can't move A to << without moving W to ^v. No placement of D relieves that limitation.\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level? - This is theoretically the best rotation because of the distance between the two traps", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level?\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level?"
+						"Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level? - probably not, as you can't move A to << without moving W to ^v. No placement of D relieves that limitation.\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level? - This is theoretically the best rotation because of the distance between the two traps"
 					]
 				}] }
 			],
