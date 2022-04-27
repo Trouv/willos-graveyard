@@ -48,6 +48,10 @@ fn main() {
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
             gameplay::LevelCardEvent,
         >::new())
+        .insert_resource(LdtkSettings {
+            set_clear_color: SetClearColor::FromEditorBackground,
+            ..default()
+        })
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
