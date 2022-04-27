@@ -52,6 +52,7 @@ fn main() {
             set_clear_color: SetClearColor::FromLevelBackground,
             ..default()
         })
+        .insert_resource(Msaa { samples: 1 })
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
