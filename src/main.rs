@@ -49,7 +49,7 @@ fn main() {
             gameplay::LevelCardEvent,
         >::new())
         .insert_resource(LdtkSettings {
-            set_clear_color: SetClearColor::FromEditorBackground,
+            set_clear_color: SetClearColor::FromLevelBackground,
             ..default()
         })
         .insert_resource(LevelSelection::Index(level_num))
