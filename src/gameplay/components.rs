@@ -117,6 +117,7 @@ pub struct SpriteSheetAnimation {
 pub enum PlayerAnimationState {
     Idle,
     Push(Direction),
+    Move(Direction),
     Dying,
 }
 
@@ -128,14 +129,19 @@ impl Default for PlayerAnimationState {
 
 impl From<PlayerAnimationState> for SpriteSheetAnimation {
     fn from(state: PlayerAnimationState) -> SpriteSheetAnimation {
+        use Direction::*;
         use PlayerAnimationState::*;
 
         let indices = match state {
             Idle => 95..100,
-            Push(Direction::Up) => 38..44,
-            Push(Direction::Left) => 19..25,
-            Push(Direction::Down) => 57..63,
-            Push(Direction::Right) => 0..6,
+            Push(Up) => 38..44,
+            Push(Left) => 19..25,
+            Push(Down) => 57..63,
+            Push(Right) => 0..6,
+            Move(Up) => 38..44,
+            Move(Left) => 19..25,
+            Move(Down) => 57..63,
+            Move(Right) => 0..6,
             Dying => 76..95,
         };
 
