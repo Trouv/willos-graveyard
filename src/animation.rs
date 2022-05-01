@@ -13,7 +13,7 @@ pub fn sprite_sheet_animation(
         if sprite_sheet_animation.frame_timer.just_finished() {
             sprite.index += 1;
             if sprite.index >= sprite_sheet_animation.indices.end {
-                sprite.index = sprite_sheet_animation.indices.start;
+                sprite.index = sprite_sheet_animation.indices.end - 1;
                 event_writer.send(AnimationEvent::Finished(entity));
             }
         }
@@ -38,8 +38,12 @@ pub struct SpriteSheetAnimationPlugin;
 
 impl Plugin for SpriteSheetAnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(sprite_sheet_animation)
-            .add_system(set_initial_sprite_index);
+        app.add_system(
+            sprite_sheet_animation.label("animation"), //.before("from_component"),
+        )
+        .add_system(
+            set_initial_sprite_index.label("animation"), //.before("from_component"),
+        );
     }
 }
 
@@ -72,19 +76,25 @@ where
 {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
-            .add_system(animation_finisher::<F>);
+            .add_system(animation_finisher::<F>.before("animation"));
     }
 }
 
-fn animation_finisher<F>(mut query: Query<&mut F>, mut event_reader: EventReader<AnimationEvent>)
-where
+fn animation_finisher<F>(
+    mut query: Query<(&mut F, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
+    mut event_reader: EventReader<AnimationEvent>,
+) where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
     for event in event_reader.iter() {
         match event {
             AnimationEvent::Finished(entity) => {
-                if let Ok(mut from) = query.get_mut(*entity) {
+                if let Ok((mut from, mut sprite, mut sprite_sheet_animation)) =
+                    query.get_mut(*entity)
+                {
                     *from = from.next().unwrap();
+                    *sprite_sheet_animation = from.clone().into();
+                    sprite.index = sprite_sheet_animation.indices.start;
                 } else {
                     warn!("Unable to find from component for finished animation");
                 }

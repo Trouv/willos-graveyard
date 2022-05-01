@@ -29,8 +29,8 @@ where
     I: Component + 'static + Send + Sync,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(from_changed_component::<F, I>)
-            .add_system(from_added_component::<F, I>);
+        app.add_system(from_changed_component::<F, I>.label("from_component"))
+            .add_system(from_added_component::<F, I>.label("from_component"));
     }
 }
 
