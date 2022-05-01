@@ -6,7 +6,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
-use rand::prelude::*;
+use rand::{distributions::WeightedIndex, prelude::*};
 use std::time::Duration;
 
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -26,16 +26,22 @@ pub fn spawn_gravestone_body(
     gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
 ) {
     for (entity, texture_handle) in gravestones.iter() {
+        let index_range = 17..34 as usize;
+
+        let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
+
+        let dist = WeightedIndex::new(dist).unwrap();
+
         let mut rng = rand::thread_rng();
 
         commands
             .spawn_bundle(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
-                    index: (17..34 as usize).choose(&mut rng).unwrap(),
+                    index: (17..34 as usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
                     ..default()
                 },
                 texture_atlas: texture_handle.clone(),
-                transform: Transform::from_xyz(0., 0., -1.),
+                transform: Transform::from_xyz(0., 0., -0.5),
                 ..default()
             })
             .insert(Parent(entity));
