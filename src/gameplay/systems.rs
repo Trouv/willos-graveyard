@@ -447,7 +447,6 @@ pub fn update_control_display(
                 };
 
                 let mut keys_to_controls: Vec<(KeyCode, Vec<ControlNode>)> = Vec::new();
-
                 keys_to_controls.push((
                     KeyCode::W,
                     vec![
