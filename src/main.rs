@@ -3,7 +3,7 @@ mod event_scheduler;
 mod from_component;
 mod gameplay;
 
-use animation::FromComponentAnimator;
+use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
@@ -46,6 +46,7 @@ fn main() {
     app.add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
+        .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(FromComponentAnimator::<
             gameplay::components::PlayerAnimationState,
         >::new())
@@ -79,7 +80,8 @@ fn main() {
         .add_system(gameplay::systems::rewind)
         .add_system(gameplay::systems::reset)
         .add_system(gameplay::systems::ease_movement)
-        .add_system(gameplay::systems::update_control_display)
+        //.add_system(gameplay::systems::update_control_display)
+        .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)
         .add_system(gameplay::transitions::spawn_death_card)
         .add_system(gameplay::transitions::spawn_level_card)
@@ -87,7 +89,6 @@ fn main() {
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
         .add_system(gameplay::systems::animate_grass_system)
-        .add_system(animation::sprite_sheet_animation)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")

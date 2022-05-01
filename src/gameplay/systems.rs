@@ -65,7 +65,12 @@ fn push_grid_coords_recursively(
 }
 
 pub fn perform_grid_coords_movement(
-    mut grid_coords_query: Query<(Entity, &mut GridCoords, &RigidBody, Option<&PlayerState>)>,
+    mut grid_coords_query: Query<(
+        Entity,
+        &mut GridCoords,
+        &RigidBody,
+        Option<&mut PlayerAnimationState>,
+    )>,
     mut reader: EventReader<PlayerMovementEvent>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
@@ -91,31 +96,35 @@ pub fn perform_grid_coords_movement(
 
             let mut collision_map: Vec<Vec<Option<(Entity, RigidBody)>>> =
                 vec![vec![None; width as usize]; height as usize];
+
             for (entity, grid_coords, rigid_body, _) in grid_coords_query.iter_mut() {
                 collision_map[grid_coords.y as usize][grid_coords.x as usize] =
                     Some((entity, *rigid_body));
             }
 
-            let (_, &player_grid_coords, _, _) = grid_coords_query
-                .iter()
-                .find(|(_, _, _, player)| player.is_some())
-                .unwrap();
+            if let Some((_, player_grid_coords, _, Some(mut animation))) = grid_coords_query
+                .iter_mut()
+                .find(|(_, _, _, animation)| animation.is_some())
+            {
+                let pushed_entities = push_grid_coords_recursively(
+                    collision_map,
+                    IVec2::from(*player_grid_coords),
+                    movement_event.direction,
+                );
 
-            let pushed_entities = push_grid_coords_recursively(
-                collision_map,
-                player_grid_coords.into(),
-                movement_event.direction,
-            );
+                if pushed_entities.len() > 1 {
+                    audio.play(sfx.push.clone_weak());
+                    *animation = PlayerAnimationState::Push(movement_event.direction);
+                } else {
+                    *animation = PlayerAnimationState::Move(movement_event.direction);
+                }
 
-            if pushed_entities.len() > 1 {
-                audio.play(sfx.push.clone_weak());
-            }
-
-            for entity in pushed_entities {
-                *grid_coords_query
-                    .get_component_mut::<GridCoords>(entity)
-                    .expect("Pushed should have GridCoords component") +=
-                    GridCoords::from(IVec2::from(movement_event.direction));
+                for entity in pushed_entities {
+                    *grid_coords_query
+                        .get_component_mut::<GridCoords>(entity)
+                        .expect("Pushed should have GridCoords component") +=
+                        GridCoords::from(IVec2::from(movement_event.direction));
+                }
             }
         }
     }
@@ -212,18 +221,20 @@ pub fn store_current_position(
 }
 
 pub fn rewind(
-    mut player_query: Query<&mut PlayerState>,
+    mut player_query: Query<(&mut PlayerState, &mut PlayerAnimationState)>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
+    if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
                     *grid_coords = prev_state;
-                    *player_query.single_mut() = PlayerState::Waiting;
+                    let (mut state, mut animation) = player_query.single_mut();
+                    *state = PlayerState::Waiting;
+                    *animation = PlayerAnimationState::Idle;
                     audio.play(sfx.undo.clone_weak());
                 }
             }
@@ -232,19 +243,21 @@ pub fn rewind(
 }
 
 pub fn reset(
-    mut player_query: Query<&mut PlayerState>,
+    mut player_query: Query<(&mut PlayerState, &mut PlayerAnimationState)>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
+    if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(initial_state) = history.tiles.get(0) {
                     *grid_coords = *initial_state;
                     history.tiles = Vec::new();
-                    *player_query.single_mut() = PlayerState::Waiting;
+                    let (mut state, mut animation) = player_query.single_mut();
+                    *state = PlayerState::Waiting;
+                    *animation = PlayerAnimationState::Idle;
                     audio.play(sfx.undo.clone_weak());
                 }
             }
@@ -253,12 +266,13 @@ pub fn reset(
 }
 
 pub fn check_death(
-    mut player_query: Query<(&GridCoords, &mut PlayerState)>,
+    mut player_query: Query<(&GridCoords, &mut PlayerState, &mut PlayerAnimationState)>,
     exorcism_query: Query<&GridCoords, With<ExorcismBlock>>,
     level_state: Res<LevelState>,
 ) {
     if *level_state == LevelState::Gameplay {
-        if let Ok((player_coords, mut player_state)) = player_query.get_single_mut() {
+        if let Ok((player_coords, mut player_state, mut animation)) = player_query.get_single_mut()
+        {
             if *player_state != PlayerState::Dead {
                 if exorcism_query
                     .iter()
@@ -266,6 +280,7 @@ pub fn check_death(
                     .is_some()
                 {
                     *player_state = PlayerState::Dead;
+                    *animation = PlayerAnimationState::Dying;
                 }
             }
         }

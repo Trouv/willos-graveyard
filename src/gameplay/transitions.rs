@@ -6,6 +6,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
+use rand::prelude::*;
 use std::time::Duration;
 
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -18,6 +19,27 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         transform: Transform::from_xyz(32., 32., 0.),
         ..Default::default()
     });
+}
+
+pub fn spawn_gravestone_body(
+    mut commands: Commands,
+    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
+) {
+    for (entity, texture_handle) in gravestones.iter() {
+        let mut rng = rand::thread_rng();
+
+        commands
+            .spawn_bundle(SpriteSheetBundle {
+                sprite: TextureAtlasSprite {
+                    index: (17..34 as usize).choose(&mut rng).unwrap(),
+                    ..default()
+                },
+                texture_atlas: texture_handle.clone(),
+                transform: Transform::from_xyz(0., 0., -1.),
+                ..default()
+            })
+            .insert(Parent(entity));
+    }
 }
 
 pub fn spawn_ui_root(mut commands: Commands) {

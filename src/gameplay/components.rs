@@ -80,12 +80,14 @@ pub enum LevelCard {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct DeathCard;
 
+const MOVEMENT_SECONDS: f32 = 0.14;
+
 #[derive(Clone, Debug, Component)]
 pub struct MovementTimer(pub Timer);
 
 impl Default for MovementTimer {
     fn default() -> MovementTimer {
-        MovementTimer(Timer::from_seconds(0.14, false))
+        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
     }
 }
 
@@ -133,19 +135,22 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
         use PlayerAnimationState::*;
 
         let indices = match state {
-            Idle => 95..100,
-            Push(Up) => 38..44,
-            Push(Left) => 19..25,
-            Push(Down) => 57..63,
-            Push(Right) => 0..6,
-            Move(Up) => 38..44,
-            Move(Left) => 19..25,
-            Move(Down) => 57..63,
-            Move(Right) => 0..6,
-            Dying => 76..95,
+            Idle => 0..6,
+            Move(Up) => 25..31,
+            Move(Down) => 50..56,
+            Move(Left) => 75..81,
+            Move(Right) => 100..106,
+            Push(Up) => 125..131,
+            Push(Down) => 150..156,
+            Push(Left) => 175..181,
+            Push(Right) => 200..206,
+            Dying => 225..250,
         };
 
-        let frame_timer = Timer::new(Duration::from_millis(150), true);
+        let frame_timer = match state {
+            Idle | Dying => Timer::new(Duration::from_millis(150), true),
+            _ => Timer::new(Duration::from_secs_f32(MOVEMENT_SECONDS / 3.), true),
+        };
 
         SpriteSheetAnimation {
             indices,

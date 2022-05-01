@@ -20,7 +20,30 @@ pub fn sprite_sheet_animation(
     }
 }
 
-#[derive(Eq, PartialEq, Hash)]
+pub fn set_initial_sprite_index(
+    mut query: Query<
+        (&mut TextureAtlasSprite, &SpriteSheetAnimation),
+        Changed<SpriteSheetAnimation>,
+    >,
+) {
+    for (mut sprite, sprite_sheet_animation) in query.iter_mut() {
+        let indices = &sprite_sheet_animation.indices;
+        if sprite.index < indices.start || sprite.index > indices.end {
+            sprite.index = indices.start;
+        }
+    }
+}
+
+pub struct SpriteSheetAnimationPlugin;
+
+impl Plugin for SpriteSheetAnimationPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(sprite_sheet_animation)
+            .add_system(set_initial_sprite_index);
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum AnimationEvent {
     Finished(Entity),
 }
