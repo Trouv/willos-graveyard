@@ -196,7 +196,7 @@
 					"__grid": [6,7],
 					"__pivot": [0,0],
 					"__tags": [],
-					"__tile": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__tile": { "tilesetUid": 43, "x": 0, "y": 160, "w": 32, "h": 32 },
 					"__smartColor": "#FFFFFF",
 					"iid": "5e4f5170-b4d0-11ec-b4dc-9d9384c53d92",
 					"width": 32,

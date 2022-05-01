@@ -44,6 +44,7 @@ pub struct PlayerBundle {
     #[sprite_sheet_bundle]
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,
+    pub player_animation_state: PlayerAnimationState,
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]

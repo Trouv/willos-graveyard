@@ -1,5 +1,7 @@
-use bevy::prelude::*;
+use crate::gameplay::Direction;
+use bevy::{prelude::*, utils::Duration};
 use bevy_ecs_ldtk::prelude::*;
+use std::ops::Range;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum RigidBody {
@@ -104,3 +106,44 @@ pub struct ControlDisplayNode;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct UiRoot;
+
+#[derive(Clone, Debug, Default, Component)]
+pub struct SpriteSheetAnimation {
+    pub indices: Range<usize>,
+    pub frame_timer: Timer,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
+pub enum PlayerAnimationState {
+    Idle,
+    Push(Direction),
+    Dying,
+}
+
+impl Default for PlayerAnimationState {
+    fn default() -> Self {
+        PlayerAnimationState::Idle
+    }
+}
+
+impl From<PlayerAnimationState> for SpriteSheetAnimation {
+    fn from(state: PlayerAnimationState) -> SpriteSheetAnimation {
+        use PlayerAnimationState::*;
+
+        let indices = match state {
+            Idle => 95..100,
+            Push(Direction::Up) => 38..44,
+            Push(Direction::Left) => 19..25,
+            Push(Direction::Down) => 57..63,
+            Push(Direction::Right) => 0..6,
+            Dying => 76..95,
+        };
+
+        let frame_timer = Timer::new(Duration::from_millis(150), true);
+
+        SpriteSheetAnimation {
+            indices,
+            frame_timer,
+        }
+    }
+}

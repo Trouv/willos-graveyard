@@ -976,9 +976,9 @@
 			"renderMode": "Tile",
 			"showName": true,
 			"tilesetId": 43,
-			"tileId": 0,
+			"tileId": 95,
 			"tileRenderMode": "Stretch",
-			"tileRect": { "tilesetUid": 43, "x": 0, "y": 0, "w": 32, "h": 32 },
+			"tileRect": { "tilesetUid": 43, "x": 0, "y": 160, "w": 32, "h": 32 },
 			"nineSliceBorders": [],
 			"maxCount": 1,
 			"limitScope": "PerLevel",
@@ -1244,7 +1244,7 @@
 			"savedSelections": [],
 			"cachedPixelData": {
 				"opaqueTiles": "0000000000000000000000000000000000",
-				"averageColors": "2776277827882878000000000000000000000000000000000000000000000000000086878687669866987687559765878587858745a88476968896886698769854876576"
+				"averageColors": "2665267826872767000000000000000000000000000000000000000000000000000096879577758775877587658775879577957755989577968796876698769865877566"
 			}
 		},
 		{

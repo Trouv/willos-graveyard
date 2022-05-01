@@ -2717,6 +2717,7 @@ dependencies = [
  "bevy_easings",
  "bevy_ecs_ldtk",
  "rand",
+ "serde",
 ]
 
 [[package]]

@@ -1,9 +1,12 @@
+mod animation;
 mod event_scheduler;
+mod from_component;
 mod gameplay;
 
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
+use from_component::FromComponentPlugin;
 use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
@@ -43,6 +46,10 @@ fn main() {
     app.add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
+        .add_plugin(FromComponentPlugin::<
+            gameplay::components::PlayerAnimationState,
+            gameplay::components::SpriteSheetAnimation,
+        >::new())
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<gameplay::ActionEvent>()
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
@@ -80,6 +87,7 @@ fn main() {
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
         .add_system(gameplay::systems::animate_grass_system)
+        .add_system(animation::sprite_sheet_animation)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")
