@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use serde::{Deserialize, Serialize};
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum RigidBody {
     Static,
     Dynamic,
@@ -38,10 +37,10 @@ impl From<EntityInstance> for InputBlock {
     }
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct Goal;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ExorcismBlock;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
@@ -68,7 +67,7 @@ pub struct History {
     pub tiles: Vec<GridCoords>,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum LevelCard {
     Rising,
     Holding,
@@ -76,7 +75,7 @@ pub enum LevelCard {
     End,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct DeathCard;
 
 #[derive(Clone, Debug, Component)]
@@ -100,8 +99,8 @@ impl Default for WindTimer {
     }
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ControlDisplayNode;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Serialize, Deserialize, Component)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct UiRoot;

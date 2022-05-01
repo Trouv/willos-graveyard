@@ -38,8 +38,9 @@ fn main() {
         level_num = std::env::args().last().unwrap().parse::<usize>().unwrap();
     }
 
-    App::new()
-        .add_plugins(DefaultPlugins)
+    let mut app = App::new();
+
+    app.add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
@@ -47,6 +48,11 @@ fn main() {
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
             gameplay::LevelCardEvent,
         >::new())
+        .insert_resource(LdtkSettings {
+            set_clear_color: SetClearColor::FromLevelBackground,
+            ..default()
+        })
+        .insert_resource(Msaa { samples: 1 })
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
@@ -73,7 +79,7 @@ fn main() {
         .add_system(gameplay::transitions::load_next_level)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
-        .add_system(gameplay::systems::animate_grass_system)
+        //.add_system(gameplay::systems::animate_grass_system)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")
@@ -83,8 +89,17 @@ fn main() {
         .register_ldtk_entity::<gameplay::bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<gameplay::bundles::GrassBundle>("Grass")
         .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(1)
+        .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(3)
+        .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(4)
         .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2)
-        .run()
+        .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2);
+
+    #[cfg(feature = "hot")]
+    {
+        app.add_startup_system(enable_hot_reloading);
+    }
+
+    app.run()
 }
 
 pub struct SpriteHandles {
@@ -142,4 +157,9 @@ pub fn sound_load(mut commands: Commands, assets: Res<AssetServer>) {
         push: assets.load("sfx/push.wav"),
         undo: assets.load("sfx/undo.wav"),
     })
+}
+
+#[cfg(feature = "hot")]
+pub fn enable_hot_reloading(asset_server: ResMut<AssetServer>) {
+    asset_server.watch_for_changes().unwrap();
 }

@@ -4,15 +4,14 @@ version = "0.2.0"
 authors = ["TLovell <trevorlovelldesign@gmail.com>"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+hot = []
 
 [dependencies]
-serde = {version = "1.0", features = ["derive"]}
-dunce = "1.0"
-bevy = {version = "0.6", features = ["wav"]}
-bevy_easings = "0.5"
-bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", rev = "171663fb5243160d3fb45aa45c9c37c7d6469ce1" }
+bevy = {version = "0.7", features = ["wav"]}
+bevy_easings = "0.7"
+bevy_ecs_ldtk = "0.3"
 rand = "0.8"
 
 [target.wasm32-unknown-unknown.dependencies]
-bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", rev = "171663fb5243160d3fb45aa45c9c37c7d6469ce1", features = ["atlas"] }
+bevy_ecs_ldtk = { version = "0.3", features = ["atlas"] }

@@ -1,7 +1,6 @@
 use crate::UNIT_LENGTH;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use serde::{Deserialize, Serialize};
 pub mod bundles;
 pub mod components;
 pub mod systems;
@@ -11,7 +10,7 @@ pub fn xy_translation(coords: IVec2) -> Vec2 {
     Vec2::new(coords.x as f32 + 0.5, coords.y as f32 + 0.5) * UNIT_LENGTH
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum Direction {
     Up,
     Left,
@@ -37,7 +36,7 @@ impl From<Direction> for IVec2 {
     }
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct PlayerMovementEvent {
     direction: Direction,
 }
