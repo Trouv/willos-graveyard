@@ -50,14 +50,14 @@ pub enum AnimationEvent {
 
 pub struct FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Default,
+    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
     from_type: PhantomData<F>,
 }
 
 impl<F> FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Default,
+    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
     pub fn new() -> Self {
         FromComponentAnimator {
@@ -68,7 +68,7 @@ where
 
 impl<F> Plugin for FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Default,
+    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
@@ -78,13 +78,13 @@ where
 
 fn animation_finisher<F>(mut query: Query<&mut F>, mut event_reader: EventReader<AnimationEvent>)
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Default,
+    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
     for event in event_reader.iter() {
         match event {
             AnimationEvent::Finished(entity) => {
                 if let Ok(mut from) = query.get_mut(*entity) {
-                    *from = F::default();
+                    *from = from.next().unwrap();
                 } else {
                     warn!("Unable to find from component for finished animation");
                 }

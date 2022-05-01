@@ -121,11 +121,22 @@ pub enum PlayerAnimationState {
     Push(Direction),
     Move(Direction),
     Dying,
+    None,
 }
 
 impl Default for PlayerAnimationState {
     fn default() -> Self {
         PlayerAnimationState::Idle
+    }
+}
+
+impl Iterator for PlayerAnimationState {
+    type Item = Self;
+    fn next(&mut self) -> Option<Self::Item> {
+        Some(match self {
+            PlayerAnimationState::Dying | PlayerAnimationState::None => PlayerAnimationState::None,
+            _ => PlayerAnimationState::Idle,
+        })
     }
 }
 
@@ -145,6 +156,7 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
             Push(Left) => 175..181,
             Push(Right) => 200..206,
             Dying => 225..250,
+            None => 7..8,
         };
 
         let frame_timer = match state {
