@@ -79,7 +79,7 @@ fn main() {
         .add_system(gameplay::transitions::load_next_level)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
-        //.add_system(gameplay::systems::animate_grass_system)
+        .add_system(gameplay::systems::animate_grass_system)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")
