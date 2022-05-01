@@ -10,7 +10,7 @@ use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use rand::Rng;
-use std::{cmp, time::Duration};
+use std::{cmp, collections::HashMap, time::Duration};
 
 pub fn ease_movement(
     mut commands: Commands,
@@ -446,18 +446,45 @@ pub fn update_control_display(
                         });
                 };
 
+                let mut keys_to_controls: Vec<(KeyCode, Vec<ControlNode>)> = Vec::new();
+
+                keys_to_controls.push((
+                    KeyCode::W,
+                    vec![
+                        ControlNode::Image(assets.load("textures/w_0.png")),
+                        ControlNode::Text("=".to_string()),
+                    ],
+                ));
+
+                keys_to_controls.push((
+                    KeyCode::A,
+                    vec![
+                        ControlNode::Image(assets.load("textures/a_0.png")),
+                        ControlNode::Text("=".to_string()),
+                    ],
+                ));
+
+                keys_to_controls.push((
+                    KeyCode::S,
+                    vec![
+                        ControlNode::Image(assets.load("textures/s_0.png")),
+                        ControlNode::Text("=".to_string()),
+                    ],
+                ));
+
+                keys_to_controls.push((
+                    KeyCode::D,
+                    vec![
+                        ControlNode::Image(assets.load("textures/d_0.png")),
+                        ControlNode::Text("=".to_string()),
+                    ],
+                ));
+
                 for (i, rank) in move_table.table.iter().enumerate() {
                     for (j, key) in rank.iter().enumerate() {
                         if let Some(key) = key {
                             let first_dir = DIRECTION_ORDER[i];
                             let second_dir = DIRECTION_ORDER[j];
-
-                            let key_handle = match key {
-                                KeyCode::W => assets.load("textures/w_0.png"),
-                                KeyCode::A => assets.load("textures/a_0.png"),
-                                KeyCode::S => assets.load("textures/s_0.png"),
-                                _ => assets.load("textures/d_0.png"),
-                            };
 
                             let direction_handle = |d: Direction| -> Handle<Image> {
                                 match d {
@@ -468,15 +495,21 @@ pub fn update_control_display(
                                 }
                             };
 
-                            add_row(vec![
-                                ControlNode::Image(key_handle),
-                                ControlNode::Text("=".to_string()),
-                                ControlNode::Image(direction_handle(first_dir)),
-                                ControlNode::Image(direction_handle(second_dir)),
-                            ]);
+                            if let Some((_, controls)) =
+                                keys_to_controls.iter_mut().find(|(k, _)| k == key)
+                            {
+                                controls.extend(vec![
+                                    ControlNode::Image(direction_handle(first_dir)),
+                                    ControlNode::Image(direction_handle(second_dir)),
+                                ]);
+                            }
                         }
                     }
                 }
+
+                keys_to_controls
+                    .into_iter()
+                    .for_each(|(_, row)| add_row(row));
 
                 add_row(vec![
                     ControlNode::Text(format!("R")),
