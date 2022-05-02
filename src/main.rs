@@ -80,7 +80,7 @@ fn main() {
         .add_system(gameplay::systems::rewind)
         .add_system(gameplay::systems::reset)
         .add_system(gameplay::systems::ease_movement)
-        //.add_system(gameplay::systems::update_control_display)
+        .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)
         .add_system(gameplay::transitions::spawn_death_card)

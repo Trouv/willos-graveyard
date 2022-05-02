@@ -465,7 +465,7 @@ pub fn update_control_display(
                 keys_to_controls.push((
                     KeyCode::W,
                     vec![
-                        ControlNode::Image(assets.load("textures/w_0.png")),
+                        ControlNode::Image(assets.load("textures/w.png")),
                         ControlNode::Text("=".to_string()),
                     ],
                 ));
@@ -473,7 +473,7 @@ pub fn update_control_display(
                 keys_to_controls.push((
                     KeyCode::A,
                     vec![
-                        ControlNode::Image(assets.load("textures/a_0.png")),
+                        ControlNode::Image(assets.load("textures/a.png")),
                         ControlNode::Text("=".to_string()),
                     ],
                 ));
@@ -481,7 +481,7 @@ pub fn update_control_display(
                 keys_to_controls.push((
                     KeyCode::S,
                     vec![
-                        ControlNode::Image(assets.load("textures/s_0.png")),
+                        ControlNode::Image(assets.load("textures/s.png")),
                         ControlNode::Text("=".to_string()),
                     ],
                 ));
@@ -489,7 +489,7 @@ pub fn update_control_display(
                 keys_to_controls.push((
                     KeyCode::D,
                     vec![
-                        ControlNode::Image(assets.load("textures/d_0.png")),
+                        ControlNode::Image(assets.load("textures/d.png")),
                         ControlNode::Text("=".to_string()),
                     ],
                 ));

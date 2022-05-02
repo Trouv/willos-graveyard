@@ -135,6 +135,7 @@ impl Iterator for PlayerAnimationState {
     fn next(&mut self) -> Option<Self::Item> {
         Some(match self {
             PlayerAnimationState::Dying | PlayerAnimationState::None => PlayerAnimationState::None,
+            PlayerAnimationState::Push(d) => PlayerAnimationState::Move(*d),
             _ => PlayerAnimationState::Idle,
         })
     }
@@ -151,17 +152,16 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
             Move(Down) => 50..56,
             Move(Left) => 75..81,
             Move(Right) => 100..106,
-            Push(Up) => 125..131,
-            Push(Down) => 150..156,
-            Push(Left) => 175..181,
-            Push(Right) => 200..206,
+            Push(Up) => 126..128,
+            Push(Down) => 151..153,
+            Push(Left) => 176..178,
+            Push(Right) => 201..203,
             Dying => 225..250,
             None => 7..8,
         };
 
         let frame_timer = match state {
-            Idle | Dying => Timer::new(Duration::from_millis(150), true),
-            _ => Timer::new(Duration::from_secs_f32(MOVEMENT_SECONDS / 3.), true),
+            _ => Timer::new(Duration::from_millis(150), true),
         };
 
         SpriteSheetAnimation {
