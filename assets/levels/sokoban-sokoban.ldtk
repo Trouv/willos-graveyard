@@ -1745,7 +1745,10 @@
 			"__bgPos": null,
 			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Level", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [] },
+				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Sokoban, sokoban"]
+				}] },
 				{ "__identifier": "Notes", "__value": "First level created with graph theory!", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["First level created with graph theory!"]
