@@ -2,6 +2,7 @@ mod animation;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
+mod resources;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::prelude::*;
@@ -63,6 +64,7 @@ fn main() {
         .insert_resource(Msaa { samples: 1 })
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
+        .insert_resource(resources::GoalGhostSettings::NORMAL)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
@@ -81,6 +83,7 @@ fn main() {
         .add_system(gameplay::systems::reset)
         .add_system(gameplay::systems::ease_movement)
         .add_system(gameplay::systems::update_control_display)
+        .add_system(animation::goal_ghost_animation)
         .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)
         .add_system(gameplay::transitions::spawn_death_card)
@@ -88,6 +91,7 @@ fn main() {
         .add_system(gameplay::transitions::load_next_level)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
+        .add_system(gameplay::transitions::spawn_goal_ghosts)
         .add_system(gameplay::systems::animate_grass_system)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")

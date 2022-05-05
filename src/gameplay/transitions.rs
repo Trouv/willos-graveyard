@@ -1,6 +1,7 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
+    resources::*,
     LevelState, ASPECT_RATIO, PLAY_ZONE_RATIO,
 };
 use bevy::prelude::*;
@@ -45,6 +46,45 @@ pub fn spawn_gravestone_body(
                 ..default()
             })
             .insert(Parent(entity));
+    }
+}
+
+pub fn spawn_goal_ghosts(
+    mut commands: Commands,
+    goals: Query<Entity, Added<Goal>>,
+    mut goal_ghost_settings: ResMut<GoalGhostSettings>,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    for goal_entity in goals.iter() {
+        let atlas_handle = match &goal_ghost_settings.atlas {
+            Some(atlas) => atlas.clone(),
+            None => {
+                let image_handle = asset_server.load("textures/Goal-Ghost.png");
+                let texture_atlas = TextureAtlas::from_grid(
+                    image_handle,
+                    Vec2::splat(32.),
+                    goal_ghost_settings.num_columns,
+                    goal_ghost_settings.num_rows,
+                );
+                let atlas_handle = texture_atlases.add(texture_atlas);
+
+                goal_ghost_settings.atlas = Some(atlas_handle.clone());
+                atlas_handle
+            }
+        };
+
+        commands
+            .spawn_bundle(SpriteSheetBundle {
+                texture_atlas: atlas_handle,
+                transform: Transform::from_xyz(0., 0., 0.5),
+                ..default()
+            })
+            .insert(GoalGhostAnimation {
+                frame_timer: Timer::new(goal_ghost_settings.frame_duration, true),
+                ..default()
+            })
+            .insert(Parent(goal_entity));
     }
 }
 

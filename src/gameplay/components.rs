@@ -170,3 +170,31 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
         }
     }
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum HandDirection {
+    Right,
+    Left,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum GoalAnimationState {
+    Idle,
+    Turn { hand: HandDirection, frames: usize },
+    Blinking { frames: usize },
+}
+
+impl Default for GoalAnimationState {
+    fn default() -> Self {
+        GoalAnimationState::Idle
+    }
+}
+
+#[derive(Clone, Default, Debug, Component)]
+pub struct GoalGhostAnimation {
+    pub column: usize,
+    pub frame_timer: Timer,
+    pub frames_since_blink: usize,
+    pub frames_since_turn: usize,
+    pub state: GoalAnimationState,
+}
