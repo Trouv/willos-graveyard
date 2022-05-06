@@ -3,6 +3,7 @@ mod event_scheduler;
 mod from_component;
 mod gameplay;
 mod resources;
+mod sugar;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::prelude::*;
@@ -99,6 +100,7 @@ fn main() {
         .add_system(gameplay::systems::animate_grass_system)
         .add_system(animation::play_death_animations)
         .add_system(animation::despawn_death_animations)
+        .add_system(sugar::history_sugar)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")

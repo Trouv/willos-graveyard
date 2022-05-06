@@ -60,7 +60,7 @@ pub fn spawn_goal_ghosts(
         let atlas_handle = match &goal_ghost_settings.atlas {
             Some(atlas) => atlas.clone(),
             None => {
-                let image_handle = asset_server.load("textures/Goal-Ghost.png");
+                let image_handle = asset_server.load("textures/animations/goal_ghost-Sheet.png");
                 let texture_atlas = TextureAtlas::from_grid(
                     image_handle,
                     Vec2::splat(32.),

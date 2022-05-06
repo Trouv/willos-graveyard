@@ -223,14 +223,12 @@ pub fn store_current_position(
 }
 
 pub fn rewind(
-    mut player_query: Query<(&mut PlayerState, &mut PlayerAnimationState)>,
+    mut player_query: Query<&mut PlayerState>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
-    audio: Res<Audio>,
-    sfx: Res<SoundEffects>,
     mut history_event_writer: EventWriter<HistoryEvent>,
 ) {
-    if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
+    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
             let mut rewind_happened = false;
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
@@ -241,11 +239,7 @@ pub fn rewind(
             }
 
             if rewind_happened {
-                let (mut state, mut animation) = player_query.single_mut();
-                *state = PlayerState::Waiting;
-                *animation = PlayerAnimationState::Idle;
-                audio.play(sfx.undo.clone_weak());
-
+                *player_query.single_mut() = PlayerState::Waiting;
                 history_event_writer.send(HistoryEvent::Rewind);
             }
         }
@@ -253,14 +247,12 @@ pub fn rewind(
 }
 
 pub fn reset(
-    mut player_query: Query<(&mut PlayerState, &mut PlayerAnimationState)>,
+    mut player_query: Query<&mut PlayerState>,
     input: Res<Input<KeyCode>>,
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
-    audio: Res<Audio>,
-    sfx: Res<SoundEffects>,
     mut history_event_writer: EventWriter<HistoryEvent>,
 ) {
-    if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
+    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
             let mut reset_happened = false;
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
@@ -272,11 +264,7 @@ pub fn reset(
             }
 
             if reset_happened {
-                let (mut state, mut animation) = player_query.single_mut();
-                *state = PlayerState::Waiting;
-                *animation = PlayerAnimationState::Idle;
-                audio.play(sfx.undo.clone_weak());
-
+                *player_query.single_mut() = PlayerState::Waiting;
                 history_event_writer.send(HistoryEvent::Reset);
             }
         }
