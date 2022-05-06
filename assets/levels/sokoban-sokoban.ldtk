@@ -1671,8 +1671,8 @@
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 608,
-			"pxHei": 608,
+			"pxWid": 672,
+			"pxHei": 672,
 			"__bgColor": "#332943",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -1684,13 +1684,15 @@
 			"__bgPos": null,
 			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "T Spin", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["T Spin"]
+					"params": ["Training week"]
 				}] },
-				{ "__identifier": "Notes", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+				{ "__identifier": "Notes", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?"]
+					"params": [
+						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
+					]
 				}] }
 			],
 			"layerInstances": null,
