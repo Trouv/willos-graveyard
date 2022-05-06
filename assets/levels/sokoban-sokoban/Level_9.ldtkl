@@ -571,6 +571,62 @@
 					"defUid": 52,
 					"px": [96,480],
 					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [19,7],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "f89824a0-b4d0-11ec-8435-c9eaa13b4b9b",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [608,224],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [13,5],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "fb7701a0-b4d0-11ec-8435-a99b5b4b6b04",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [416,160],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [19,1],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "fc8eb330-b4d0-11ec-8435-a11bddcfa5a7",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [608,32],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [6,6],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "00341480-b4d0-11ec-8435-53ae919035f9",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [192,192],
+					"fieldInstances": []
 				}
 			]
 		},
