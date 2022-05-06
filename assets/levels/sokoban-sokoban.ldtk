@@ -1665,40 +1665,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_9",
-			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
-			"uid": 59,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 672,
-			"pxHei": 672,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Training week"]
-				}] },
-				{ "__identifier": "Notes", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Level_10",
 			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
 			"uid": 66,
@@ -1716,7 +1682,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1728,7 +1694,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_11",
+			"identifier": "Level_10",
 			"iid": "16944ee0-b4d0-11ec-8435-2d4d9e893036",
 			"uid": 120,
 			"worldX": -1,
@@ -1745,7 +1711,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1754,6 +1720,40 @@
 				{ "__identifier": "Notes", "__value": "First level created with graph theory!", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["First level created with graph theory!"]
+				}] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_11",
+			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
+			"uid": 59,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 736,
+			"pxHei": 672,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Training week"]
+				}] },
+				{ "__identifier": "Notes", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+					"id": "V_String",
+					"params": [
+						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
+					]
 				}] }
 			],
 			"layerInstances": null,
