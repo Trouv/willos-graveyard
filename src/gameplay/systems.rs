@@ -232,16 +232,21 @@ pub fn rewind(
 ) {
     if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
+            let mut rewind_happened = false;
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(prev_state) = history.tiles.pop() {
                     *grid_coords = prev_state;
-                    let (mut state, mut animation) = player_query.single_mut();
-                    *state = PlayerState::Waiting;
-                    *animation = PlayerAnimationState::Idle;
-                    audio.play(sfx.undo.clone_weak());
-
-                    history_event_writer.send(HistoryEvent::Rewind);
+                    rewind_happened = true;
                 }
+            }
+
+            if rewind_happened {
+                let (mut state, mut animation) = player_query.single_mut();
+                *state = PlayerState::Waiting;
+                *animation = PlayerAnimationState::Idle;
+                audio.play(sfx.undo.clone_weak());
+
+                history_event_writer.send(HistoryEvent::Rewind);
             }
         }
     }
@@ -257,17 +262,22 @@ pub fn reset(
 ) {
     if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
+            let mut reset_happened = false;
             for (mut history, mut grid_coords) in objects_query.iter_mut() {
                 if let Some(initial_state) = history.tiles.get(0) {
                     *grid_coords = *initial_state;
+                    reset_happened = true;
                     history.tiles = Vec::new();
-                    let (mut state, mut animation) = player_query.single_mut();
-                    *state = PlayerState::Waiting;
-                    *animation = PlayerAnimationState::Idle;
-                    audio.play(sfx.undo.clone_weak());
-
-                    history_event_writer.send(HistoryEvent::Reset);
                 }
+            }
+
+            if reset_happened {
+                let (mut state, mut animation) = player_query.single_mut();
+                *state = PlayerState::Waiting;
+                *animation = PlayerAnimationState::Idle;
+                audio.play(sfx.undo.clone_weak());
+
+                history_event_writer.send(HistoryEvent::Reset);
             }
         }
     }

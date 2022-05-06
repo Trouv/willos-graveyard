@@ -99,8 +99,6 @@ fn animation_finisher<F>(
                     *from = from.next().unwrap();
                     *sprite_sheet_animation = from.clone().into();
                     sprite.index = sprite_sheet_animation.indices.start;
-                } else {
-                    warn!("Unable to find from component for finished animation");
                 }
             }
         }
@@ -264,7 +262,6 @@ pub fn despawn_death_animations(
     for event in history_event_reader.iter() {
         match event {
             HistoryEvent::Rewind | HistoryEvent::Reset => {
-                dbg!(event);
                 for entity in death_hole_query.iter() {
                     commands.entity(entity).despawn_recursive();
                 }
