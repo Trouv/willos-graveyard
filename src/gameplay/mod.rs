@@ -41,7 +41,18 @@ pub struct PlayerMovementEvent {
     direction: Direction,
 }
 
-pub struct ActionEvent;
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub struct DeathEvent {
+    pub player_entity: Entity,
+    pub exorcism_entity: Entity,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum HistoryEvent {
+    Record,
+    Rewind,
+    Reset,
+}
 
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub enum LevelCardEvent {

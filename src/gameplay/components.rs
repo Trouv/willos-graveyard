@@ -198,3 +198,55 @@ pub struct GoalGhostAnimation {
     pub frames_since_turn: usize,
     pub state: GoalAnimationState,
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+pub enum DeathHoleState {
+    Opening,
+    Closed,
+}
+
+impl Iterator for DeathHoleState {
+    type Item = DeathHoleState;
+    fn next(&mut self) -> Option<Self::Item> {
+        *self = DeathHoleState::Closed;
+        Some(*self)
+    }
+}
+
+impl From<DeathHoleState> for SpriteSheetAnimation {
+    fn from(state: DeathHoleState) -> SpriteSheetAnimation {
+        SpriteSheetAnimation {
+            indices: match state {
+                DeathHoleState::Opening => 0..29,
+                DeathHoleState::Closed => 29..30,
+            },
+            frame_timer: Timer::new(Duration::from_millis(150), true),
+        }
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+pub enum DemonArmsState {
+    Grabbing,
+    Gone,
+}
+
+impl Iterator for DemonArmsState {
+    type Item = DemonArmsState;
+    fn next(&mut self) -> Option<Self::Item> {
+        *self = DemonArmsState::Gone;
+        Some(*self)
+    }
+}
+
+impl From<DemonArmsState> for SpriteSheetAnimation {
+    fn from(state: DemonArmsState) -> SpriteSheetAnimation {
+        SpriteSheetAnimation {
+            indices: match state {
+                DemonArmsState::Grabbing => 0..29,
+                DemonArmsState::Gone => 29..30,
+            },
+            frame_timer: Timer::new(Duration::from_millis(150), true),
+        }
+    }
+}

@@ -1,4 +1,6 @@
-use crate::{from_component::FromComponentPlugin, gameplay::components::*, resources::*};
+use crate::{
+    from_component::FromComponentPlugin, gameplay::components::*, gameplay::*, resources::*,
+};
 use bevy::prelude::*;
 use rand::prelude::*;
 use std::marker::PhantomData;
@@ -193,6 +195,85 @@ pub fn goal_ghost_animation(
 
             animation.column += 1;
             animation.column %= goal_ghost_settings.num_columns;
+        }
+    }
+}
+
+pub fn load_death_animations(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    let death_hole_texture = asset_server.load("textures/animations/death-Sheet.png");
+    let demon_arms_texture = asset_server.load("textures/animations/demon-Sheet.png");
+
+    let death_hole_texture_atlas =
+        TextureAtlas::from_grid(death_hole_texture, Vec2::splat(32.), 30, 1);
+    let demon_arms_texture_atlas =
+        TextureAtlas::from_grid(demon_arms_texture, Vec2::splat(32.), 30, 1);
+
+    commands.insert_resource(DeathAnimationTextureAtlases {
+        death_hole_handle: texture_atlases.add(death_hole_texture_atlas),
+        demon_arms_handle: texture_atlases.add(demon_arms_texture_atlas),
+    });
+}
+
+pub fn play_death_animations(
+    mut commands: Commands,
+    mut player_query: Query<&mut PlayerAnimationState>,
+    mut death_event_reader: EventReader<DeathEvent>,
+    death_animation_texture_atlases: Res<DeathAnimationTextureAtlases>,
+) {
+    for DeathEvent {
+        player_entity,
+        exorcism_entity,
+    } in death_event_reader.iter()
+    {
+        if let Ok(mut player_animation_state) = player_query.get_mut(*player_entity) {
+            *player_animation_state = PlayerAnimationState::Dying;
+        }
+
+        commands
+            .entity(*exorcism_entity)
+            .with_children(|child_commands| {
+                child_commands
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: death_animation_texture_atlases.death_hole_handle.clone(),
+                        transform: Transform::from_xyz(0., 0., 0.5),
+                        ..default()
+                    })
+                    .insert(DeathHoleState::Opening);
+
+                child_commands
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: death_animation_texture_atlases.demon_arms_handle.clone(),
+                        transform: Transform::from_xyz(0., 0., 1.5),
+                        ..default()
+                    })
+                    .insert(DemonArmsState::Grabbing);
+            });
+    }
+}
+
+pub fn despawn_death_animations(
+    mut commands: Commands,
+    mut history_event_reader: EventReader<HistoryEvent>,
+    death_hole_query: Query<Entity, With<DeathHoleState>>,
+    demon_arms_query: Query<Entity, With<DemonArmsState>>,
+) {
+    for event in history_event_reader.iter() {
+        match event {
+            HistoryEvent::Rewind | HistoryEvent::Reset => {
+                dbg!(event);
+                for entity in death_hole_query.iter() {
+                    commands.entity(entity).despawn_recursive();
+                }
+
+                for entity in demon_arms_query.iter() {
+                    commands.entity(entity).despawn_recursive();
+                }
+            }
+            _ => (),
         }
     }
 }

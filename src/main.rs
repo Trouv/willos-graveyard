@@ -51,9 +51,12 @@ fn main() {
         .add_plugin(FromComponentAnimator::<
             gameplay::components::PlayerAnimationState,
         >::new())
+        .add_plugin(FromComponentAnimator::<gameplay::components::DeathHoleState>::new())
+        .add_plugin(FromComponentAnimator::<gameplay::components::DemonArmsState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_event::<gameplay::PlayerMovementEvent>()
-        .add_event::<gameplay::ActionEvent>()
+        .add_event::<gameplay::HistoryEvent>()
+        .add_event::<gameplay::DeathEvent>()
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
             gameplay::LevelCardEvent,
         >::new())
@@ -70,6 +73,7 @@ fn main() {
         .add_startup_system(gameplay::transitions::world_setup)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
+        .add_startup_system(animation::load_death_animations)
         .add_system(gameplay::systems::player_state_input.label(SystemLabels::Input))
         .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
         .add_system(
@@ -93,6 +97,8 @@ fn main() {
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
         .add_system(gameplay::transitions::spawn_goal_ghosts)
         .add_system(gameplay::systems::animate_grass_system)
+        .add_system(animation::play_death_animations)
+        .add_system(animation::despawn_death_animations)
         .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")

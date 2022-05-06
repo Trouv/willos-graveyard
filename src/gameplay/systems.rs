@@ -1,8 +1,8 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{
-        components::*, xy_translation, ActionEvent, Direction, LevelCardEvent, PlayerMovementEvent,
-        DIRECTION_ORDER,
+        components::*, xy_translation, DeathEvent, Direction, HistoryEvent, LevelCardEvent,
+        PlayerMovementEvent, DIRECTION_ORDER,
     },
     LevelState, SoundEffects,
 };
@@ -168,7 +168,7 @@ pub fn move_player_by_table(
     table_query: Query<&MoveTable>,
     mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
     mut movement_writer: EventWriter<PlayerMovementEvent>,
-    mut action_writer: EventWriter<ActionEvent>,
+    mut action_writer: EventWriter<HistoryEvent>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
@@ -178,7 +178,7 @@ pub fn move_player_by_table(
             if timer.0.finished() {
                 match *player {
                     PlayerState::RankMove(key) => {
-                        action_writer.send(ActionEvent);
+                        action_writer.send(HistoryEvent::Record);
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
                                 movement_writer.send(PlayerMovementEvent {
@@ -210,12 +210,14 @@ pub fn move_player_by_table(
 }
 
 pub fn store_current_position(
-    mut reader: EventReader<ActionEvent>,
+    mut reader: EventReader<HistoryEvent>,
     mut objects_query: Query<(&mut History, &GridCoords)>,
 ) {
-    for _ in reader.iter() {
-        for (mut history, grid_coords) in objects_query.iter_mut() {
-            history.tiles.push(*grid_coords);
+    for event in reader.iter() {
+        if *event == HistoryEvent::Record {
+            for (mut history, grid_coords) in objects_query.iter_mut() {
+                history.tiles.push(*grid_coords);
+            }
         }
     }
 }
@@ -226,6 +228,7 @@ pub fn rewind(
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
+    mut history_event_writer: EventWriter<HistoryEvent>,
 ) {
     if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
         if input.just_pressed(KeyCode::Z) {
@@ -236,6 +239,8 @@ pub fn rewind(
                     *state = PlayerState::Waiting;
                     *animation = PlayerAnimationState::Idle;
                     audio.play(sfx.undo.clone_weak());
+
+                    history_event_writer.send(HistoryEvent::Rewind);
                 }
             }
         }
@@ -248,6 +253,7 @@ pub fn reset(
     mut objects_query: Query<(&mut History, &mut GridCoords)>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
+    mut history_event_writer: EventWriter<HistoryEvent>,
 ) {
     if let Ok((PlayerState::Waiting | PlayerState::Dead, _)) = player_query.get_single() {
         if input.just_pressed(KeyCode::R) {
@@ -259,6 +265,8 @@ pub fn reset(
                     *state = PlayerState::Waiting;
                     *animation = PlayerAnimationState::Idle;
                     audio.play(sfx.undo.clone_weak());
+
+                    history_event_writer.send(HistoryEvent::Reset);
                 }
             }
         }
@@ -266,21 +274,22 @@ pub fn reset(
 }
 
 pub fn check_death(
-    mut player_query: Query<(&GridCoords, &mut PlayerState, &mut PlayerAnimationState)>,
-    exorcism_query: Query<&GridCoords, With<ExorcismBlock>>,
+    mut player_query: Query<(Entity, &GridCoords, &mut PlayerState)>,
+    exorcism_query: Query<(Entity, &GridCoords), With<ExorcismBlock>>,
     level_state: Res<LevelState>,
+    mut death_event_writer: EventWriter<DeathEvent>,
 ) {
     if *level_state == LevelState::Gameplay {
-        if let Ok((player_coords, mut player_state, mut animation)) = player_query.get_single_mut()
-        {
+        if let Ok((entity, player_coords, mut player_state)) = player_query.get_single_mut() {
             if *player_state != PlayerState::Dead {
-                if exorcism_query
-                    .iter()
-                    .find(|&e| e == player_coords)
-                    .is_some()
+                if let Some((exorcism_entity, _)) =
+                    exorcism_query.iter().find(|(_, g)| *g == player_coords)
                 {
                     *player_state = PlayerState::Dead;
-                    *animation = PlayerAnimationState::Dying;
+                    death_event_writer.send(DeathEvent {
+                        player_entity: entity,
+                        exorcism_entity,
+                    });
                 }
             }
         }
