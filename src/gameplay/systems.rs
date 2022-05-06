@@ -9,8 +9,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
-use rand::Rng;
-use std::{cmp, time::Duration};
+use std::time::Duration;
 
 pub fn ease_movement(
     mut commands: Commands,
