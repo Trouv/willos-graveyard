@@ -22,7 +22,6 @@ pub fn flush_history_commands<C: Component + Clone + core::fmt::Debug>(
             HistoryCommands::Record => {
                 for (mut history, component) in history_query.iter_mut() {
                     history.push(component.clone());
-                    dbg!(history);
                 }
             }
             HistoryCommands::Rewind => {
@@ -30,7 +29,6 @@ pub fn flush_history_commands<C: Component + Clone + core::fmt::Debug>(
                     if let Some(prev_state) = history.pop() {
                         *component = prev_state;
                     }
-                    dbg!(history);
                 }
             }
             HistoryCommands::Reset => {
@@ -45,7 +43,6 @@ pub fn flush_history_commands<C: Component + Clone + core::fmt::Debug>(
                         // list allows us to rewind the act of resetting.
                         *component = first;
                     }
-                    dbg!(history);
                 }
             }
         }
