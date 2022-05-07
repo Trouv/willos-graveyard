@@ -2,7 +2,7 @@ use crate::gameplay::Direction;
 use crate::{
     animation::SpriteSheetAnimation,
     gameplay::{components::*, *},
-    history::HistoryEvent,
+    history::HistoryCommands,
     resources::*,
     *,
 };
@@ -146,14 +146,14 @@ impl From<DemonArmsState> for SpriteSheetAnimation {
 }
 
 pub fn history_sugar(
-    mut history_event_reader: EventReader<HistoryEvent>,
+    mut history_commands: EventReader<HistoryCommands>,
     mut player_query: Query<&mut PlayerAnimationState>,
     audio: Res<Audio>,
     sfx: Res<SoundEffects>,
 ) {
-    for event in history_event_reader.iter() {
-        match event {
-            HistoryEvent::Rewind | HistoryEvent::Reset => {
+    for command in history_commands.iter() {
+        match command {
+            HistoryCommands::Rewind | HistoryCommands::Reset => {
                 *player_query.single_mut() = PlayerAnimationState::Idle;
                 audio.play(sfx.undo.clone_weak());
             }
@@ -201,13 +201,13 @@ pub fn play_death_animations(
 
 pub fn despawn_death_animations(
     mut commands: Commands,
-    mut history_event_reader: EventReader<HistoryEvent>,
+    mut history_commands: EventReader<HistoryCommands>,
     death_hole_query: Query<Entity, With<DeathHoleState>>,
     demon_arms_query: Query<Entity, With<DemonArmsState>>,
 ) {
-    for event in history_event_reader.iter() {
-        match event {
-            HistoryEvent::Rewind | HistoryEvent::Reset => {
+    for command in history_commands.iter() {
+        match command {
+            HistoryCommands::Rewind | HistoryCommands::Reset => {
                 for entity in death_hole_query.iter() {
                     commands.entity(entity).despawn_recursive();
                 }

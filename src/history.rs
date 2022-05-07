@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum HistoryEvent {
+pub enum HistoryCommands {
     Record,
     Rewind,
     Reset,
@@ -15,17 +15,17 @@ pub struct History<C: Component>(Vec<C>);
 
 pub fn flush_history_commands<C: Component + Clone + core::fmt::Debug>(
     mut history_query: Query<(&mut History<C>, &mut C)>,
-    mut history_events: EventReader<HistoryEvent>,
+    mut history_commands: EventReader<HistoryCommands>,
 ) {
-    for event in history_events.iter() {
-        match event {
-            HistoryEvent::Record => {
+    for command in history_commands.iter() {
+        match command {
+            HistoryCommands::Record => {
                 for (mut history, component) in history_query.iter_mut() {
                     history.push(component.clone());
                     dbg!(history);
                 }
             }
-            HistoryEvent::Rewind => {
+            HistoryCommands::Rewind => {
                 for (mut history, mut component) in history_query.iter_mut() {
                     if let Some(prev_state) = history.pop() {
                         *component = prev_state;
@@ -33,7 +33,7 @@ pub fn flush_history_commands<C: Component + Clone + core::fmt::Debug>(
                     dbg!(history);
                 }
             }
-            HistoryEvent::Reset => {
+            HistoryCommands::Reset => {
                 for (mut history, mut component) in history_query.iter_mut() {
                     if let Some(first) = history.get(0) {
                         // Cloning is done before pushing to avoid borrow check issues

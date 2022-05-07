@@ -56,7 +56,7 @@ fn main() {
         .add_plugin(FromComponentAnimator::<sugar::DemonArmsState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_event::<gameplay::PlayerMovementEvent>()
-        .add_event::<history::HistoryEvent>()
+        .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
             gameplay::LevelCardEvent,

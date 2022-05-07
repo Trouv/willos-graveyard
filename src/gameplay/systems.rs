@@ -4,7 +4,7 @@ use crate::{
         components::*, xy_translation, DeathEvent, Direction, LevelCardEvent, PlayerMovementEvent,
         DIRECTION_ORDER,
     },
-    history::HistoryEvent,
+    history::HistoryCommands,
     sugar::PlayerAnimationState,
     LevelState, SoundEffects,
 };
@@ -152,31 +152,31 @@ pub fn move_table_update(
 pub fn player_state_input(
     mut player_query: Query<&mut PlayerState>,
     input: Res<Input<KeyCode>>,
-    mut history_commands: EventWriter<HistoryEvent>,
+    mut history_commands: EventWriter<HistoryCommands>,
 ) {
     for mut player in player_query.iter_mut() {
         if *player == PlayerState::Waiting {
             if input.just_pressed(KeyCode::W) {
-                history_commands.send(HistoryEvent::Record);
+                history_commands.send(HistoryCommands::Record);
                 *player = PlayerState::RankMove(KeyCode::W)
             } else if input.just_pressed(KeyCode::A) {
-                history_commands.send(HistoryEvent::Record);
+                history_commands.send(HistoryCommands::Record);
                 *player = PlayerState::RankMove(KeyCode::A)
             } else if input.just_pressed(KeyCode::S) {
-                history_commands.send(HistoryEvent::Record);
+                history_commands.send(HistoryCommands::Record);
                 *player = PlayerState::RankMove(KeyCode::S)
             } else if input.just_pressed(KeyCode::D) {
-                history_commands.send(HistoryEvent::Record);
+                history_commands.send(HistoryCommands::Record);
                 *player = PlayerState::RankMove(KeyCode::D)
             }
         }
 
         if *player == PlayerState::Waiting || *player == PlayerState::Dead {
             if input.just_pressed(KeyCode::Z) {
-                history_commands.send(HistoryEvent::Rewind);
+                history_commands.send(HistoryCommands::Rewind);
                 *player = PlayerState::Waiting;
             } else if input.just_pressed(KeyCode::R) {
-                history_commands.send(HistoryEvent::Reset);
+                history_commands.send(HistoryCommands::Reset);
                 *player = PlayerState::Waiting;
             }
         }
@@ -187,7 +187,7 @@ pub fn move_player_by_table(
     table_query: Query<&MoveTable>,
     mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
     mut movement_writer: EventWriter<PlayerMovementEvent>,
-    mut action_writer: EventWriter<HistoryEvent>,
+    mut action_writer: EventWriter<HistoryCommands>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
