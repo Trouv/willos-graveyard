@@ -5,6 +5,7 @@ use crate::{
         DIRECTION_ORDER,
     },
     history::{History, HistoryEvent},
+    sugar::PlayerAnimationState,
     LevelState, SoundEffects,
 };
 use bevy::prelude::*;

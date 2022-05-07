@@ -2,6 +2,7 @@ use crate::{
     event_scheduler::EventScheduler,
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
     resources::*,
+    sugar::GoalGhostAnimation,
     LevelState, ASPECT_RATIO, PLAY_ZONE_RATIO,
 };
 use bevy::prelude::*;

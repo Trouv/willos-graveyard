@@ -1,4 +1,4 @@
-use crate::{gameplay::components::*, history::History};
+use crate::{gameplay::components::*, history::History, sugar::*};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 

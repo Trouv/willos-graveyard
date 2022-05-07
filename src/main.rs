@@ -51,11 +51,9 @@ fn main() {
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
-        .add_plugin(FromComponentAnimator::<
-            gameplay::components::PlayerAnimationState,
-        >::new())
-        .add_plugin(FromComponentAnimator::<gameplay::components::DeathHoleState>::new())
-        .add_plugin(FromComponentAnimator::<gameplay::components::DemonArmsState>::new())
+        .add_plugin(FromComponentAnimator::<sugar::PlayerAnimationState>::new())
+        .add_plugin(FromComponentAnimator::<sugar::DeathHoleState>::new())
+        .add_plugin(FromComponentAnimator::<sugar::DemonArmsState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<history::HistoryEvent>()

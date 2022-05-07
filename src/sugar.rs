@@ -1,11 +1,149 @@
+use crate::gameplay::Direction;
 use crate::{
+    animation::SpriteSheetAnimation,
     gameplay::{components::*, *},
     history::HistoryEvent,
     resources::*,
     *,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, utils::Duration};
 use std::{cmp, ops::Range};
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
+pub enum PlayerAnimationState {
+    Idle,
+    Push(Direction),
+    Move(Direction),
+    Dying,
+    None,
+}
+
+impl Default for PlayerAnimationState {
+    fn default() -> Self {
+        PlayerAnimationState::Idle
+    }
+}
+
+impl Iterator for PlayerAnimationState {
+    type Item = Self;
+    fn next(&mut self) -> Option<Self::Item> {
+        Some(match self {
+            PlayerAnimationState::Dying | PlayerAnimationState::None => PlayerAnimationState::None,
+            PlayerAnimationState::Push(d) => PlayerAnimationState::Move(*d),
+            _ => PlayerAnimationState::Idle,
+        })
+    }
+}
+
+impl From<PlayerAnimationState> for SpriteSheetAnimation {
+    fn from(state: PlayerAnimationState) -> SpriteSheetAnimation {
+        use Direction::*;
+        use PlayerAnimationState::*;
+
+        let indices = match state {
+            Idle => 0..6,
+            Move(Up) => 25..31,
+            Move(Down) => 50..56,
+            Move(Left) => 75..81,
+            Move(Right) => 100..106,
+            Push(Up) => 126..128,
+            Push(Down) => 151..153,
+            Push(Left) => 176..178,
+            Push(Right) => 201..203,
+            Dying => 225..250,
+            None => 7..8,
+        };
+
+        let frame_timer = match state {
+            _ => Timer::new(Duration::from_millis(150), true),
+        };
+
+        SpriteSheetAnimation {
+            indices,
+            frame_timer,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum HandDirection {
+    Right,
+    Left,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum GoalAnimationState {
+    Idle,
+    Turn { hand: HandDirection, frames: usize },
+    Blinking { frames: usize },
+}
+
+impl Default for GoalAnimationState {
+    fn default() -> Self {
+        GoalAnimationState::Idle
+    }
+}
+
+#[derive(Clone, Default, Debug, Component)]
+pub struct GoalGhostAnimation {
+    pub column: usize,
+    pub frame_timer: Timer,
+    pub frames_since_blink: usize,
+    pub frames_since_turn: usize,
+    pub state: GoalAnimationState,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+pub enum DeathHoleState {
+    Opening,
+    Closed,
+}
+
+impl Iterator for DeathHoleState {
+    type Item = DeathHoleState;
+    fn next(&mut self) -> Option<Self::Item> {
+        *self = DeathHoleState::Closed;
+        Some(*self)
+    }
+}
+
+impl From<DeathHoleState> for SpriteSheetAnimation {
+    fn from(state: DeathHoleState) -> SpriteSheetAnimation {
+        SpriteSheetAnimation {
+            indices: match state {
+                DeathHoleState::Opening => 0..29,
+                DeathHoleState::Closed => 29..30,
+            },
+            frame_timer: Timer::new(Duration::from_millis(150), true),
+        }
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+pub enum DemonArmsState {
+    Grabbing,
+    Gone,
+}
+
+impl Iterator for DemonArmsState {
+    type Item = DemonArmsState;
+    fn next(&mut self) -> Option<Self::Item> {
+        *self = DemonArmsState::Gone;
+        Some(*self)
+    }
+}
+
+impl From<DemonArmsState> for SpriteSheetAnimation {
+    fn from(state: DemonArmsState) -> SpriteSheetAnimation {
+        SpriteSheetAnimation {
+            indices: match state {
+                DemonArmsState::Grabbing => 0..29,
+                DemonArmsState::Gone => 29..30,
+            },
+            frame_timer: Timer::new(Duration::from_millis(150), true),
+        }
+    }
+}
 
 pub fn history_sugar(
     mut history_event_reader: EventReader<HistoryEvent>,

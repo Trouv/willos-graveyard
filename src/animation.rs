@@ -1,6 +1,12 @@
-use crate::{from_component::FromComponentPlugin, gameplay::components::*};
+use crate::from_component::FromComponentPlugin;
 use bevy::prelude::*;
-use std::marker::PhantomData;
+use std::{marker::PhantomData, ops::Range};
+
+#[derive(Clone, Debug, Default, Component)]
+pub struct SpriteSheetAnimation {
+    pub indices: Range<usize>,
+    pub frame_timer: Timer,
+}
 
 pub fn sprite_sheet_animation(
     mut query: Query<(Entity, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
