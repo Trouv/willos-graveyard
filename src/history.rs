@@ -1,6 +1,4 @@
-pub use crate::gameplay::components::*;
-pub use bevy::prelude::*;
-pub use bevy_ecs_ldtk::prelude::*;
+use bevy::prelude::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HistoryEvent {
@@ -9,55 +7,46 @@ pub enum HistoryEvent {
     Reset,
 }
 
-#[derive(Clone, PartialEq, Debug, Default, Component)]
-pub struct History {
-    pub tiles: Vec<GridCoords>,
-}
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
+pub struct FlushHistoryCommands;
 
-pub fn rewind(
-    mut player_query: Query<&mut PlayerState>,
-    input: Res<Input<KeyCode>>,
-    mut objects_query: Query<(&mut History, &mut GridCoords)>,
-    mut history_event_writer: EventWriter<HistoryEvent>,
+#[derive(Clone, PartialEq, Debug, Default, Component, Deref, DerefMut)]
+pub struct History<C: Component>(Vec<C>);
+
+pub fn flush_history_commands<C: Component + Clone + core::fmt::Debug>(
+    mut history_query: Query<(&mut History<C>, &mut C)>,
+    mut history_events: EventReader<HistoryEvent>,
 ) {
-    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
-        if input.just_pressed(KeyCode::Z) {
-            let mut rewind_happened = false;
-            for (mut history, mut grid_coords) in objects_query.iter_mut() {
-                if let Some(prev_state) = history.tiles.pop() {
-                    *grid_coords = prev_state;
-                    rewind_happened = true;
+    for event in history_events.iter() {
+        match event {
+            HistoryEvent::Record => {
+                for (mut history, component) in history_query.iter_mut() {
+                    history.push(component.clone());
+                    dbg!(history);
                 }
             }
-
-            if rewind_happened {
-                *player_query.single_mut() = PlayerState::Waiting;
-                history_event_writer.send(HistoryEvent::Rewind);
-            }
-        }
-    }
-}
-
-pub fn reset(
-    mut player_query: Query<&mut PlayerState>,
-    input: Res<Input<KeyCode>>,
-    mut objects_query: Query<(&mut History, &mut GridCoords)>,
-    mut history_event_writer: EventWriter<HistoryEvent>,
-) {
-    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
-        if input.just_pressed(KeyCode::R) {
-            let mut reset_happened = false;
-            for (mut history, mut grid_coords) in objects_query.iter_mut() {
-                if let Some(initial_state) = history.tiles.get(0) {
-                    *grid_coords = *initial_state;
-                    reset_happened = true;
-                    history.tiles = Vec::new();
+            HistoryEvent::Rewind => {
+                for (mut history, mut component) in history_query.iter_mut() {
+                    if let Some(prev_state) = history.pop() {
+                        *component = prev_state;
+                    }
+                    dbg!(history);
                 }
             }
+            HistoryEvent::Reset => {
+                for (mut history, mut component) in history_query.iter_mut() {
+                    if let Some(first) = history.get(0) {
+                        // Cloning is done before pushing to avoid borrow check issues
+                        let first = first.clone();
 
-            if reset_happened {
-                *player_query.single_mut() = PlayerState::Waiting;
-                history_event_writer.send(HistoryEvent::Reset);
+                        history.push(component.clone());
+
+                        // Updating to a clone of the first item instead of rewinding the entire
+                        // list allows us to rewind the act of resetting.
+                        *component = first;
+                    }
+                    dbg!(history);
+                }
             }
         }
     }

@@ -75,17 +75,25 @@ fn main() {
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_startup_system(resources::load_death_animations)
-        .add_system(gameplay::systems::player_state_input.label(SystemLabels::Input))
+        .add_system(
+            gameplay::systems::player_state_input
+                .label(SystemLabels::Input)
+                .before(history::FlushHistoryCommands),
+        )
         .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
         .add_system(
             gameplay::systems::perform_grid_coords_movement.label(SystemLabels::MoveTableUpdate),
         )
-        .add_system(gameplay::systems::store_current_position.before(SystemLabels::MoveTableUpdate))
         .add_system(gameplay::systems::check_death.label(SystemLabels::CheckDeath))
         .add_system(gameplay::systems::check_goal.after(SystemLabels::CheckDeath))
-        .add_system(gameplay::systems::move_player_by_table.after(SystemLabels::MoveTableUpdate))
-        .add_system(history::rewind)
-        .add_system(history::reset)
+        .add_system(
+            history::flush_history_commands::<GridCoords>.label(history::FlushHistoryCommands),
+        )
+        .add_system(
+            gameplay::systems::move_player_by_table
+                .after(SystemLabels::MoveTableUpdate)
+                .after(history::FlushHistoryCommands),
+        )
         .add_system(gameplay::systems::ease_movement)
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)

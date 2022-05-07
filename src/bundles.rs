@@ -12,7 +12,7 @@ pub struct WallBundle {
 pub struct InputBlockBundle {
     #[grid_coords]
     grid_coords: GridCoords,
-    history: History,
+    history: History<GridCoords>,
     #[from_entity_instance]
     rigid_body: RigidBody,
     #[from_entity_instance]
@@ -36,7 +36,7 @@ pub struct GoalBundle {
 pub struct PlayerBundle {
     #[grid_coords]
     pub grid_coords: GridCoords,
-    pub history: History,
+    pub history: History<GridCoords>,
     #[from_entity_instance]
     pub rigid_body: RigidBody,
     pub player_state: PlayerState,

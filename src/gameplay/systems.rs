@@ -4,7 +4,7 @@ use crate::{
         components::*, xy_translation, DeathEvent, Direction, LevelCardEvent, PlayerMovementEvent,
         DIRECTION_ORDER,
     },
-    history::{History, HistoryEvent},
+    history::HistoryEvent,
     sugar::PlayerAnimationState,
     LevelState, SoundEffects,
 };
@@ -149,17 +149,35 @@ pub fn move_table_update(
     }
 }
 
-pub fn player_state_input(mut player_query: Query<&mut PlayerState>, input: Res<Input<KeyCode>>) {
+pub fn player_state_input(
+    mut player_query: Query<&mut PlayerState>,
+    input: Res<Input<KeyCode>>,
+    mut history_commands: EventWriter<HistoryEvent>,
+) {
     for mut player in player_query.iter_mut() {
         if *player == PlayerState::Waiting {
             if input.just_pressed(KeyCode::W) {
+                history_commands.send(HistoryEvent::Record);
                 *player = PlayerState::RankMove(KeyCode::W)
             } else if input.just_pressed(KeyCode::A) {
+                history_commands.send(HistoryEvent::Record);
                 *player = PlayerState::RankMove(KeyCode::A)
             } else if input.just_pressed(KeyCode::S) {
+                history_commands.send(HistoryEvent::Record);
                 *player = PlayerState::RankMove(KeyCode::S)
             } else if input.just_pressed(KeyCode::D) {
+                history_commands.send(HistoryEvent::Record);
                 *player = PlayerState::RankMove(KeyCode::D)
+            }
+        }
+
+        if *player == PlayerState::Waiting || *player == PlayerState::Dead {
+            if input.just_pressed(KeyCode::Z) {
+                history_commands.send(HistoryEvent::Rewind);
+                *player = PlayerState::Waiting;
+            } else if input.just_pressed(KeyCode::R) {
+                history_commands.send(HistoryEvent::Reset);
+                *player = PlayerState::Waiting;
             }
         }
     }
@@ -179,7 +197,6 @@ pub fn move_player_by_table(
             if timer.0.finished() {
                 match *player {
                     PlayerState::RankMove(key) => {
-                        action_writer.send(HistoryEvent::Record);
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
                                 movement_writer.send(PlayerMovementEvent {
@@ -205,19 +222,6 @@ pub fn move_player_by_table(
                     }
                     _ => {}
                 }
-            }
-        }
-    }
-}
-
-pub fn store_current_position(
-    mut reader: EventReader<HistoryEvent>,
-    mut objects_query: Query<(&mut History, &GridCoords)>,
-) {
-    for event in reader.iter() {
-        if *event == HistoryEvent::Record {
-            for (mut history, grid_coords) in objects_query.iter_mut() {
-                history.tiles.push(*grid_coords);
             }
         }
     }
