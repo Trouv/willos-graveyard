@@ -64,11 +64,6 @@ impl Default for PlayerState {
     }
 }
 
-#[derive(Clone, PartialEq, Debug, Default, Component)]
-pub struct History {
-    pub tiles: Vec<GridCoords>,
-}
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum LevelCard {
     Rising,

@@ -1,7 +1,9 @@
 mod animation;
+mod bundles;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
+mod history;
 mod resources;
 mod sugar;
 
@@ -56,7 +58,7 @@ fn main() {
         .add_plugin(FromComponentAnimator::<gameplay::components::DemonArmsState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_event::<gameplay::PlayerMovementEvent>()
-        .add_event::<gameplay::HistoryEvent>()
+        .add_event::<history::HistoryEvent>()
         .add_event::<gameplay::DeathEvent>()
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
             gameplay::LevelCardEvent,
@@ -84,8 +86,8 @@ fn main() {
         .add_system(gameplay::systems::check_death.label(SystemLabels::CheckDeath))
         .add_system(gameplay::systems::check_goal.after(SystemLabels::CheckDeath))
         .add_system(gameplay::systems::move_player_by_table.after(SystemLabels::MoveTableUpdate))
-        .add_system(gameplay::systems::rewind)
-        .add_system(gameplay::systems::reset)
+        .add_system(history::rewind)
+        .add_system(history::reset)
         .add_system(gameplay::systems::ease_movement)
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)
@@ -101,19 +103,19 @@ fn main() {
         .add_system(sugar::play_death_animations)
         .add_system(sugar::despawn_death_animations)
         .add_system(sugar::history_sugar)
-        .register_ldtk_entity::<gameplay::bundles::PlayerBundle>("Willo")
-        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("W")
-        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("A")
-        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("S")
-        .register_ldtk_entity::<gameplay::bundles::InputBlockBundle>("D")
-        .register_ldtk_entity::<gameplay::bundles::GoalBundle>("Goal")
-        .register_ldtk_entity::<gameplay::bundles::MoveTableBundle>("Table")
-        .register_ldtk_entity::<gameplay::bundles::GrassBundle>("Grass")
-        .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(1)
-        .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(3)
-        .register_ldtk_int_cell::<gameplay::bundles::WallBundle>(4)
-        .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2)
-        .register_ldtk_int_cell::<gameplay::bundles::ExorcismBlockBundle>(2);
+        .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
+        .register_ldtk_entity::<bundles::InputBlockBundle>("W")
+        .register_ldtk_entity::<bundles::InputBlockBundle>("A")
+        .register_ldtk_entity::<bundles::InputBlockBundle>("S")
+        .register_ldtk_entity::<bundles::InputBlockBundle>("D")
+        .register_ldtk_entity::<bundles::GoalBundle>("Goal")
+        .register_ldtk_entity::<bundles::MoveTableBundle>("Table")
+        .register_ldtk_entity::<bundles::GrassBundle>("Grass")
+        .register_ldtk_int_cell::<bundles::WallBundle>(1)
+        .register_ldtk_int_cell::<bundles::WallBundle>(3)
+        .register_ldtk_int_cell::<bundles::WallBundle>(4)
+        .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2)
+        .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
 
     #[cfg(feature = "hot")]
     {

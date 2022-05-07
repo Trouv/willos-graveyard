@@ -1,7 +1,6 @@
 use crate::UNIT_LENGTH;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-pub mod bundles;
 pub mod components;
 pub mod systems;
 pub mod transitions;
@@ -45,13 +44,6 @@ pub struct PlayerMovementEvent {
 pub struct DeathEvent {
     pub player_entity: Entity,
     pub exorcism_entity: Entity,
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum HistoryEvent {
-    Record,
-    Rewind,
-    Reset,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug)]

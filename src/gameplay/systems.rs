@@ -1,9 +1,10 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{
-        components::*, xy_translation, DeathEvent, Direction, HistoryEvent, LevelCardEvent,
-        PlayerMovementEvent, DIRECTION_ORDER,
+        components::*, xy_translation, DeathEvent, Direction, LevelCardEvent, PlayerMovementEvent,
+        DIRECTION_ORDER,
     },
+    history::{History, HistoryEvent},
     LevelState, SoundEffects,
 };
 use bevy::prelude::*;
@@ -216,55 +217,6 @@ pub fn store_current_position(
         if *event == HistoryEvent::Record {
             for (mut history, grid_coords) in objects_query.iter_mut() {
                 history.tiles.push(*grid_coords);
-            }
-        }
-    }
-}
-
-pub fn rewind(
-    mut player_query: Query<&mut PlayerState>,
-    input: Res<Input<KeyCode>>,
-    mut objects_query: Query<(&mut History, &mut GridCoords)>,
-    mut history_event_writer: EventWriter<HistoryEvent>,
-) {
-    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
-        if input.just_pressed(KeyCode::Z) {
-            let mut rewind_happened = false;
-            for (mut history, mut grid_coords) in objects_query.iter_mut() {
-                if let Some(prev_state) = history.tiles.pop() {
-                    *grid_coords = prev_state;
-                    rewind_happened = true;
-                }
-            }
-
-            if rewind_happened {
-                *player_query.single_mut() = PlayerState::Waiting;
-                history_event_writer.send(HistoryEvent::Rewind);
-            }
-        }
-    }
-}
-
-pub fn reset(
-    mut player_query: Query<&mut PlayerState>,
-    input: Res<Input<KeyCode>>,
-    mut objects_query: Query<(&mut History, &mut GridCoords)>,
-    mut history_event_writer: EventWriter<HistoryEvent>,
-) {
-    if let Ok(PlayerState::Waiting | PlayerState::Dead) = player_query.get_single() {
-        if input.just_pressed(KeyCode::R) {
-            let mut reset_happened = false;
-            for (mut history, mut grid_coords) in objects_query.iter_mut() {
-                if let Some(initial_state) = history.tiles.get(0) {
-                    *grid_coords = *initial_state;
-                    reset_happened = true;
-                    history.tiles = Vec::new();
-                }
-            }
-
-            if reset_happened {
-                *player_query.single_mut() = PlayerState::Waiting;
-                history_event_writer.send(HistoryEvent::Reset);
             }
         }
     }

@@ -1,5 +1,6 @@
 use crate::{
     gameplay::{components::*, *},
+    history::HistoryEvent,
     resources::*,
     *,
 };
