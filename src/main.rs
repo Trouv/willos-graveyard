@@ -84,7 +84,11 @@ fn main() {
         .add_system(
             gameplay::systems::perform_grid_coords_movement.label(SystemLabels::MoveTableUpdate),
         )
-        .add_system(gameplay::systems::check_death.label(SystemLabels::CheckDeath))
+        .add_system(
+            gameplay::systems::check_death
+                .label(SystemLabels::CheckDeath)
+                .after(history::FlushHistoryCommands),
+        )
         .add_system(gameplay::systems::check_goal.after(SystemLabels::CheckDeath))
         .add_system(
             history::flush_history_commands::<GridCoords>.label(history::FlushHistoryCommands),
