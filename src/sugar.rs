@@ -39,6 +39,31 @@ pub fn ease_movement(
     }
 }
 
+pub fn reset_player_easing(
+    mut commands: Commands,
+    player_query: Query<
+        (Entity, &GridCoords, &Transform, &PlayerAnimationState),
+        Changed<PlayerAnimationState>,
+    >,
+) {
+    if let Ok((entity, &grid_coords, transform, player_animation_state)) = player_query.get_single()
+    {
+        match player_animation_state {
+            PlayerAnimationState::Push(_) => (),
+            _ => {
+                let xy = xy_translation(grid_coords.into());
+                commands.entity(entity).insert(transform.ease_to(
+                    Transform::from_xyz(xy.x, xy.y, transform.translation.z),
+                    EaseFunction::CubicOut,
+                    EasingType::Once {
+                        duration: std::time::Duration::from_millis(110),
+                    },
+                ));
+            }
+        }
+    }
+}
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
 pub enum PlayerAnimationState {
     Idle(Direction),

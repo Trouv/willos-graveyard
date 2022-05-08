@@ -82,7 +82,9 @@ fn main() {
         )
         .add_system(gameplay::systems::move_table_update.before(SystemLabels::Input))
         .add_system(
-            gameplay::systems::perform_grid_coords_movement.label(SystemLabels::MoveTableUpdate),
+            gameplay::systems::perform_grid_coords_movement
+                .label(SystemLabels::MoveTableUpdate)
+                .before("from_component"),
         )
         .add_system(
             gameplay::systems::check_death
@@ -99,6 +101,7 @@ fn main() {
                 .after(history::FlushHistoryCommands),
         )
         .add_system(sugar::ease_movement)
+        .add_system(sugar::reset_player_easing)
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)

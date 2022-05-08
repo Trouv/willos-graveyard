@@ -93,9 +93,12 @@ pub fn perform_grid_coords_movement(
 
                 if pushed_entities.len() > 1 {
                     audio.play(sfx.push.clone_weak());
-                    *animation = PlayerAnimationState::Push(movement_event.direction);
+                    *animation.into_inner() = PlayerAnimationState::Push(movement_event.direction);
                 } else {
-                    *animation = PlayerAnimationState::Idle(movement_event.direction);
+                    let new_state = PlayerAnimationState::Idle(movement_event.direction);
+                    if *animation != new_state {
+                        *animation = new_state;
+                    }
                 }
 
                 for entity in pushed_entities {
