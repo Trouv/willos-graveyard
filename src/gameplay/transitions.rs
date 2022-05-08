@@ -155,6 +155,7 @@ pub fn spawn_death_card(
             commands
                 .spawn_bundle(NodeBundle {
                     color: UiColor(Color::rgba(0., 0., 0., 0.9)),
+                    visibility: Visibility { is_visible: false },
                     ..Default::default()
                 })
                 .insert(
@@ -212,6 +213,7 @@ pub fn spawn_death_card(
                                 vertical: VerticalAlign::Center,
                             },
                         ),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     });
                 })
@@ -286,6 +288,7 @@ pub fn spawn_level_card(
             commands
                 .spawn_bundle(NodeBundle {
                     color: UiColor(Color::BLACK),
+                    visibility: Visibility { is_visible: false },
                     ..Default::default()
                 })
                 .insert(
@@ -343,6 +346,7 @@ pub fn spawn_level_card(
                                     horizontal: HorizontalAlign::Center,
                                 },
                             ),
+                            visibility: Visibility { is_visible: false },
                             ..Default::default()
                         });
                     }
@@ -356,6 +360,7 @@ pub fn spawn_level_card(
                             },
                             TextAlignment::default(),
                         ),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     });
                 })

@@ -259,14 +259,14 @@ pub fn schedule_level_card(
 ) {
     level_card_events.schedule(
         LevelCardEvent::Rise(level_selection.clone()),
-        Duration::from_millis(100),
+        Duration::from_millis(800),
     );
     level_card_events.schedule(
         LevelCardEvent::Block(level_selection),
-        Duration::from_millis(1600),
+        Duration::from_millis(2300),
     );
-    level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3100));
-    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(4600));
+    level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3800));
+    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(5300));
 }
 
 pub fn check_goal(

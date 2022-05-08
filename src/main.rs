@@ -76,6 +76,7 @@ fn main() {
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_startup_system(resources::load_death_animations)
+        .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
         .add_system(
             gameplay::systems::player_state_input
                 .label(SystemLabels::Input)
