@@ -58,6 +58,7 @@ fn main() {
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
+        .add_event::<gameplay::GoalEvent>()
         .add_plugin(event_scheduler::EventSchedulerPlugin::<
             gameplay::LevelCardEvent,
         >::new())
@@ -70,7 +71,6 @@ fn main() {
         .insert_resource(LevelState::Inbetween)
         .insert_resource(resources::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
-        .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
@@ -137,49 +137,6 @@ fn main() {
     }
 
     app.run()
-}
-
-pub struct SpriteHandles {
-    pub grass_plain: Handle<TextureAtlas>,
-    pub grass_tufts: Handle<TextureAtlas>,
-    pub grass_stone: Handle<TextureAtlas>,
-}
-
-impl SpriteHandles {
-    pub fn get_rand_grass(&self) -> Handle<TextureAtlas> {
-        let mut rng = rand::thread_rng();
-        let chance = rng.gen::<f32>();
-        if chance < 0.9 {
-            self.grass_plain.clone_weak()
-        } else if chance > 0.9 && chance < 0.95 {
-            self.grass_stone.clone_weak()
-        } else {
-            self.grass_tufts.clone_weak()
-        }
-    }
-}
-
-pub fn sprite_load(
-    mut commands: Commands,
-    assets: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    let grass_plain_handle = assets.load("textures/grass_plain.png");
-    let grass_plain_atlas =
-        TextureAtlas::from_grid(grass_plain_handle, Vec2::new(32.0, 32.0), 4, 1);
-    let grass_stone_handle = assets.load("textures/grass_stone.png");
-    let grass_stone_atlas =
-        TextureAtlas::from_grid(grass_stone_handle, Vec2::new(32.0, 32.0), 4, 1);
-    let grass_tufts_handle = assets.load("textures/grass_tufts.png");
-    let grass_tufts_atlas =
-        TextureAtlas::from_grid(grass_tufts_handle, Vec2::new(32.0, 32.0), 4, 1);
-    commands.spawn_bundle(UiCameraBundle::default());
-
-    commands.insert_resource(SpriteHandles {
-        grass_plain: texture_atlases.add(grass_plain_atlas),
-        grass_tufts: texture_atlases.add(grass_tufts_atlas),
-        grass_stone: texture_atlases.add(grass_stone_atlas),
-    });
 }
 
 pub struct SoundEffects {

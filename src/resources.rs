@@ -8,6 +8,9 @@ pub struct GoalGhostSettings {
     pub no_blink_length: Range<usize>,
     pub blink_length: Range<usize>,
     pub frame_duration: Duration,
+    pub idle_frame_count: usize,
+    pub happy_frame_count: usize,
+    pub none_frame_index: usize,
     pub num_columns: usize,
     pub num_rows: usize,
     pub atlas: Option<Handle<TextureAtlas>>,
@@ -20,8 +23,11 @@ impl GoalGhostSettings {
         no_blink_length: 50..100,
         blink_length: 0..1,
         frame_duration: Duration::from_millis(150),
-        num_columns: 8,
-        num_rows: 4,
+        idle_frame_count: 8,
+        happy_frame_count: 10,
+        none_frame_index: 8,
+        num_columns: 10,
+        num_rows: 5,
         atlas: None,
     };
 }

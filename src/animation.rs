@@ -89,7 +89,7 @@ where
 {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
-            .add_system(animation_finisher::<F>.before("animation"));
+            .add_system(animation_finisher::<F>.before(AnimationLabel));
     }
 }
 

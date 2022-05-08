@@ -38,7 +38,9 @@ impl From<EntityInstance> for InputBlock {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct Goal;
+pub struct Goal {
+    pub met: bool,
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ExorcismBlock;

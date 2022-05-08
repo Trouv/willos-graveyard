@@ -53,3 +53,14 @@ pub enum LevelCardEvent {
     Fall,
     Despawn,
 }
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum GoalEvent {
+    Met {
+        stone_entity: Entity,
+        goal_entity: Entity,
+    },
+    UnMet {
+        goal_entity: Entity,
+    },
+}

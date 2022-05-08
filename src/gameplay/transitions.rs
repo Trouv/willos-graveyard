@@ -16,6 +16,8 @@ pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .spawn_bundle(OrthographicCameraBundle::new_2d())
         .insert(OrthographicCamera);
 
+    commands.spawn_bundle(UiCameraBundle::default());
+
     commands.spawn_bundle(LdtkWorldBundle {
         ldtk_handle: asset_server.load("levels/sokoban-sokoban.ldtk"),
         transform: Transform::from_xyz(32., 32., 0.),
@@ -78,13 +80,13 @@ pub fn spawn_goal_ghosts(
         commands
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: atlas_handle,
-                transform: Transform::from_xyz(0., 0., 0.5),
+                transform: Transform::from_xyz(0., 1., 2.5),
                 ..default()
             })
-            .insert(GoalGhostAnimation {
-                frame_timer: Timer::new(goal_ghost_settings.frame_duration, true),
-                ..default()
-            })
+            .insert(GoalGhostAnimation::new(
+                goal_entity,
+                Timer::new(goal_ghost_settings.frame_duration, true),
+            ))
             .insert(Parent(goal_entity));
     }
 }

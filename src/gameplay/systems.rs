@@ -1,7 +1,8 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{
-        components::*, DeathEvent, Direction, LevelCardEvent, PlayerMovementEvent, DIRECTION_ORDER,
+        components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, PlayerMovementEvent,
+        DIRECTION_ORDER,
     },
     history::HistoryCommands,
     resources::*,
@@ -269,9 +270,10 @@ pub fn schedule_level_card(
 }
 
 pub fn check_goal(
-    goal_query: Query<&GridCoords, With<Goal>>,
-    block_query: Query<&GridCoords, With<InputBlock>>,
+    mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
+    block_query: Query<(Entity, &GridCoords), With<InputBlock>>,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
+    mut goal_events: EventWriter<GoalEvent>,
     mut level_state: ResMut<LevelState>,
     level_selection: Res<LevelSelection>,
     audio: Res<Audio>,
@@ -285,15 +287,29 @@ pub fn check_goal(
             return;
         }
 
-        for goal_grid_coords in goal_query.iter() {
+        for (goal_entity, mut goal, goal_grid_coords) in goal_query.iter_mut() {
             let mut goal_met = false;
-            for block_grid_coords in block_query.iter() {
+            for (stone_entity, block_grid_coords) in block_query.iter() {
                 if goal_grid_coords == block_grid_coords {
                     goal_met = true;
+
+                    if !goal.met {
+                        goal.met = true;
+
+                        goal_events.send(GoalEvent::Met {
+                            stone_entity,
+                            goal_entity,
+                        });
+                    }
+
                     break;
                 }
             }
             if !goal_met {
+                if goal.met {
+                    goal_events.send(GoalEvent::UnMet { goal_entity });
+                    goal.met = false;
+                }
                 return;
             }
         }

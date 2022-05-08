@@ -1207,25 +1207,6 @@
 			}
 		},
 		{
-			"__cWid": 0,
-			"__cHei": 0,
-			"identifier": "Level_tileset",
-			"uid": 70,
-			"relPath": null,
-			"embedAtlas": null,
-			"pxWid": 0,
-			"pxHei": 0,
-			"tileGridSize": 32,
-			"spacing": 0,
-			"padding": 0,
-			"tags": [],
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
-			"customData": [],
-			"savedSelections": [],
-			"cachedPixelData": null
-		},
-		{
 			"__cWid": 17,
 			"__cHei": 2,
 			"identifier": "Graves_Sheet",

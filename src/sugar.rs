@@ -130,6 +130,8 @@ pub enum GoalAnimationState {
     Idle,
     Turn { hand: HandDirection, frames: usize },
     Blinking { frames: usize },
+    Happy { frame: usize },
+    None,
 }
 
 impl Default for GoalAnimationState {
@@ -138,13 +140,27 @@ impl Default for GoalAnimationState {
     }
 }
 
-#[derive(Clone, Default, Debug, Component)]
+#[derive(Clone, Debug, Component)]
 pub struct GoalGhostAnimation {
-    pub column: usize,
+    pub goal_entity: Entity,
     pub frame_timer: Timer,
+    pub column: usize,
     pub frames_since_blink: usize,
     pub frames_since_turn: usize,
     pub state: GoalAnimationState,
+}
+
+impl GoalGhostAnimation {
+    pub fn new(goal_entity: Entity, frame_timer: Timer) -> GoalGhostAnimation {
+        GoalGhostAnimation {
+            goal_entity,
+            frame_timer,
+            column: 0,
+            frames_since_blink: 0,
+            frames_since_turn: 0,
+            state: GoalAnimationState::default(),
+        }
+    }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
@@ -278,9 +294,25 @@ pub fn despawn_death_animations(
 pub fn goal_ghost_animation(
     mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
     goal_ghost_settings: Res<GoalGhostSettings>,
+    mut goal_events: EventReader<GoalEvent>,
     time: Res<Time>,
 ) {
     for (mut animation, mut sprite) in goal_ghost_query.iter_mut() {
+        for event in goal_events.iter() {
+            match event {
+                GoalEvent::Met { goal_entity, .. } => {
+                    if *goal_entity == animation.goal_entity {
+                        animation.state = GoalAnimationState::Happy { frame: 0 };
+                    }
+                }
+                GoalEvent::UnMet { goal_entity } => {
+                    if *goal_entity == animation.goal_entity {
+                        animation.state = GoalAnimationState::Idle;
+                    }
+                }
+            }
+        }
+
         animation.frame_timer.tick(time.delta());
 
         if animation.frame_timer.finished() {
@@ -355,10 +387,28 @@ pub fn goal_ghost_animation(
                     }
                     animation.frames_since_blink = 0;
                 }
+                GoalAnimationState::Happy { frame } => {
+                    let index_offset = goal_ghost_settings.num_columns * 4;
+
+                    sprite.index = index_offset + frame;
+
+                    if animation.column >= goal_ghost_settings.num_columns {
+                        sprite.index = animation.column;
+                    }
+
+                    if frame < goal_ghost_settings.happy_frame_count - 1 {
+                        animation.state = GoalAnimationState::Happy { frame: frame + 1 };
+                    } else {
+                        animation.state = GoalAnimationState::None;
+                    }
+                }
+                GoalAnimationState::None => {
+                    sprite.index = goal_ghost_settings.none_frame_index;
+                }
             }
 
             animation.column += 1;
-            animation.column %= goal_ghost_settings.num_columns;
+            animation.column %= goal_ghost_settings.idle_frame_count;
         }
     }
 }
