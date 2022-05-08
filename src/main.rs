@@ -98,7 +98,7 @@ fn main() {
                 .after(SystemLabels::MoveTableUpdate)
                 .after(history::FlushHistoryCommands),
         )
-        .add_system(gameplay::systems::ease_movement)
+        .add_system(sugar::ease_movement)
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)

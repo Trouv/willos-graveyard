@@ -1,13 +1,43 @@
 use crate::gameplay::Direction;
 use crate::{
     animation::SpriteSheetAnimation,
-    gameplay::{components::*, *},
+    gameplay::{components::*, xy_translation, *},
     history::HistoryCommands,
     resources::*,
     *,
 };
 use bevy::{prelude::*, utils::Duration};
+use bevy_easings::*;
 use std::{cmp, ops::Range};
+
+pub fn ease_movement(
+    mut commands: Commands,
+    mut grid_coords_query: Query<
+        (
+            Entity,
+            &GridCoords,
+            &Transform,
+            Option<&PlayerAnimationState>,
+        ),
+        (Changed<GridCoords>, Without<MoveTable>),
+    >,
+) {
+    for (entity, &grid_coords, transform, player_state) in grid_coords_query.iter_mut() {
+        let mut xy = xy_translation(grid_coords.into());
+
+        if let Some(PlayerAnimationState::Push(direction)) = player_state {
+            xy += IVec2::from(*direction).as_vec2() * 5.;
+        }
+
+        commands.entity(entity).insert(transform.ease_to(
+            Transform::from_xyz(xy.x, xy.y, transform.translation.z),
+            EaseFunction::CubicOut,
+            EasingType::Once {
+                duration: std::time::Duration::from_millis(110),
+            },
+        ));
+    }
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
 pub enum PlayerAnimationState {

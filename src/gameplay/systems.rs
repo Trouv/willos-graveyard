@@ -1,46 +1,15 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{
-        components::*, xy_translation, DeathEvent, Direction, LevelCardEvent, PlayerMovementEvent,
-        DIRECTION_ORDER,
+        components::*, DeathEvent, Direction, LevelCardEvent, PlayerMovementEvent, DIRECTION_ORDER,
     },
     history::HistoryCommands,
     sugar::PlayerAnimationState,
     LevelState, SoundEffects,
 };
 use bevy::prelude::*;
-use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
-
-pub fn ease_movement(
-    mut commands: Commands,
-    mut grid_coords_query: Query<
-        (
-            Entity,
-            &GridCoords,
-            &Transform,
-            Option<&PlayerAnimationState>,
-        ),
-        (Changed<GridCoords>, Without<MoveTable>),
-    >,
-) {
-    for (entity, &grid_coords, transform, player_state) in grid_coords_query.iter_mut() {
-        let mut xy = xy_translation(grid_coords.into());
-
-        if let Some(PlayerAnimationState::Push(direction)) = player_state {
-            xy += IVec2::from(*direction).as_vec2() * 5.;
-        }
-
-        commands.entity(entity).insert(transform.ease_to(
-            Transform::from_xyz(xy.x, xy.y, transform.translation.z),
-            EaseFunction::CubicOut,
-            EasingType::Once {
-                duration: std::time::Duration::from_millis(110),
-            },
-        ));
-    }
-}
 
 fn push_grid_coords_recursively(
     collision_map: Vec<Vec<Option<(Entity, RigidBody)>>>,
