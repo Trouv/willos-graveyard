@@ -84,7 +84,7 @@ fn main() {
         .add_system(
             gameplay::systems::perform_grid_coords_movement
                 .label(SystemLabels::MoveTableUpdate)
-                .before("from_component"),
+                .before(from_component::FromComponentLabel),
         )
         .add_system(
             gameplay::systems::check_death

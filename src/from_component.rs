@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 use std::marker::PhantomData;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
+pub struct FromComponentLabel;
+
 pub struct FromComponentPlugin<F, I>
 where
     F: Into<I> + Component + 'static + Send + Sync + Clone,
@@ -29,8 +32,8 @@ where
     I: Component + 'static + Send + Sync,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(from_changed_component::<F, I>.label("from_component"))
-            .add_system(from_added_component::<F, I>.label("from_component"));
+        app.add_system(from_changed_component::<F, I>.label(FromComponentLabel))
+            .add_system(from_added_component::<F, I>.label(FromComponentLabel));
     }
 }
 

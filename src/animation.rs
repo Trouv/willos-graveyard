@@ -1,6 +1,9 @@
-use crate::from_component::FromComponentPlugin;
+use crate::from_component::{FromComponentLabel, FromComponentPlugin};
 use bevy::prelude::*;
 use std::{marker::PhantomData, ops::Range};
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
+pub struct AnimationLabel;
 
 #[derive(Clone, Debug, Default, Component)]
 pub struct SpriteSheetAnimation {
@@ -46,13 +49,13 @@ impl Plugin for SpriteSheetAnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             sprite_sheet_animation
-                .label("animation")
-                .after("from_component"),
+                .label(AnimationLabel)
+                .after(FromComponentLabel),
         )
         .add_system(
             set_initial_sprite_index
-                .label("animation")
-                .after("from_component"),
+                .label(AnimationLabel)
+                .after(FromComponentLabel),
         );
     }
 }
