@@ -69,6 +69,7 @@ fn main() {
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
         .insert_resource(resources::GoalGhostSettings::NORMAL)
+        .insert_resource(resources::RewindSettings::NORMAL)
         .add_startup_system_to_stage(StartupStage::PreStartup, sprite_load)
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
