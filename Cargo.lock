@@ -2710,17 +2710,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sokoban-sokoban"
-version = "0.2.0"
-dependencies = [
- "bevy",
- "bevy_easings",
- "bevy_ecs_ldtk",
- "rand",
- "serde",
-]
-
-[[package]]
 name = "spirv"
 version = "0.2.0+1.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3196,6 +3185,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "549533d9e1cdd4b4cda7718d33ff500fc4c34b5467b71d76b547ae0324f3b2a2"
 dependencies = [
  "bitflags",
+]
+
+[[package]]
+name = "willos-graveyard"
+version = "0.3.0"
+dependencies = [
+ "bevy",
+ "bevy_easings",
+ "bevy_ecs_ldtk",
+ "rand",
+ "serde",
 ]
 
 [[package]]

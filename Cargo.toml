@@ -1,6 +1,6 @@
 [package]
-name = "sokoban-sokoban"
-version = "0.2.0"
+name = "willos-graveyard"
+version = "0.3.0"
 authors = ["TLovell <trevorlovelldesign@gmail.com>"]
 edition = "2021"
 

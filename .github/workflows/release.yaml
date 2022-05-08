@@ -9,7 +9,7 @@ on:
       - '*'
 
 env:
-  binary: sokoban-sokoban
+  binary: willos-graveyard
 
 
 jobs:
