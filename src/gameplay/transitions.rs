@@ -28,7 +28,7 @@ pub fn spawn_gravestone_body(
     gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
 ) {
     for (entity, texture_handle) in gravestones.iter() {
-        let index_range = 17..34 as usize;
+        let index_range = 17..34_usize;
 
         let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
 
@@ -39,7 +39,7 @@ pub fn spawn_gravestone_body(
         commands
             .spawn_bundle(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
-                    index: (17..34 as usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
+                    index: (17..34_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
                     ..default()
                 },
                 texture_atlas: texture_handle.clone(),
@@ -418,64 +418,59 @@ pub fn fit_camera_around_play_zone_padded(
     levels: Res<Assets<LdtkLevel>>,
 ) {
     for level_event in level_events.iter() {
-        match level_event {
-            LevelEvent::Transformed(_) => {
-                let level_handle = level_query.single();
-                if let Some(level) = levels.get(level_handle) {
-                    let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
-                    let padded_level_size = level_size + IVec2::splat(32 * 2);
+        if let LevelEvent::Transformed(_) = level_event {
+            let level_handle = level_query.single();
+            if let Some(level) = levels.get(level_handle) {
+                let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
+                let padded_level_size = level_size + IVec2::splat(32 * 2);
 
-                    let padded_level_ratio =
-                        padded_level_size.x as f32 / padded_level_size.y as f32;
-                    let play_zone_ratio =
-                        PLAY_ZONE_RATIO.width as f32 / PLAY_ZONE_RATIO.height as f32;
-                    let aspect_ratio = ASPECT_RATIO.width as f32 / ASPECT_RATIO.height as f32;
+                let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
+                let play_zone_ratio = PLAY_ZONE_RATIO.width as f32 / PLAY_ZONE_RATIO.height as f32;
+                let aspect_ratio = ASPECT_RATIO.width as f32 / ASPECT_RATIO.height as f32;
 
-                    let (mut transform, mut projection) = camera_query.single_mut();
-                    projection.scaling_mode = bevy::render::camera::ScalingMode::None;
-                    projection.bottom = 0.;
-                    projection.left = 0.;
+                let (mut transform, mut projection) = camera_query.single_mut();
+                projection.scaling_mode = bevy::render::camera::ScalingMode::None;
+                projection.bottom = 0.;
+                projection.left = 0.;
 
-                    let play_zone_size = if padded_level_ratio > play_zone_ratio {
-                        // Level is "wide"
-                        Size {
-                            width: padded_level_size.x as f32,
-                            height: padded_level_size.x as f32 / play_zone_ratio,
-                        }
-                    } else {
-                        // Level is "tall"
-                        Size {
-                            width: padded_level_size.y as f32 * play_zone_ratio,
-                            height: padded_level_size.y as f32,
-                        }
-                    };
+                let play_zone_size = if padded_level_ratio > play_zone_ratio {
+                    // Level is "wide"
+                    Size {
+                        width: padded_level_size.x as f32,
+                        height: padded_level_size.x as f32 / play_zone_ratio,
+                    }
+                } else {
+                    // Level is "tall"
+                    Size {
+                        width: padded_level_size.y as f32 * play_zone_ratio,
+                        height: padded_level_size.y as f32,
+                    }
+                };
 
-                    if play_zone_ratio > aspect_ratio {
-                        // Play zone is "wide"
-                        let pixel_perfect_width = (play_zone_size.width / ASPECT_RATIO.width as f32)
-                            .round() as i32
-                            * ASPECT_RATIO.width;
+                if play_zone_ratio > aspect_ratio {
+                    // Play zone is "wide"
+                    let pixel_perfect_width = (play_zone_size.width / ASPECT_RATIO.width as f32)
+                        .round() as i32
+                        * ASPECT_RATIO.width;
 
-                        projection.right = pixel_perfect_width as f32;
-                        projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
-                    } else {
-                        // Play zone is "tall"
+                    projection.right = pixel_perfect_width as f32;
+                    projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
+                } else {
+                    // Play zone is "tall"
 
-                        let pixel_perfect_height =
-                            (play_zone_size.height / ASPECT_RATIO.height as f32).round() as i32
-                                * ASPECT_RATIO.height;
+                    let pixel_perfect_height = (play_zone_size.height / ASPECT_RATIO.height as f32)
+                        .round() as i32
+                        * ASPECT_RATIO.height;
 
-                        projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
-                        projection.top = pixel_perfect_height as f32;
-                    };
+                    projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
+                    projection.top = pixel_perfect_height as f32;
+                };
 
-                    transform.translation.x =
-                        ((play_zone_size.width - padded_level_size.x as f32) / -2.).round();
-                    transform.translation.y =
-                        ((play_zone_size.height - padded_level_size.y as f32) / -2.).round();
-                }
+                transform.translation.x =
+                    ((play_zone_size.width - padded_level_size.x as f32) / -2.).round();
+                transform.translation.y =
+                    ((play_zone_size.height - padded_level_size.y as f32) / -2.).round();
             }
-            _ => (),
         }
     }
 }

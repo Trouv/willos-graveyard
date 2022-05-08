@@ -119,7 +119,7 @@ pub fn move_table_update(
             let diff = *input_grid_coords - *table_grid_coords;
             let x_index = diff.x - 1;
             let y_index = -1 - diff.y;
-            if x_index >= 0 && x_index < 4 && y_index >= 0 && y_index < 4 {
+            if (0..4).contains(&x_index) && y_index >= 0 && y_index < 4 {
                 // key block is in table
                 table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
             }
@@ -257,7 +257,7 @@ pub fn check_goal(
         // the goal will automatically be "met", loading the next level.
         // This if statement prevents that.
         if goal_query.iter().count() == 0 {
-            return ();
+            return;
         }
 
         for goal_grid_coords in goal_query.iter() {
@@ -269,7 +269,7 @@ pub fn check_goal(
                 }
             }
             if !goal_met {
-                return ();
+                return;
             }
         }
 
@@ -377,38 +377,36 @@ pub fn update_control_display(
                         });
                 };
 
-                let mut keys_to_controls: Vec<(KeyCode, Vec<ControlNode>)> = Vec::new();
-                keys_to_controls.push((
-                    KeyCode::W,
-                    vec![
-                        ControlNode::Image(assets.load("textures/w.png")),
-                        ControlNode::Text("=".to_string()),
-                    ],
-                ));
-
-                keys_to_controls.push((
-                    KeyCode::A,
-                    vec![
-                        ControlNode::Image(assets.load("textures/a.png")),
-                        ControlNode::Text("=".to_string()),
-                    ],
-                ));
-
-                keys_to_controls.push((
-                    KeyCode::S,
-                    vec![
-                        ControlNode::Image(assets.load("textures/s.png")),
-                        ControlNode::Text("=".to_string()),
-                    ],
-                ));
-
-                keys_to_controls.push((
-                    KeyCode::D,
-                    vec![
-                        ControlNode::Image(assets.load("textures/d.png")),
-                        ControlNode::Text("=".to_string()),
-                    ],
-                ));
+                let mut keys_to_controls: Vec<(KeyCode, Vec<ControlNode>)> = vec![
+                    (
+                        KeyCode::W,
+                        vec![
+                            ControlNode::Image(assets.load("textures/w.png")),
+                            ControlNode::Text("=".to_string()),
+                        ],
+                    ),
+                    (
+                        KeyCode::A,
+                        vec![
+                            ControlNode::Image(assets.load("textures/a.png")),
+                            ControlNode::Text("=".to_string()),
+                        ],
+                    ),
+                    (
+                        KeyCode::S,
+                        vec![
+                            ControlNode::Image(assets.load("textures/s.png")),
+                            ControlNode::Text("=".to_string()),
+                        ],
+                    ),
+                    (
+                        KeyCode::D,
+                        vec![
+                            ControlNode::Image(assets.load("textures/d.png")),
+                            ControlNode::Text("=".to_string()),
+                        ],
+                    ),
+                ];
 
                 for (i, rank) in move_table.table.iter().enumerate() {
                     for (j, key) in rank.iter().enumerate() {
@@ -442,12 +440,12 @@ pub fn update_control_display(
                     .for_each(|(_, row)| add_row(row));
 
                 add_row(vec![
-                    ControlNode::Text(format!("R")),
+                    ControlNode::Text("R".to_string()),
                     ControlNode::Text("=".to_string()),
                     ControlNode::Text("restart".to_string()),
                 ]);
                 add_row(vec![
-                    ControlNode::Text(format!("Z")),
+                    ControlNode::Text("Z".to_string()),
                     ControlNode::Text("=".to_string()),
                     ControlNode::Text("undo".to_string()),
                 ]);
