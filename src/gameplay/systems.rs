@@ -165,7 +165,6 @@ pub fn move_player_by_table(
     table_query: Query<&MoveTable>,
     mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
     mut movement_writer: EventWriter<PlayerMovementEvent>,
-    mut action_writer: EventWriter<HistoryCommands>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
