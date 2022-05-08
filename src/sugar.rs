@@ -11,16 +11,15 @@ use std::{cmp, ops::Range};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
 pub enum PlayerAnimationState {
-    Idle,
+    Idle(Direction),
     Push(Direction),
-    Move(Direction),
     Dying,
     None,
 }
 
 impl Default for PlayerAnimationState {
     fn default() -> Self {
-        PlayerAnimationState::Idle
+        PlayerAnimationState::Idle(Direction::Down)
     }
 }
 
@@ -29,8 +28,8 @@ impl Iterator for PlayerAnimationState {
     fn next(&mut self) -> Option<Self::Item> {
         Some(match self {
             PlayerAnimationState::Dying | PlayerAnimationState::None => PlayerAnimationState::None,
-            PlayerAnimationState::Push(d) => PlayerAnimationState::Move(*d),
-            _ => PlayerAnimationState::Idle,
+            PlayerAnimationState::Push(d) => PlayerAnimationState::Idle(*d),
+            _ => PlayerAnimationState::Idle(Direction::Down),
         })
     }
 }
@@ -41,20 +40,20 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
         use PlayerAnimationState::*;
 
         let indices = match state {
-            Idle => 0..6,
-            Move(Up) => 25..31,
-            Move(Down) => 50..56,
-            Move(Left) => 75..81,
-            Move(Right) => 100..106,
-            Push(Up) => 126..128,
-            Push(Down) => 151..153,
-            Push(Left) => 176..178,
-            Push(Right) => 201..203,
-            Dying => 225..250,
+            Push(Up) => 1..2,
+            Push(Down) => 26..27,
+            Push(Left) => 51..52,
+            Push(Right) => 76..77,
+            Idle(Up) => 100..107,
+            Idle(Down) => 125..132,
+            Idle(Left) => 150..157,
+            Idle(Right) => 175..182,
+            Dying => 200..225,
             None => 7..8,
         };
 
         let frame_timer = match state {
+            //Push(_) => Timer::new(Duration::from_millis(75), true),
             _ => Timer::new(Duration::from_millis(150), true),
         };
 
@@ -154,7 +153,7 @@ pub fn history_sugar(
     for command in history_commands.iter() {
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
-                *player_query.single_mut() = PlayerAnimationState::Idle;
+                *player_query.single_mut() = PlayerAnimationState::Idle(Direction::Down);
                 audio.play(sfx.undo.clone_weak());
             }
             _ => (),

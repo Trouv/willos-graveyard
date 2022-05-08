@@ -16,12 +16,21 @@ use std::time::Duration;
 pub fn ease_movement(
     mut commands: Commands,
     mut grid_coords_query: Query<
-        (Entity, &GridCoords, &Transform),
+        (
+            Entity,
+            &GridCoords,
+            &Transform,
+            Option<&PlayerAnimationState>,
+        ),
         (Changed<GridCoords>, Without<MoveTable>),
     >,
 ) {
-    for (entity, &grid_coords, transform) in grid_coords_query.iter_mut() {
-        let xy = xy_translation(grid_coords.into());
+    for (entity, &grid_coords, transform, player_state) in grid_coords_query.iter_mut() {
+        let mut xy = xy_translation(grid_coords.into());
+
+        if let Some(PlayerAnimationState::Push(direction)) = player_state {
+            xy += IVec2::from(*direction).as_vec2() * 5.;
+        }
 
         commands.entity(entity).insert(transform.ease_to(
             Transform::from_xyz(xy.x, xy.y, transform.translation.z),
@@ -117,7 +126,7 @@ pub fn perform_grid_coords_movement(
                     audio.play(sfx.push.clone_weak());
                     *animation = PlayerAnimationState::Push(movement_event.direction);
                 } else {
-                    *animation = PlayerAnimationState::Move(movement_event.direction);
+                    *animation = PlayerAnimationState::Idle(movement_event.direction);
                 }
 
                 for entity in pushed_entities {
