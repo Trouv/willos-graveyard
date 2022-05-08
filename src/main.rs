@@ -114,6 +114,7 @@ fn main() {
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
         .add_system(gameplay::transitions::spawn_goal_ghosts)
         .add_system(sugar::goal_ghost_animation)
+        .add_system(sugar::goal_ghost_event_sugar)
         .add_system(sugar::animate_grass_system)
         .add_system(sugar::play_death_animations)
         .add_system(sugar::despawn_death_animations)

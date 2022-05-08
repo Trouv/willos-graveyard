@@ -291,14 +291,12 @@ pub fn despawn_death_animations(
     }
 }
 
-pub fn goal_ghost_animation(
-    mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
-    goal_ghost_settings: Res<GoalGhostSettings>,
+pub fn goal_ghost_event_sugar(
+    mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
     mut goal_events: EventReader<GoalEvent>,
-    time: Res<Time>,
 ) {
-    for (mut animation, mut sprite) in goal_ghost_query.iter_mut() {
-        for event in goal_events.iter() {
+    for event in goal_events.iter() {
+        for mut animation in goal_ghost_query.iter_mut() {
             match event {
                 GoalEvent::Met { goal_entity, .. } => {
                     if *goal_entity == animation.goal_entity {
@@ -312,7 +310,15 @@ pub fn goal_ghost_animation(
                 }
             }
         }
+    }
+}
 
+pub fn goal_ghost_animation(
+    mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
+    goal_ghost_settings: Res<GoalGhostSettings>,
+    time: Res<Time>,
+) {
+    for (mut animation, mut sprite) in goal_ghost_query.iter_mut() {
         animation.frame_timer.tick(time.delta());
 
         if animation.frame_timer.finished() {

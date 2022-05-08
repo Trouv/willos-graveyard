@@ -287,6 +287,8 @@ pub fn check_goal(
             return;
         }
 
+        let mut level_goal_met = true;
+
         for (goal_entity, mut goal, goal_grid_coords) in goal_query.iter_mut() {
             let mut goal_met = false;
             for (stone_entity, block_grid_coords) in block_query.iter() {
@@ -306,21 +308,24 @@ pub fn check_goal(
                 }
             }
             if !goal_met {
+                level_goal_met = false;
+
                 if goal.met {
                     goal_events.send(GoalEvent::UnMet { goal_entity });
                     goal.met = false;
                 }
-                return;
             }
         }
 
-        *level_state = LevelState::Inbetween;
+        if level_goal_met {
+            *level_state = LevelState::Inbetween;
 
-        if let LevelSelection::Index(num) = *level_selection {
-            schedule_level_card(&mut level_card_events, LevelSelection::Index(num + 1));
+            if let LevelSelection::Index(num) = *level_selection {
+                schedule_level_card(&mut level_card_events, LevelSelection::Index(num + 1));
+            }
+
+            audio.play(sfx.victory.clone_weak());
         }
-
-        audio.play(sfx.victory.clone_weak());
     }
 }
 
