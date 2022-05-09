@@ -96,14 +96,14 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
 
         let indices = match state {
             Push(Up) => 1..2,
-            Push(Down) => 26..27,
-            Push(Left) => 51..52,
-            Push(Right) => 76..77,
-            Idle(Up) => 100..107,
-            Idle(Down) => 125..132,
-            Idle(Left) => 150..157,
-            Idle(Right) => 175..182,
-            Dying => 200..225,
+            Push(Down) => 11..12,
+            Push(Left) => 21..22,
+            Push(Right) => 31..32,
+            Idle(Up) => 40..46,
+            Idle(Down) => 50..56,
+            Idle(Left) => 60..66,
+            Idle(Right) => 70..76,
+            Dying => 80..105,
             None => 7..8,
         };
 
