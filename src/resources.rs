@@ -23,11 +23,11 @@ impl GoalGhostSettings {
         no_blink_length: 50..100,
         blink_length: 0..1,
         frame_duration: Duration::from_millis(150),
-        idle_frame_count: 8,
+        idle_frame_count: 7,
         happy_frame_count: 10,
         none_frame_index: 8,
         num_columns: 10,
-        num_rows: 5,
+        num_rows: 7,
         atlas: None,
     };
 }

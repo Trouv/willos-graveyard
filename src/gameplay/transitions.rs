@@ -30,7 +30,7 @@ pub fn spawn_gravestone_body(
     gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
 ) {
     for (entity, texture_handle) in gravestones.iter() {
-        let index_range = 17..34_usize;
+        let index_range = 10..26_usize;
 
         let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
 
@@ -41,7 +41,7 @@ pub fn spawn_gravestone_body(
         commands
             .spawn_bundle(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
-                    index: (17..34_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
+                    index: (10..26_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
                     ..default()
                 },
                 texture_atlas: texture_handle.clone(),
