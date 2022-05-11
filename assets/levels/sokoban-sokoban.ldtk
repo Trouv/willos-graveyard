@@ -1543,10 +1543,10 @@
 					"id": "V_String",
 					"params": ["Full control"]
 				}] },
-				{ "__identifier": "Notes", "__value": "Should accomplish:\n- Makes players think about an ideal table without demanding too much\n- Doesn't necessarily need exorcism tiles, since we just had 2 levels in a row with them ", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+				{ "__identifier": "Notes", "__value": "Should accomplish:\n- Makes players think about an ideal table without demanding too much\n- Doesn't necessarily need exorcism tiles, since we just had 2 levels in a row with them \n\n22-05-10\nA too-simple solution was found during a play test: moving D up to <v and then solving the puzzle with W\n\nAfter some thought, I think this solution does ruin the puzzle a bit, so it needs some redesign\n\nThe redesign should make it so:\n- All 4 directions need to be covered by the movement table for the solution", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"Should accomplish:\n- Makes players think about an ideal table without demanding too much\n- Doesn't necessarily need exorcism tiles, since we just had 2 levels in a row with them "
+						"Should accomplish:\n- Makes players think about an ideal table without demanding too much\n- Doesn't necessarily need exorcism tiles, since we just had 2 levels in a row with them \n\n22-05-10\nA too-simple solution was found during a play test: moving D up to <v and then solving the puzzle with W\n\nAfter some thought, I think this solution does ruin the puzzle a bit, so it needs some redesign\n\nThe redesign should make it so:\n- All 4 directions need to be covered by the movement table for the solution"
 					]
 				}] }
 			],
