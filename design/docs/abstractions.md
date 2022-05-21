@@ -174,48 +174,48 @@ These are generally in order of difficulty.
 Some advanced concepts within lower categories may be more advanced than novice concepts in higher categories.
 
 1. Mechanical
-    1. Straight moves
-    1. Turn moves
-    1. Walls
-    1. Pushing stones
-    1. Goals
-    1. Table changing
-    1. Table meaning
-    1. Obstacles on table
-    1. Cancel moves
-    1. Pushing stones into stones
-    1. Death 
-    1. Multiple goals
+   1. Straight moves
+   1. Turn moves
+   1. Walls
+   1. Pushing stones
+   1. Goals
+   1. Table changing
+   1. Table meaning
+   1. Obstacles on table
+   1. Cancel moves
+   1. Pushing stones into stones
+   1. Death 
+   1. Multiple goals
 2. Positional
-    1. Point A to point B
-    1. Positioning to push stones with straight moves
-    1. Positioning to push stones with turn moves
-    1. Diagonal range
-    1. Corner range
-    1. Climbing diagonals with walls
-    1. Subgrid range
-    1. Changing subgrid with walls
-    1. Color range
-    1. Changing colors with walls
-    1. "Pushing off" walls with cancel moves
-    1. Post-change positioning
+   1. Point A to point B
+   1. Positioning to push stones with straight moves
+   1. Positioning to push stones with turn moves
+   1. Diagonal range
+   1. Corner range
+   1. Climbing diagonals with walls
+   1. Subgrid range
+   1. Changing subgrid with walls
+   1. Color range
+   1. Changing colors with walls
+   1. "Pushing off" walls with cancel moves
+   1. Post-change positioning
 3. Movement
-    1. Movement addressing obstacle
-    1. Unnecessary movements
-    1. Straight tile pattern
-    1. Cancel tile pattern
-    1. Movement addressing subgrid range
-    1. Movement addressing corner range
-    1. Movement redundancy
-    1. Train movement
-    1. Wide changes using straights
-    1. Wide changes using trains
+   1. Movement addressing obstacle
+   1. Unnecessary movements
+   1. Straight tile pattern
+   1. Cancel tile pattern
+   1. Movement addressing subgrid range
+   1. Movement addressing corner range
+   1. Movement redundancy
+   1. Train movement
+   1. Wide changes using straights
+   1. Wide changes using trains
 4. Table
-    1. Table addressing obstacles
-    1. Order of changes
-    1. Edge trap tables
-    1. Corner trap tables
-    1. Utility tables
-    1. Train utility tables
-    1. Fork/T utility tables
-    1. Double straight utility tables
+   1. Table addressing obstacles
+   1. Order of changes
+   1. Edge trap tables
+   1. Corner trap tables
+   1. Utility tables
+   1. Train utility tables
+   1. Fork/T utility tables
+   1. Double straight utility tables
