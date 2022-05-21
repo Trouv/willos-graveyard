@@ -111,14 +111,9 @@ pub fn spawn_control_display(
     mut commands: Commands,
     ui_root_query: Query<Entity, Added<UiRoot>>,
     play_zone_portion: Res<PlayZonePortion>,
-    windows: Res<Windows>,
 ) {
     for ui_root_entity in ui_root_query.iter() {
-        let window = windows.primary();
-
-        let aspect_ratio = window.width() as f32 / window.height() as f32;
-        let play_zone_ratio = aspect_ratio * **play_zone_portion;
-        let control_zone_ratio = (aspect_ratio - play_zone_ratio) / aspect_ratio;
+        let control_zone_ratio = 1. - **play_zone_portion;
 
         commands
             .spawn_bundle(NodeBundle {
