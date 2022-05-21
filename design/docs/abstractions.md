@@ -175,31 +175,31 @@ Some advanced concepts within lower categories may be more advanced than novice 
 
 1. Mechanical
   1. 
-  1. 
-  1. 
-  1. 
-  1. 
+  2. 
+  3. 
+  4. 
+  5. 
 2. Positional
   1. 
-  1. 
-  1. 
-  1. 
-  1. 
+  2. 
+  3. 
+  4. 
+  5. 
 3. Movement
   1. 
-  1. 
-  1. 
-  1. 
-  1. 
+  2. 
+  3. 
+  4. 
+  5. 
 4. Table
   1. 
-  1. 
-  1. 
-  1. 
-  1. 
+  2. 
+  3. 
+  4. 
+  5. 
 5. Table Category
   1. 
-  1. 
-  1. 
-  1. 
-  1. 
+  2. 
+  3. 
+  4. 
+  5. 
