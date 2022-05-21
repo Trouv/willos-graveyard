@@ -8,6 +8,7 @@ use crate::{
 use bevy::{prelude::*, window::WindowResized};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
+use num_rational::Ratio;
 use rand::{distributions::WeightedIndex, prelude::*};
 use std::time::Duration;
 
@@ -449,11 +450,13 @@ pub fn fit_camera_around_play_zone_padded(
                 let padded_level_size = level_size + IVec2::splat(32 * 2);
 
                 let window = windows.primary();
-                dbg!(window.width(), window.height());
 
                 let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
                 let aspect_ratio = window.width() as f32 / window.height() as f32;
                 let play_zone_ratio = aspect_ratio * **play_zone_portion;
+
+                let reduced_aspect_ratio =
+                    Ratio::new(window.width() as i32, window.height() as i32).reduced();
 
                 let (mut transform, mut projection) = camera_query.single_mut();
                 projection.scaling_mode = bevy::render::camera::ScalingMode::None;
@@ -476,18 +479,20 @@ pub fn fit_camera_around_play_zone_padded(
 
                 if play_zone_ratio > aspect_ratio {
                     // Play zone is "wide"
-                    let pixel_perfect_width = (play_zone_size.width / window.width() as f32).round()
-                        as i32
-                        * window.width() as i32;
+                    let pixel_perfect_width = (play_zone_size.width
+                        / *reduced_aspect_ratio.numer() as f32)
+                        .round() as i32
+                        * *reduced_aspect_ratio.numer() as i32;
 
                     projection.right = pixel_perfect_width as f32;
                     projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
                 } else {
                     // Play zone is "tall"
 
-                    let pixel_perfect_height = (play_zone_size.height / window.height() as f32)
+                    let pixel_perfect_height = (play_zone_size.height
+                        / *reduced_aspect_ratio.denom() as f32)
                         .round() as i32
-                        * window.height() as i32;
+                        * *reduced_aspect_ratio.denom() as i32;
 
                     projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
                     projection.top = pixel_perfect_height as f32;
