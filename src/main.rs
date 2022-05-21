@@ -71,6 +71,7 @@ fn main() {
         .insert_resource(LevelState::Inbetween)
         .insert_resource(resources::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
+        .insert_resource(resources::PlayZonePortion(0.75))
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
         .add_startup_system(gameplay::transitions::spawn_ui_root)

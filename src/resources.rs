@@ -86,3 +86,6 @@ impl RewindSettings {
         hold_timer: None,
     };
 }
+
+#[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
+pub struct PlayZonePortion(pub f32);
