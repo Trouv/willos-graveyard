@@ -152,3 +152,54 @@ Beginner Table Categories
 
 ## No stone unturned
 Intermediate Table
+
+
+# Conceptual Analysis
+I think it may be useful to reframe a lot of the problem questions above as just concepts.
+Then, we can analyze levels in terms of what concepts they "reinforce", and what concepts they "introduce".
+
+Introducing a concept should be explicitly designed.
+While levels that are the first to feature a concept may technically be introducing it, they should be considered reinforcments unless a higher standard of introduction is met.
+
+Concepts that are reinforced without introduction may warrant some adjustments, or the creation of a new level.
+Other concepts may not need to be teached.
+They might just not be interesting enough, or maybe they can't be tested in any way.
+One example that comes to mind is "holding undo".
+It'd still be nice to list these.
+
+
+## Levels of abstraction, again
+We will organize concepts into their levels of abstraction.
+These are generally in order of difficulty.
+Some advanced concepts within lower categories may be more advanced than novice concepts in higher categories.
+
+1. Mechanical
+  1. 
+  1. 
+  1. 
+  1. 
+  1. 
+2. Positional
+  1. 
+  1. 
+  1. 
+  1. 
+  1. 
+3. Movement
+  1. 
+  1. 
+  1. 
+  1. 
+  1. 
+4. Table
+  1. 
+  1. 
+  1. 
+  1. 
+  1. 
+5. Table Category
+  1. 
+  1. 
+  1. 
+  1. 
+  1. 
