@@ -15,16 +15,6 @@ use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
-pub const PLAY_ZONE_RATIO: Size<i32> = Size {
-    width: 4,
-    height: 3,
-};
-
-pub const ASPECT_RATIO: Size<i32> = Size {
-    width: 16,
-    height: 9,
-};
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum SystemLabels {
     LoadAssets,
