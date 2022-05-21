@@ -9,7 +9,6 @@ hot = []
 
 [dependencies]
 bevy = {version = "0.7", features = ["wav"]}
-num-rational = "0.3"
 bevy_easings = "0.7"
 bevy_ecs_ldtk = "0.3"
 rand = "0.8"
