@@ -5,7 +5,10 @@ authors = ["TLovell <trevorlovelldesign@gmail.com>"]
 edition = "2021"
 
 [features]
+# For release builds, make sure to use --no-default-features
+default = ["hot", "fast-compile"]
 hot = []
+fast-compile = ["bevy/dynamic"]
 
 [dependencies]
 bevy = {version = "0.7", features = ["wav"]}
