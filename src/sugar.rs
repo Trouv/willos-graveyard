@@ -1,3 +1,5 @@
+use crate::animation::AnimationEvent;
+use crate::bundles::SaltSteamBundle;
 use crate::gameplay::Direction;
 use crate::{
     animation::SpriteSheetAnimation,
@@ -423,6 +425,7 @@ fn range_chance(range: &Range<usize>, current: usize) -> f32 {
     ((current as f32 - range.start as f32) / (range.end as f32 - range.start as f32)).clamp(0., 1.)
 }
 
+
 pub fn animate_grass_system(
     time: Res<Time>,
     texture_atlases: Res<Assets<TextureAtlas>>,
@@ -446,6 +449,46 @@ pub fn animate_grass_system(
         }
     }
 }
+
+pub fn spawn_steam_animations(
+    mut commands: Commands,
+    settings: Res<SaltSteamSettings>,
+    mut exorcism_query: Query<(Entity, &mut ExorcismBlock)>,
+){
+    let atlas_handle = settings.atlas.clone().unwrap();
+    let mut rng = rand::thread_rng();
+    let animation = SpriteSheetAnimation{indices: 0..settings.frame_count, frame_timer: Timer::new(settings.frame_duration, true)};
+    
+    for ( entity, mut ex_block) in exorcism_query.iter_mut(){
+        if ex_block.time_since_steam == 0 || rng.gen::<f32>() < range_chance(&settings.no_spawn_length, ex_block.time_since_steam){
+            let pos_offset: Vec2 = Vec2::new((0.5 - rng.gen::<f32>()) * 0.65 * UNIT_LENGTH, (0.5 - rng.gen::<f32>()) * 0.65 * UNIT_LENGTH);
+            let sprite_sheet = SpriteSheetBundle { texture_atlas: atlas_handle.clone(), transform: Transform::from_xyz(pos_offset.x, pos_offset.y, 0.2), ..default()};
+            let bundle = SaltSteamBundle {sprite_sheet_bundle: sprite_sheet, salt_steam: SaltSteam};
+            let steam_entity = commands.spawn_bundle(bundle.clone()).insert(animation.clone()).id();
+            commands.entity(entity).add_child(steam_entity);
+            ex_block.time_since_steam = 1;
+        }
+        else {
+            ex_block.time_since_steam += 1;
+        }
+    }
+}
+
+pub fn despawn_steam_animations(
+    mut commands: Commands,
+    mut animation_events: EventReader<AnimationEvent>,
+    steam_query: Query<(Entity, With<SaltSteam>)>,
+){
+    for AnimationEvent::Finished(entity) in animation_events.iter(){
+        if steam_query.contains(*entity){
+            commands.entity(*entity).despawn_recursive()
+        }
+    }
+}
+
+
+
+
 
 pub fn make_ui_visible(mut ui_query: Query<&mut Visibility, With<Node>>) {
     for mut visibility in ui_query.iter_mut() {
