@@ -69,3 +69,10 @@ pub struct GrassBundle {
 pub struct ExorcismBlockBundle {
     pub exorcism_block: ExorcismBlock,
 }
+
+#[derive(Clone, Bundle)]
+pub struct SaltSteamBundle {
+    #[bundle]
+    pub sprite_sheet_bundle: SpriteSheetBundle,
+    pub salt_steam: SaltSteam
+}

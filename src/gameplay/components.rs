@@ -43,7 +43,12 @@ pub struct Goal {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ExorcismBlock;
+pub struct SaltSteam;
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
+pub struct ExorcismBlock {
+    pub time_since_steam: usize,
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct MoveTable {
