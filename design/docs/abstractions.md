@@ -219,3 +219,98 @@ Some advanced concepts within lower categories may be more advanced than novice 
    1. Train utility tables
    1. Fork/T utility tables
    1. Double straight utility tables
+
+# Conceptual Analysis of current levels
+Below is are lists of what concepts are reinforced in each level.
+*Italicized* concepts are appearing for the first time.
+**Bold** concepts are deliberately introduced in the level design.
+
+## Who put this gravestone here?
+- **1.i**
+- **1.iii**
+- **1.iv**
+- **1.v**
+- **2.i**
+
+## It takes some getting used to.
+- 1.i
+- **1.ii**
+- 1.iii
+- 1.iv
+- 1.v
+- 2.i
+- **2.ii**
+- **2.iii**
+
+## Set the table.
+- 1.i
+- 1.iii
+- 1.iv
+- 1.v
+- **1.vi**
+- 2.i
+- 2.ii
+
+## Exorcism?!
+- 1.i
+- 1.ii
+- 1.iii
+- 1.iv
+- 1.v
+- 1.vi
+- **1.vii**
+- *1.viii*
+- *1.ix*
+- **1.xi**
+- 2.i
+- 2.ii
+- 2.iii
+
+1.i, 1.iii, 1.iv, 1.v, and 2.i have all been reinforced 4 times.
+
+## The bishop changes color
+- 1.ii
+- 2.iii
+- **2.ix**
+- **2.x**
+
+## Full Control
+- 1.ii
+- 1.vi
+- 1.vii
+- 2.ii
+- 2.iii
+- 2.ix
+- 2.x
+- **2.vii**
+- **2.viii**
+- *3.i*
+- *3.ii*
+- **3.iii**
+- *3.vii*
+- *4.i*
+
+1.ii, 2.ii, 2.iii have all been reinforced 4 times.
+
+## Yoink
+- 1.vi
+- 1.vii
+- 2.ix
+- 2.x
+- 3.i
+- 3.ii
+- 3.vii
+
+1.vi has now been reinforced 4 times.
+
+## Origami fortune teller
+- 1.vii
+- 1.ix
+- *2.iv*
+- **2.v**
+- **2.vi**
+- 3.i
+- 3.ii
+- 3.vi
+- 3.vii
+- 4.i
