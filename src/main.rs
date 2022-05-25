@@ -15,16 +15,6 @@ use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
-pub const PLAY_ZONE_RATIO: Size<i32> = Size {
-    width: 4,
-    height: 3,
-};
-
-pub const ASPECT_RATIO: Size<i32> = Size {
-    width: 16,
-    height: 9,
-};
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum SystemLabels {
     LoadAssets,
@@ -71,6 +61,7 @@ fn main() {
         .insert_resource(LevelState::Inbetween)
         .insert_resource(resources::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
+        .insert_resource(resources::PlayZonePortion(0.75))
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
         .add_startup_system(gameplay::transitions::world_setup)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
