@@ -33,6 +33,26 @@ impl GoalGhostSettings {
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
+pub struct ActiveArrowTextureHandle {
+    pub atlas: Option<Handle<TextureAtlas>>
+}
+
+
+pub fn load_active_table_arrows(asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>, mut settings: ResMut<ActiveArrowTextureHandle>){
+    
+    let image_handle = asset_server.load("textures/table_arrows_active.png");
+    let texture_atlas = TextureAtlas::from_grid(
+        image_handle,
+        Vec2::splat(32.),
+        5,
+        5,
+    );
+    let atlas_handle = texture_atlases.add(texture_atlas);
+    settings.atlas = Some(atlas_handle);
+}
+
+
+#[derive(Clone, Eq, PartialEq, Debug, Hash)]
 pub struct SaltSteamSettings {
     pub no_spawn_length: Range<usize>,
     pub frame_count: usize,

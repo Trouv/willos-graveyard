@@ -62,6 +62,7 @@ pub struct GrassBundle {
     #[sprite_sheet_bundle]
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,
+    pub grass: Grass,
     pub wind_timer: WindTimer,
 }
 

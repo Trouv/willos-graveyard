@@ -78,6 +78,7 @@ fn main() {
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_startup_system(resources::load_death_animations)
         .add_startup_system(resources::load_salt_steam)
+        // .add_startup_system(resources::load_active_table_arrows)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
         .add_system(
             gameplay::systems::player_state_input

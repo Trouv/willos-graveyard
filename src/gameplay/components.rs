@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
+use std::{cmp, ops::Range};
+use rand::Rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum RigidBody {
@@ -108,3 +110,17 @@ pub struct ControlDisplayNode;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct UiRoot;
+
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Component)]
+
+pub struct Grass {
+    pub frame_range: Range<usize>
+}
+
+impl Default for Grass {
+    fn default() -> Grass {
+        let mut rng = rand::thread_rng();
+        let row_index = rng.gen_range(0..4);
+        Grass{frame_range: (row_index * 4)..((row_index+1)*4)}
+    }
+}

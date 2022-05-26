@@ -331,7 +331,7 @@ pub fn check_goal(
 
 pub fn update_control_display(
     mut commands: Commands,
-    move_table_query: Query<&MoveTable, Changed<MoveTable>>,
+    move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
     assets: Res<AssetServer>,
 ) {
@@ -340,161 +340,162 @@ pub fn update_control_display(
         Image(Handle<Image>),
     }
 
-    for move_table in move_table_query.iter() {
-        let control_display_entity = control_display_query.single();
+    for (table_entity, move_table, changed) in move_table_query.iter() {
+        if changed{
+            let control_display_entity = control_display_query.single();
 
-        commands
-            .entity(control_display_entity)
-            .despawn_descendants();
+            commands
+                .entity(control_display_entity)
+                .despawn_descendants();
 
-        let font = assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf");
+            let font = assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf");
 
-        let style = TextStyle {
-            font,
-            font_size: 30.,
-            color: Color::WHITE,
-        };
-        commands
-            .entity(control_display_entity)
-            .with_children(|parent| {
-                let mut add_row = |nodes: Vec<ControlNode>| {
-                    parent
-                        .spawn_bundle(NodeBundle {
-                            style: Style {
-                                size: Size {
-                                    height: Val::Percent(100. / 18.),
+            let style = TextStyle {
+                font,
+                font_size: 30.,
+                color: Color::WHITE,
+            };
+            commands
+                .entity(control_display_entity)
+                .with_children(|parent| {
+                    let mut add_row = |nodes: Vec<ControlNode>| {
+                        parent
+                            .spawn_bundle(NodeBundle {
+                                style: Style {
+                                    size: Size {
+                                        height: Val::Percent(100. / 18.),
+                                        ..Default::default()
+                                    },
+                                    margin: Rect {
+                                        bottom: Val::Px(16.),
+                                        ..Default::default()
+                                    },
                                     ..Default::default()
                                 },
-                                margin: Rect {
-                                    bottom: Val::Px(16.),
-                                    ..Default::default()
-                                },
+                                color: UiColor(Color::NONE),
                                 ..Default::default()
-                            },
-                            color: UiColor(Color::NONE),
-                            ..Default::default()
-                        })
-                        .with_children(|parent| {
-                            for node in nodes {
-                                match node {
-                                    ControlNode::Text(s) => {
-                                        parent.spawn_bundle(TextBundle {
-                                            text: Text::with_section(
-                                                s,
-                                                style.clone(),
-                                                TextAlignment {
-                                                    vertical: VerticalAlign::Center,
-                                                    horizontal: HorizontalAlign::Center,
-                                                },
-                                            ),
-                                            style: Style {
-                                                size: Size {
-                                                    height: Val::Percent(100.),
-                                                    ..Default::default()
-                                                },
-                                                margin: Rect {
-                                                    right: Val::Px(16.),
-                                                    ..Default::default()
-                                                },
-                                                ..Default::default()
-                                            },
-                                            ..Default::default()
-                                        });
-                                    }
-                                    ControlNode::Image(h) => {
-                                        parent.spawn_bundle(ImageBundle {
-                                            image: UiImage(h),
-                                            style: Style {
-                                                size: Size {
-                                                    height: Val::Percent(100.),
-                                                    ..Default::default()
-                                                },
-                                                margin: Rect {
-                                                    right: Val::Px(16.),
+                            })
+                            .with_children(|parent| {
+                                for node in nodes {
+                                    match node {
+                                        ControlNode::Text(s) => {
+                                            parent.spawn_bundle(TextBundle {
+                                                text: Text::with_section(
+                                                    s,
+                                                    style.clone(),
+                                                    TextAlignment {
+                                                        vertical: VerticalAlign::Center,
+                                                        horizontal: HorizontalAlign::Center,
+                                                    },
+                                                ),
+                                                style: Style {
+                                                    size: Size {
+                                                        height: Val::Percent(100.),
+                                                        ..Default::default()
+                                                    },
+                                                    margin: Rect {
+                                                        right: Val::Px(16.),
+                                                        ..Default::default()
+                                                    },
                                                     ..Default::default()
                                                 },
                                                 ..Default::default()
-                                            },
-                                            ..Default::default()
-                                        });
+                                            });
+                                        }
+                                        ControlNode::Image(h) => {
+                                            parent.spawn_bundle(ImageBundle {
+                                                image: UiImage(h),
+                                                style: Style {
+                                                    size: Size {
+                                                        height: Val::Percent(100.),
+                                                        ..Default::default()
+                                                    },
+                                                    margin: Rect {
+                                                        right: Val::Px(16.),
+                                                        ..Default::default()
+                                                    },
+                                                    ..Default::default()
+                                                },
+                                                ..Default::default()
+                                            });
+                                        }
                                     }
                                 }
-                            }
-                        });
-                };
+                            });
+                    };
 
-                let mut keys_to_controls: Vec<(KeyCode, Vec<ControlNode>)> = vec![
-                    (
-                        KeyCode::W,
-                        vec![
-                            ControlNode::Image(assets.load("textures/w.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                    (
-                        KeyCode::A,
-                        vec![
-                            ControlNode::Image(assets.load("textures/a.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                    (
-                        KeyCode::S,
-                        vec![
-                            ControlNode::Image(assets.load("textures/s.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                    (
-                        KeyCode::D,
-                        vec![
-                            ControlNode::Image(assets.load("textures/d.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                ];
+                    let mut keys_to_controls: Vec<(KeyCode, Vec<ControlNode>)> = vec![
+                        (
+                            KeyCode::W,
+                            vec![
+                                ControlNode::Image(assets.load("textures/w.png")),
+                                ControlNode::Text("=".to_string()),
+                            ],
+                        ),
+                        (
+                            KeyCode::A,
+                            vec![
+                                ControlNode::Image(assets.load("textures/a.png")),
+                                ControlNode::Text("=".to_string()),
+                            ],
+                        ),
+                        (
+                            KeyCode::S,
+                            vec![
+                                ControlNode::Image(assets.load("textures/s.png")),
+                                ControlNode::Text("=".to_string()),
+                            ],
+                        ),
+                        (
+                            KeyCode::D,
+                            vec![
+                                ControlNode::Image(assets.load("textures/d.png")),
+                                ControlNode::Text("=".to_string()),
+                            ],
+                        ),
+                    ];
 
-                for (i, rank) in move_table.table.iter().enumerate() {
-                    for (j, key) in rank.iter().enumerate() {
-                        if let Some(key) = key {
-                            let first_dir = DIRECTION_ORDER[i];
-                            let second_dir = DIRECTION_ORDER[j];
+                    for (i, rank) in move_table.table.iter().enumerate() {
+                        for (j, key) in rank.iter().enumerate() {
+                            if let Some(key) = key {
+                                let first_dir = DIRECTION_ORDER[i];
+                                let second_dir = DIRECTION_ORDER[j];
+                                let direction_handle = |d: Direction| -> Handle<Image> {
+                                    match d {
+                                        Direction::Up => assets.load("textures/up.png"),
+                                        Direction::Left => assets.load("textures/left.png"),
+                                        Direction::Down => assets.load("textures/down.png"),
+                                        Direction::Right => assets.load("textures/right.png"),
+                                    }
+                                };
 
-                            let direction_handle = |d: Direction| -> Handle<Image> {
-                                match d {
-                                    Direction::Up => assets.load("textures/up.png"),
-                                    Direction::Left => assets.load("textures/left.png"),
-                                    Direction::Down => assets.load("textures/down.png"),
-                                    Direction::Right => assets.load("textures/right.png"),
+                                if let Some((_, controls)) =
+                                    keys_to_controls.iter_mut().find(|(k, _)| k == key)
+                                {
+                                    controls.extend(vec![
+                                        ControlNode::Image(direction_handle(first_dir)),
+                                        ControlNode::Image(direction_handle(second_dir)),
+                                    ]);
                                 }
-                            };
-
-                            if let Some((_, controls)) =
-                                keys_to_controls.iter_mut().find(|(k, _)| k == key)
-                            {
-                                controls.extend(vec![
-                                    ControlNode::Image(direction_handle(first_dir)),
-                                    ControlNode::Image(direction_handle(second_dir)),
-                                ]);
                             }
                         }
                     }
-                }
 
-                keys_to_controls
-                    .into_iter()
-                    .for_each(|(_, row)| add_row(row));
+                    keys_to_controls
+                        .into_iter()
+                        .for_each(|(_, row)| add_row(row));
 
-                add_row(vec![
-                    ControlNode::Text("R".to_string()),
-                    ControlNode::Text("=".to_string()),
-                    ControlNode::Text("restart".to_string()),
-                ]);
-                add_row(vec![
-                    ControlNode::Text("Z".to_string()),
-                    ControlNode::Text("=".to_string()),
-                    ControlNode::Text("undo".to_string()),
-                ]);
-            });
+                    add_row(vec![
+                        ControlNode::Text("R".to_string()),
+                        ControlNode::Text("=".to_string()),
+                        ControlNode::Text("restart".to_string()),
+                    ]);
+                    add_row(vec![
+                        ControlNode::Text("Z".to_string()),
+                        ControlNode::Text("=".to_string()),
+                        ControlNode::Text("undo".to_string()),
+                    ]);
+                });
     }
+}
 }
