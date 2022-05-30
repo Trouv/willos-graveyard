@@ -7,7 +7,7 @@ use crate::{
     history::HistoryCommands,
     resources::*,
     sugar::PlayerAnimationState,
-    LevelState, SoundEffects,
+    LevelState, SoundEffects, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
@@ -331,7 +331,7 @@ pub fn check_goal(
 
 pub fn update_control_display(
     mut commands: Commands,
-    move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
+    move_table_query: Query<(&MoveTable, Changed<MoveTable>)>,
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
     assets: Res<AssetServer>,
 ) {
@@ -340,7 +340,7 @@ pub fn update_control_display(
         Image(Handle<Image>),
     }
 
-    for (table_entity, move_table, changed) in move_table_query.iter() {
+    for (move_table, changed) in move_table_query.iter() {
         if changed{
             let control_display_entity = control_display_query.single();
 
@@ -349,7 +349,6 @@ pub fn update_control_display(
                 .despawn_descendants();
 
             let font = assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf");
-
             let style = TextStyle {
                 font,
                 font_size: 30.,
@@ -472,6 +471,7 @@ pub fn update_control_display(
                                 if let Some((_, controls)) =
                                     keys_to_controls.iter_mut().find(|(k, _)| k == key)
                                 {
+
                                     controls.extend(vec![
                                         ControlNode::Image(direction_handle(first_dir)),
                                         ControlNode::Image(direction_handle(second_dir)),

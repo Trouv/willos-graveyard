@@ -33,22 +33,32 @@ impl GoalGhostSettings {
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
-pub struct ActiveArrowTextureHandle {
-    pub atlas: Option<Handle<TextureAtlas>>
+pub struct ActiveArrowSettings {
+    pub atlas: Handle<TextureAtlas>,
+    pub up_indices: [usize;2],
+    pub left_indices: [usize;2],
+    pub down_indices: [usize;2],
+    pub right_indices: [usize;2],
 }
 
 
-pub fn load_active_table_arrows(asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>, mut settings: ResMut<ActiveArrowTextureHandle>){
+pub fn load_active_table_arrows(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
     
-    let image_handle = asset_server.load("textures/table_arrows_active.png");
+    let image_handle = asset_server.load("textures/table_active.png");
     let texture_atlas = TextureAtlas::from_grid(
         image_handle,
         Vec2::splat(32.),
         5,
         5,
     );
-    let atlas_handle = texture_atlases.add(texture_atlas);
-    settings.atlas = Some(atlas_handle);
+    let settings = ActiveArrowSettings{
+        atlas: texture_atlases.add(texture_atlas),
+        up_indices: [1,5],
+        left_indices: [2,10],
+        down_indices: [3,15],
+        right_indices: [4,20],
+    };
+    commands.insert_resource(settings.clone());
 }
 
 
