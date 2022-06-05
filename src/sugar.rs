@@ -488,38 +488,28 @@ pub fn despawn_steam_animations(
 
 pub fn update_table_sprites(
     mut commands: Commands,
-    move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
-    active_arrow_settings: Res<ActiveArrowSettings> 
+    mut move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
+    active_arrow_settings: Res<TableArrowSettings> 
 ){
-    for (table_entity, move_table, ..) in move_table_query.iter(){
+    for (mut table_entity, move_table, ..) in move_table_query.iter(){
+        commands.entity(table_entity).despawn_descendants();
         for (i, rank) in move_table.table.iter().enumerate() {
             for (j, key) in rank.iter().enumerate() {
-                if let Some(key) = key {
-
-                    let mut bundle = SpriteSheetBundle {texture_atlas: (*active_arrow_settings).atlas.clone(), sprite: TextureAtlasSprite {index: i+1,..default() }, transform: Transform::from_xyz(UNIT_LENGTH * (i as f32), 0., 0.05),..Default::default()};
-                    let y_arrow = commands.spawn_bundle(bundle.clone()).id();
-                    bundle.sprite.index = (j * 5) as usize;
-                    bundle.transform = Transform::from_xyz(0.0, UNIT_LENGTH * j as f32, 0.08);
-                    let x_arrow = commands.spawn_bundle(bundle.clone()).id();
-                    commands.entity(table_entity).add_child(y_arrow).add_child(x_arrow);
+                let atlas = if key.is_some() {    
+                    &active_arrow_settings.active_atlas
+                } else {
+                    &active_arrow_settings.atlas
+                };
+                let mut bundle = SpriteSheetBundle {texture_atlas: atlas.clone(), sprite: TextureAtlasSprite {index: i,..default() }, transform: Transform::from_xyz(-2.*UNIT_LENGTH,-UNIT_LENGTH * (i as f32 -1.), 0.02),..Default::default()};
+                let y_arrow = commands.spawn_bundle(bundle.clone()).id();
+                bundle.sprite.index = (j + 4) as usize;
+                bundle.transform = Transform::from_xyz(UNIT_LENGTH * (j as f32 -1.), 2. * UNIT_LENGTH, 0.02);
+                let x_arrow = commands.spawn_bundle(bundle.clone()).id();
+                commands.entity(table_entity).add_child(y_arrow).add_child(x_arrow);
         
-                }
             }
         }
     }
-}
-
-pub fn get_arrow_index_from_move(first_direction: Direction, second_direction: Direction, arrow_settings:&Res<ActiveArrowSettings> 
-) -> [usize;2]{
-    let get_index = |d: Direction| -> [usize;2]{ 
-    match d{
-        Direction::Up => arrow_settings.up_indices,
-        Direction::Left => arrow_settings.left_indices,
-        Direction::Down => arrow_settings.down_indices,
-        Direction::Right => arrow_settings.right_indices,
-    }
-};
-    [get_index(first_direction)[0], get_index(second_direction)[1]]
 }
 
 

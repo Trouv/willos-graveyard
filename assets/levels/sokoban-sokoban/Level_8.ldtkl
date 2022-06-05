@@ -320,7 +320,7 @@
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 27, "x": 0, "y": 0, "w": 160, "h": 160 },
-					"__smartColor": "#7C7C7C",
+					"__smartColor": "#6B926C",
 					"iid": "fc6418d0-b4d0-11ec-b4dc-bdbf184a3f69",
 					"width": 160,
 					"height": 160,

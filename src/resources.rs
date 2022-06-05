@@ -33,8 +33,9 @@ impl GoalGhostSettings {
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
-pub struct ActiveArrowSettings {
+pub struct TableArrowSettings {
     pub atlas: Handle<TextureAtlas>,
+    pub active_atlas: Handle<TextureAtlas>,
     pub up_indices: [usize;2],
     pub left_indices: [usize;2],
     pub down_indices: [usize;2],
@@ -42,24 +43,29 @@ pub struct ActiveArrowSettings {
 }
 
 
-pub fn load_active_table_arrows(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
+pub fn load_table_arrows(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
     
-    let image_handle = asset_server.load("textures/table_active.png");
-    let texture_atlas = TextureAtlas::from_grid(
-        image_handle,
-        Vec2::splat(32.),
-        5,
-        5,
-    );
-    let settings = ActiveArrowSettings{
-        atlas: texture_atlases.add(texture_atlas),
-        up_indices: [1,5],
-        left_indices: [2,10],
-        down_indices: [3,15],
-        right_indices: [4,20],
-    };
-    commands.insert_resource(settings.clone());
-}
+        
+        let get_atlas = |p: &str| -> TextureAtlas {
+            let image_handle = asset_server.load(p);
+            TextureAtlas::from_grid(
+                image_handle,
+                Vec2::splat(32.),
+                4,
+                2,
+            )
+        };
+        let settings = TableArrowSettings{
+            atlas: texture_atlases.add(get_atlas("textures/editor-table.png")),
+            active_atlas: texture_atlases.add(get_atlas("textures/table_active.png")),
+            up_indices: [0,4],
+            left_indices: [1,5],
+            down_indices: [2,6],
+            right_indices: [3,7],
+        };
+        commands.insert_resource(settings.clone());
+    }
+
 
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]

@@ -195,6 +195,20 @@
 					"defUid": 25,
 					"px": [320,352],
 					"fieldInstances": []
+				},
+				{
+					"__identifier": "Table",
+					"__grid": [6,7],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 27, "x": 0, "y": 0, "w": 160, "h": 160 },
+					"__smartColor": "#6B926C",
+					"iid": "4e15e1a2-b4d0-11ec-885f-6f26cc209508",
+					"width": 160,
+					"height": 160,
+					"defUid": 19,
+					"px": [192,224],
+					"fieldInstances": []
 				}
 			]
 		},
@@ -305,20 +319,6 @@
 					"height": 32,
 					"defUid": 52,
 					"px": [64,32],
-					"fieldInstances": []
-				},
-				{
-					"__identifier": "Table",
-					"__grid": [6,7],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 27, "x": 0, "y": 0, "w": 160, "h": 160 },
-					"__smartColor": "#7C7C7C",
-					"iid": "4e15e1a2-b4d0-11ec-885f-6f26cc209508",
-					"width": 160,
-					"height": 160,
-					"defUid": 19,
-					"px": [192,224],
 					"fieldInstances": []
 				},
 				{
