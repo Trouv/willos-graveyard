@@ -488,25 +488,40 @@ pub fn despawn_steam_animations(
 
 pub fn update_table_sprites(
     mut commands: Commands,
-    mut move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
+    move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
     active_arrow_settings: Res<TableArrowSettings> 
 ){
-    for (mut table_entity, move_table, ..) in move_table_query.iter(){
+    for (table_entity, move_table, ..) in move_table_query.iter(){
         commands.entity(table_entity).despawn_descendants();
         for (i, rank) in move_table.table.iter().enumerate() {
             for (j, key) in rank.iter().enumerate() {
-                let atlas = if key.is_some() {    
-                    &active_arrow_settings.active_atlas
+                let (atlas, height) = if key.is_some() {    
+                    (&active_arrow_settings.active_atlas,
+                    0.05)
                 } else {
-                    &active_arrow_settings.atlas
+                    (&active_arrow_settings.atlas,
+                    0.02)
                 };
-                let mut bundle = SpriteSheetBundle {texture_atlas: atlas.clone(), sprite: TextureAtlasSprite {index: i,..default() }, transform: Transform::from_xyz(-2.*UNIT_LENGTH,-UNIT_LENGTH * (i as f32 -1.), 0.02),..Default::default()};
-                let y_arrow = commands.spawn_bundle(bundle.clone()).id();
-                bundle.sprite.index = (j + 4) as usize;
-                bundle.transform = Transform::from_xyz(UNIT_LENGTH * (j as f32 -1.), 2. * UNIT_LENGTH, 0.02);
-                let x_arrow = commands.spawn_bundle(bundle.clone()).id();
-                commands.entity(table_entity).add_child(y_arrow).add_child(x_arrow);
-        
+                commands.entity(table_entity)
+                .with_children(|child_commands| {
+                    child_commands
+                        .spawn_bundle(SpriteSheetBundle {
+                            sprite: TextureAtlasSprite {index: i,..default() },
+                            texture_atlas: atlas.clone(),
+                            transform: Transform::from_xyz(-2.*UNIT_LENGTH,-UNIT_LENGTH * (i as f32 -1.), height),
+                            ..default()
+                        })
+                        .insert(DeathHoleState::Opening);
+    
+                    child_commands
+                        .spawn_bundle(SpriteSheetBundle {
+                            sprite: TextureAtlasSprite {index: (j + 4) as usize,..default() },
+                            texture_atlas: atlas.clone(),
+                            transform: Transform::from_xyz(UNIT_LENGTH * (j as f32 -1.), 2. * UNIT_LENGTH, height),
+                            ..default()
+                        })
+                        .insert(DemonArmsState::Grabbing);
+                });
             }
         }
     }
