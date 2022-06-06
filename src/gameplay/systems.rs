@@ -334,6 +334,7 @@ pub fn update_control_display(
     move_table_query: Query<(&MoveTable, Changed<MoveTable>)>,
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
     assets: Res<AssetServer>,
+    arrow_settings: Res<TableArrowSettings>
 ) {
     enum ControlNode {
         Text(String),
@@ -461,10 +462,10 @@ pub fn update_control_display(
                                 let second_dir = DIRECTION_ORDER[j];
                                 let direction_handle = |d: Direction| -> Handle<Image> {
                                     match d {
-                                        Direction::Up => assets.load("textures/up.png"),
-                                        Direction::Left => assets.load("textures/left.png"),
-                                        Direction::Down => assets.load("textures/down.png"),
-                                        Direction::Right => assets.load("textures/right.png"),
+                                        Direction::Up => assets.load("textures/arrow1.png"),
+                                        Direction::Left => assets.load("textures/arrow2.png"),
+                                        Direction::Down => assets.load("textures/arrow3.png"),
+                                        Direction::Right => assets.load("textures/arrow4.png"),
                                     }
                                 };
 

@@ -510,8 +510,7 @@ pub fn update_table_sprites(
                             texture_atlas: atlas.clone(),
                             transform: Transform::from_xyz(-2.*UNIT_LENGTH,-UNIT_LENGTH * (i as f32 -1.), height),
                             ..default()
-                        })
-                        .insert(DeathHoleState::Opening);
+                        });
     
                     child_commands
                         .spawn_bundle(SpriteSheetBundle {
@@ -519,8 +518,7 @@ pub fn update_table_sprites(
                             texture_atlas: atlas.clone(),
                             transform: Transform::from_xyz(UNIT_LENGTH * (j as f32 -1.), 2. * UNIT_LENGTH, height),
                             ..default()
-                        })
-                        .insert(DemonArmsState::Grabbing);
+                        });
                 });
             }
         }
