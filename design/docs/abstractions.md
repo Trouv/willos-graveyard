@@ -64,7 +64,7 @@ Some advanced concepts within lower categories may be more advanced than novice 
    1. Fork/T utility tables
    1. Double straight utility tables
 
-# Conceptual Analysis of current levels
+# Conceptual Analysis of levels (as of 2022-06-15)
 Below is are lists of what concepts are reinforced in each level.
 *Italicized* concepts are appearing for the first time.
 **Bold** concepts are deliberately introduced in the level design.
@@ -95,6 +95,8 @@ Below is are lists of what concepts are reinforced in each level.
 - 2.i
 - 2.ii
 
+This level could stand to be more challenging
+
 ## Exorcism?!
 - 1.i
 - 1.ii
@@ -112,6 +114,8 @@ Below is are lists of what concepts are reinforced in each level.
 
 1.i, 1.iii, 1.iv, 1.v, and 2.i have all been reinforced 4 times.
 
+This level could also stand to be more challenging
+
 ## The bishop changes color
 - 1.ii
 - 2.iii
@@ -128,7 +132,7 @@ Below is are lists of what concepts are reinforced in each level.
 - 2.x
 - **2.vii**
 - **2.viii**
-- *3.i*
+- *3.i*, may be good to introduce this a little earlier?
 - *3.ii*
 - **3.iii**
 - *3.vii*
