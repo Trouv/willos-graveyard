@@ -92,10 +92,10 @@ Below is are lists of what concepts are reinforced in each level.
 - 1.iv
 - 1.v
 - **1.vi**
+- *1.viii*
 - 2.i
 - 2.ii
-
-This level could stand to be more challenging
+- **3.i**
 
 ## Exorcism?!
 - 1.i
@@ -105,7 +105,7 @@ This level could stand to be more challenging
 - 1.v
 - 1.vi
 - **1.vii**
-- *1.viii*
+- 1.viii
 - *1.ix*
 - **1.xi**
 - 2.i
@@ -132,7 +132,7 @@ This level could also stand to be more challenging
 - 2.x
 - **2.vii**
 - **2.viii**
-- *3.i*, may be good to introduce this a little earlier?
+- 3.i
 - *3.ii*
 - **3.iii**
 - *3.vii*
@@ -162,3 +162,5 @@ This level could also stand to be more challenging
 - 3.vi
 - 3.vii
 - 4.i
+
+3.i has now been reinforced 4 times.
