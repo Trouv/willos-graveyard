@@ -64,19 +64,19 @@ Some advanced concepts within lower categories may be more advanced than novice 
    1. Fork/T utility tables
    1. Double straight utility tables
 
-# Conceptual Analysis of levels (as of 2022-06-15)
+# Conceptual Analysis of levels (as of 2022-06-30)
 Below is are lists of what concepts are reinforced in each level.
 *Italicized* concepts are appearing for the first time.
 **Bold** concepts are deliberately introduced in the level design.
 
-## Who put this gravestone here?
+### Who put this gravestone here?
 - **1.i**
 - **1.iii**
 - **1.iv**
 - **1.v**
 - **2.i**
 
-## It takes some getting used to.
+### It takes some getting used to.
 - 1.i
 - **1.ii**
 - 1.iii
@@ -86,7 +86,7 @@ Below is are lists of what concepts are reinforced in each level.
 - **2.ii**
 - **2.iii**
 
-## Set the table.
+### Set the table.
 - 1.i
 - 1.iii
 - 1.iv
@@ -97,7 +97,11 @@ Below is are lists of what concepts are reinforced in each level.
 - 2.ii
 - **3.i**
 
-## Exorcism?!
+### Turn the table
+- 
+- 
+
+### Exorcism?!
 - 1.i
 - 1.ii
 - 1.iii
@@ -116,13 +120,13 @@ Below is are lists of what concepts are reinforced in each level.
 
 This level could also stand to be more challenging
 
-## The bishop changes color
+### The bishop changes color
 - 1.ii
 - 2.iii
 - **2.ix**
 - **2.x**
 
-## Full Control
+### Full Control
 - 1.ii
 - 1.vi
 - 1.vii
@@ -140,7 +144,7 @@ This level could also stand to be more challenging
 
 1.ii, 2.ii, 2.iii have all been reinforced 4 times.
 
-## Yoink
+### Yoink
 - 1.vi
 - 1.vii
 - 2.ix
@@ -151,7 +155,7 @@ This level could also stand to be more challenging
 
 1.vi has now been reinforced 4 times.
 
-## Origami fortune teller
+### Origami fortune teller
 - 1.vii
 - 1.ix
 - *2.iv*

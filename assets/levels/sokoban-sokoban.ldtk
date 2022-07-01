@@ -1492,35 +1492,6 @@
 		},
 		{
 			"identifier": "Level_4",
-			"iid": "7231e280-dbe0-11ec-8458-910d169c7c64",
-			"uid": 122,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 416,
-			"pxHei": 544,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_4.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Turn the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Turn the table"]
-				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Level_4",
 			"iid": "4e1c4a40-b4d0-11ec-885f-55563c888679",
 			"uid": 68,
 			"worldX": -1,
@@ -1537,7 +1508,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_4.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Full control", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1548,6 +1519,38 @@
 					"params": [
 						"Should accomplish:\n- Makes players think about an ideal table without demanding too much\n- Doesn't necessarily need exorcism tiles, since we just had 2 levels in a row with them \n\n22-05-10\nA too-simple solution was found during a play test: moving D up to <v and then solving the puzzle with W\n\nAfter some thought, I think this solution does ruin the puzzle a bit, so it needs some redesign\n\nThe redesign should make it so:\n- All 4 directions need to be covered by the movement table for the solution"
 					]
+				}] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_5",
+			"iid": "16944ee0-b4d0-11ec-8435-2d4d9e893036",
+			"uid": 120,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 608,
+			"pxHei": 480,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Sokoban, sokoban"]
+				}] },
+				{ "__identifier": "Notes", "__value": "First level created with graph theory!", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["First level created with graph theory!"]
 				}] }
 			],
 			"layerInstances": null,
@@ -1646,14 +1649,14 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_8",
-			"iid": "16944ee0-b4d0-11ec-8435-2d4d9e893036",
-			"uid": 120,
+			"identifier": "Level_9",
+			"iid": "7231e280-dbe0-11ec-8458-910d169c7c64",
+			"uid": 122,
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 608,
-			"pxHei": 480,
+			"pxWid": 416,
+			"pxHei": 544,
 			"__bgColor": "#332943",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -1665,14 +1668,11 @@
 			"__bgPos": null,
 			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__value": "Turn the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Sokoban, sokoban"]
+					"params": ["Turn the table"]
 				}] },
-				{ "__identifier": "Notes", "__value": "First level created with graph theory!", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["First level created with graph theory!"]
-				}] }
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
