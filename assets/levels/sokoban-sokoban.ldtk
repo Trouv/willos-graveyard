@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.3",
 	"appBuildId": 458520,
-	"nextUid": 123,
+	"nextUid": 124,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
@@ -1492,6 +1492,35 @@
 		},
 		{
 			"identifier": "Level_4",
+			"iid": "efacbd70-dbe0-11ec-8458-3dad3edfb447",
+			"uid": 123,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 544,
+			"pxHei": 448,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_4.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Choice illusion", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Choice illusion"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_4",
 			"iid": "4e1c4a40-b4d0-11ec-885f-55563c888679",
 			"uid": 68,
 			"worldX": -1,
@@ -1508,7 +1537,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_4.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Full control", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1542,7 +1571,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1574,7 +1603,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_7.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Yoink", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1603,7 +1632,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_7.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami fortune teller", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1637,7 +1666,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1666,7 +1695,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Turn the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1695,7 +1724,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1729,7 +1758,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two Zs", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1763,7 +1792,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Don't worry, I'll put it back", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1797,7 +1826,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_14.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Martyr", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1826,7 +1855,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_14.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_15.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "A simple variation", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1860,7 +1889,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_15.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "No stone unturned", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
