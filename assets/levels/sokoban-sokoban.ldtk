@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.3",
 	"appBuildId": 458520,
-	"nextUid": 124,
+	"nextUid": 125,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
@@ -1838,6 +1838,35 @@
 			"__neighbours": []
 		},
 		{
+			"identifier": "Level_15",
+			"iid": "a1eac240-dbe0-11ec-8458-2b717b57fcbb",
+			"uid": 124,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 384,
+			"pxHei": 512,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_15.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Invisible walls", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Invisible walls"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
 			"identifier": "Level_13",
 			"iid": "4e21ef90-b4d0-11ec-885f-41d8e5c591e4",
 			"uid": 67,
@@ -1855,7 +1884,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_15.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "A simple variation", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1889,7 +1918,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "No stone unturned", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
