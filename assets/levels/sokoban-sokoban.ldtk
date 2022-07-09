@@ -1520,7 +1520,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_4",
+			"identifier": "Level_5",
 			"iid": "4e1c4a40-b4d0-11ec-885f-55563c888679",
 			"uid": 68,
 			"worldX": -1,
@@ -1554,7 +1554,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_5",
+			"identifier": "Level_6",
 			"iid": "16944ee0-b4d0-11ec-8435-2d4d9e893036",
 			"uid": 120,
 			"worldX": -1,
@@ -1644,7 +1644,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_8",
+			"identifier": "Level_9",
 			"iid": "5087c760-b4d0-11ec-b4dc-a18e05e2c81b",
 			"uid": 109,
 			"worldX": -1,
@@ -1678,7 +1678,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_7",
+			"identifier": "Level_10",
 			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
 			"uid": 66,
 			"worldX": -1,
@@ -1707,7 +1707,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_9",
+			"identifier": "Level_11",
 			"iid": "7231e280-dbe0-11ec-8458-910d169c7c64",
 			"uid": 122,
 			"worldX": -1,
@@ -1736,7 +1736,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_9",
+			"identifier": "Level_12",
 			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
 			"uid": 59,
 			"worldX": -1,
@@ -1770,7 +1770,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_10",
+			"identifier": "Level_13",
 			"iid": "4e2068f0-b4d0-11ec-885f-fd3102a60bbc",
 			"uid": 47,
 			"worldX": -1,
@@ -1804,7 +1804,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_11",
+			"identifier": "Level_14",
 			"iid": "4e215350-b4d0-11ec-885f-8b3b70f3d213",
 			"uid": 65,
 			"worldX": -1,
@@ -1838,7 +1838,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_12",
+			"identifier": "Level_15",
 			"iid": "3e8979e0-b4d0-11ec-88b3-bb85270add56",
 			"uid": 108,
 			"worldX": -1,
@@ -1867,36 +1867,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_15",
-			"iid": "a1eac240-dbe0-11ec-8458-2b717b57fcbb",
-			"uid": 124,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 384,
-			"pxHei": 512,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Invisible walls", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Invisible walls"]
-				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Level_13",
+			"identifier": "Level_16",
 			"iid": "4e21ef90-b4d0-11ec-885f-41d8e5c591e4",
 			"uid": 67,
 			"worldX": -1,
@@ -1913,7 +1884,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "A simple variation", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1930,7 +1901,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_14",
+			"identifier": "Level_17",
 			"iid": "4e2264c0-b4d0-11ec-885f-19c010fcf197",
 			"uid": 62,
 			"worldX": -1,
@@ -1947,7 +1918,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_18.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "No stone unturned", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
