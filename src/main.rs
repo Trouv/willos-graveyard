@@ -15,6 +15,9 @@ use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
+#[cfg(feature = "inspector")]
+use bevy_inspector_egui::prelude::*;
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum SystemLabels {
     LoadAssets,
@@ -127,6 +130,11 @@ fn main() {
     #[cfg(feature = "hot")]
     {
         app.add_startup_system(enable_hot_reloading);
+    }
+
+    #[cfg(feature = "inspector")]
+    {
+        app.add_plugin(WorldInspectorPlugin::new());
     }
 
     app.run()
