@@ -108,13 +108,18 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
         };
 
         let frame_timer = match state {
-            //Push(_) => Timer::new(Duration::from_millis(75), true),
             _ => Timer::new(Duration::from_millis(150), true),
+        };
+
+        let repeat = match state {
+            Idle(Down) => true,
+            _ => false,
         };
 
         SpriteSheetAnimation {
             indices,
             frame_timer,
+            repeat,
         }
     }
 }
@@ -185,6 +190,7 @@ impl From<DeathHoleState> for SpriteSheetAnimation {
                 DeathHoleState::Closed => 29..30,
             },
             frame_timer: Timer::new(Duration::from_millis(150), true),
+            repeat: false,
         }
     }
 }
@@ -211,6 +217,7 @@ impl From<DemonArmsState> for SpriteSheetAnimation {
                 DemonArmsState::Gone => 29..30,
             },
             frame_timer: Timer::new(Duration::from_millis(150), true),
+            repeat: false,
         }
     }
 }

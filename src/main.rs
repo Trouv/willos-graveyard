@@ -15,12 +15,16 @@ use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
+#[cfg(feature = "inspector")]
+use bevy_inspector_egui::prelude::*;
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum SystemLabels {
     LoadAssets,
     Input,
     MoveTableUpdate,
     CheckDeath,
+    PlayerEasing,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
@@ -93,8 +97,8 @@ fn main() {
                 .after(SystemLabels::MoveTableUpdate)
                 .after(history::FlushHistoryCommands),
         )
-        .add_system(sugar::ease_movement)
-        .add_system(sugar::reset_player_easing)
+        .add_system(sugar::ease_movement.label(SystemLabels::PlayerEasing))
+        .add_system(sugar::reset_player_easing.before(SystemLabels::PlayerEasing))
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)
@@ -127,6 +131,11 @@ fn main() {
     #[cfg(feature = "hot")]
     {
         app.add_startup_system(enable_hot_reloading);
+    }
+
+    #[cfg(feature = "inspector")]
+    {
+        app.add_plugin(WorldInspectorPlugin::new());
     }
 
     app.run()
