@@ -1737,40 +1737,6 @@
 		},
 		{
 			"identifier": "Level_12",
-			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
-			"uid": 59,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 736,
-			"pxHei": 672,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Training week"]
-				}] },
-				{ "__identifier": "Notes", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Level_13",
 			"iid": "4e2068f0-b4d0-11ec-885f-fd3102a60bbc",
 			"uid": 47,
 			"worldX": -1,
@@ -1787,7 +1753,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two Zs", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1797,6 +1763,40 @@
 					"id": "V_String",
 					"params": [
 						"This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working."
+					]
+				}] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_12",
+			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
+			"uid": 59,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 736,
+			"pxHei": 672,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Training week"]
+				}] },
+				{ "__identifier": "Notes", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+					"id": "V_String",
+					"params": [
+						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
 					]
 				}] }
 			],
