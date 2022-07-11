@@ -9,6 +9,7 @@ pub struct AnimationLabel;
 pub struct SpriteSheetAnimation {
     pub indices: Range<usize>,
     pub frame_timer: Timer,
+    pub repeat: bool,
 }
 
 pub fn sprite_sheet_animation(
@@ -22,8 +23,13 @@ pub fn sprite_sheet_animation(
         if sprite_sheet_animation.frame_timer.just_finished() {
             sprite.index += 1;
             if sprite.index >= sprite_sheet_animation.indices.end {
-                sprite.index = sprite_sheet_animation.indices.end - 1;
-                event_writer.send(AnimationEvent::Finished(entity));
+                // Animation finished
+                if sprite_sheet_animation.repeat {
+                    sprite.index = sprite_sheet_animation.indices.start;
+                } else {
+                    sprite.index = sprite_sheet_animation.indices.end - 1;
+                    event_writer.send(AnimationEvent::Finished(entity));
+                }
             }
         }
     }
