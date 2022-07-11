@@ -24,7 +24,6 @@ pub enum SystemLabels {
     Input,
     MoveTableUpdate,
     CheckDeath,
-    PlayerEasing,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
@@ -97,8 +96,8 @@ fn main() {
                 .after(SystemLabels::MoveTableUpdate)
                 .after(history::FlushHistoryCommands),
         )
-        .add_system(sugar::ease_movement.label(SystemLabels::PlayerEasing))
-        .add_system(sugar::reset_player_easing.before(SystemLabels::PlayerEasing))
+        .add_system(sugar::ease_movement)
+        .add_system_to_stage(CoreStage::PreUpdate, sugar::reset_player_easing)
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)
         .add_system(gameplay::transitions::spawn_control_display)
