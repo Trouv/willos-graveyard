@@ -149,6 +149,7 @@ pub struct GoalGhostAnimation {
     pub column: usize,
     pub frames_since_blink: usize,
     pub frames_since_turn: usize,
+    pub frames_since_punctuation: usize,
     pub state: GoalAnimationState,
 }
 
@@ -160,6 +161,7 @@ impl GoalGhostAnimation {
             column: 0,
             frames_since_blink: 0,
             frames_since_turn: 0,
+            frames_since_punctuation: 0,
             state: GoalAnimationState::default(),
         }
     }
@@ -316,11 +318,12 @@ pub fn goal_ghost_event_sugar(
 }
 
 pub fn goal_ghost_animation(
-    mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
+    mut commands: Commands,
+    mut goal_ghost_query: Query<(Entity, Option<&mut Children>, &mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
     goal_ghost_settings: Res<GoalGhostSettings>,
     time: Res<Time>,
 ) {
-    for (mut animation, mut sprite) in goal_ghost_query.iter_mut() {
+    for (ghost_entity, mut children, mut animation, mut sprite) in goal_ghost_query.iter_mut() {
         animation.frame_timer.tick(time.delta());
 
         if animation.frame_timer.finished() {
@@ -414,6 +417,33 @@ pub fn goal_ghost_animation(
                     sprite.index = goal_ghost_settings.none_frame_index;
                 }
             }
+            let chance_for_punctuation = range_chance(
+                &goal_ghost_settings.punctuation_timer, 
+                animation.frames_since_punctuation
+            );
+            let f: f32 = rng.gen();
+            animation.frames_since_punctuation += 1;
+            if  f < chance_for_punctuation {
+                let f2: f32 = rng.gen();
+                let x: usize = if f2 < 0.5 {
+                    50
+                } else {
+                    60
+                };
+                animation.frames_since_punctuation = 0;
+                commands.entity(ghost_entity).despawn_descendants();
+                commands.entity(ghost_entity)
+                .with_children(|child_commands| {
+                    child_commands
+                        .spawn_bundle(SpriteSheetBundle {
+                            sprite: TextureAtlasSprite {index: x, ..default() },
+                            texture_atlas: goal_ghost_settings.atlas.clone().unwrap(),
+                            transform: Transform::from_xyz(0., 0., 0.06),
+                            ..default()
+                        }).insert(SpriteSheetAnimation{indices: x..(x+7), frame_timer: Timer::new(Duration::from_millis(150), true)});
+                });                      
+            }
+        
 
             animation.column += 1;
             animation.column %= goal_ghost_settings.idle_frame_count;
@@ -487,40 +517,59 @@ pub fn despawn_steam_animations(
 }
 
 pub fn update_table_sprites(
+    time: Res<Time>,
     mut commands: Commands,
     move_table_query: Query<(Entity, &MoveTable, Changed<MoveTable>)>,
-    active_arrow_settings: Res<TableArrowSettings> 
+    table_arrow_settings: Res<TableArrowSettings> 
 ){
+    let elapsed = (time.time_since_startup().as_millis() / 400) as f32;
     for (table_entity, move_table, ..) in move_table_query.iter(){
         commands.entity(table_entity).despawn_descendants();
+        let mut active_ranks: Vec<bool> = vec![false, false, false, false];
+        let mut active_files: Vec<bool> = vec![false, false, false, false];
         for (i, rank) in move_table.table.iter().enumerate() {
             for (j, key) in rank.iter().enumerate() {
-                let (atlas, height) = if key.is_some() {    
-                    (&active_arrow_settings.active_atlas,
-                    0.05)
-                } else {
-                    (&active_arrow_settings.atlas,
-                    0.02)
-                };
-                commands.entity(table_entity)
-                .with_children(|child_commands| {
-                    child_commands
-                        .spawn_bundle(SpriteSheetBundle {
-                            sprite: TextureAtlasSprite {index: i,..default() },
-                            texture_atlas: atlas.clone(),
-                            transform: Transform::from_xyz(-2.*UNIT_LENGTH,-UNIT_LENGTH * (i as f32 -1.), height),
-                            ..default()
-                        });
-    
-                    child_commands
-                        .spawn_bundle(SpriteSheetBundle {
-                            sprite: TextureAtlasSprite {index: (j + 4) as usize,..default() },
-                            texture_atlas: atlas.clone(),
-                            transform: Transform::from_xyz(UNIT_LENGTH * (j as f32 -1.), 2. * UNIT_LENGTH, height),
-                            ..default()
-                        });
-                });
+                if key.is_some(){
+                    active_ranks[i] = true;
+                    active_files[j] = true;
+                }
             }
+        }
+
+        let active_height = (((elapsed  as f32).sin()) * 2.).floor() * UNIT_LENGTH / 32.;
+        for index in 0..4 as usize{
+            let z = 0.02;
+            let toggle_sprite = |arrow_list: &Vec<bool>| {
+                if arrow_list[index]{
+                (active_height,
+                &table_arrow_settings.active_atlas)
+                } else {
+                (0., &table_arrow_settings.atlas)
+                }
+            };
+            let (float_height, rank_atlas) = toggle_sprite(&active_ranks);
+            commands.entity(table_entity)
+            .with_children(|child_commands| {
+                child_commands
+                    .spawn_bundle(SpriteSheetBundle {
+                        sprite: TextureAtlasSprite {index: index,..default() },
+                        texture_atlas: rank_atlas.clone(),
+                        transform: Transform::from_xyz(-2.*UNIT_LENGTH,-UNIT_LENGTH * (index as f32 -1.) + float_height, z),
+                        ..default()
+                    });
+            });
+
+            let (float_height, file_atlas) = toggle_sprite(&active_files);
+            commands.entity(table_entity)
+            .with_children(|child_commands| {
+                child_commands
+                    .spawn_bundle(SpriteSheetBundle {
+                        sprite: TextureAtlasSprite {index: index,..default() },
+                        texture_atlas: file_atlas.clone(),
+                        transform: Transform::from_xyz(UNIT_LENGTH * (index as f32 -1.), 2. * UNIT_LENGTH + float_height, z),
+                        ..default()
+                    });
+            });
         }
     }
 }

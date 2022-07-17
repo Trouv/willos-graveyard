@@ -14,6 +14,7 @@ pub struct GoalGhostSettings {
     pub num_columns: usize,
     pub num_rows: usize,
     pub atlas: Option<Handle<TextureAtlas>>,
+    pub punctuation_timer: Range<usize>,
 }
 
 impl GoalGhostSettings {
@@ -29,6 +30,7 @@ impl GoalGhostSettings {
         num_columns: 10,
         num_rows: 7,
         atlas: None,
+        punctuation_timer: 40..100,
     };
 }
 
@@ -36,32 +38,22 @@ impl GoalGhostSettings {
 pub struct TableArrowSettings {
     pub atlas: Handle<TextureAtlas>,
     pub active_atlas: Handle<TextureAtlas>,
-    pub up_indices: [usize;2],
-    pub left_indices: [usize;2],
-    pub down_indices: [usize;2],
-    pub right_indices: [usize;2],
 }
 
 
 pub fn load_table_arrows(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
-    
-        
         let get_atlas = |p: &str| -> TextureAtlas {
             let image_handle = asset_server.load(p);
             TextureAtlas::from_grid(
                 image_handle,
                 Vec2::splat(32.),
                 4,
-                2,
+                1,
             )
         };
         let settings = TableArrowSettings{
             atlas: texture_atlases.add(get_atlas("textures/editor-table.png")),
             active_atlas: texture_atlases.add(get_atlas("textures/table_active.png")),
-            up_indices: [0,4],
-            left_indices: [1,5],
-            down_indices: [2,6],
-            right_indices: [3,7],
         };
         commands.insert_resource(settings.clone());
     }
