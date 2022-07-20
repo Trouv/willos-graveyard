@@ -73,7 +73,7 @@ pub fn spawn_goal_ghosts(
                 let atlas_handle = texture_atlases.add(texture_atlas);
 
                 goal_ghost_settings.atlas = Some(atlas_handle.clone());
-                atlas_handle
+                atlas_handle.clone()
             }
         };
 

@@ -96,15 +96,15 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
 
         let indices = match state {
             Push(Up) => 1..2,
-            Push(Down) => 26..27,
-            Push(Left) => 51..52,
-            Push(Right) => 76..77,
-            Idle(Up) => 100..107,
-            Idle(Down) => 125..132,
-            Idle(Left) => 150..157,
-            Idle(Right) => 175..182,
-            Dying => 200..225,
-            None => 7..8,
+            Push(Down) => 11..12,
+            Push(Left) => 21..22,
+            Push(Right) => 31..32,
+            Idle(Up) => 40..47,
+            Idle(Down) => 50..57,
+            Idle(Left) => 60..67,
+            Idle(Right) => 70..77,
+            Dying => 80..85,
+            None => 3..4,
         };
 
         let frame_timer = match state {
@@ -168,59 +168,7 @@ impl GoalGhostAnimation {
     }
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum DeathHoleState {
-    Opening,
-    Closed,
-}
 
-impl Iterator for DeathHoleState {
-    type Item = DeathHoleState;
-    fn next(&mut self) -> Option<Self::Item> {
-        *self = DeathHoleState::Closed;
-        Some(*self)
-    }
-}
-
-impl From<DeathHoleState> for SpriteSheetAnimation {
-    fn from(state: DeathHoleState) -> SpriteSheetAnimation {
-        SpriteSheetAnimation {
-            indices: match state {
-                DeathHoleState::Opening => 0..29,
-                DeathHoleState::Closed => 29..30,
-            },
-            frame_timer: Timer::new(Duration::from_millis(150), true),
-            repeat: false,
-        }
-    }
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum DemonArmsState {
-    Grabbing,
-    Gone,
-}
-
-impl Iterator for DemonArmsState {
-    type Item = DemonArmsState;
-    fn next(&mut self) -> Option<Self::Item> {
-        *self = DemonArmsState::Gone;
-        Some(*self)
-    }
-}
-
-impl From<DemonArmsState> for SpriteSheetAnimation {
-    fn from(state: DemonArmsState) -> SpriteSheetAnimation {
-        SpriteSheetAnimation {
-            indices: match state {
-                DemonArmsState::Grabbing => 0..29,
-                DemonArmsState::Gone => 29..30,
-            },
-            frame_timer: Timer::new(Duration::from_millis(150), true),
-            repeat: false,
-        }
-    }
-}
 
 pub fn history_sugar(
     mut history_commands: EventReader<HistoryCommands>,
@@ -240,10 +188,8 @@ pub fn history_sugar(
 }
 
 pub fn play_death_animations(
-    mut commands: Commands,
     mut player_query: Query<&mut PlayerAnimationState>,
     mut death_event_reader: EventReader<DeathEvent>,
-    death_animation_texture_atlases: Res<DeathAnimationTextureAtlases>,
 ) {
     for DeathEvent {
         player_entity,
@@ -252,48 +198,6 @@ pub fn play_death_animations(
     {
         if let Ok(mut player_animation_state) = player_query.get_mut(*player_entity) {
             *player_animation_state = PlayerAnimationState::Dying;
-        }
-
-        commands
-            .entity(*exorcism_entity)
-            .with_children(|child_commands| {
-                child_commands
-                    .spawn_bundle(SpriteSheetBundle {
-                        texture_atlas: death_animation_texture_atlases.death_hole_handle.clone(),
-                        transform: Transform::from_xyz(0., 0., 0.5),
-                        ..default()
-                    })
-                    .insert(DeathHoleState::Opening);
-
-                child_commands
-                    .spawn_bundle(SpriteSheetBundle {
-                        texture_atlas: death_animation_texture_atlases.demon_arms_handle.clone(),
-                        transform: Transform::from_xyz(0., 0., 1.5),
-                        ..default()
-                    })
-                    .insert(DemonArmsState::Grabbing);
-            });
-    }
-}
-
-pub fn despawn_death_animations(
-    mut commands: Commands,
-    mut history_commands: EventReader<HistoryCommands>,
-    death_hole_query: Query<Entity, With<DeathHoleState>>,
-    demon_arms_query: Query<Entity, With<DemonArmsState>>,
-) {
-    for command in history_commands.iter() {
-        match command {
-            HistoryCommands::Rewind | HistoryCommands::Reset => {
-                for entity in death_hole_query.iter() {
-                    commands.entity(entity).despawn_recursive();
-                }
-
-                for entity in demon_arms_query.iter() {
-                    commands.entity(entity).despawn_recursive();
-                }
-            }
-            _ => (),
         }
     }
 }
