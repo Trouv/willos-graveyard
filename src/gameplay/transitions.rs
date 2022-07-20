@@ -30,7 +30,7 @@ pub fn spawn_gravestone_body(
     gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
 ) {
     for (entity, texture_handle) in gravestones.iter() {
-        let index_range = 17..34_usize;
+        let index_range = 10..22_usize;
 
         let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
 

@@ -103,7 +103,7 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
             Idle(Down) => 50..57,
             Idle(Left) => 60..67,
             Idle(Right) => 70..77,
-            Dying => 80..85,
+            Dying => 80..105,
             None => 3..4,
         };
 
