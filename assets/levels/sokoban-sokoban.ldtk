@@ -1554,38 +1554,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_6",
-			"iid": "16944ee0-b4d0-11ec-8435-2d4d9e893036",
-			"uid": 120,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 608,
-			"pxHei": 480,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Sokoban, sokoban"]
-				}] },
-				{ "__identifier": "Notes", "__value": "First level created with graph theory!", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["First level created with graph theory!"]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Level_7",
 			"iid": "da164c70-dbe0-11ec-8458-f10c49c79d1b",
 			"uid": 125,
@@ -1603,7 +1571,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_7.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Wallflower", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1632,7 +1600,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_7.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Yoink", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1661,7 +1629,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami fortune teller", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1695,13 +1663,45 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["All tied up"]
 				}] },
 				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_10",
+			"iid": "16944ee0-b4d0-11ec-8435-2d4d9e893036",
+			"uid": 120,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 608,
+			"pxHei": 480,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Sokoban, sokoban", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Sokoban, sokoban"]
+				}] },
+				{ "__identifier": "Notes", "__value": "First level created with graph theory!", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["First level created with graph theory!"]
+				}] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
