@@ -179,6 +179,20 @@
 					"defUid": 25,
 					"px": [96,64],
 					"fieldInstances": []
+				},
+				{
+					"__identifier": "Willo",
+					"__grid": [1,12],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 43, "x": 0, "y": 160, "w": 32, "h": 32 },
+					"__smartColor": "#FFFFFF",
+					"iid": "d4166ee0-02f0-11ed-a349-c31eb15a9f25",
+					"width": 32,
+					"height": 32,
+					"defUid": 17,
+					"px": [32,384],
+					"fieldInstances": []
 				}
 			]
 		},
@@ -276,20 +290,6 @@
 					"height": 160,
 					"defUid": 19,
 					"px": [160,160],
-					"fieldInstances": []
-				},
-				{
-					"__identifier": "Willo",
-					"__grid": [1,12],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 43, "x": 0, "y": 160, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "71847650-02f0-11ed-a349-e9bd75a98d87",
-					"width": 32,
-					"height": 32,
-					"defUid": 17,
-					"px": [32,384],
 					"fieldInstances": []
 				},
 				{
