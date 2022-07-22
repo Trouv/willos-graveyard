@@ -1521,35 +1521,6 @@
 		},
 		{
 			"identifier": "Level_5",
-			"iid": "49fa1630-02f0-11ed-a349-e7bd5d5aad36",
-			"uid": 133,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 448,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Origami boat", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Origami boat"]
-				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Level_5",
 			"iid": "4e1c4a40-b4d0-11ec-885f-55563c888679",
 			"uid": 68,
 			"worldX": -1,
@@ -1566,7 +1537,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Full control", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1578,6 +1549,35 @@
 						"Should accomplish:\n- Makes players think about an ideal table without demanding too much\n- Doesn't necessarily need exorcism tiles, since we just had 2 levels in a row with them \n\n22-05-10\nA too-simple solution was found during a play test: moving D up to <v and then solving the puzzle with W\n\nAfter some thought, I think this solution does ruin the puzzle a bit, so it needs some redesign\n\nThe redesign should make it so:\n- All 4 directions need to be covered by the movement table for the solution"
 					]
 				}] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_6",
+			"iid": "49fa1630-02f0-11ed-a349-e7bd5d5aad36",
+			"uid": 133,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 480,
+			"pxHei": 448,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Origami boat", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Origami boat"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
