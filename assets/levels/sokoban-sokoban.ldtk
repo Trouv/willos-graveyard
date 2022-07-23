@@ -1593,7 +1593,7 @@
 			"savedSelections": [],
 			"cachedPixelData": {
 				"opaqueTiles": "000000000000000000000000000000",
-				"averageColors": "355435563566365600000000000000000000000094769577957685769576847664767477747664879476947600000000000000000000000000000000"
+				"averageColors": "376234683475374600000000000000000000000094769577957685769576847664767477747664879476947600000000000000000000000000000000"
 			}
 		},
 		{
@@ -1639,13 +1639,13 @@
 		},
 		{
 			"__cWid": 4,
-			"__cHei": 1,
+			"__cHei": 5,
 			"identifier": "Grass",
 			"uid": 50,
 			"relPath": "../textures/animations/grass_tufts-Sheet.png",
 			"embedAtlas": null,
 			"pxWid": 128,
-			"pxHei": 32,
+			"pxHei": 160,
 			"tileGridSize": 32,
 			"spacing": 0,
 			"padding": 0,
@@ -1654,7 +1654,10 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "1145114511451145" }
+			"cachedPixelData": {
+				"opaqueTiles": "00000000000000000000",
+				"averageColors": "11451145114511450145014501450145014501450145014501450145014501450145014501450145"
+			}
 		},
 		{
 			"__cWid": 8,
