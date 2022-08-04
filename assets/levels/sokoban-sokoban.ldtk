@@ -1870,35 +1870,6 @@
 		},
 		{
 			"identifier": "Level_16",
-			"iid": "3e8979e0-b4d0-11ec-88b3-bb85270add56",
-			"uid": 108,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 288,
-			"pxHei": 288,
-			"__bgColor": "#332943",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#8F8998",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Martyr", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Martyr"]
-				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Level_17",
 			"iid": "068b2bf0-02f0-11ed-8a27-c1e51c1ea2d6",
 			"uid": 132,
 			"worldX": -1,
@@ -1915,11 +1886,40 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Only child", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["Only child"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_16",
+			"iid": "3e8979e0-b4d0-11ec-88b3-bb85270add56",
+			"uid": 108,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 288,
+			"pxHei": 288,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Martyr", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Martyr"]
 				}] },
 				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
