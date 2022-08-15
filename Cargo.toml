@@ -14,14 +14,14 @@ fast-compile = ["bevy/dynamic"]
 inspector = ["bevy-inspector-egui"]
 
 [dependencies]
-bevy = {version = "0.7", features = ["wav"]}
-bevy_easings = "0.7"
-bevy_ecs_ldtk = "0.3"
+bevy = {version = "0.8", features = ["wav"]}
+bevy_easings = "0.8"
+bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", branch = "feat/respawn" }
 rand = "0.8"
 serde = "1.0"
 
-bevy-inspector-egui = { version = "0.11", optional = true }
+bevy-inspector-egui = { version = "0.12", optional = true }
 
 [target.wasm32-unknown-unknown.dependencies]
-bevy_ecs_ldtk = { version = "0.3", features = ["atlas"] }
+bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", branch = "feat/respawn", features = ["atlas"] }
 

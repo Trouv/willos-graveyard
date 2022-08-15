@@ -8,7 +8,8 @@ mod resources;
 mod sugar;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
-use bevy::prelude::*;
+use bevy::{prelude::*, render::texture::ImageSettings};
+
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
 use rand::Rng;
@@ -40,7 +41,8 @@ fn main() {
 
     let mut app = App::new();
 
-    app.add_plugins(DefaultPlugins)
+    app.insert_resource(ImageSettings::default_nearest())
+        .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
