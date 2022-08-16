@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.3",
 	"appBuildId": 458520,
-	"nextUid": 137,
+	"nextUid": 138,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
@@ -1492,6 +1492,35 @@
 		},
 		{
 			"identifier": "Level_4",
+			"iid": "60ca9200-02f0-11ed-be11-7350070c0815",
+			"uid": 137,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 288,
+			"pxHei": 288,
+			"__bgColor": "#332943",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#8F8998",
+			"__bgPos": null,
+			"externalRelPath": "sokoban-sokoban/Level_4.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Orion's bow", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Orion's bow"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_4",
 			"iid": "4e1c4a40-b4d0-11ec-885f-55563c888679",
 			"uid": 68,
 			"worldX": -1,
@@ -1508,7 +1537,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_4.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Full control", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1542,7 +1571,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Choice illusion", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1571,7 +1600,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_7.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami boat", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1600,7 +1629,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_7.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Wallflower", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1629,7 +1658,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_8.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Yoink", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1658,7 +1687,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_9.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami fortune teller", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1692,7 +1721,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_10.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Turn the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1721,7 +1750,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_11.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1755,7 +1784,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_12.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two Zs", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1789,7 +1818,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_13.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_14.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1823,7 +1852,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_14.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_15.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Cargo train", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1852,7 +1881,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_15.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Don't worry, I'll put it back", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1886,7 +1915,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_16.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Only child", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1915,7 +1944,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_17.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_18.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Martyr", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1944,7 +1973,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_18.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_19.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two stones, one bird", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -1973,7 +2002,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_19.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_20.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "A simple variation", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2007,7 +2036,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_20.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_21.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "No stone unturned", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2041,7 +2070,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#8F8998",
 			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_21.ldtkl",
+			"externalRelPath": "sokoban-sokoban/Level_22.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Combination lock", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
