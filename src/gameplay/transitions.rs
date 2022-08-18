@@ -41,7 +41,7 @@ pub fn spawn_gravestone_body(
         commands
             .spawn_bundle(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
-                    index: (17..34_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
+                    index: (11..22_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
                     ..default()
                 },
                 texture_atlas: texture_handle.clone(),
