@@ -13,10 +13,8 @@ use std::time::Duration;
 
 pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
-        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .spawn_bundle(Camera2dBundle::default())
         .insert(OrthographicCamera);
-
-    commands.spawn_bundle(UiCameraBundle::default());
 
     commands.spawn_bundle(LdtkWorldBundle {
         ldtk_handle: asset_server.load("levels/sokoban-sokoban.ldtk"),
@@ -38,7 +36,7 @@ pub fn spawn_gravestone_body(
 
         let mut rng = rand::thread_rng();
 
-        commands
+        let body_entity = commands
             .spawn_bundle(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
                     index: (17..34_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
@@ -48,7 +46,9 @@ pub fn spawn_gravestone_body(
                 transform: Transform::from_xyz(0., 0., -0.5),
                 ..default()
             })
-            .insert(Parent(entity));
+            .id();
+
+        commands.entity(entity).add_child(body_entity);
     }
 }
 
@@ -77,7 +77,7 @@ pub fn spawn_goal_ghosts(
             }
         };
 
-        commands
+        let ghost_entity = commands
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: atlas_handle,
                 transform: Transform::from_xyz(0., 1., 2.5),
@@ -87,7 +87,9 @@ pub fn spawn_goal_ghosts(
                 goal_entity,
                 Timer::new(goal_ghost_settings.frame_duration, true),
             ))
-            .insert(Parent(goal_entity));
+            .id();
+
+        commands.entity(goal_entity).add_child(ghost_entity);
     }
 }
 
@@ -115,7 +117,7 @@ pub fn spawn_control_display(
     for ui_root_entity in ui_root_query.iter() {
         let control_zone_ratio = 1. - **play_zone_portion;
 
-        commands
+        let control_display_entity = commands
             .spawn_bundle(NodeBundle {
                 color: UiColor(Color::NONE),
                 style: Style {
@@ -128,7 +130,7 @@ pub fn spawn_control_display(
                         width: Val::Percent(100. * control_zone_ratio),
                         height: Val::Percent(100.),
                     },
-                    position: Rect {
+                    position: UiRect {
                         top: Val::Percent(0.),
                         right: Val::Percent(0.),
                         ..Default::default()
@@ -139,7 +141,11 @@ pub fn spawn_control_display(
                 ..Default::default()
             })
             .insert(ControlDisplayNode)
-            .insert(Parent(ui_root_entity));
+            .id();
+
+        commands
+            .entity(ui_root_entity)
+            .add_child(control_display_entity);
     }
 }
 
@@ -154,7 +160,7 @@ pub fn spawn_death_card(
     for state in player_query.iter() {
         if *state == PlayerState::Dead && *last_state != PlayerState::Dead {
             // Player just died
-            commands
+            let death_card_entity = commands
                 .spawn_bundle(NodeBundle {
                     color: UiColor(Color::rgba(0., 0., 0., 0.9)),
                     visibility: Visibility { is_visible: false },
@@ -170,7 +176,7 @@ pub fn spawn_death_card(
                             width: Val::Percent(100.),
                             height: Val::Percent(100.),
                         },
-                        position: Rect {
+                        position: UiRect {
                             top: Val::Percent(100.),
                             left: Val::Percent(0.),
                             ..Default::default()
@@ -187,7 +193,7 @@ pub fn spawn_death_card(
                                 width: Val::Percent(100.),
                                 height: Val::Percent(100.),
                             },
-                            position: Rect {
+                            position: UiRect {
                                 top: Val::Percent(0.),
                                 left: Val::Percent(0.),
                                 ..Default::default()
@@ -203,23 +209,27 @@ pub fn spawn_death_card(
                 .insert(DeathCard)
                 .with_children(|parent| {
                     parent.spawn_bundle(TextBundle {
-                        text: Text::with_section(
+                        text: Text::from_section(
                             "EXORCISED\n\nR to restart\nZ to undo",
                             TextStyle {
                                 font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
                                 font_size: 30.,
                                 color: Color::WHITE,
                             },
-                            TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            },
-                        ),
+                        )
+                        .with_alignment(TextAlignment {
+                            horizontal: HorizontalAlign::Center,
+                            vertical: VerticalAlign::Center,
+                        }),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
                     });
                 })
-                .insert(Parent(ui_root_query.single()));
+                .id();
+
+            commands
+                .entity(ui_root_query.single())
+                .add_child(death_card_entity);
         } else if *state != PlayerState::Dead && *last_state == PlayerState::Dead {
             // Player just un-died
             if let Ok(entity) = death_cards.get_single() {
@@ -287,7 +297,7 @@ pub fn spawn_level_card(
                 }
             }
 
-            commands
+            let level_card_entity = commands
                 .spawn_bundle(NodeBundle {
                     color: UiColor(Color::BLACK),
                     visibility: Visibility { is_visible: false },
@@ -303,7 +313,7 @@ pub fn spawn_level_card(
                             width: Val::Percent(100.),
                             height: Val::Percent(100.),
                         },
-                        position: Rect {
+                        position: UiRect {
                             top: Val::Percent(100.),
                             left: Val::Percent(0.),
                             ..Default::default()
@@ -320,7 +330,7 @@ pub fn spawn_level_card(
                                 width: Val::Percent(100.),
                                 height: Val::Percent(100.),
                             },
-                            position: Rect {
+                            position: UiRect {
                                 top: Val::Percent(0.),
                                 left: Val::Percent(0.),
                                 ..Default::default()
@@ -336,31 +346,30 @@ pub fn spawn_level_card(
                 .with_children(|parent| {
                     if let Some(level_num) = level_num {
                         parent.spawn_bundle(TextBundle {
-                            text: Text::with_section(
+                            text: Text::from_section(
                                 format!("#{}", level_num),
                                 TextStyle {
                                     font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
                                     font_size: 50.,
                                     color: Color::WHITE,
                                 },
-                                TextAlignment {
-                                    vertical: VerticalAlign::Center,
-                                    horizontal: HorizontalAlign::Center,
-                                },
-                            ),
+                            )
+                            .with_alignment(TextAlignment {
+                                vertical: VerticalAlign::Center,
+                                horizontal: HorizontalAlign::Center,
+                            }),
                             visibility: Visibility { is_visible: false },
                             ..Default::default()
                         });
                     }
                     parent.spawn_bundle(TextBundle {
-                        text: Text::with_section(
+                        text: Text::from_section(
                             title,
                             TextStyle {
                                 font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
                                 font_size: 30.,
                                 color: Color::WHITE,
                             },
-                            TextAlignment::default(),
                         ),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
@@ -371,7 +380,11 @@ pub fn spawn_level_card(
                 } else {
                     LevelCard::End
                 })
-                .insert(Parent(ui_root_query.single()));
+                .id();
+
+            commands
+                .entity(ui_root_query.single())
+                .add_child(level_card_entity);
         }
     }
 }
@@ -391,7 +404,7 @@ pub fn level_card_update(
                 LevelCardEvent::Fall => {
                     commands.entity(entity).insert(style.clone().ease_to(
                         Style {
-                            position: Rect {
+                            position: UiRect {
                                 top: Val::Percent(100.),
                                 left: Val::Percent(0.),
                                 ..Default::default()

@@ -368,7 +368,7 @@ pub fn update_control_display(
                                     height: Val::Percent(100. / 18.),
                                     ..Default::default()
                                 },
-                                margin: Rect {
+                                margin: UiRect {
                                     bottom: Val::Px(16.),
                                     ..Default::default()
                                 },
@@ -382,20 +382,17 @@ pub fn update_control_display(
                                 match node {
                                     ControlNode::Text(s) => {
                                         parent.spawn_bundle(TextBundle {
-                                            text: Text::with_section(
-                                                s,
-                                                style.clone(),
-                                                TextAlignment {
+                                            text: Text::from_section(s, style.clone())
+                                                .with_alignment(TextAlignment {
                                                     vertical: VerticalAlign::Center,
                                                     horizontal: HorizontalAlign::Center,
-                                                },
-                                            ),
+                                                }),
                                             style: Style {
                                                 size: Size {
                                                     height: Val::Percent(100.),
                                                     ..Default::default()
                                                 },
-                                                margin: Rect {
+                                                margin: UiRect {
                                                     right: Val::Px(16.),
                                                     ..Default::default()
                                                 },
@@ -412,7 +409,7 @@ pub fn update_control_display(
                                                     height: Val::Percent(100.),
                                                     ..Default::default()
                                                 },
-                                                margin: Rect {
+                                                margin: UiRect {
                                                     right: Val::Px(16.),
                                                     ..Default::default()
                                                 },
