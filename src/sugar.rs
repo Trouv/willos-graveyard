@@ -107,14 +107,9 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
             None => 7..8,
         };
 
-        let frame_timer = match state {
-            _ => Timer::new(Duration::from_millis(150), true),
-        };
+        let frame_timer = Timer::new(Duration::from_millis(150), true);
 
-        let repeat = match state {
-            Idle(Down) => true,
-            _ => false,
-        };
+        let repeat = matches!(state, Idle(Down));
 
         SpriteSheetAnimation {
             indices,

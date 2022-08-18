@@ -1,3 +1,6 @@
+// these two lints are triggered by normal system code a lot
+#![allow(clippy::too_many_arguments, clippy::type_complexity)]
+
 mod animation;
 mod bundles;
 mod event_scheduler;

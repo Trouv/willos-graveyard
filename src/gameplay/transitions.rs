@@ -445,11 +445,7 @@ pub fn fit_camera_around_play_zone_padded(
     if !window_resize_events.is_empty()
         || level_events
             .iter()
-            .find(|e| match e {
-                LevelEvent::Transformed(_) => true,
-                _ => false,
-            })
-            .is_some()
+            .any(|e| matches!(e, LevelEvent::Transformed(_)))
     {
         if let Ok(level_handle) = level_query.get_single() {
             if let Some(level) = levels.get(level_handle) {

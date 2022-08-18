@@ -10,7 +10,7 @@ pub enum HistoryCommands {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
 pub struct FlushHistoryCommands;
 
-#[derive(Clone, PartialEq, Debug, Default, Component, Deref, DerefMut)]
+#[derive(Clone, PartialEq, Eq, Debug, Default, Component, Deref, DerefMut)]
 pub struct History<C: Component + Clone>(Vec<C>);
 
 pub fn flush_history_commands<C: Component + Clone>(
