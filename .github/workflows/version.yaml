@@ -31,7 +31,7 @@ jobs:
           if [[ $CHANGED_ASSETS || $CHANGED_CODE ]]; then
             echo "changes made, updating version"
 
-            if [[ $LAST_TAG =~ ^v\?([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
+            if [[ $LAST_TAG =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
               CODE_VERSION_MAJOR=${BASH_REMATCH[1]}
               CODE_VERSION_MINOR=${BASH_REMATCH[2]}
               CODE_VERSION_PATCH=${BASH_REMATCH[3]}
