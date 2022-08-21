@@ -22,6 +22,7 @@ jobs:
       # This job only has one step since it all needs to be wrapped in an if statement
       - name: Update version
         run: |
+          git fetch --tags
           LAST_TAG=$(git tag | head -n 1)
           CHANGED_ASSETS=$(git diff --name-only $LAST_TAG -- assets/)
           CHANGED_CODE=$(git diff --name-only $LAST_TAG -- src/ Cargo.*)
