@@ -124,7 +124,7 @@ pub fn move_table_update(
             let diff = *input_grid_coords - *table_grid_coords;
             let x_index = diff.x - 1;
             let y_index = -1 - diff.y;
-            if (0..4).contains(&x_index) && y_index >= 0 && y_index < 4 {
+            if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
                 // key block is in table
                 table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
             }
