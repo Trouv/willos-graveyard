@@ -1,66 +1,14 @@
 use crate::{
-    gameplay::{components::*, GoalEvent,},utils::range_chance
+    gameplay::{components::*, GoalEvent,},utils::range_chance, animation::SpriteSheetAnimation
 };
 use std::{ops::Range, time::Duration};
 use bevy::prelude::*;
-use bevy_ecs_ldtk::prelude::*;
 use rand::Rng;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HandDirection {
     Right,
     Left,
-}
-
-#[derive(Clone, Default, Bundle, LdtkEntity)]
-pub struct GoalBundle {
-    #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub goal: Goal,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
-}
-
-pub fn spawn_goal_ghosts(
-    mut commands: Commands,
-    goals: Query<Entity, Added<Goal>>,
-    mut goal_ghost_settings: ResMut<GoalGhostSettings>,
-    asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    for goal_entity in goals.iter() {
-        let atlas_handle = match &goal_ghost_settings.atlas {
-            Some(atlas) => atlas.clone(),
-            None => {
-                let image_handle = asset_server.load("textures/animations/goal_ghost-Sheet.png");
-                let texture_atlas = TextureAtlas::from_grid(
-                    image_handle,
-                    Vec2::splat(32.),
-                    goal_ghost_settings.num_columns,
-                    goal_ghost_settings.num_rows,
-                );
-                let atlas_handle = texture_atlases.add(texture_atlas);
-
-                goal_ghost_settings.atlas = Some(atlas_handle.clone());
-                atlas_handle.clone()
-            }
-        };
-
-        let ghost_entity = commands
-            .spawn_bundle(SpriteSheetBundle {
-                texture_atlas: atlas_handle,
-                transform: Transform::from_xyz(0., 1., 2.5),
-                ..default()
-            })
-            .insert(GoalGhostAnimation::new(
-                goal_entity,
-                Timer::new(goal_ghost_settings.frame_duration, true),
-            ))
-            .id();
-
-        commands.entity(goal_entity).add_child(ghost_entity);
-    }
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
@@ -90,9 +38,9 @@ impl GoalGhostSettings {
         happy_frame_count: 10,
         none_frame_index: 8,
         num_columns: 10,
-        num_rows: 5,
+        num_rows: 11,
         atlas: None,
-        punctuation_timer: 40..100,
+        punctuation_timer: 300..1000,
     };
 }
 
@@ -136,6 +84,48 @@ impl GoalGhostAnimation {
     }
 }
 
+pub fn spawn_goal_ghosts(
+    mut commands: Commands,
+    goals: Query<Entity, Added<Goal>>,
+    mut goal_ghost_settings: ResMut<GoalGhostSettings>,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    for goal_entity in goals.iter() {
+        let atlas_handle = match &goal_ghost_settings.atlas {
+            Some(atlas) => atlas.clone(),
+            None => {
+                let image_handle = asset_server.load("textures/animations/goal_ghost-Sheet.png");
+                let texture_atlas = TextureAtlas::from_grid(
+                    image_handle,
+                    Vec2::splat(32.),
+                    goal_ghost_settings.num_columns,
+                    goal_ghost_settings.num_rows,
+                );
+                let atlas_handle = texture_atlases.add(texture_atlas);
+
+                goal_ghost_settings.atlas = Some(atlas_handle.clone());
+                atlas_handle.clone()
+            }
+        };
+
+        let ghost_entity = commands
+            .spawn_bundle(SpriteSheetBundle {
+                texture_atlas: atlas_handle,
+                transform: Transform::from_xyz(0., 1., 2.5),
+                ..default()
+            })
+            .insert(GoalGhostAnimation::new(
+                goal_entity,
+                Timer::new(goal_ghost_settings.frame_duration, true),
+            ))
+            .id();
+
+        commands.entity(goal_entity).add_child(ghost_entity);
+    }
+}
+
+
 
 pub fn goal_ghost_event_sugar(
     mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
@@ -158,6 +148,43 @@ pub fn goal_ghost_event_sugar(
         }
     }
 }
+
+pub fn punctuation(
+    mut commands: Commands,
+    mut goal_ghost_query: Query<(Entity, Option<&mut Children>, &mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
+    goal_ghost_settings: Res<GoalGhostSettings>,
+) {
+    for (ghost_entity, mut children, mut animation, mut sprite) in goal_ghost_query.iter_mut() {
+        if animation.state == GoalAnimationState::Idle {
+                let mut rng = rand::thread_rng();
+                let chance_for_punctuation = range_chance(
+                    &goal_ghost_settings.punctuation_timer, 
+                    animation.frames_since_punctuation
+                );
+                let f: f32 = rng.gen();
+                animation.frames_since_punctuation += 1;
+                if  f < chance_for_punctuation {
+                    let f2: f32 = rng.gen();
+                    let x: usize = if f2 < 0.5 {
+                        50
+                    } else {
+                        80
+                    };
+                    animation.frames_since_punctuation = 0;
+                    commands.entity(ghost_entity).despawn_descendants();
+                    commands.entity(ghost_entity)
+                    .with_children(|child_commands| {
+                        child_commands
+                            .spawn_bundle(SpriteSheetBundle {
+                                sprite: TextureAtlasSprite {index: x, ..default() },
+                                texture_atlas: goal_ghost_settings.atlas.clone().unwrap(),
+                                transform: Transform::from_xyz(0., 0., 0.06),
+                                ..default()
+                            }).insert(SpriteSheetAnimation{indices: x..(x+21), frame_timer: Timer::new(Duration::from_millis(50), true), repeat: false});
+                    });                      
+                }            }
+        }
+    }
 
 pub fn goal_ghost_animation(
     mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
