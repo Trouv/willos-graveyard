@@ -6,6 +6,7 @@ on:
   schedule:
     - cron: '0 7 * 1,2,11,12 *'
     - cron: '0 6 * 3,4,5,6,7,8,9,10 *'
+  workflow_dispatch:
 
 jobs:
   version:
@@ -21,33 +22,34 @@ jobs:
       # This job only has one step since it all needs to be wrapped in an if statement
       - name: Update version
         run: |
-          # Determine if new version needs to be created
           LAST_TAG=$(git tag | head -n 1)
-          CHANGED_ASSETS=$(git diff --name-only -- assets/)
+          CHANGED_ASSETS=$(git diff --name-only $LAST_TAG -- assets/)
           CHANGED_CODE=$(git diff --name-only $LAST_TAG -- src/ Cargo.*)
           if [[ $CHANGED_ASSETS || $CHANGED_CODE ]]; then
             echo "changes made, updating version"
 
-            # Get previous semantic version
             if [[ $LAST_TAG =~ ^([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
               CODE_VERSION_MAJOR=${BASH_REMATCH[1]}
               CODE_VERSION_MINOR=${BASH_REMATCH[2]}
               CODE_VERSION_PATCH=${BASH_REMATCH[3]}
 
-              # Increment code version
               UPDATE_CARGO=0
-              MAJOR_COMMITS=$(git log $LAST_TAG..HEAD | grep '^    \w+!:')
+              MAJOR_COMMITS=$(git log $LAST_TAG..HEAD --grep '^\w+!:')
               if [[ $MAJOR_COMMITS ]]; then
+                echo "incrementing code version (minor)"
                 CODE_VERSION_MINOR=$(( $CODE_VERSION_MINOR + 1 ))
                 UPDATE_CARGO=1
               elif [[ $CHANGED_CODE ]]; then
+                echo "incrementing code version (patch)"
                 CODE_VERSION_PATCH=$(( $CODE_VERSION_PATCH + 1 ))
                 UPDATE_CARGO=1
               fi
               CODE_VERSION="$CODE_VERSION_MAJOR.$CODE_VERSION_MINOR.$CODE_VERSION_PATCH"
 
-              # Update cargo
+              git config user.name 'github-actions[bot]'
+              git config user.email 'github-actions[bot]@users.noreply.github.com'
               if [[ $UPDATE_CARGO ]]; then
+                echo "updating cargo"
                 sed "s/^version = \".*\"$/version = \"$CODE_VERSION\"/" Cargo.toml -i
                 cargo update
                 git add Cargo.*
@@ -58,7 +60,12 @@ jobs:
               VERSION="$CODE_VERSION-$DATE_VERSION"
               echo "new version: $VERSION"
 
+              echo "creating tag, pushing"
               git tag -a $VERSION -m "version updated to $VERSION by CI"
               git push --follow-tags
+            else
+              echo "most recent tag isn't semver, skipping.."
             fi
+          else
+            echo "no changes detected, skipping.."
           fi
