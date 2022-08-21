@@ -2,7 +2,6 @@ use crate::{
     event_scheduler::EventScheduler,
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
     resources::*,
-    sugar::GoalGhostAnimation,
     LevelState,
 };
 use bevy::{prelude::*, window::WindowResized};
@@ -52,46 +51,7 @@ pub fn spawn_gravestone_body(
     }
 }
 
-pub fn spawn_goal_ghosts(
-    mut commands: Commands,
-    goals: Query<Entity, Added<Goal>>,
-    mut goal_ghost_settings: ResMut<GoalGhostSettings>,
-    asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    for goal_entity in goals.iter() {
-        let atlas_handle = match &goal_ghost_settings.atlas {
-            Some(atlas) => atlas.clone(),
-            None => {
-                let image_handle = asset_server.load("textures/animations/goal_ghost-Sheet.png");
-                let texture_atlas = TextureAtlas::from_grid(
-                    image_handle,
-                    Vec2::splat(32.),
-                    goal_ghost_settings.num_columns,
-                    goal_ghost_settings.num_rows,
-                );
-                let atlas_handle = texture_atlases.add(texture_atlas);
 
-                goal_ghost_settings.atlas = Some(atlas_handle.clone());
-                atlas_handle.clone()
-            }
-        };
-
-        let ghost_entity = commands
-            .spawn_bundle(SpriteSheetBundle {
-                texture_atlas: atlas_handle,
-                transform: Transform::from_xyz(0., 1., 2.5),
-                ..default()
-            })
-            .insert(GoalGhostAnimation::new(
-                goal_entity,
-                Timer::new(goal_ghost_settings.frame_duration, true),
-            ))
-            .id();
-
-        commands.entity(goal_entity).add_child(ghost_entity);
-    }
-}
 
 pub fn spawn_ui_root(mut commands: Commands) {
     commands

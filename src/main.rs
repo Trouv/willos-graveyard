@@ -9,6 +9,8 @@ mod gameplay;
 mod history;
 mod resources;
 mod sugar;
+mod goal_ghost;
+mod utils;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::{prelude::*, render::texture::ImageSettings};
@@ -65,7 +67,7 @@ fn main() {
         .insert_resource(Msaa { samples: 1 })
         .insert_resource(LevelSelection::Index(level_num))
         .insert_resource(LevelState::Inbetween)
-        .insert_resource(resources::GoalGhostSettings::NORMAL)
+        .insert_resource(goal_ghost::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
         .insert_resource(resources::PlayZonePortion(0.75))
         .add_startup_system_to_stage(StartupStage::PreStartup, sound_load)
@@ -108,9 +110,9 @@ fn main() {
         .add_system(gameplay::transitions::load_next_level)
         .add_system(gameplay::transitions::level_card_update)
         .add_system(gameplay::transitions::fit_camera_around_play_zone_padded)
-        .add_system(gameplay::transitions::spawn_goal_ghosts)
-        .add_system(sugar::goal_ghost_animation)
-        .add_system(sugar::goal_ghost_event_sugar)
+        .add_system(goal_ghost::spawn_goal_ghosts)
+        .add_system(goal_ghost::goal_ghost_animation)
+        .add_system(goal_ghost::goal_ghost_event_sugar)
         .add_system(sugar::animate_grass_system)
         .add_system(sugar::play_death_animations)
         .add_system(sugar::history_sugar)
