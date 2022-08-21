@@ -1,3 +1,6 @@
+// these two lints are triggered by normal system code a lot
+#![allow(clippy::too_many_arguments, clippy::type_complexity)]
+
 mod animation;
 mod bundles;
 mod event_scheduler;
@@ -8,7 +11,8 @@ mod resources;
 mod sugar;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
-use bevy::prelude::*;
+use bevy::{prelude::*, render::texture::ImageSettings};
+
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
 use rand::Rng;
@@ -40,13 +44,12 @@ fn main() {
 
     let mut app = App::new();
 
-    app.add_plugins(DefaultPlugins)
+    app.insert_resource(ImageSettings::default_nearest())
+        .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(FromComponentAnimator::<sugar::PlayerAnimationState>::new())
-        .add_plugin(FromComponentAnimator::<sugar::DeathHoleState>::new())
-        .add_plugin(FromComponentAnimator::<sugar::DemonArmsState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<history::HistoryCommands>()
@@ -69,7 +72,6 @@ fn main() {
         .add_startup_system(gameplay::transitions::world_setup)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
-        .add_startup_system(resources::load_death_animations)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
         .add_system(
             gameplay::systems::player_state_input
@@ -111,7 +113,6 @@ fn main() {
         .add_system(sugar::goal_ghost_event_sugar)
         .add_system(sugar::animate_grass_system)
         .add_system(sugar::play_death_animations)
-        .add_system(sugar::despawn_death_animations)
         .add_system(sugar::history_sugar)
         .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")

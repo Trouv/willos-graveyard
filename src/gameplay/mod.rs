@@ -43,7 +43,6 @@ pub struct PlayerMovementEvent {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct DeathEvent {
     pub player_entity: Entity,
-    pub exorcism_entity: Entity,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug)]

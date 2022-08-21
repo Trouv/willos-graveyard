@@ -124,7 +124,7 @@ pub fn move_table_update(
             let diff = *input_grid_coords - *table_grid_coords;
             let x_index = diff.x - 1;
             let y_index = -1 - diff.y;
-            if (0..4).contains(&x_index) && y_index >= 0 && y_index < 4 {
+            if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
                 // key block is in table
                 table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
             }
@@ -241,16 +241,13 @@ pub fn check_death(
 ) {
     if *level_state == LevelState::Gameplay {
         if let Ok((entity, player_coords, mut player_state)) = player_query.get_single_mut() {
-            if *player_state != PlayerState::Dead {
-                if let Some((exorcism_entity, _)) =
-                    exorcism_query.iter().find(|(_, g)| *g == player_coords)
-                {
-                    *player_state = PlayerState::Dead;
-                    death_event_writer.send(DeathEvent {
-                        player_entity: entity,
-                        exorcism_entity,
-                    });
-                }
+            if *player_state != PlayerState::Dead
+                && exorcism_query.iter().any(|(_, g)| *g == *player_coords)
+            {
+                *player_state = PlayerState::Dead;
+                death_event_writer.send(DeathEvent {
+                    player_entity: entity,
+                });
             }
         }
     }
@@ -368,7 +365,7 @@ pub fn update_control_display(
                                     height: Val::Percent(100. / 18.),
                                     ..Default::default()
                                 },
-                                margin: Rect {
+                                margin: UiRect {
                                     bottom: Val::Px(16.),
                                     ..Default::default()
                                 },
@@ -382,20 +379,17 @@ pub fn update_control_display(
                                 match node {
                                     ControlNode::Text(s) => {
                                         parent.spawn_bundle(TextBundle {
-                                            text: Text::with_section(
-                                                s,
-                                                style.clone(),
-                                                TextAlignment {
+                                            text: Text::from_section(s, style.clone())
+                                                .with_alignment(TextAlignment {
                                                     vertical: VerticalAlign::Center,
                                                     horizontal: HorizontalAlign::Center,
-                                                },
-                                            ),
+                                                }),
                                             style: Style {
                                                 size: Size {
                                                     height: Val::Percent(100.),
                                                     ..Default::default()
                                                 },
-                                                margin: Rect {
+                                                margin: UiRect {
                                                     right: Val::Px(16.),
                                                     ..Default::default()
                                                 },
@@ -412,7 +406,7 @@ pub fn update_control_display(
                                                     height: Val::Percent(100.),
                                                     ..Default::default()
                                                 },
-                                                margin: Rect {
+                                                margin: UiRect {
                                                     right: Val::Px(16.),
                                                     ..Default::default()
                                                 },

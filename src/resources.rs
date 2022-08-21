@@ -32,31 +32,6 @@ impl GoalGhostSettings {
     };
 }
 
-#[derive(Clone, Eq, PartialEq, Debug, Default, Hash)]
-pub struct DeathAnimationTextureAtlases {
-    pub death_hole_handle: Handle<TextureAtlas>,
-    pub demon_arms_handle: Handle<TextureAtlas>,
-}
-
-pub fn load_death_animations(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    let death_hole_texture = asset_server.load("textures/animations/death-Sheet.png");
-    let demon_arms_texture = asset_server.load("textures/animations/demon-Sheet.png");
-
-    let death_hole_texture_atlas =
-        TextureAtlas::from_grid(death_hole_texture, Vec2::splat(32.), 30, 1);
-    let demon_arms_texture_atlas =
-        TextureAtlas::from_grid(demon_arms_texture, Vec2::splat(32.), 30, 1);
-
-    commands.insert_resource(DeathAnimationTextureAtlases {
-        death_hole_handle: texture_atlases.add(death_hole_texture_atlas),
-        demon_arms_handle: texture_atlases.add(demon_arms_texture_atlas),
-    });
-}
-
 #[derive(Clone, Debug, Default)]
 pub struct RewindTimer {
     pub velocity: f32,
