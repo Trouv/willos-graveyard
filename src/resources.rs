@@ -32,7 +32,6 @@ impl GoalGhostSettings {
     };
 }
 
-
 #[derive(Clone, Debug, Default)]
 pub struct RewindTimer {
     pub velocity: f32,

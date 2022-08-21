@@ -241,16 +241,13 @@ pub fn check_death(
 ) {
     if *level_state == LevelState::Gameplay {
         if let Ok((entity, player_coords, mut player_state)) = player_query.get_single_mut() {
-            if *player_state != PlayerState::Dead {
-                if let Some((exorcism_entity, _)) =
-                    exorcism_query.iter().find(|(_, g)| *g == player_coords)
-                {
-                    *player_state = PlayerState::Dead;
-                    death_event_writer.send(DeathEvent {
-                        player_entity: entity,
-                        exorcism_entity,
-                    });
-                }
+            if *player_state != PlayerState::Dead
+                && exorcism_query.iter().any(|(_, g)| *g == *player_coords)
+            {
+                *player_state = PlayerState::Dead;
+                death_event_writer.send(DeathEvent {
+                    player_entity: entity,
+                });
             }
         }
     }

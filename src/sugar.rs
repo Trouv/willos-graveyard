@@ -163,8 +163,6 @@ impl GoalGhostAnimation {
     }
 }
 
-
-
 pub fn history_sugar(
     mut history_commands: EventReader<HistoryCommands>,
     mut player_query: Query<&mut PlayerAnimationState>,
@@ -186,11 +184,7 @@ pub fn play_death_animations(
     mut player_query: Query<&mut PlayerAnimationState>,
     mut death_event_reader: EventReader<DeathEvent>,
 ) {
-    for DeathEvent {
-        player_entity,
-        exorcism_entity,
-    } in death_event_reader.iter()
-    {
+    for DeathEvent { player_entity } in death_event_reader.iter() {
         if let Ok(mut player_animation_state) = player_query.get_mut(*player_entity) {
             *player_animation_state = PlayerAnimationState::Dying;
         }
