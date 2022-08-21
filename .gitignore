@@ -3,4 +3,6 @@
 **/.DS_Store
 **/**/.DS_Store
 **/**/**/.DS_Store
-**/**/**/backups/
+Session.vim
+/assets/levels/sokoban-sokoban/backups
+*.ods#
