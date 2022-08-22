@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -29,7 +31,7 @@ jobs:
           if [[ $CHANGED_ASSETS || $CHANGED_CODE ]]; then
             echo "changes made, updating version"
 
-            if [[ $LAST_TAG =~ ^([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
+            if [[ $LAST_TAG =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
               CODE_VERSION_MAJOR=${BASH_REMATCH[1]}
               CODE_VERSION_MINOR=${BASH_REMATCH[2]}
               CODE_VERSION_PATCH=${BASH_REMATCH[3]}
@@ -58,7 +60,13 @@ jobs:
               fi
 
               DATE_VERSION=$(date +%y.%m.%d)
-              VERSION="$CODE_VERSION-$DATE_VERSION"
+              VERSION="v$CODE_VERSION-$DATE_VERSION"
+              COLLISION=0
+              while [[ $(git tag | grep $VERSION) ]]; do
+                COLLISION=$(( $COLLISION + 1 ))
+                VERSION="v$CODE_VERSION-$DATE_VERSION-$COLLISION"
+              done
+
               echo "new version: $VERSION"
 
               echo "creating tag, pushing"
