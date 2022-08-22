@@ -1,5 +1,5 @@
 use crate::{
-    gameplay::{components::*, GoalEvent,},utils::range_chance, animation::SpriteSheetAnimation
+    gameplay::{components::*, GoalEvent,},utils::range_chance, animation::SpriteSheetAnimation, UNIT_LENGTH
 };
 use std::{ops::Range, time::Duration};
 use bevy::prelude::*;
@@ -178,7 +178,7 @@ pub fn punctuation(
                             .spawn_bundle(SpriteSheetBundle {
                                 sprite: TextureAtlasSprite {index: x, ..default() },
                                 texture_atlas: goal_ghost_settings.atlas.clone().unwrap(),
-                                transform: Transform::from_xyz(0., 0., 0.06),
+                                transform: Transform::from_xyz(0., UNIT_LENGTH/2.0, 0.06),
                                 ..default()
                             }).insert(SpriteSheetAnimation{indices: x..(x+21), frame_timer: Timer::new(Duration::from_millis(50), true), repeat: false});
                     });                      
