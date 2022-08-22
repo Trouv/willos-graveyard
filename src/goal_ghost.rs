@@ -183,8 +183,8 @@ pub fn punctuation(
                                 ..default()
                             })
                             .insert(SpriteSheetAnimation {
-                                indices: x..(x + 21),
-                                frame_timer: Timer::new(Duration::from_millis(100), true),
+                                indices: x..(x + 27),
+                                frame_timer: Timer::new(Duration::from_millis(80), true),
                                 repeat: false,
                             })
                             .insert(KillOnFinish);
