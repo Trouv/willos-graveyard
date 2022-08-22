@@ -3,11 +3,12 @@ use crate::{
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
     resources::*,
     sugar::GoalGhostAnimation,
-    LevelState,
+    GameState,
 };
 use bevy::{prelude::*, window::WindowResized};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
+use iyes_loopless::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 use std::time::Duration;
 
@@ -392,7 +393,6 @@ pub fn spawn_level_card(
 pub fn level_card_update(
     mut commands: Commands,
     mut card_query: Query<(Entity, &mut LevelCard, &mut Style)>,
-    mut level_state: ResMut<LevelState>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
     for event in level_card_events.iter() {
@@ -417,7 +417,7 @@ pub fn level_card_update(
                         },
                     ));
 
-                    *level_state = LevelState::Gameplay;
+                    commands.insert_resource(NextState(GameState::Gameplay));
                     *card = LevelCard::Falling;
                 }
                 LevelCardEvent::Despawn => {
