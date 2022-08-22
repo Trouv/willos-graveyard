@@ -51,6 +51,12 @@ jobs:
           asset_name: ${{ env.binary }}-wasm-${{ steps.get_version.outputs.tag }}.zip
           tag: ${{ github.ref }}
           overwrite: true
+      - name: Deploy to github pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PAT }}
+          publish_dir: ./wasm
+          publish_branch: github-pages
 
   # Build for Linux
   release-linux:
