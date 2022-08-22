@@ -6,10 +6,10 @@ mod bundles;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
+mod goal_ghost;
 mod history;
 mod resources;
 mod sugar;
-mod goal_ghost;
 mod utils;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
@@ -101,6 +101,7 @@ fn main() {
                 .after(history::FlushHistoryCommands),
         )
         .add_system(sugar::ease_movement)
+        .add_system(animation::kill_one_shot_sprites)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::reset_player_easing)
         .add_system(gameplay::systems::update_control_display)
         .add_system(gameplay::transitions::spawn_gravestone_body)

@@ -12,6 +12,9 @@ pub struct SpriteSheetAnimation {
     pub repeat: bool,
 }
 
+#[derive(Clone, Debug, Default, Component)]
+pub struct KillOnFinish;
+
 pub fn sprite_sheet_animation(
     mut query: Query<(Entity, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
     time: Res<Time>,
@@ -31,6 +34,19 @@ pub fn sprite_sheet_animation(
                     event_writer.send(AnimationEvent::Finished(entity));
                 }
             }
+        }
+    }
+}
+
+pub fn kill_one_shot_sprites(
+    mut commands: Commands,
+    query: Query<Entity, With<KillOnFinish>>,
+    mut event_reader: EventReader<AnimationEvent>,
+) {
+    for e in event_reader.iter() {
+        let AnimationEvent::Finished(finished) = e;
+        if query.contains(*finished) {
+            commands.entity(*finished).despawn_recursive();
         }
     }
 }

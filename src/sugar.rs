@@ -3,12 +3,11 @@ use crate::{
     animation::SpriteSheetAnimation,
     gameplay::{components::*, xy_translation, *},
     history::HistoryCommands,
-    resources::*,
     *,
 };
 use bevy::{prelude::*, utils::Duration};
 use bevy_easings::*;
-use std::{cmp};
+use std::cmp;
 
 pub fn ease_movement(
     mut commands: Commands,
@@ -119,7 +118,6 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
     }
 }
 
-
 pub fn history_sugar(
     mut history_commands: EventReader<HistoryCommands>,
     mut player_query: Query<&mut PlayerAnimationState>,
@@ -147,7 +145,6 @@ pub fn play_death_animations(
         }
     }
 }
-
 
 pub fn animate_grass_system(
     time: Res<Time>,

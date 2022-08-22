@@ -1,9 +1,12 @@
 use crate::{
-    gameplay::{components::*, GoalEvent,},utils::range_chance, animation::SpriteSheetAnimation, UNIT_LENGTH
+    animation::{KillOnFinish, SpriteSheetAnimation},
+    gameplay::{components::*, GoalEvent},
+    utils::range_chance,
+    UNIT_LENGTH,
 };
-use std::{ops::Range, time::Duration};
 use bevy::prelude::*;
 use rand::Rng;
+use std::{ops::Range, time::Duration};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HandDirection {
@@ -125,8 +128,6 @@ pub fn spawn_goal_ghosts(
     }
 }
 
-
-
 pub fn goal_ghost_event_sugar(
     mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
     mut goal_events: EventReader<GoalEvent>,
@@ -151,40 +152,47 @@ pub fn goal_ghost_event_sugar(
 
 pub fn punctuation(
     mut commands: Commands,
-    mut goal_ghost_query: Query<(Entity, Option<&mut Children>, &mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
+    mut goal_ghost_query: Query<(Entity, &mut GoalGhostAnimation)>,
     goal_ghost_settings: Res<GoalGhostSettings>,
 ) {
-    for (ghost_entity, mut children, mut animation, mut sprite) in goal_ghost_query.iter_mut() {
+    for (ghost_entity, mut animation) in goal_ghost_query.iter_mut() {
         if animation.state == GoalAnimationState::Idle {
-                let mut rng = rand::thread_rng();
-                let chance_for_punctuation = range_chance(
-                    &goal_ghost_settings.punctuation_timer, 
-                    animation.frames_since_punctuation
-                );
-                let f: f32 = rng.gen();
-                animation.frames_since_punctuation += 1;
-                if  f < chance_for_punctuation {
-                    let f2: f32 = rng.gen();
-                    let x: usize = if f2 < 0.5 {
-                        50
-                    } else {
-                        80
-                    };
-                    animation.frames_since_punctuation = 0;
-                    commands.entity(ghost_entity).despawn_descendants();
-                    commands.entity(ghost_entity)
+            let mut rng = rand::thread_rng();
+            let chance_for_punctuation = range_chance(
+                &goal_ghost_settings.punctuation_timer,
+                animation.frames_since_punctuation,
+            );
+            let f: f32 = rng.gen();
+            animation.frames_since_punctuation += 1;
+            if f < chance_for_punctuation {
+                let f2: f32 = rng.gen();
+                let x: usize = if f2 < 0.5 { 50 } else { 80 };
+                animation.frames_since_punctuation = 0;
+                commands.entity(ghost_entity).despawn_descendants();
+                commands
+                    .entity(ghost_entity)
                     .with_children(|child_commands| {
                         child_commands
                             .spawn_bundle(SpriteSheetBundle {
-                                sprite: TextureAtlasSprite {index: x, ..default() },
+                                sprite: TextureAtlasSprite {
+                                    index: x,
+                                    ..default()
+                                },
                                 texture_atlas: goal_ghost_settings.atlas.clone().unwrap(),
-                                transform: Transform::from_xyz(0., UNIT_LENGTH/2.0, 0.06),
+                                transform: Transform::from_xyz(0., UNIT_LENGTH / 2.5, 0.06),
                                 ..default()
-                            }).insert(SpriteSheetAnimation{indices: x..(x+21), frame_timer: Timer::new(Duration::from_millis(50), true), repeat: false});
-                    });                      
-                }            }
+                            })
+                            .insert(SpriteSheetAnimation {
+                                indices: x..(x + 21),
+                                frame_timer: Timer::new(Duration::from_millis(100), true),
+                                repeat: false,
+                            })
+                            .insert(KillOnFinish);
+                    });
+            }
         }
     }
+}
 
 pub fn goal_ghost_animation(
     mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
@@ -199,7 +207,6 @@ pub fn goal_ghost_animation(
 
             match animation.state {
                 GoalAnimationState::Idle => {
-
                     sprite.index = animation.column;
 
                     let chance_to_turn = range_chance(

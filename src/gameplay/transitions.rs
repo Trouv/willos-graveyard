@@ -51,8 +51,6 @@ pub fn spawn_gravestone_body(
     }
 }
 
-
-
 pub fn spawn_ui_root(mut commands: Commands) {
     commands
         .spawn_bundle(NodeBundle {

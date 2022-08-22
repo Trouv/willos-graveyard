@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use std::{ops::Range, time::Duration};
 
-
 #[derive(Clone, Debug, Default)]
 pub struct RewindTimer {
     pub velocity: f32,
