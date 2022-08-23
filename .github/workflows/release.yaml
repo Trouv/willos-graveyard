@@ -25,16 +25,17 @@ jobs:
           toolchain: nightly
           target: wasm32-unknown-unknown
           override: true
-      - name: Install Trunk
-        run: |
-          cargo install --locked trunk
-      - name: Trunk Build
+      - name: Install trunk
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: 'latest'
+      - name: Trunk build
         run: |
           trunk build --release --public-url /willos-graveyard/ --no-default-features
       - name: Deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          githhub_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: github-pages
 
