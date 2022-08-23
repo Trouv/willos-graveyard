@@ -19,43 +19,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
-        id: get_version
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - name: Install Trunk
+        uses: jetli/trunk-action@v0.1.0
         with:
-          toolchain: nightly
-          target: wasm32-unknown-unknown
-          override: true
-      - name: install wasm-bindgen-cli
+          version: "latest"
+      - name: Trunk Build
         run: |
-          cargo install wasm-bindgen-cli
-      - name: Build
-        run: |
-          cargo build --release --target wasm32-unknown-unknown --no-default-features
-      - name: Prepare package
-        run: |
-          wasm-bindgen --no-typescript --out-name bevy_game --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
-          cp -r assets wasm/
-      - name: Package as a zip
-        uses: vimtor/action-zip@v1
-        with:
-          files: wasm
-          dest: ${{ env.binary }}.zip
-
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.binary }}.zip
-          asset_name: ${{ env.binary }}-wasm-${{ steps.get_version.outputs.tag }}.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+          trunk build --release --public-url /willos-graveyard/ --no-default-features
       - name: Deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets.PAT }}
-          publish_dir: ./wasm
+          githhub_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
           publish_branch: github-pages
 
   # Build for Linux
