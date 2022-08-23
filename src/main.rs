@@ -81,6 +81,15 @@ fn main() {
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::reset_player_easing)
+        .add_enter_system(
+            GameState::Gameplay,
+            gameplay::transitions::fit_camera_around_play_zone_padded,
+        )
+        .add_system(
+            gameplay::transitions::fit_camera_around_play_zone_padded
+                .run_not_in_state(GameState::AssetLoading)
+                .run_on_event::<bevy::window::WindowResized>(),
+        )
         .add_system_set(
             ConditionSet::new()
                 .run_in_state(GameState::LevelTransition)
@@ -89,7 +98,6 @@ fn main() {
                 .with_system(gameplay::transitions::spawn_control_display)
                 .with_system(gameplay::transitions::load_next_level)
                 .with_system(gameplay::transitions::level_card_update)
-                .with_system(gameplay::transitions::fit_camera_around_play_zone_padded)
                 .with_system(gameplay::transitions::spawn_goal_ghosts)
                 .into(),
         )
