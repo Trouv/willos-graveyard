@@ -443,9 +443,7 @@ pub fn fit_camera_around_play_zone_padded(
     play_zone_portion: Res<PlayZonePortion>,
 ) {
     if let Ok(level_handle) = level_query.get_single() {
-        println!("level entity found");
         if let Some(level) = levels.get(level_handle) {
-            println!("level asset found");
             let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
             let padded_level_size = level_size + IVec2::splat(32 * 2);
 
