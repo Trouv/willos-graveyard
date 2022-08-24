@@ -3,25 +3,19 @@ use crate::{
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
     resources::*,
     sugar::GoalGhostAnimation,
-    GameState,
+    AssetHolder, GameState,
 };
-use bevy::{prelude::*, window::WindowResized};
+use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use iyes_loopless::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 use std::time::Duration;
 
-pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn spawn_camera(mut commands: Commands) {
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(OrthographicCamera);
-
-    commands.spawn_bundle(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("levels/sokoban-sokoban.ldtk"),
-        transform: Transform::from_xyz(32., 32., 0.),
-        ..Default::default()
-    });
 }
 
 pub fn spawn_gravestone_body(
@@ -250,15 +244,23 @@ pub fn schedule_first_level_card(
 }
 
 pub fn load_next_level(
+    mut commands: Commands,
     mut level_card_events: EventReader<LevelCardEvent>,
     mut level_selection: ResMut<LevelSelection>,
     mut first_card_skipped: Local<bool>,
+    asset_holder: Res<AssetHolder>,
 ) {
     for event in level_card_events.iter() {
         if let LevelCardEvent::Block(new_level_selection) = event {
             if *first_card_skipped {
                 *level_selection = new_level_selection.clone()
             } else {
+                commands.spawn_bundle(LdtkWorldBundle {
+                    ldtk_handle: asset_holder.ldtk.clone(),
+                    transform: Transform::from_xyz(32., 32., 0.),
+                    ..Default::default()
+                });
+
                 *first_card_skipped = true;
             }
         }

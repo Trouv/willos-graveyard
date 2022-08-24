@@ -68,7 +68,7 @@ fn main() {
             gameplay::LevelCardEvent,
         >::new())
         .insert_resource(LdtkSettings {
-            set_clear_color: SetClearColor::FromLevelBackground,
+            set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
         })
         .insert_resource(Msaa { samples: 1 })
@@ -76,7 +76,7 @@ fn main() {
         .insert_resource(resources::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
         .insert_resource(resources::PlayZonePortion(0.75))
-        .add_startup_system(gameplay::transitions::world_setup)
+        .add_startup_system(gameplay::transitions::spawn_camera)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
