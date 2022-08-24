@@ -2459,8 +2459,8 @@
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 576,
+			"pxWid": 704,
+			"pxHei": 288,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -2472,7 +2472,10 @@
 			"__bgPos": null,
 			"externalRelPath": "sokoban-sokoban/Level_6.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Level", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [] },
+				{ "__identifier": "Title", "__value": "Spirit gate", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Spirit gate"]
+				}] },
 				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
