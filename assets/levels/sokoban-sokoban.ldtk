@@ -2443,9 +2443,9 @@
 			"__bgPos": null,
 			"externalRelPath": "sokoban-sokoban/Level_5.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Choice illusion", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__value": "Cygnus's wing", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Choice illusion"]
+					"params": ["Cygnus's wing"]
 				}] },
 				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
@@ -2482,7 +2482,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_6",
+			"identifier": "Level_7",
 			"iid": "49fa1630-02f0-11ed-a349-e7bd5d5aad36",
 			"uid": 133,
 			"worldX": -1,

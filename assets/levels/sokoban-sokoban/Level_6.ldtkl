@@ -211,20 +211,6 @@
 					"defUid": 25,
 					"px": [128,96],
 					"fieldInstances": []
-				},
-				{
-					"__identifier": "Goal",
-					"__grid": [6,7],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 4, "x": 0, "y": 96, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "98c68a10-02f0-11ed-ab4b-9951538ef683",
-					"width": 32,
-					"height": 32,
-					"defUid": 18,
-					"px": [192,224],
-					"fieldInstances": []
 				}
 			]
 		},
@@ -378,6 +364,20 @@
 					"height": 32,
 					"defUid": 52,
 					"px": [192,192],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Goal",
+					"__grid": [6,7],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 4, "x": 0, "y": 96, "w": 32, "h": 32 },
+					"__smartColor": "#FFFFFF",
+					"iid": "79d7ba10-02f0-11ed-ab4b-9df936c8a98f",
+					"width": 32,
+					"height": 32,
+					"defUid": 18,
+					"px": [192,224],
 					"fieldInstances": []
 				}
 			]
