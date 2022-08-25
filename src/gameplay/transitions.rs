@@ -3,24 +3,19 @@ use crate::{
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
     resources::*,
     sugar::GoalGhostAnimation,
-    LevelState,
+    AssetHolder, GameState,
 };
-use bevy::{prelude::*, window::WindowResized};
+use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
+use iyes_loopless::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 use std::time::Duration;
 
-pub fn world_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn spawn_camera(mut commands: Commands) {
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(OrthographicCamera);
-
-    commands.spawn_bundle(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("levels/sokoban-sokoban.ldtk"),
-        transform: Transform::from_xyz(32., 32., 0.),
-        ..Default::default()
-    });
 }
 
 pub fn spawn_gravestone_body(
@@ -249,15 +244,23 @@ pub fn schedule_first_level_card(
 }
 
 pub fn load_next_level(
+    mut commands: Commands,
     mut level_card_events: EventReader<LevelCardEvent>,
     mut level_selection: ResMut<LevelSelection>,
     mut first_card_skipped: Local<bool>,
+    asset_holder: Res<AssetHolder>,
 ) {
     for event in level_card_events.iter() {
         if let LevelCardEvent::Block(new_level_selection) = event {
             if *first_card_skipped {
                 *level_selection = new_level_selection.clone()
             } else {
+                commands.spawn_bundle(LdtkWorldBundle {
+                    ldtk_handle: asset_holder.ldtk.clone(),
+                    transform: Transform::from_xyz(32., 32., 0.),
+                    ..Default::default()
+                });
+
                 *first_card_skipped = true;
             }
         }
@@ -392,7 +395,6 @@ pub fn spawn_level_card(
 pub fn level_card_update(
     mut commands: Commands,
     mut card_query: Query<(Entity, &mut LevelCard, &mut Style)>,
-    mut level_state: ResMut<LevelState>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
     for event in level_card_events.iter() {
@@ -417,7 +419,7 @@ pub fn level_card_update(
                         },
                     ));
 
-                    *level_state = LevelState::Gameplay;
+                    commands.insert_resource(NextState(GameState::Gameplay));
                     *card = LevelCard::Falling;
                 }
                 LevelCardEvent::Despawn => {
@@ -435,70 +437,62 @@ pub fn fit_camera_around_play_zone_padded(
         (&mut Transform, &mut OrthographicProjection),
         With<OrthographicCamera>,
     >,
-    mut level_events: EventReader<LevelEvent>,
-    window_resize_events: EventReader<WindowResized>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
     windows: Res<Windows>,
     play_zone_portion: Res<PlayZonePortion>,
 ) {
-    if !window_resize_events.is_empty()
-        || level_events
-            .iter()
-            .any(|e| matches!(e, LevelEvent::Transformed(_)))
-    {
-        if let Ok(level_handle) = level_query.get_single() {
-            if let Some(level) = levels.get(level_handle) {
-                let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
-                let padded_level_size = level_size + IVec2::splat(32 * 2);
+    if let Ok(level_handle) = level_query.get_single() {
+        if let Some(level) = levels.get(level_handle) {
+            let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
+            let padded_level_size = level_size + IVec2::splat(32 * 2);
 
-                let window = windows.primary();
+            let window = windows.primary();
 
-                let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
-                let aspect_ratio = window.width() as f32 / window.height() as f32;
-                let play_zone_ratio = aspect_ratio * **play_zone_portion;
+            let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
+            let aspect_ratio = window.width() as f32 / window.height() as f32;
+            let play_zone_ratio = aspect_ratio * **play_zone_portion;
 
-                let (mut transform, mut projection) = camera_query.single_mut();
-                projection.scaling_mode = bevy::render::camera::ScalingMode::None;
-                projection.bottom = 0.;
-                projection.left = 0.;
+            let (mut transform, mut projection) = camera_query.single_mut();
+            projection.scaling_mode = bevy::render::camera::ScalingMode::None;
+            projection.bottom = 0.;
+            projection.left = 0.;
 
-                let play_zone_size = if padded_level_ratio > play_zone_ratio {
-                    // Level is "wide"
-                    Size {
-                        width: padded_level_size.x as f32,
-                        height: padded_level_size.x as f32 / play_zone_ratio,
-                    }
-                } else {
-                    // Level is "tall"
-                    Size {
-                        width: padded_level_size.y as f32 * play_zone_ratio,
-                        height: padded_level_size.y as f32,
-                    }
-                };
+            let play_zone_size = if padded_level_ratio > play_zone_ratio {
+                // Level is "wide"
+                Size {
+                    width: padded_level_size.x as f32,
+                    height: padded_level_size.x as f32 / play_zone_ratio,
+                }
+            } else {
+                // Level is "tall"
+                Size {
+                    width: padded_level_size.y as f32 * play_zone_ratio,
+                    height: padded_level_size.y as f32,
+                }
+            };
 
-                if play_zone_ratio > aspect_ratio {
-                    // Play zone is "wide"
-                    let pixel_perfect_width =
-                        ((play_zone_size.width / aspect_ratio).round() * aspect_ratio).round();
+            if play_zone_ratio > aspect_ratio {
+                // Play zone is "wide"
+                let pixel_perfect_width =
+                    ((play_zone_size.width / aspect_ratio).round() * aspect_ratio).round();
 
-                    projection.right = pixel_perfect_width as f32;
-                    projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
-                } else {
-                    // Play zone is "tall"
+                projection.right = pixel_perfect_width as f32;
+                projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
+            } else {
+                // Play zone is "tall"
 
-                    let pixel_perfect_height =
-                        ((play_zone_size.height / aspect_ratio).round() * aspect_ratio).round();
+                let pixel_perfect_height =
+                    ((play_zone_size.height / aspect_ratio).round() * aspect_ratio).round();
 
-                    projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
-                    projection.top = pixel_perfect_height as f32;
-                };
+                projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
+                projection.top = pixel_perfect_height as f32;
+            };
 
-                transform.translation.x =
-                    ((play_zone_size.width - padded_level_size.x as f32) / -2.).round();
-                transform.translation.y =
-                    ((play_zone_size.height - padded_level_size.y as f32) / -2.).round();
-            }
+            transform.translation.x =
+                ((play_zone_size.width - padded_level_size.x as f32) / -2.).round();
+            transform.translation.y =
+                ((play_zone_size.height - padded_level_size.y as f32) / -2.).round();
         }
     }
 }
