@@ -25,13 +25,13 @@ jobs:
       - name: Update version
         run: |
           git fetch --tags
-          LAST_TAG=$(git tag | head -n 1)
+          LAST_TAG=$(git tag --list v*.*.* --sort taggerdate | tail -n 1)
           CHANGED_ASSETS=$(git diff --name-only $LAST_TAG -- assets/)
           CHANGED_CODE=$(git diff --name-only $LAST_TAG -- src/ Cargo.*)
           if [[ $CHANGED_ASSETS || $CHANGED_CODE ]]; then
             echo "changes made, updating version"
 
-            if [[ $LAST_TAG =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
+            if [[ $LAST_TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
               CODE_VERSION_MAJOR=${BASH_REMATCH[1]}
               CODE_VERSION_MINOR=${BASH_REMATCH[2]}
               CODE_VERSION_PATCH=${BASH_REMATCH[3]}
@@ -41,6 +41,7 @@ jobs:
               if [[ $MAJOR_COMMITS ]]; then
                 echo "incrementing code version (minor)"
                 CODE_VERSION_MINOR=$(( $CODE_VERSION_MINOR + 1 ))
+                CODE_VERSION_PATCH=0
                 UPDATE_CARGO=1
               elif [[ $CHANGED_CODE ]]; then
                 echo "incrementing code version (patch)"
@@ -72,8 +73,6 @@ jobs:
               echo "creating tag, pushing"
               git tag -a $VERSION -m "version updated to $VERSION by CI"
               git push --follow-tags
-            else
-              echo "most recent tag isn't semver, skipping.."
             fi
           else
             echo "no changes detected, skipping.."
