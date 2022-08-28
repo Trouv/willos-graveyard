@@ -3003,32 +3003,6 @@
 			],
 			"layerInstances": null,
 			"__neighbours": []
-		},
-		{
-			"identifier": "Level_23",
-			"iid": "e8aeb190-02f0-11ed-b338-4b79a320e216",
-			"uid": 177,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 320,
-			"pxHei": 384,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "sokoban-sokoban/Level_23.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Level", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
 		}
 	],
 	"worlds": []
