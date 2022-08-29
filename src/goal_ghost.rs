@@ -5,13 +5,28 @@ use crate::{
     UNIT_LENGTH,
 };
 use bevy::prelude::*;
-use rand::Rng;
+use rand::{
+    distributions::{Distribution, Standard},
+    Rng,
+};
 use std::{ops::Range, time::Duration};
+
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HandDirection {
     Right,
     Left,
+    Up,
+}
+
+impl Distribution<HandDirection> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> HandDirection {
+        match rng.gen_range(0..=2) {
+            0 => HandDirection::Right,
+            1 => HandDirection::Left,
+            _ => HandDirection::Up,
+        }
+    }
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
@@ -37,11 +52,11 @@ impl GoalGhostSettings {
         no_blink_length: 50..100,
         blink_length: 0..1,
         frame_duration: Duration::from_millis(150),
-        idle_frame_count: 8,
+        idle_frame_count: 2,
         happy_frame_count: 10,
         none_frame_index: 8,
         num_columns: 10,
-        num_rows: 11,
+        num_rows: 12,
         atlas: None,
         punctuation_timer: 300..1000,
     };
@@ -166,7 +181,7 @@ pub fn punctuation(
             animation.frames_since_punctuation += 1;
             if f < chance_for_punctuation {
                 let f2: f32 = rng.gen();
-                let x: usize = if f2 < 0.5 { 50 } else { 80 };
+                let x: usize = if f2 < 0.5 { 60 } else { 90 };
                 animation.frames_since_punctuation = 0;
                 commands.entity(ghost_entity).despawn_descendants();
                 commands
@@ -222,12 +237,7 @@ pub fn goal_ghost_animation(
                     let r: f32 = rng.gen();
 
                     if r < chance_to_turn {
-                        let hand = if rng.gen::<f32>() < 0.5 {
-                            HandDirection::Right
-                        } else {
-                            HandDirection::Left
-                        };
-
+                        let hand: HandDirection = rand::random();
                         animation.state = GoalAnimationState::Turn { hand, frames: 0 };
                     } else if r < chance_to_blink {
                         animation.state = GoalAnimationState::Blinking { frames: 0 };
@@ -239,8 +249,10 @@ pub fn goal_ghost_animation(
                 GoalAnimationState::Turn { hand, frames } => {
                     let index_offset = if hand == HandDirection::Right {
                         goal_ghost_settings.num_columns
-                    } else {
+                    } else if hand == HandDirection::Left {
                         goal_ghost_settings.num_columns * 2
+                    } else {
+                        goal_ghost_settings.num_columns * 4
                     };
 
                     sprite.index = index_offset + animation.column;
