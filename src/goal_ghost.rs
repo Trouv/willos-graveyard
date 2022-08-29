@@ -47,9 +47,9 @@ pub struct GoalGhostSettings {
 
 impl GoalGhostSettings {
     pub const NORMAL: GoalGhostSettings = GoalGhostSettings {
-        no_turn_length: 32..64,
-        turn_length: 12..20,
-        no_blink_length: 50..100,
+        no_turn_length: 12..20,
+        turn_length: 8..13,
+        no_blink_length: 30..50,
         blink_length: 0..1,
         frame_duration: Duration::from_millis(150),
         idle_frame_count: 2,
