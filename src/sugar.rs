@@ -122,13 +122,13 @@ pub fn history_sugar(
     mut history_commands: EventReader<HistoryCommands>,
     mut player_query: Query<&mut PlayerAnimationState>,
     audio: Res<Audio>,
-    sfx: Res<SoundEffects>,
+    sfx: Res<AssetHolder>,
 ) {
     for command in history_commands.iter() {
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
                 *player_query.single_mut() = PlayerAnimationState::Idle(Direction::Down);
-                audio.play(sfx.undo.clone_weak());
+                audio.play(sfx.undo_sound.clone_weak());
             }
             _ => (),
         }
