@@ -40,7 +40,7 @@ pub enum GameState {
 }
 
 fn main() {
-    let mut level_num = 0;
+    let mut level_num = 1;
     if std::env::args().count() > 1 {
         level_num = std::env::args().last().unwrap().parse::<usize>().unwrap();
     }
@@ -72,7 +72,7 @@ fn main() {
             ..default()
         })
         .insert_resource(Msaa { samples: 1 })
-        .insert_resource(LevelSelection::Index(level_num))
+        .insert_resource(LevelSelection::Index(level_num - 1))
         .insert_resource(resources::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
         .insert_resource(resources::PlayZonePortion(0.75))
