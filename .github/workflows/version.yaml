@@ -71,7 +71,8 @@ jobs:
               echo "new version: $VERSION"
 
               echo "creating tag, pushing"
-              git tag -a $VERSION -m "version updated to $VERSION by CI"
+              TAG_MESSAGE=$(git log $LAST_TAG..HEAD --pretty=format:%s%n)
+              git tag -a $VERSION -m $TAG_MESSAGE
               git push --follow-tags
             fi
           else
