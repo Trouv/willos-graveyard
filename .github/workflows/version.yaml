@@ -72,7 +72,7 @@ jobs:
 
               echo "creating tag, pushing"
               TAG_MESSAGE=$(git log $LAST_TAG..HEAD --pretty=format:%s%n)
-              git tag -a $VERSION -m $TAG_MESSAGE
+              git tag -a $VERSION -m "$TAG_MESSAGE"
               git push --follow-tags
             fi
           else
