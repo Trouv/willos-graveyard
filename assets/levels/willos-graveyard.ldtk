@@ -2564,35 +2564,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_10",
-			"iid": "6a130680-02f0-11ed-b338-99df6a572f16",
-			"uid": 179,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 256,
-			"pxHei": 416,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_10.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Yoink", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Yoink"]
-				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Level_11",
 			"iid": "5087c760-b4d0-11ec-b4dc-a18e05e2c81b",
 			"uid": 109,
@@ -2610,7 +2581,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_11.ldtkl",
+			"externalRelPath": "willos-graveyard/Level_10.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami fortune teller", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2644,7 +2615,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_12.ldtkl",
+			"externalRelPath": "willos-graveyard/Level_11.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Turn the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2656,41 +2627,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_13",
-			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
-			"uid": 66,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 192,
-			"pxHei": 288,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_13.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["All tied up"]
-				}] },
-				{ "__identifier": "Notes", "__value": "# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?"
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Level_14",
+			"identifier": "Level_12",
 			"iid": "4e2068f0-b4d0-11ec-885f-fd3102a60bbc",
 			"uid": 47,
 			"worldX": -1,
@@ -2707,7 +2644,7 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_14.ldtkl",
+			"externalRelPath": "willos-graveyard/Level_12.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two Zs", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2717,6 +2654,69 @@
 					"id": "V_String",
 					"params": [
 						"This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working."
+					]
+				}] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_13",
+			"iid": "6a130680-02f0-11ed-b338-99df6a572f16",
+			"uid": 179,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 256,
+			"pxHei": 416,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Level_13.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Yoink", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Yoink"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_14",
+			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
+			"uid": 66,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 192,
+			"pxHei": 288,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Level_14.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["All tied up"]
+				}] },
+				{ "__identifier": "Notes", "__value": "# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+					"id": "V_String",
+					"params": [
+						"# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?"
 					]
 				}] }
 			],
