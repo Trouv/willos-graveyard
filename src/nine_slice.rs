@@ -32,6 +32,7 @@ impl Default for NineSliceIndex {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash)]
 pub struct NineSliceSize {
     pub inner_width: u32,
     pub inner_height: u32,
@@ -59,6 +60,7 @@ fn push_nine_slice_row_data(
     middle_rect: Rect,
     right_rect: Rect,
     row_height: u32,
+    middle_count: u32,
 ) {
     for y in 0..row_height {
         for x in 0..left_rect.width() as u32 {
@@ -66,9 +68,11 @@ fn push_nine_slice_row_data(
             buffer.extend(get_pixel(image, coord));
         }
 
-        for x in 0..middle_rect.width() as u32 {
-            let coord = middle_rect.min.as_uvec2() + UVec2::new(x, y);
-            buffer.extend(get_pixel(image, coord));
+        for _ in 0..middle_count {
+            for x in 0..middle_rect.width() as u32 {
+                let coord = middle_rect.min.as_uvec2() + UVec2::new(x, y);
+                buffer.extend(get_pixel(image, coord));
+            }
         }
 
         for x in 0..right_rect.width() as u32 {
@@ -115,16 +119,20 @@ pub fn generate_nineslice_image(
         top_rect,
         top_right_rect,
         top_left_rect.height() as u32,
+        size.inner_width,
     );
 
-    push_nine_slice_row_data(
-        &mut data,
-        source_image,
-        left_rect,
-        center_rect,
-        right_rect,
-        center_rect.height() as u32,
-    );
+    for _ in 0..size.inner_height {
+        push_nine_slice_row_data(
+            &mut data,
+            source_image,
+            left_rect,
+            center_rect,
+            right_rect,
+            center_rect.height() as u32,
+            size.inner_width,
+        );
+    }
 
     push_nine_slice_row_data(
         &mut data,
@@ -132,7 +140,8 @@ pub fn generate_nineslice_image(
         bottom_left_rect,
         bottom_rect,
         bottom_right_rect,
-        bottom_left_rect.height() as u32,
+        bottom_right_rect.height() as u32,
+        size.inner_width,
     );
 
     let image = Image::new(
