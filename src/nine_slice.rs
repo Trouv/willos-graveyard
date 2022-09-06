@@ -157,3 +157,55 @@ pub fn generate_nineslice_image(
 
     Ok(images.add(image))
 }
+
+pub fn texture_atlas_from_nine_slice(
+    texture: Handle<Image>,
+    dimensions: Vec2,
+    left: f32,
+    right: f32,
+    top: f32,
+    bottom: f32,
+) -> TextureAtlas {
+    let mut texture_atlas = TextureAtlas::new_empty(texture, dimensions);
+
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(0., 0.),
+        max: Vec2::new(left, top),
+    });
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(left, 0.),
+        max: Vec2::new(dimensions.x - right, top),
+    });
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(dimensions.x - right, 0.),
+        max: Vec2::new(dimensions.x, top),
+    });
+
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(0., top),
+        max: Vec2::new(left, dimensions.y - bottom),
+    });
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(left, top),
+        max: Vec2::new(dimensions.x - right, dimensions.y - bottom),
+    });
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(dimensions.x - right, top),
+        max: Vec2::new(dimensions.x, dimensions.y - bottom),
+    });
+
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(0., dimensions.y - bottom),
+        max: Vec2::new(left, dimensions.y),
+    });
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(left, dimensions.y - bottom),
+        max: Vec2::new(dimensions.x - right, dimensions.y),
+    });
+    texture_atlas.textures.push(Rect {
+        min: Vec2::new(dimensions.x - right, dimensions.y - bottom),
+        max: Vec2::new(dimensions.x, dimensions.y),
+    });
+
+    texture_atlas
+}
