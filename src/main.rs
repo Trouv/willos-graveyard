@@ -177,7 +177,7 @@ fn main() {
 
 #[derive(Debug, Default, AssetCollection)]
 pub struct AssetHolder {
-    #[asset(path = "levels/sokoban-sokoban.ldtk")]
+    #[asset(path = "levels/willos-graveyard.ldtk")]
     pub ldtk: Handle<LdtkAsset>,
     #[asset(path = "sfx/victory.wav")]
     pub victory_sound: Handle<AudioSource>,
