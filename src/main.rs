@@ -7,6 +7,7 @@ mod event_scheduler;
 mod from_component;
 mod gameplay;
 mod history;
+mod nine_slice;
 mod resources;
 mod sugar;
 
