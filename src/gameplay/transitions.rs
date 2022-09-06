@@ -282,7 +282,7 @@ pub fn spawn_level_card(
             if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
                 if let LevelSelection::Index(level_index) = *level_selection {
                     if level_index < ldtk_asset.project.levels.len() {
-                        level_num = Some(level_index);
+                        level_num = Some(level_index + 1);
 
                         let level = ldtk_asset.project.levels.get(level_index).unwrap();
 
