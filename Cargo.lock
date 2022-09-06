@@ -3579,6 +3579,7 @@ dependencies = [
  "iyes_loopless",
  "rand",
  "serde",
+ "thiserror",
 ]
 
 [[package]]
