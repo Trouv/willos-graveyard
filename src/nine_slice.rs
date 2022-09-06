@@ -34,7 +34,9 @@ impl Default for NineSliceIndex {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash)]
 pub struct NineSliceSize {
+    /// the width of the 9-slice object in "inner" tiles, excluding the borders
     pub inner_width: u32,
+    /// the height of the 9-slice object in "inner" tiles, excluding the borders
     pub inner_height: u32,
 }
 
@@ -82,6 +84,7 @@ fn push_nine_slice_row_data(
     }
 }
 
+/// Generate a new image from 9-slice data
 pub fn generate_nineslice_image(
     size: NineSliceSize,
     NineSliceIndex { indices }: NineSliceIndex,
@@ -158,6 +161,10 @@ pub fn generate_nineslice_image(
     Ok(images.add(image))
 }
 
+/// Construct a texture atlas from 9-slice data
+///
+/// The `left`, `right`, `top` and `bottom` arguments represent the locations of the slices in
+/// terms of their distance from the border.
 pub fn texture_atlas_from_nine_slice(
     texture: Handle<Image>,
     dimensions: Vec2,
