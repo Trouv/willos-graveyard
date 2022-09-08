@@ -1,6 +1,7 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{components::*, systems::schedule_level_card, LevelCardEvent},
+    nine_slice::*,
     resources::*,
     sugar::GoalGhostAnimation,
     AssetHolder, GameState,
@@ -272,6 +273,8 @@ pub fn spawn_level_card(
     mut reader: EventReader<LevelCardEvent>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     assets: Res<AssetServer>,
+    asset_holder: Res<AssetHolder>,
+    mut images: ResMut<Assets<Image>>,
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
     for event in reader.iter() {
@@ -300,9 +303,28 @@ pub fn spawn_level_card(
                 }
             }
 
+            let level_card_atlas = texture_atlas_from_nine_slice(
+                asset_holder.tarot_sheet.clone(),
+                Vec2::splat(64.),
+                16.,
+                16.,
+                16.,
+                16.,
+            );
+            let level_card_texture = generate_nineslice_image(
+                NineSliceSize {
+                    inner_width: 8,
+                    inner_height: 4,
+                },
+                NineSliceIndex::default(),
+                &level_card_atlas,
+                &mut images,
+            )
+            .unwrap();
+
             let level_card_entity = commands
-                .spawn_bundle(NodeBundle {
-                    color: UiColor(Color::BLACK),
+                .spawn_bundle(ImageBundle {
+                    image: UiImage(level_card_texture),
                     visibility: Visibility { is_visible: false },
                     ..Default::default()
                 })

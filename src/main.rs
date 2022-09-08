@@ -7,6 +7,7 @@ mod event_scheduler;
 mod from_component;
 mod gameplay;
 mod history;
+mod nine_slice;
 mod resources;
 mod sugar;
 
@@ -185,6 +186,8 @@ pub struct AssetHolder {
     pub push_sound: Handle<AudioSource>,
     #[asset(path = "sfx/undo.wav")]
     pub undo_sound: Handle<AudioSource>,
+    #[asset(path = "textures/tarot.png")]
+    pub tarot_sheet: Handle<Image>,
 }
 
 #[cfg(feature = "hot")]
