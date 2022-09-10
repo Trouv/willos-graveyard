@@ -21,9 +21,9 @@ We'll represent a movement as a 2-dimensional vector.
 The first value represents the movement's change in the x-direction in tiles, and the second value represents the movement's change in the y-direction.
 
 #### Examples:
-1. the up-right movement would be represented as ${\vec{m} = \begin{pmatrix} 1 \\ 1 \end{pmatrix}}$
-2. the left-left (aka left-straight) movement would be represented as ${\vec{m} = \begin{pmatrix} -2 \\ 0 \end{pmatrix}}$
-3. the up-down movement would be represented as ${\vec{m} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}}$
+1. the up-right movement would be represented as ${\vec{m} = \begin{pmatrix} 1 \\\\ 1 \end{pmatrix}}$
+2. the left-left (aka left-straight) movement would be represented as ${\vec{m} = \begin{pmatrix} -2 \\\\ 0 \end{pmatrix}}$
+3. the up-down movement would be represented as ${\vec{m} = \begin{pmatrix} 0 \\\\ 0 \end{pmatrix}}$
 
 Every movement is made up of two sub-movements called components.
 The up-right movement is made up of an up component followed by a right component.
@@ -34,16 +34,16 @@ It's worth noting that movable arrows will introduce 0-components and diagonal c
 So, for now, the set of all components ${C}$ is the same as the set of all vectors representing cardinal directions:
 
 $$
-C = \{
-\begin{pmatrix} 0 \\ 1 \end{pmatrix},
-\begin{pmatrix} -1 \\ 0 \end{pmatrix},
-\begin{pmatrix} 0 \\ -1 \end{pmatrix},
-\begin{pmatrix} 1 \\ 0 \end{pmatrix}
-\}
+C = \\{
+\begin{pmatrix} 0 \\\\ 1 \end{pmatrix},
+\begin{pmatrix} -1 \\\\ 0 \end{pmatrix},
+\begin{pmatrix} 0 \\\\ -1 \end{pmatrix},
+\begin{pmatrix} 1 \\\\ 0 \end{pmatrix}
+\\}
 $$
 
 Then, the set of all possible movement vectors ${M}$ can be defined as:
 
-$$ M = \{ \vec{c}_1 + \vec{c}_2: \vec{c}_1, \vec{c}_2 \in C\} $$
+$$ M = \\{ \vec{c}_1 + \vec{c}_2: \vec{c}_1, \vec{c}_2 \in C \\} $$
 
 Finally, a particular movement table ${T}$ could be thought of as some subset of ${M}$.
