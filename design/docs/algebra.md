@@ -4,7 +4,7 @@ Some of the most important fundamental concepts of solving a puzzle in *Willo's 
 Range deals with what positions are reachable for the player based on their current movement table.
 Some of the most common ranges have been referred to as:
 - Utility range.
-The player has can pretty much go wherever they want, on a checkerboard.
+The player can pretty much go wherever they want, on a checkerboard.
 - Diagonal traps.
 The player has access to half the level, but the other half across the diagonal is inaccessable.
 - Subgrid range.
@@ -15,7 +15,7 @@ However, this concept is reminiscent of spans in linear algebra.
 If we model movements as vectors, then the movement table can be modeled as a set of movement vectors.
 The range of the movement table can then be modeled as the span of the set of movement vectors.
 
-## Definitions
+## Movement vectors
 Let's define a movement vector.
 We'll represent a movement as a 2-dimensional vector.
 The first value represents the movement's change in the x-direction in tiles, and the second value represents the movement's change in the y-direction.
