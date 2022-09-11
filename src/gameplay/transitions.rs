@@ -282,12 +282,14 @@ pub fn spawn_level_card(
             let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
             let mut level_num = None;
 
-            if let Some((_, ldtk_asset)) = ldtk_assets.iter().next() {
-                if let LevelSelection::Index(level_index) = *level_selection {
+            if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
+                if let Some((level_index, level)) = ldtk_asset
+                    .iter_levels()
+                    .enumerate()
+                    .find(|(i, level)| level_selection.is_match(i, level))
+                {
                     if level_index < ldtk_asset.project.levels.len() {
                         level_num = Some(level_index + 1);
-
-                        let level = ldtk_asset.project.levels.get(level_index).unwrap();
 
                         if let Some(FieldInstance {
                             value: FieldValue::String(Some(level_title)),

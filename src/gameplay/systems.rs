@@ -268,8 +268,9 @@ pub fn check_goal(
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut goal_events: EventWriter<GoalEvent>,
     level_selection: Res<LevelSelection>,
+    ldtk_assets: Res<Assets<LdtkAsset>>,
     audio: Res<Audio>,
-    sfx: Res<AssetHolder>,
+    asset_holder: Res<AssetHolder>,
 ) {
     // If the goal is not loaded for whatever reason (for example when hot-reloading levels),
     // the goal will automatically be "met", loading the next level.
@@ -311,11 +312,20 @@ pub fn check_goal(
     if level_goal_met {
         commands.insert_resource(NextState(GameState::LevelTransition));
 
-        if let LevelSelection::Index(num) = *level_selection {
-            schedule_level_card(&mut level_card_events, LevelSelection::Index(num + 1));
+        if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
+            if let Some((level_index, _)) = ldtk_asset
+                .iter_levels()
+                .enumerate()
+                .find(|(i, level)| level_selection.is_match(i, level))
+            {
+                schedule_level_card(
+                    &mut level_card_events,
+                    LevelSelection::Index(level_index + 1),
+                );
+            }
         }
 
-        audio.play(sfx.victory_sound.clone_weak());
+        audio.play(asset_holder.victory_sound.clone_weak());
     }
 }
 
