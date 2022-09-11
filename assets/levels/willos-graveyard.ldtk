@@ -2454,7 +2454,7 @@
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 576,
+			"pxWid": 512,
 			"pxHei": 448,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
