@@ -2420,13 +2420,13 @@
 		},
 		{
 			"identifier": "Orion_s_bow",
-			"iid": "60ca9200-02f0-11ed-be11-7350070c0815",
-			"uid": 137,
+			"iid": "90af5640-2a00-11ed-8561-8ba21b320aa1",
+			"uid": 181,
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 288,
-			"pxHei": 288,
+			"pxWid": 512,
+			"pxHei": 448,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": false,
@@ -2442,32 +2442,6 @@
 					"id": "V_String",
 					"params": ["Orion's bow"]
 				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Untitled",
-			"iid": "90af5640-2a00-11ed-8561-8ba21b320aa1",
-			"uid": 181,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 512,
-			"pxHei": 448,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Untitled.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Level", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [] },
 				{ "__identifier": "Notes", "__value": "The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (4x4 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality\n\nIt's difficult to d", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
