@@ -42,9 +42,11 @@ pub enum GameState {
 
 fn main() {
     let level_selection = if std::env::args().count() > 1 {
-        match std::env::args().last().unwrap().parse::<usize>() {
+        let level_arg = std::env::args().last().unwrap();
+
+        match level_arg.parse::<usize>() {
             Ok(num) => LevelSelection::Index(num - 1),
-            _ => LevelSelection::Identifier(std::env::args().last().unwrap()),
+            _ => LevelSelection::Identifier(level_arg),
         }
     } else {
         LevelSelection::Index(0)
