@@ -31,10 +31,10 @@
 			"id": "V_String",
 			"params": ["Orion's bow"]
 		}] },
-		{ "__identifier": "Notes", "__value": "The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (4x4 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality\n\nIt's difficult to d", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+		{ "__identifier": "Notes", "__value": "The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (4x4 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality\n\nIt's difficult to d"
+				"The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality"
 			]
 		}] }
 	],
