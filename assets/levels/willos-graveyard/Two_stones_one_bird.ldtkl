@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_20",
+	"identifier": "Two_stones_one_bird",
 	"iid": "6ee1d1c0-02f0-11ed-8a27-413ebfea4dcf",
 	"uid": 129,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 384,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,
