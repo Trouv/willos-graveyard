@@ -28,18 +28,18 @@ jobs:
           echo "LAST_VERSION=$( git tag --list v*.*.* --sort taggerdate | tail -n 1 )" >> $GITHUB_ENV
       - name: Update version
         run: |
-          CHANGED_ASSETS=$(git diff --name-only $env.LAST_VERSION -- assets/)
-          CHANGED_CODE=$(git diff --name-only $env.LAST_VERSION -- src/ Cargo.*)
+          CHANGED_ASSETS=$(git diff --name-only ${{ env.LAST_VERSION }} -- assets/)
+          CHANGED_CODE=$(git diff --name-only ${{ env.LAST_VERSION }} -- src/ Cargo.*)
           if [[ $CHANGED_ASSETS || $CHANGED_CODE ]]; then
             echo "changes made, updating version"
 
-            if [[ $env.LAST_VERSION =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
+            if [[ ${{ env.LAST_VERSION }} =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+).*$ ]]; then
               CODE_VERSION_MAJOR=${BASH_REMATCH[1]}
               CODE_VERSION_MINOR=${BASH_REMATCH[2]}
               CODE_VERSION_PATCH=${BASH_REMATCH[3]}
 
               UPDATE_CARGO=0
-              MAJOR_COMMITS=$(git log $env.LAST_VERSION..HEAD --grep '^\w+!:')
+              MAJOR_COMMITS=$(git log ${{ env.LAST_VERSION }}..HEAD --grep '^\w+!:')
               if [[ $MAJOR_COMMITS ]]; then
                 echo "incrementing code version (minor)"
                 CODE_VERSION_MINOR=$(( $CODE_VERSION_MINOR + 1 ))
@@ -71,11 +71,7 @@ jobs:
               done
 
               echo "new version: $VERSION"
-
-              echo "creating tag, pushing"
-              TAG_MESSAGE=$(git log $env.LAST_VERSION..HEAD --pretty=format:%s%n)
-              git tag -a $VERSION -m "$TAG_MESSAGE"
-              git push --follow-tags
+              echo "NEW_VERSION=$VERSION" >> $GITHUB_ENV
             fi
           else
             echo "no changes detected, skipping.."
