@@ -21,7 +21,6 @@ jobs:
           profile: minimal
           toolchain: nightly
           override: true
-      # This job only has one step since it all needs to be wrapped in an if statement
       - name: Get last version
         run: |
           git fetch --tags
@@ -76,3 +75,15 @@ jobs:
           else
             echo "no changes detected, skipping.."
           fi
+      - name: Push tag
+        if: ${{ env.NEW_VERSION }}
+        run: |
+          git log ${{ env.LAST_VERSION }}..HEAD --pretty=format:%s%n > release-body.md
+          git tag -a ${{ env.NEW_VERSION }} -m "version updated to ${{ env.NEW_VERSION }} by CI"
+          git push --follow-tags
+      - name: Describe release
+        if: ${{ env.NEW_VERSION }}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.NEW_VERSION }}
+          bodyFile: release-body.md
