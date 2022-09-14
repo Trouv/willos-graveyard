@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_8",
+	"identifier": "Origami_boat",
 	"iid": "49fa1630-02f0-11ed-a349-e7bd5d5aad36",
 	"uid": 133,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 480,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,

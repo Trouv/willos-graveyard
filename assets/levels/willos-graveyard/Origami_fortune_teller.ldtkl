@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_11",
+	"identifier": "Origami_fortune_teller",
 	"iid": "5087c760-b4d0-11ec-b4dc-a18e05e2c81b",
 	"uid": 109,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 320,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,

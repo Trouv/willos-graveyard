@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.3",
 	"appBuildId": 458520,
-	"nextUid": 180,
+	"nextUid": 182,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
@@ -30,7 +30,7 @@
 	"pngFilePattern": null,
 	"backupOnSave": true,
 	"backupLimit": 10,
-	"levelNamePattern": "Level_%idx1",
+	"levelNamePattern": "Untitled",
 	"tutorialDesc": null,
 	"flags": [],
 	"defs": { "layers": [
@@ -2303,7 +2303,7 @@
 	] },
 	"levels": [
 		{
-			"identifier": "Level_1",
+			"identifier": "Some_poor_soul_lost_their_gravestone",
 			"iid": "4e156c71-b4d0-11ec-885f-f19b4e2c7981",
 			"uid": 0,
 			"worldX": -1,
@@ -2313,14 +2313,14 @@
 			"pxHei": 576,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_1.ldtkl",
+			"externalRelPath": "willos-graveyard/Some_poor_soul_lost_their_gravestone.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Some poor soul lost their gravestone", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2332,7 +2332,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_2",
+			"identifier": "It_takes_some_getting_used_to",
 			"iid": "4e16f310-b4d0-11ec-885f-ffe785388b98",
 			"uid": 29,
 			"worldX": -1,
@@ -2342,14 +2342,14 @@
 			"pxHei": 544,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_2.ldtkl",
+			"externalRelPath": "willos-graveyard/It_takes_some_getting_used_to.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "It takes some getting used to", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2361,7 +2361,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_3",
+			"identifier": "The_bishop_changes_colors",
 			"iid": "4e1a9c90-b4d0-11ec-885f-09be90c1b180",
 			"uid": 39,
 			"worldX": -1,
@@ -2371,14 +2371,14 @@
 			"pxHei": 512,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_3.ldtkl",
+			"externalRelPath": "willos-graveyard/The_bishop_changes_colors.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "The bishop changes colors", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2390,7 +2390,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_4",
+			"identifier": "Set_the_table",
 			"iid": "f3046430-02f0-11ed-ad3f-371e1028b23b",
 			"uid": 134,
 			"worldX": -1,
@@ -2400,14 +2400,14 @@
 			"pxHei": 608,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_4.ldtkl",
+			"externalRelPath": "willos-graveyard/Set_the_table.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Set the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2419,36 +2419,41 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_5",
-			"iid": "60ca9200-02f0-11ed-be11-7350070c0815",
-			"uid": 137,
+			"identifier": "Orion_s_bow",
+			"iid": "90af5640-2a00-11ed-8561-8ba21b320aa1",
+			"uid": 181,
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 288,
-			"pxHei": 288,
+			"pxWid": 512,
+			"pxHei": 448,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_5.ldtkl",
+			"externalRelPath": "willos-graveyard/Orion_s_bow.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Orion's bow", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["Orion's bow"]
 				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+				{ "__identifier": "Notes", "__value": "The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+					"id": "V_String",
+					"params": [
+						"The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality"
+					]
+				}] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_6",
+			"identifier": "Cygnus_s_wing",
 			"iid": "efacbd70-dbe0-11ec-8458-3dad3edfb447",
 			"uid": 123,
 			"worldX": -1,
@@ -2458,14 +2463,14 @@
 			"pxHei": 448,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_6.ldtkl",
+			"externalRelPath": "willos-graveyard/Cygnus_s_wing.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Cygnus's wing", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2477,7 +2482,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_7",
+			"identifier": "Spirit_gate",
 			"iid": "4e9c97f0-02f0-11ed-ab4b-131203fb58ea",
 			"uid": 176,
 			"worldX": -1,
@@ -2487,14 +2492,14 @@
 			"pxHei": 288,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_7.ldtkl",
+			"externalRelPath": "willos-graveyard/Spirit_gate.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Spirit gate", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2506,7 +2511,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_8",
+			"identifier": "Origami_boat",
 			"iid": "49fa1630-02f0-11ed-a349-e7bd5d5aad36",
 			"uid": 133,
 			"worldX": -1,
@@ -2516,14 +2521,14 @@
 			"pxHei": 480,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_8.ldtkl",
+			"externalRelPath": "willos-graveyard/Origami_boat.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami boat", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2535,7 +2540,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_9",
+			"identifier": "Wallflower",
 			"iid": "da164c70-dbe0-11ec-8458-f10c49c79d1b",
 			"uid": 125,
 			"worldX": -1,
@@ -2545,14 +2550,14 @@
 			"pxHei": 448,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_9.ldtkl",
+			"externalRelPath": "willos-graveyard/Wallflower.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Wallflower", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2564,7 +2569,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_11",
+			"identifier": "Origami_fortune_teller",
 			"iid": "5087c760-b4d0-11ec-b4dc-a18e05e2c81b",
 			"uid": 109,
 			"worldX": -1,
@@ -2574,14 +2579,14 @@
 			"pxHei": 320,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_10.ldtkl",
+			"externalRelPath": "willos-graveyard/Origami_fortune_teller.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Origami fortune teller", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2598,7 +2603,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_12",
+			"identifier": "Turn_the_table",
 			"iid": "7231e280-dbe0-11ec-8458-910d169c7c64",
 			"uid": 122,
 			"worldX": -1,
@@ -2608,14 +2613,14 @@
 			"pxHei": 544,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_11.ldtkl",
+			"externalRelPath": "willos-graveyard/Turn_the_table.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Turn the table", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2627,7 +2632,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_12",
+			"identifier": "Two_Zs",
 			"iid": "4e2068f0-b4d0-11ec-885f-fd3102a60bbc",
 			"uid": 47,
 			"worldX": -1,
@@ -2637,14 +2642,14 @@
 			"pxHei": 512,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_12.ldtkl",
+			"externalRelPath": "willos-graveyard/Two_Zs.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two Zs", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2661,7 +2666,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_13",
+			"identifier": "Yoink",
 			"iid": "6a130680-02f0-11ed-b338-99df6a572f16",
 			"uid": 179,
 			"worldX": -1,
@@ -2671,14 +2676,14 @@
 			"pxHei": 416,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_13.ldtkl",
+			"externalRelPath": "willos-graveyard/Yoink.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Yoink", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2690,7 +2695,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_14",
+			"identifier": "All_tied_up",
 			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
 			"uid": 66,
 			"worldX": -1,
@@ -2700,14 +2705,14 @@
 			"pxHei": 288,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_14.ldtkl",
+			"externalRelPath": "willos-graveyard/All_tied_up.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "All tied up", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2724,7 +2729,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_15",
+			"identifier": "Training_week",
 			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
 			"uid": 59,
 			"worldX": -1,
@@ -2734,14 +2739,14 @@
 			"pxHei": 672,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_15.ldtkl",
+			"externalRelPath": "willos-graveyard/Training_week.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Training week", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2758,7 +2763,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_16",
+			"identifier": "Cargo_train",
 			"iid": "49554690-02f0-11ed-8a27-4100851f9ebd",
 			"uid": 131,
 			"worldX": -1,
@@ -2768,14 +2773,14 @@
 			"pxHei": 352,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_16.ldtkl",
+			"externalRelPath": "willos-graveyard/Cargo_train.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Cargo train", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2787,7 +2792,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_17",
+			"identifier": "Don_t_worry_I_ll_put_it_back",
 			"iid": "4e215350-b4d0-11ec-885f-8b3b70f3d213",
 			"uid": 65,
 			"worldX": -1,
@@ -2797,14 +2802,14 @@
 			"pxHei": 352,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_17.ldtkl",
+			"externalRelPath": "willos-graveyard/Don_t_worry_I_ll_put_it_back.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Don't worry, I'll put it back", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2821,7 +2826,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_18",
+			"identifier": "Only_child",
 			"iid": "068b2bf0-02f0-11ed-8a27-c1e51c1ea2d6",
 			"uid": 132,
 			"worldX": -1,
@@ -2831,14 +2836,14 @@
 			"pxHei": 384,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_18.ldtkl",
+			"externalRelPath": "willos-graveyard/Only_child.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Only child", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2850,7 +2855,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_19",
+			"identifier": "Martyr",
 			"iid": "3e8979e0-b4d0-11ec-88b3-bb85270add56",
 			"uid": 108,
 			"worldX": -1,
@@ -2860,14 +2865,14 @@
 			"pxHei": 288,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_19.ldtkl",
+			"externalRelPath": "willos-graveyard/Martyr.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Martyr", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2879,7 +2884,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_20",
+			"identifier": "Two_stones_one_bird",
 			"iid": "6ee1d1c0-02f0-11ed-8a27-413ebfea4dcf",
 			"uid": 129,
 			"worldX": -1,
@@ -2889,14 +2894,14 @@
 			"pxHei": 384,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_20.ldtkl",
+			"externalRelPath": "willos-graveyard/Two_stones_one_bird.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Two stones, one bird", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2908,7 +2913,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_21",
+			"identifier": "Purifying_salt_punch",
 			"iid": "aa83a190-02f0-11ed-be11-33c11018fde9",
 			"uid": 136,
 			"worldX": -1,
@@ -2918,14 +2923,14 @@
 			"pxHei": 416,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_21.ldtkl",
+			"externalRelPath": "willos-graveyard/Purifying_salt_punch.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "Purifying salt punch", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2937,7 +2942,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_22",
+			"identifier": "A_simple_variation",
 			"iid": "4e21ef90-b4d0-11ec-885f-41d8e5c591e4",
 			"uid": 67,
 			"worldX": -1,
@@ -2947,14 +2952,14 @@
 			"pxHei": 352,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_22.ldtkl",
+			"externalRelPath": "willos-graveyard/A_simple_variation.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "A simple variation", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
@@ -2971,7 +2976,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_23",
+			"identifier": "No_stone_unturned",
 			"iid": "4e2264c0-b4d0-11ec-885f-19c010fcf197",
 			"uid": 62,
 			"worldX": -1,
@@ -2981,14 +2986,14 @@
 			"pxHei": 352,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Level_23.ldtkl",
+			"externalRelPath": "willos-graveyard/No_stone_unturned.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__value": "No stone unturned", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",

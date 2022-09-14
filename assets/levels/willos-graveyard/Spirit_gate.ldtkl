@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_7",
+	"identifier": "Spirit_gate",
 	"iid": "4e9c97f0-02f0-11ed-ab4b-131203fb58ea",
 	"uid": 176,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 288,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,
