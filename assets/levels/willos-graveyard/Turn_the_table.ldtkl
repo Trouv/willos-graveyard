@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_12",
+	"identifier": "Turn_the_table",
 	"iid": "7231e280-dbe0-11ec-8458-910d169c7c64",
 	"uid": 122,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 544,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,

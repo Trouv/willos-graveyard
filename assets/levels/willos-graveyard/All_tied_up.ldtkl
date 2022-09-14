@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_14",
+	"identifier": "All_tied_up",
 	"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
 	"uid": 66,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 288,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,

@@ -8,7 +8,7 @@
 		"appVersion": "1.1.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Level_9",
+	"identifier": "Wallflower",
 	"iid": "da164c70-dbe0-11ec-8458-f10c49c79d1b",
 	"uid": 125,
 	"worldX": -1,
@@ -18,7 +18,7 @@
 	"pxHei": 448,
 	"__bgColor": "#3A1847",
 	"bgColor": null,
-	"useAutoIdentifier": true,
+	"useAutoIdentifier": false,
 	"bgRelPath": null,
 	"bgPos": null,
 	"bgPivotX": 0.5,
