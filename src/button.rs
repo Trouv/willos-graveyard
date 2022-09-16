@@ -1,11 +1,11 @@
 use crate::{gameplay::components::UiRoot, AssetHolder};
-use bevy::{ecs::system::EntityCommands, prelude::*};
+use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ButtonText;
+pub struct ButtonText;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ButtonRadial;
+pub struct ButtonRadial;
 
 pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
     child_builder: &'b mut ChildBuilder<'w, 's, 'a>,
@@ -21,6 +21,7 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
 
             ..default()
         },
+        color: UiColor(Color::NONE),
         image: UiImage(asset_holder.button_radial.clone()),
         ..default()
     });
@@ -45,6 +46,7 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
                 min_size: Size::new(Val::Px(64.), Val::Px(32.)),
                 ..default()
             },
+            focus_policy: FocusPolicy::Pass,
             ..default()
         });
     });
@@ -63,4 +65,33 @@ pub fn debug_spawn_button(
         spawn_button(&mut root, "ooh this one is really long!!", &asset_holder);
         spawn_button(&mut root, "help", &asset_holder);
     });
+}
+
+pub fn button_interaction(
+    mut button_radials: Query<
+        (Entity, &mut UiColor, &Interaction),
+        (With<ButtonRadial>, Changed<Interaction>),
+    >,
+    mut button_texts: Query<(&Parent, &mut Transform), With<ButtonText>>,
+) {
+    for (button_entity, mut radial_color, interaction) in button_radials.iter_mut() {
+        let (_, mut text_transform) = button_texts
+            .iter_mut()
+            .find(|(parent, _)| parent.get() == button_entity)
+            .expect("button radials should have a ButtonText child");
+        match interaction {
+            Interaction::None => {
+                *text_transform = Transform::default();
+                *radial_color = UiColor(Color::NONE);
+            }
+            Interaction::Hovered => {
+                *text_transform = Transform::default();
+                *radial_color = UiColor(Color::WHITE);
+            }
+            Interaction::Clicked => {
+                *text_transform = Transform::from_xyz(0., -1., 0.);
+                *radial_color = UiColor(Color::WHITE);
+            }
+        }
+    }
 }
