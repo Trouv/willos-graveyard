@@ -18,7 +18,6 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             min_size: Size::new(Val::Px(64.), Val::Px(32.)),
-
             ..default()
         },
         color: UiColor(Color::NONE),
@@ -69,28 +68,20 @@ pub fn debug_spawn_button(
 
 pub fn button_interaction(
     mut button_radials: Query<
-        (Entity, &mut UiColor, &Interaction),
+        (&mut UiColor, &Interaction),
         (With<ButtonRadial>, Changed<Interaction>),
     >,
-    mut button_texts: Query<(&Parent, &mut Transform), With<ButtonText>>,
 ) {
-    for (button_entity, mut radial_color, interaction) in button_radials.iter_mut() {
-        let (_, mut text_transform) = button_texts
-            .iter_mut()
-            .find(|(parent, _)| parent.get() == button_entity)
-            .expect("button radials should have a ButtonText child");
+    for (mut radial_color, interaction) in button_radials.iter_mut() {
         match interaction {
             Interaction::None => {
-                *text_transform = Transform::default();
                 *radial_color = UiColor(Color::NONE);
             }
             Interaction::Hovered => {
-                *text_transform = Transform::default();
                 *radial_color = UiColor(Color::WHITE);
             }
             Interaction::Clicked => {
-                *text_transform = Transform::from_xyz(0., -1., 0.);
-                *radial_color = UiColor(Color::WHITE);
+                *radial_color = UiColor(Color::GRAY);
             }
         }
     }
