@@ -3,6 +3,7 @@
 
 mod animation;
 mod bundles;
+mod button;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
@@ -155,6 +156,7 @@ fn main() {
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::play_death_animations.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::history_sugar.run_not_in_state(GameState::AssetLoading))
+        .add_enter_system(GameState::LevelTransition, button::debug_spawn_button)
         .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")
@@ -186,6 +188,12 @@ fn main() {
 pub struct AssetHolder {
     #[asset(path = "levels/willos-graveyard.ldtk")]
     pub ldtk: Handle<LdtkAsset>,
+    #[asset(path = "fonts/WayfarersToyBoxRegular-gxxER.ttf")]
+    pub font: Handle<Font>,
+    #[asset(path = "textures/button-underline.png")]
+    pub button_underline: Handle<Image>,
+    #[asset(path = "textures/button-radial.png")]
+    pub button_radial: Handle<Image>,
     #[asset(path = "sfx/victory.wav")]
     pub victory_sound: Handle<AudioSource>,
     #[asset(path = "sfx/push.wav")]
