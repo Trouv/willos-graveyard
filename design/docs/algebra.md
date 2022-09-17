@@ -71,3 +71,25 @@ The coefficients also cannot be negative, doing "negative" movements is a bit mo
 For example, it's not like having the move right-right means that the player can also perform the move left-left.
 
 So, we need to only consider "natural" linear combinations, only construct "natural" spans, and only do any of this in a level with no walls.
+
+### 3-dimensional model
+There was an idea to model the movement vectors in 3 dimensions instead of 2, in order to ease the limitations somewhat.
+The 3rd value of every movement vector would simply be 1.
+This 3rd value would represent the number of movements that have been performed.
+
+This eases the natural limitation on linear combinations of the movement vectors.
+In particular, we don't need to worry about negative coefficients anymore.
+For example, negative coefficients on a right-right movement vector would no longer equate to a left-left movement.
+After all, the actual left-left movement has a positive 1 in the 3rd dimension, while a negative right-right movement would have a negative one.
+Instead, negative right-right would be more like "undoing" a right-right movement, going back in time.
+In terms of linear combinations and spans, negative coefficients wouldn't be a problem for the accuracy of the model.
+
+However, there is a new "limitation".
+A simple position in the level is now no longer a particular coordinate, but an entire line in 3d space.
+The consequence is that some concepts like linear independence don't behave quite like we expect them to.
+For example, we may wand a model where the set up-right, right-down, and right-right are *not* linearly independent, since performaing the first two moves results in the same delta as the last.
+However, this isn't true in this 3d model, since the sum of the first two moves would have a value of 2 in the third dimension, while the last move would only have a value of 1.
+Despite being in the same position in-game, they are not in the same position in the model.
+
+So, either way, there is a trade-off.
+For now, I will continue to work with the 2d model.
