@@ -17,17 +17,38 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
             flex_direction: FlexDirection::ColumnReverse,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            min_size: Size::new(Val::Px(64.), Val::Px(32.)),
+            size: Size::new(Val::Auto, Val::Px(40.)),
+            margin: UiRect {
+                top: Val::Px(4.),
+                bottom: Val::Px(4.),
+                left: Val::Px(4.),
+                right: Val::Px(4.),
+            },
             ..default()
         },
         color: UiColor(Color::NONE),
-        image: UiImage(asset_holder.button_radial.clone()),
         ..default()
     });
 
-    e.insert(ButtonRadial);
-
     e.with_children(|button| {
+        button
+            .spawn_bundle(ImageBundle {
+                image: UiImage(asset_holder.button_radial.clone()),
+                style: Style {
+                    position_type: PositionType::Absolute,
+                    position: UiRect {
+                        left: Val::Percent(15.),
+                        top: Val::Percent(15.),
+                        ..default()
+                    },
+                    size: Size::new(Val::Percent(70.), Val::Percent(70.)),
+                    ..default()
+                },
+                focus_policy: FocusPolicy::Pass,
+                ..default()
+            })
+            .insert(ButtonRadial);
+
         button
             .spawn_bundle(TextBundle::from_section(
                 button_text,
@@ -37,12 +58,20 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
                     color: Color::WHITE,
                 },
             ))
+            .insert(Style {
+                margin: UiRect {
+                    top: Val::Px(4.),
+                    bottom: Val::Px(4.),
+                    ..default()
+                },
+                ..default()
+            })
             .insert(ButtonText);
 
         button.spawn_bundle(ImageBundle {
             image: UiImage(asset_holder.button_underline.clone()),
             style: Style {
-                min_size: Size::new(Val::Px(64.), Val::Px(32.)),
+                min_size: Size::new(Val::Percent(50.), Val::Px(16.)),
                 ..default()
             },
             focus_policy: FocusPolicy::Pass,
