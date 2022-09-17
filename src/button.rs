@@ -88,7 +88,7 @@ pub fn debug_spawn_button(
     ui_root: Query<Entity, With<UiRoot>>,
 ) {
     commands.entity(ui_root.single()).with_children(|mut root| {
-        spawn_button(&mut root, "help", &asset_holder);
+        spawn_button(&mut root, "#1", &asset_holder);
         spawn_button(&mut root, "help", &asset_holder);
         spawn_button(&mut root, "ooh this one is really long!!", &asset_holder);
         spawn_button(&mut root, "help", &asset_holder);
@@ -96,12 +96,15 @@ pub fn debug_spawn_button(
 }
 
 pub fn button_interaction(
-    mut button_radials: Query<
-        (&mut UiColor, &Interaction),
-        (With<ButtonRadial>, Changed<Interaction>),
-    >,
+    buttons: Query<(Entity, &Interaction), Changed<Interaction>>,
+    mut button_radials: Query<(&mut UiColor, &Parent), With<ButtonRadial>>,
 ) {
-    for (mut radial_color, interaction) in button_radials.iter_mut() {
+    for (button_entity, interaction) in buttons.iter() {
+        let (mut radial_color, _) = button_radials
+            .iter_mut()
+            .find(|(_, parent)| parent.get() == button_entity)
+            .expect("button should have radial child");
+
         match interaction {
             Interaction::None => {
                 *radial_color = UiColor(Color::NONE);
