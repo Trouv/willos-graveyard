@@ -47,3 +47,27 @@ Then, the set of all possible movement vectors ${M}$ can be defined as:
 $$ M = \\{ \vec{c}_1 + \vec{c}_2: \vec{c}_1, \vec{c}_2 \in C \\} $$
 
 Finally, a particular movement table ${T}$ could be thought of as some subset of ${M}$.
+
+### Limitations
+This model isn't 100% analogous to the game world.
+The game world complicates things by having walls, which can nullify movement components.
+The movement vectors also don't express the order of the components, instead only expressing the total change, or "movement delta".
+
+The set of all movements ${M}$ may also be misleading since, due to the uniqueness of set elements, it only contains unique movement deltas.
+Meanwhile, in game, for all turn movements there exists a similar turn movement on the table that has the same components in the opposite order.
+There's also the issue of cancel moves, despite having different components in different orders, all 4 of them share the same movement delta 0, which only appears in ${M}$ once.
+This may complicate things if we ever need to consider the possibility of two moves being similar on a table while also considering the impossibility that those two moves are actually the same.
+
+The purpose of this model is to have a set of vectors we can use to discuss the topic of range.
+Again, range seems to be a similar concept to spans.
+To avoid hitting these limitations, we can just think about these thinggs in the context of a level without walls, and be considerate when thinking about repeated/similar movements.
+
+However, the analogy between range and spans actually breaks down a little bit with this model.
+To define a span, we need to consider the possible linear combinations of a set of vectors.
+Linear combinations *do* have an analogy to the game in our model, the vector terms being the movement vectors and their coefficients being the number of times those movements were enacted by the player.
+However, with this analogy, the only linear combinations that are valid in our game are ones with natural-number coefficients.
+The coefficients cannot be non-integers, since there's no way to perform half a movement delta in the game.
+The coefficients also cannot be negative, doing "negative" movements is a bit more useful that what is available to the player.
+For example, it's not like having the move right-right means that the player can also perform the move left-left.
+
+So, we need to only consider "natural" linear combinations, only construct "natural" spans, and only do any of this in a level with no walls.
