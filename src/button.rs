@@ -2,10 +2,10 @@ use crate::{gameplay::components::UiRoot, AssetHolder};
 use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ButtonText;
+pub struct TextButton;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ButtonRadial;
+pub struct TextButtonRadial;
 
 pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
     child_builder: &'b mut ChildBuilder<'w, 's, 'a>,
@@ -30,6 +30,8 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
         ..default()
     });
 
+    e.insert(TextButton);
+
     e.with_children(|button| {
         button
             .spawn_bundle(ImageBundle {
@@ -47,7 +49,7 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             })
-            .insert(ButtonRadial);
+            .insert(TextButtonRadial);
 
         button
             .spawn_bundle(TextBundle::from_section(
@@ -65,8 +67,7 @@ pub fn spawn_button<'w, 's, 'a, 'b, S: Into<String>>(
                     ..default()
                 },
                 ..default()
-            })
-            .insert(ButtonText);
+            });
 
         button.spawn_bundle(ImageBundle {
             image: UiImage(asset_holder.button_underline.clone()),
@@ -95,11 +96,11 @@ pub fn debug_spawn_button(
     });
 }
 
-pub fn button_interaction(
-    buttons: Query<(Entity, &Interaction), Changed<Interaction>>,
-    mut button_radials: Query<(&mut UiColor, &Parent), With<ButtonRadial>>,
+pub fn text_button_interaction(
+    text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
+    mut button_radials: Query<(&mut UiColor, &Parent), With<TextButtonRadial>>,
 ) {
-    for (button_entity, interaction) in buttons.iter() {
+    for (button_entity, interaction) in text_buttons.iter() {
         let (mut radial_color, _) = button_radials
             .iter_mut()
             .find(|(_, parent)| parent.get() == button_entity)
