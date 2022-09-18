@@ -9,7 +9,7 @@ pub struct PreviousComponentPlugin<C: Component> {
     phantom: PhantomData<C>,
 }
 
-impl<C: Component + Clone> Plugin for PreviousComponent<C> {
+impl<C: Component + Clone> Plugin for PreviousComponentPlugin<C> {
     fn build(&self, app: &mut App) {
         app.add_system(track_previous_component::<C>.label(TrackPreviousComponent));
     }
@@ -22,7 +22,7 @@ pub struct PreviousComponent<C: Component> {
 }
 
 impl<C: Component> PreviousComponent<C> {
-    fn get(&self) -> &C {
+    pub fn get(&self) -> &C {
         &self.last
     }
 }
