@@ -28,6 +28,9 @@ impl Plugin for UiPlugin {
             );
 
         #[cfg(feature = "ui-debug")]
-        app.add_enter_system(GameState::Gameplay, text_button::debug::debug_spawn_button);
+        {
+            app.add_enter_system(GameState::Gameplay, text_button::debug::debug_spawn_button)
+                .add_system(actions::debug_print_action);
+        }
     }
 }

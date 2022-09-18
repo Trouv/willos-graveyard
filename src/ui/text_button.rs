@@ -1,4 +1,4 @@
-use crate::AssetHolder;
+use crate::{previous_component::PreviousComponent, AssetHolder};
 use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
@@ -31,7 +31,8 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
         ..default()
     });
 
-    e.insert(TextButton);
+    e.insert(TextButton)
+        .insert(PreviousComponent::<Interaction>::default());
 
     e.with_children(|button| {
         button
@@ -111,7 +112,7 @@ pub fn text_button_visuals(
 #[cfg(feature = "ui-debug")]
 pub mod debug {
     use super::*;
-    use crate::gameplay::components::UiRoot;
+    use crate::{gameplay::components::UiRoot, ui::actions::UiAction};
 
     pub fn debug_spawn_button(
         mut commands: Commands,
@@ -119,10 +120,11 @@ pub mod debug {
         ui_root: Query<Entity, With<UiRoot>>,
     ) {
         commands.entity(ui_root.single()).with_children(|mut root| {
-            spawn(&mut root, "#1", &asset_holder);
-            spawn(&mut root, "help", &asset_holder);
-            spawn(&mut root, "ooh this one is really long!!", &asset_holder);
-            spawn(&mut root, "help", &asset_holder);
+            spawn(&mut root, "#1", &asset_holder).insert(UiAction::Debug("#1"));
+            spawn(&mut root, "help", &asset_holder).insert(UiAction::Debug("Help 1"));
+            spawn(&mut root, "ooh this one is really long!!", &asset_holder)
+                .insert(UiAction::Debug("long"));
+            spawn(&mut root, "help", &asset_holder).insert(UiAction::Debug("Help 2"));
         });
     }
 }
