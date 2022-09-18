@@ -3,7 +3,6 @@
 
 mod animation;
 mod bundles;
-mod button;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
@@ -11,6 +10,7 @@ mod history;
 mod nine_slice;
 mod resources;
 mod sugar;
+mod ui;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::{prelude::*, render::texture::ImageSettings};
@@ -156,8 +156,13 @@ fn main() {
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::play_death_animations.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::history_sugar.run_not_in_state(GameState::AssetLoading))
-        .add_system(button::text_button_interaction.run_not_in_state(GameState::AssetLoading))
-        .add_enter_system(GameState::LevelTransition, button::debug_spawn_button)
+        .add_system(
+            ui::text_button::text_button_interaction.run_not_in_state(GameState::AssetLoading),
+        )
+        .add_enter_system(
+            GameState::LevelTransition,
+            ui::text_button::debug_spawn_button,
+        )
         .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")
