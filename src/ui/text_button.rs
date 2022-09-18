@@ -1,18 +1,30 @@
+//! Contains functions, systems, and components related to "text button"s
+
 use crate::{previous_component::PreviousComponent, AssetHolder};
 use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 
+/// Marker component for the main "text button" ui node.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct TextButton;
 
+/// Marker component for the background highlight radial on "text button"s
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct TextButtonRadial;
 
+/// Spawns a text button with the provided `button_text`.
+///
+/// Returns [EntityCommands] for the button entity.
+/// You can use this to add more components if necessary.
+///
+/// To give this button simple functionality, consider inserting a [crate::ui::actions::UiAction].
 #[allow(dead_code)]
 pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     child_builder: &'b mut ChildBuilder<'w, 's, 'a>,
     button_text: S,
     asset_holder: &AssetHolder,
 ) -> EntityCommands<'w, 's, 'b> {
+    // Assigning the initial spawn to a variable is important for being able to return the
+    // EntityCommands
     let mut e = child_builder.spawn_bundle(ButtonBundle {
         style: Style {
             flex_direction: FlexDirection::ColumnReverse,
@@ -31,10 +43,12 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
         ..default()
     });
 
+    // PreviousComponent for tracking interaction changes, useful for detecting button presses
     e.insert(TextButton)
         .insert(PreviousComponent::<Interaction>::default());
 
     e.with_children(|button| {
+        // spawn the background/highlight radial
         button
             .spawn_bundle(ImageBundle {
                 image: UiImage(asset_holder.button_radial.clone()),
@@ -53,6 +67,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             })
             .insert(TextButtonRadial);
 
+        // spawn the text
         button
             .spawn_bundle(TextBundle::from_section(
                 button_text,
@@ -71,6 +86,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
                 ..default()
             });
 
+        // spawn the underline decoration
         button.spawn_bundle(ImageBundle {
             image: UiImage(asset_holder.button_underline.clone()),
             style: Style {
@@ -85,7 +101,8 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     e
 }
 
-pub fn text_button_visuals(
+/// System that alters the visuals of a text button to show interaction
+pub(super) fn text_button_visuals(
     text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
     mut button_radials: Query<(&mut UiColor, &Parent), With<TextButtonRadial>>,
 ) {
