@@ -8,6 +8,7 @@ mod from_component;
 mod gameplay;
 mod history;
 mod nine_slice;
+mod previous_component;
 mod resources;
 mod sugar;
 mod ui;
