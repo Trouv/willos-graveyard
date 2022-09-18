@@ -68,6 +68,7 @@ fn main() {
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>(),
         )
+        .add_plugin(ui::UiPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
@@ -156,13 +157,6 @@ fn main() {
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::play_death_animations.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::history_sugar.run_not_in_state(GameState::AssetLoading))
-        .add_system(
-            ui::text_button::text_button_interaction.run_not_in_state(GameState::AssetLoading),
-        )
-        .add_enter_system(
-            GameState::LevelTransition,
-            ui::text_button::debug_spawn_button,
-        )
         .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")
