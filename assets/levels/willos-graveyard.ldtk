@@ -2655,10 +2655,10 @@
 					"id": "V_String",
 					"params": ["Two Zs"]
 				}] },
-				{ "__identifier": "Notes", "__value": "This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+				{ "__identifier": "Notes", "__value": "This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working."
+						"This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet."
 					]
 				}] }
 			],
