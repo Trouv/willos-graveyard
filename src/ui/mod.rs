@@ -1,3 +1,5 @@
+//! Plugin, components, systems, and events related to common UI patterns.
+
 pub mod actions;
 pub mod text_button;
 
@@ -8,8 +10,11 @@ use crate::{
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
+/// System labels used by ui systems.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum UiLabels {
+    /// Used for processing [actions::UiActions].
+    /// Consider placing your system after this if you are listening for `UiAction` events.
     Action,
 }
 
