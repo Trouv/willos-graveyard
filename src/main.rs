@@ -7,6 +7,7 @@ mod event_scheduler;
 mod from_component;
 mod gameplay;
 mod history;
+mod level_select;
 mod nine_slice;
 mod previous_component;
 mod resources;
