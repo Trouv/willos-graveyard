@@ -2488,7 +2488,7 @@
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 704,
+			"pxWid": 736,
 			"pxHei": 288,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
@@ -2655,10 +2655,10 @@
 					"id": "V_String",
 					"params": ["Two Zs"]
 				}] },
-				{ "__identifier": "Notes", "__value": "This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
+				{ "__identifier": "Notes", "__value": "This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet.", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"This level gets a lot easier if you happen to decide to move the S first.\nYou have to move it up.\nIs that okay?\n\nI think it is okay because it's not super obvious, and it rewards people for thinking to do that.\nThe main point of the puzzle still comes across.\n\nIf you can ever get through the puzzle without the alternative Z movement, then that's a problem.\nSo far I haven't figured out a way to do so though.\nThe careful placement of the level bounds seems to be working."
+						"This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet."
 					]
 				}] }
 			],
@@ -2753,6 +2753,35 @@
 						"# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?"
 					]
 				}] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Walls_and_secrets",
+			"iid": "27e630f0-2a00-11ed-8367-691b40d613db",
+			"uid": 182,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 352,
+			"pxHei": 800,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Walls_and_secrets.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Walls and secrets", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Walls and secrets"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
 			"__neighbours": []

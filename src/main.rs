@@ -8,8 +8,10 @@ mod from_component;
 mod gameplay;
 mod history;
 mod nine_slice;
+mod previous_component;
 mod resources;
 mod sugar;
+mod ui;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::{prelude::*, render::texture::ImageSettings};
@@ -67,6 +69,7 @@ fn main() {
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>(),
         )
+        .add_plugin(ui::UiPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
@@ -186,6 +189,12 @@ fn main() {
 pub struct AssetHolder {
     #[asset(path = "levels/willos-graveyard.ldtk")]
     pub ldtk: Handle<LdtkAsset>,
+    #[asset(path = "fonts/WayfarersToyBoxRegular-gxxER.ttf")]
+    pub font: Handle<Font>,
+    #[asset(path = "textures/button-underline.png")]
+    pub button_underline: Handle<Image>,
+    #[asset(path = "textures/button-radial.png")]
+    pub button_radial: Handle<Image>,
     #[asset(path = "sfx/victory.wav")]
     pub victory_sound: Handle<AudioSource>,
     #[asset(path = "sfx/push.wav")]

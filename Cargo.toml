@@ -1,6 +1,6 @@
 [package]
 name = "willos-graveyard"
-version = "0.3.5"
+version = "0.3.6"
 authors = ["TLovell <trevorlovelldesign@gmail.com>"]
 edition = "2021"
 
@@ -8,6 +8,8 @@ edition = "2021"
 # For release builds, make sure to use --no-default-features
 default = ["hot", "fast-compile"]
 dev = ["inspector"]
+
+ui-debug = []
 
 hot = []
 fast-compile = ["bevy/dynamic"]
