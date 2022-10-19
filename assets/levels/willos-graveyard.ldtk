@@ -2695,6 +2695,35 @@
 			"__neighbours": []
 		},
 		{
+			"identifier": "Hall_monitor",
+			"iid": "07252910-2a00-11ed-8367-bbaa60d72971",
+			"uid": 182,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 416,
+			"pxHei": 224,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Hall_monitor.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__value": "Hall monitor", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Hall monitor"]
+				}] },
+				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
 			"identifier": "All_tied_up",
 			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
 			"uid": 66,
@@ -3005,35 +3034,6 @@
 						"It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\nIt also doesn't include any walls lol"
 					]
 				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Untitled",
-			"iid": "07252910-2a00-11ed-8367-bbaa60d72971",
-			"uid": 182,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 416,
-			"pxHei": 224,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Untitled.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Hall monitor", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Hall monitor"]
-				}] },
-				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
