@@ -3029,7 +3029,10 @@
 			"__bgPos": null,
 			"externalRelPath": "willos-graveyard/Untitled.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__value": "Level", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [] },
+				{ "__identifier": "Title", "__value": "Hall monitor", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Hall monitor"]
+				}] },
 				{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,

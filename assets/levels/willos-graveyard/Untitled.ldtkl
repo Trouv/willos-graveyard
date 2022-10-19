@@ -27,7 +27,10 @@
 	"__bgPos": null,
 	"externalRelPath": null,
 	"fieldInstances": [
-		{ "__identifier": "Title", "__value": "Level", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [] },
+		{ "__identifier": "Title", "__value": "Hall monitor", "__type": "String", "__tile": null, "defUid": 28, "realEditorValues": [{
+			"id": "V_String",
+			"params": ["Hall monitor"]
+		}] },
 		{ "__identifier": "Notes", "__value": null, "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [] }
 	],
 	"layerInstances": [
@@ -281,6 +284,48 @@
 					"height": 32,
 					"defUid": 18,
 					"px": [320,128],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [7,1],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "25d1b8c0-2a00-11ed-9572-1917725df00b",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [224,32],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [7,3],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "264e3bc0-2a00-11ed-9572-3b585c3e6606",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [224,96],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [7,5],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "26b67370-2a00-11ed-9572-27325de945ed",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [224,160],
 					"fieldInstances": []
 				}
 			]
