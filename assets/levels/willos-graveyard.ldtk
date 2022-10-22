@@ -10,7 +10,7 @@
 	},
 	"jsonVersion": "1.1.3",
 	"appBuildId": 462122,
-	"nextUid": 184,
+	"nextUid": 185,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "LinearHorizontal",
 	"worldGridWidth": 256,
@@ -2697,7 +2697,7 @@
 		{
 			"identifier": "Hall_monitor",
 			"iid": "07252910-2a00-11ed-8367-bbaa60d72971",
-			"uid": 182,
+			"uid": 183,
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
