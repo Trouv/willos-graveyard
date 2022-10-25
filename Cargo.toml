@@ -26,5 +26,8 @@ iyes_loopless = "0.7"
 bevy-inspector-egui = { version = "0.12", optional = true }
 thiserror = "1"
 
+# workaround for https://github.com/diwic/alsa-rs/issues/90
+alsa = "=0.6.0"
+
 [target.wasm32-unknown-unknown.dependencies]
 bevy_ecs_ldtk = { version = "0.4", features = ["atlas"] }
