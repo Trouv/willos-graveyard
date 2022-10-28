@@ -374,7 +374,7 @@ pub fn spawn_level_card(
                     if let Some(level_num) = level_num {
                         parent.spawn_bundle(TextBundle {
                             text: Text::from_section(
-                                format!("#{}", level_num),
+                                format!("#{level_num}"),
                                 TextStyle {
                                     font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
                                     font_size: 50.,
