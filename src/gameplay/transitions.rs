@@ -374,7 +374,7 @@ pub fn spawn_level_card(
                     if let Some(level_num) = level_num {
                         parent.spawn_bundle(TextBundle {
                             text: Text::from_section(
-                                format!("#{}", level_num),
+                                format!("#{level_num}"),
                                 TextStyle {
                                     font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
                                     font_size: 50.,
@@ -474,7 +474,7 @@ pub fn fit_camera_around_play_zone_padded(
             let window = windows.primary();
 
             let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
-            let aspect_ratio = window.width() as f32 / window.height() as f32;
+            let aspect_ratio = window.width() / window.height();
             let play_zone_ratio = aspect_ratio * **play_zone_portion;
 
             let (mut transform, mut projection) = camera_query.single_mut();
@@ -501,16 +501,16 @@ pub fn fit_camera_around_play_zone_padded(
                 let pixel_perfect_width =
                     ((play_zone_size.width / aspect_ratio).round() * aspect_ratio).round();
 
-                projection.right = pixel_perfect_width as f32;
-                projection.top = (pixel_perfect_width as f32 / aspect_ratio).round();
+                projection.right = pixel_perfect_width;
+                projection.top = (pixel_perfect_width / aspect_ratio).round();
             } else {
                 // Play zone is "tall"
 
                 let pixel_perfect_height =
                     ((play_zone_size.height / aspect_ratio).round() * aspect_ratio).round();
 
-                projection.right = (pixel_perfect_height as f32 * aspect_ratio).round();
-                projection.top = pixel_perfect_height as f32;
+                projection.right = (pixel_perfect_height * aspect_ratio).round();
+                projection.top = pixel_perfect_height;
             };
 
             transform.translation.x =

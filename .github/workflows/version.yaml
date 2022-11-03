@@ -56,9 +56,8 @@ jobs:
               if [[ $UPDATE_CARGO ]]; then
                 echo "updating cargo"
                 sed "s/^version = \".*\"$/version = \"$CODE_VERSION\"/" Cargo.toml -i
-                cargo update
-                git add Cargo.*
-                git commit -m "build: increment version to $CODE_VERSION, update dependencies"
+                git add Cargo.toml
+                git commit -m "build: increment version to $CODE_VERSION"
               fi
 
               DATE_VERSION=$(date +%y.%m.%d)
