@@ -89,7 +89,6 @@ fn spawn_level_select_card(
     let level_select_entity = commands
         .spawn_bundle(ImageBundle {
             image: UiImage(level_card_texture),
-            //visibility: Visibility { is_visible: false },
             ..default()
         })
         .insert(
