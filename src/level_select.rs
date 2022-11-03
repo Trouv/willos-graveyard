@@ -13,6 +13,7 @@ use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use std::time::Duration;
 
+/// Plugin for systems and events related to the level select card.
 pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
@@ -31,9 +32,11 @@ impl Plugin for LevelSelectPlugin {
     }
 }
 
+/// Marker component for the level select UI card.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Component)]
 pub struct LevelSelectCard;
 
+/// Events regarding the visual state of the level select card.
 pub enum LevelSelectCardEvent {
     Spawned(Entity),
     Falling(Entity),
@@ -82,6 +85,7 @@ fn spawn_level_select_card(
         &mut images,
     )
     .unwrap();
+
     let level_select_entity = commands
         .spawn_bundle(ImageBundle {
             image: UiImage(level_card_texture),
