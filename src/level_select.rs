@@ -204,7 +204,7 @@ fn select_level(
         match action {
             UiAction::GoToLevel(level_selection) => {
                 commands.insert_resource(NextState(GameState::Gameplay));
-                schedule_level_card(&mut level_card_events, level_selection.clone());
+                schedule_level_card(&mut level_card_events, level_selection.clone(), 50);
                 commands.insert_resource(NextState(GameState::LevelTransition));
             }
             _ => (),
