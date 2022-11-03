@@ -201,13 +201,10 @@ fn select_level(
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
 ) {
     for action in ui_actions.iter() {
-        match action {
-            UiAction::GoToLevel(level_selection) => {
-                commands.insert_resource(NextState(GameState::Gameplay));
-                schedule_level_card(&mut level_card_events, level_selection.clone(), 50);
-                commands.insert_resource(NextState(GameState::LevelTransition));
-            }
-            _ => (),
+        if let UiAction::GoToLevel(level_selection) = action {
+            commands.insert_resource(NextState(GameState::Gameplay));
+            schedule_level_card(&mut level_card_events, level_selection.clone(), 50);
+            commands.insert_resource(NextState(GameState::LevelTransition));
         }
     }
 }
@@ -251,11 +248,8 @@ fn despawn_level_select_card(
     mut level_select_card_events: EventReader<LevelSelectCardEvent>,
 ) {
     for event in level_select_card_events.iter() {
-        match event {
-            LevelSelectCardEvent::Offscreen(entity) => {
-                commands.entity(*entity).despawn_recursive();
-            }
-            _ => (),
+        if let LevelSelectCardEvent::Offscreen(entity) = event {
+            commands.entity(*entity).despawn_recursive();
         }
     }
 }
