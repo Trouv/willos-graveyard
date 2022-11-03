@@ -41,6 +41,7 @@ pub enum GameState {
     AssetLoading,
     LevelTransition,
     Gameplay,
+    LevelSelect,
 }
 
 fn main() {
@@ -71,6 +72,7 @@ fn main() {
                 .with_collection::<AssetHolder>(),
         )
         .add_plugin(ui::UiPlugin)
+        .add_plugin(level_select::LevelSelectPlugin)
         .add_event::<gameplay::PlayerMovementEvent>()
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
