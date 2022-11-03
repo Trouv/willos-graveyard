@@ -27,8 +27,8 @@ impl Plugin for LevelSelectPlugin {
                     .run_in_state(GameState::LevelSelect)
                     .run_on_event::<UiAction>(),
             )
-            .add_exit_system(GameState::LevelSelect, drop_level_card)
-            .add_system(despawn_level_card.run_on_event::<LevelSelectCardEvent>());
+            .add_exit_system(GameState::LevelSelect, drop_level_select_card)
+            .add_system(despawn_level_select_card.run_on_event::<LevelSelectCardEvent>());
     }
 }
 
@@ -212,19 +212,15 @@ fn select_level(
     }
 }
 
-fn drop_level_card(
+fn drop_level_select_card(
     mut commands: Commands,
-    level_select_card_query: Query<Entity, With<LevelSelectCard>>,
+    level_select_card_query: Query<(Entity, &Style), With<LevelSelectCard>>,
     mut level_select_card_events: ResMut<EventScheduler<LevelSelectCardEvent>>,
 ) {
-    for entity in level_select_card_query.iter() {
-        commands.entity(entity).insert(
-            level_select_card_style(UiRect {
-                top: Val::Percent(0.),
-                left: Val::Percent(0.),
-                ..default()
-            })
-            .ease_to(
+    for (entity, style) in level_select_card_query.iter() {
+        commands
+            .entity(entity)
+            .insert(level_select_card_style(style.position).ease_to(
                 level_select_card_style(UiRect {
                     top: Val::Percent(100.),
                     left: Val::Percent(0.),
@@ -234,8 +230,11 @@ fn drop_level_card(
                 EasingType::Once {
                     duration: Duration::from_secs(1),
                 },
-            ),
-        );
+            ));
+
+        // Demote level select card so it can't be doubly-despawned
+        commands.entity(entity).remove::<LevelSelectCard>();
+
         level_select_card_events.schedule(
             LevelSelectCardEvent::Falling(entity),
             Duration::from_millis(0),
@@ -247,7 +246,7 @@ fn drop_level_card(
     }
 }
 
-fn despawn_level_card(
+fn despawn_level_select_card(
     mut commands: Commands,
     mut level_select_card_events: EventReader<LevelSelectCardEvent>,
 ) {
