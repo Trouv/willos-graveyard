@@ -19,6 +19,7 @@ use bevy::{prelude::*, render::texture::ImageSettings};
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_framepace::Limiter;
 use iyes_loopless::prelude::*;
 use rand::Rng;
 
@@ -60,6 +61,10 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
+        .add_plugin(bevy_framepace::FramepacePlugin)
+        .insert_resource(bevy_framepace::FramepaceSettings {
+            limiter: Limiter::from_framerate(19.),
+        })
         .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(FromComponentAnimator::<sugar::PlayerAnimationState>::new())
         .add_event::<animation::AnimationEvent>()
@@ -90,7 +95,7 @@ fn main() {
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
-        .add_system_to_stage(CoreStage::PreUpdate, sugar::reset_player_easing)
+        //.add_system_to_stage(CoreStage::PreUpdate, sugar::reset_player_easing)
         .add_enter_system(
             GameState::Gameplay,
             gameplay::transitions::fit_camera_around_play_zone_padded,
@@ -153,6 +158,7 @@ fn main() {
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
         .add_system(gameplay::systems::update_control_display.run_in_state(GameState::Gameplay))
         .add_system(sugar::ease_movement.run_in_state(GameState::Gameplay))
+        .add_system(sugar::ease_movement.run_in_state(GameState::LevelTransition))
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
