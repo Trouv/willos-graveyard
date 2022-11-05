@@ -154,7 +154,10 @@ fn main() {
                 .after(history::FlushHistoryCommands),
         )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
-        .add_system(gameplay::systems::update_control_display.run_in_state(GameState::Gameplay))
+        .add_system_to_stage(
+            CoreStage::PreUpdate,
+            gameplay::systems::update_control_display.run_in_state(GameState::Gameplay),
+        )
         .add_system(sugar::ease_movement.run_in_state(GameState::Gameplay))
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))

@@ -122,8 +122,8 @@ fn spawn_level_select_card(
                         "Level Select",
                         TextStyle {
                             font: asset_holder.font.clone(),
-                            font_size: 50.,
                             color: Color::WHITE,
+                            ..default()
                         },
                     )
                     .with_alignment(TextAlignment {

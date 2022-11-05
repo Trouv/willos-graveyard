@@ -79,8 +79,8 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
                 button_text,
                 TextStyle {
                     font: asset_holder.font.clone(),
-                    font_size: 16.,
                     color: Color::WHITE,
+                    ..default()
                 },
             ))
             .insert(FontScale::from(font_size))

@@ -4,6 +4,7 @@ use crate::{
     nine_slice::*,
     resources::*,
     sugar::GoalGhostAnimation,
+    ui::font_scale::{FontScale, FontSize},
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -204,22 +205,24 @@ pub fn spawn_death_card(
                 )
                 .insert(DeathCard)
                 .with_children(|parent| {
-                    parent.spawn_bundle(TextBundle {
-                        text: Text::from_section(
-                            "EXORCISED\n\nR to restart\nZ to undo",
-                            TextStyle {
-                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                font_size: 30.,
-                                color: Color::WHITE,
-                            },
-                        )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
-                        visibility: Visibility { is_visible: false },
-                        ..Default::default()
-                    });
+                    parent
+                        .spawn_bundle(TextBundle {
+                            text: Text::from_section(
+                                "EXORCISED\n\nR to restart\nZ to undo",
+                                TextStyle {
+                                    font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                    color: Color::WHITE,
+                                    ..default()
+                                },
+                            )
+                            .with_alignment(TextAlignment {
+                                horizontal: HorizontalAlign::Center,
+                                vertical: VerticalAlign::Center,
+                            }),
+                            visibility: Visibility { is_visible: false },
+                            ..Default::default()
+                        })
+                        .insert(FontScale::from(FontSize::Medium));
                 })
                 .id();
 
@@ -372,35 +375,39 @@ pub fn spawn_level_card(
                 )
                 .with_children(|parent| {
                     if let Some(level_num) = level_num {
-                        parent.spawn_bundle(TextBundle {
+                        parent
+                            .spawn_bundle(TextBundle {
+                                text: Text::from_section(
+                                    format!("#{level_num}"),
+                                    TextStyle {
+                                        font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                                        color: Color::WHITE,
+                                        ..default()
+                                    },
+                                )
+                                .with_alignment(TextAlignment {
+                                    vertical: VerticalAlign::Center,
+                                    horizontal: HorizontalAlign::Center,
+                                }),
+                                visibility: Visibility { is_visible: false },
+                                ..Default::default()
+                            })
+                            .insert(FontScale::from(FontSize::Large));
+                    }
+                    parent
+                        .spawn_bundle(TextBundle {
                             text: Text::from_section(
-                                format!("#{level_num}"),
+                                title,
                                 TextStyle {
                                     font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                    font_size: 50.,
                                     color: Color::WHITE,
+                                    ..default()
                                 },
-                            )
-                            .with_alignment(TextAlignment {
-                                vertical: VerticalAlign::Center,
-                                horizontal: HorizontalAlign::Center,
-                            }),
+                            ),
                             visibility: Visibility { is_visible: false },
                             ..Default::default()
-                        });
-                    }
-                    parent.spawn_bundle(TextBundle {
-                        text: Text::from_section(
-                            title,
-                            TextStyle {
-                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                font_size: 30.,
-                                color: Color::WHITE,
-                            },
-                        ),
-                        visibility: Visibility { is_visible: false },
-                        ..Default::default()
-                    });
+                        })
+                        .insert(FontScale::from(FontSize::Medium));
                 })
                 .insert(if level_num.is_some() {
                     LevelCard::Rising
