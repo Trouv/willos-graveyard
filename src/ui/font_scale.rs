@@ -109,7 +109,7 @@ fn font_scale(
                 .cycle()
                 .zip(text.sections.iter_mut())
                 .for_each(|(font_size, mut section)| {
-                    section.style.font_size = ratios.get(&font_size) * min_length;
+                    section.style.font_size = ratios.get(font_size) * min_length;
                 });
         }
     }
