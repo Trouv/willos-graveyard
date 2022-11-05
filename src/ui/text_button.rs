@@ -22,6 +22,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     child_builder: &'b mut ChildBuilder<'w, 's, 'a>,
     button_text: S,
     asset_holder: &AssetHolder,
+    margin: Val,
 ) -> EntityCommands<'w, 's, 'b> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
@@ -32,10 +33,10 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             align_items: AlignItems::Center,
             size: Size::new(Val::Auto, Val::Px(40.)),
             margin: UiRect {
-                top: Val::Px(4.),
-                bottom: Val::Px(4.),
-                left: Val::Px(4.),
-                right: Val::Px(4.),
+                top: margin,
+                bottom: margin,
+                left: margin,
+                right: margin,
             },
             ..default()
         },
@@ -137,11 +138,16 @@ pub mod debug {
         ui_root: Query<Entity, With<UiRoot>>,
     ) {
         commands.entity(ui_root.single()).with_children(|mut root| {
-            spawn(&mut root, "#1", &asset_holder).insert(UiAction::Debug("#1"));
-            spawn(&mut root, "help", &asset_holder).insert(UiAction::Debug("Help 1"));
-            spawn(&mut root, "ooh this one is really long!!", &asset_holder)
-                .insert(UiAction::Debug("long"));
-            spawn(&mut root, "help", &asset_holder).insert(UiAction::Debug("Help 2"));
+            spawn(&mut root, "#1", &asset_holder, Val::Px(4.)).insert(UiAction::Debug("#1"));
+            spawn(&mut root, "help", &asset_holder, Val::Px(4.)).insert(UiAction::Debug("Help 1"));
+            spawn(
+                &mut root,
+                "ooh this one is really long!!",
+                &asset_holder,
+                Val::Px(4.),
+            )
+            .insert(UiAction::Debug("long"));
+            spawn(&mut root, "help", &asset_holder, Val::Px(4.)).insert(UiAction::Debug("Help 2"));
         });
     }
 }
