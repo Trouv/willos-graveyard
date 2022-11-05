@@ -1,6 +1,10 @@
 //! Contains functions, systems, and components related to "text button"s
 
-use crate::{previous_component::PreviousComponent, AssetHolder};
+use crate::{
+    previous_component::PreviousComponent,
+    ui::font_scale::{FontScale, FontSize},
+    AssetHolder,
+};
 use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 
 /// Marker component for the main "text button" ui node.
@@ -23,6 +27,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     button_text: S,
     asset_holder: &AssetHolder,
     margin: Val,
+    font_size: FontSize,
 ) -> EntityCommands<'w, 's, 'b> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
@@ -78,6 +83,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
                     color: Color::WHITE,
                 },
             ))
+            .insert(FontScale::from(font_size))
             .insert(Style {
                 margin: UiRect {
                     top: Val::Px(4.),
@@ -138,16 +144,32 @@ pub mod debug {
         ui_root: Query<Entity, With<UiRoot>>,
     ) {
         commands.entity(ui_root.single()).with_children(|mut root| {
-            spawn(&mut root, "#1", &asset_holder, Val::Px(4.)).insert(UiAction::Debug("#1"));
-            spawn(&mut root, "help", &asset_holder, Val::Px(4.)).insert(UiAction::Debug("Help 1"));
+            spawn(&mut root, "#1", &asset_holder, Val::Px(4.), FontSize::Small)
+                .insert(UiAction::Debug("#1"));
+            spawn(
+                &mut root,
+                "help",
+                &asset_holder,
+                Val::Px(4.),
+                FontSize::Small,
+            )
+            .insert(UiAction::Debug("Help 1"));
             spawn(
                 &mut root,
                 "ooh this one is really long!!",
                 &asset_holder,
                 Val::Px(4.),
+                FontSize::Small,
             )
             .insert(UiAction::Debug("long"));
-            spawn(&mut root, "help", &asset_holder, Val::Px(4.)).insert(UiAction::Debug("Help 2"));
+            spawn(
+                &mut root,
+                "help",
+                &asset_holder,
+                Val::Px(4.),
+                FontSize::Small,
+            )
+            .insert(UiAction::Debug("Help 2"));
         });
     }
 }
