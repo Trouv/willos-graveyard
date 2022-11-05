@@ -392,7 +392,7 @@ pub fn spawn_level_card(
                                 visibility: Visibility { is_visible: false },
                                 ..Default::default()
                             })
-                            .insert(FontScale::from(FontSize::Large));
+                            .insert(FontScale::from(FontSize::Huge));
                     }
                     parent
                         .spawn_bundle(TextBundle {
