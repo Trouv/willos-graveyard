@@ -248,17 +248,24 @@ pub fn check_death(
 pub fn schedule_level_card(
     level_card_events: &mut EventScheduler<LevelCardEvent>,
     level_selection: LevelSelection,
+    offset_millis: u64,
 ) {
     level_card_events.schedule(
         LevelCardEvent::Rise(level_selection.clone()),
-        Duration::from_millis(800),
+        Duration::from_millis(offset_millis),
     );
     level_card_events.schedule(
         LevelCardEvent::Block(level_selection),
-        Duration::from_millis(2300),
+        Duration::from_millis(1500 + offset_millis),
     );
-    level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3800));
-    level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(5300));
+    level_card_events.schedule(
+        LevelCardEvent::Fall,
+        Duration::from_millis(3000 + offset_millis),
+    );
+    level_card_events.schedule(
+        LevelCardEvent::Despawn,
+        Duration::from_millis(4500 + offset_millis),
+    );
 }
 
 pub fn check_goal(
@@ -321,6 +328,7 @@ pub fn check_goal(
                 schedule_level_card(
                     &mut level_card_events,
                     LevelSelection::Index(level_index + 1),
+                    800,
                 );
             }
         }

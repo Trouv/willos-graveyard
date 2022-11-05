@@ -241,7 +241,7 @@ pub fn schedule_first_level_card(
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     level_selection: Res<LevelSelection>,
 ) {
-    schedule_level_card(&mut level_card_events, level_selection.clone());
+    schedule_level_card(&mut level_card_events, level_selection.clone(), 100);
 }
 
 pub fn load_next_level(
