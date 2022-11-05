@@ -1,9 +1,12 @@
+//! Plugin, systems, components, and resources for scaling fonts with window size.
 use bevy::{prelude::*, window::WindowResized};
 use iyes_loopless::prelude::*;
 
+/// Label used by all systems in [FontScalePlugin].
 #[derive(SystemLabel)]
 pub struct FontScaleLabel;
 
+/// Plugin with systems and resources that implement [FontScale] functionality.
 pub struct FontScalePlugin;
 
 impl Plugin for FontScalePlugin {
@@ -18,6 +21,7 @@ impl Plugin for FontScalePlugin {
     }
 }
 
+/// Font sizes available for font scaling with the [FontScale] component.
 #[allow(dead_code)]
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum FontSize {
@@ -29,8 +33,18 @@ pub enum FontSize {
     Custom(f32),
 }
 
+/// Component for making fonts scale with window size.
+///
+/// You can provide a list of font sizes for text with multiple sections.
+/// If the number of font sizes exceeds the number of sections, not all the sizes will be used.
+/// If the number of sections exceeds the number of font sizes, the sizes used will be used in a
+/// loop.
+///
+/// As a result, text with multiple sections can have a uniform font size by just using a
+/// single-element `FontSize` list.
+/// A single-element `FontScale` can be instantiated with `FontScale::from(FontSize::...)`.
 #[derive(Clone, PartialEq, Debug, Default, Component, Deref, DerefMut)]
-pub struct FontScale(Vec<FontSize>);
+pub struct FontScale(pub Vec<FontSize>);
 
 impl From<FontSize> for FontScale {
     fn from(value: FontSize) -> Self {
@@ -38,6 +52,13 @@ impl From<FontSize> for FontScale {
     }
 }
 
+/// Resource for defining the ratio of [FontSize] options to screen dimensions.
+///
+/// Each field corresponds to a different [FontSize] variant, and its value is used to scale text
+/// using that [FontSize].
+///
+/// These values can be calculated as the result of `desired_font_size / given_screen_height` for
+/// wide screens, and `desired_font_size / given_screen_width` for tall screens.
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct FontSizeRatios {
     pub tiny: f32,
@@ -48,7 +69,7 @@ pub struct FontSizeRatios {
 }
 
 impl FontSizeRatios {
-    fn get(&self, font_size: &FontSize) -> f32 {
+    pub fn get(&self, font_size: &FontSize) -> f32 {
         match font_size {
             FontSize::Tiny => self.tiny,
             FontSize::Small => self.small,
