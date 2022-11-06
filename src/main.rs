@@ -183,9 +183,9 @@ fn main() {
         .register_ldtk_entity::<bundles::GoalBundle>("Goal")
         .register_ldtk_entity::<bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<bundles::GrassBundle>("Grass")
-        .register_ldtk_int_cell::<bundles::WallBundle>(1)
-        .register_ldtk_int_cell::<bundles::WallBundle>(3)
-        .register_ldtk_int_cell::<bundles::WallBundle>(4)
+        .register_ldtk_int_cell::<sokoban::WallBundle>(1)
+        .register_ldtk_int_cell::<sokoban::WallBundle>(3)
+        .register_ldtk_int_cell::<sokoban::WallBundle>(4)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
 

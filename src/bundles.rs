@@ -2,12 +2,6 @@ use crate::{gameplay::components::*, history::History, sokoban::RigidBody};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
-#[derive(Clone, Bundle, LdtkIntCell)]
-pub struct WallBundle {
-    #[from_int_grid_cell]
-    rigid_body: RigidBody,
-}
-
 #[derive(Clone, Bundle, LdtkEntity)]
 pub struct InputBlockBundle {
     #[grid_coords]

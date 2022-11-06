@@ -13,6 +13,12 @@ pub enum RigidBody {
     Dynamic,
 }
 
+#[derive(Clone, Bundle, LdtkIntCell)]
+pub struct WallBundle {
+    #[from_int_grid_cell]
+    rigid_body: RigidBody,
+}
+
 impl From<EntityInstance> for RigidBody {
     fn from(_: EntityInstance) -> RigidBody {
         RigidBody::Dynamic
