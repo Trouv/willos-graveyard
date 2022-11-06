@@ -3,7 +3,7 @@ use crate::{
     gameplay::{components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
     history::HistoryCommands,
     resources::*,
-    willo::{PlayerMovementEvent, PlayerState},
+    willo::PlayerState,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -61,49 +61,6 @@ pub fn player_state_input(
             } else if input.just_pressed(KeyCode::R) {
                 history_commands.send(HistoryCommands::Reset);
                 *player = PlayerState::Waiting;
-            }
-        }
-    }
-}
-
-pub fn move_player_by_table(
-    table_query: Query<&MoveTable>,
-    mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
-    mut movement_writer: EventWriter<PlayerMovementEvent>,
-    time: Res<Time>,
-) {
-    for table in table_query.iter() {
-        if let Ok((mut timer, mut player)) = player_query.get_single_mut() {
-            timer.0.tick(time.delta());
-
-            if timer.0.finished() {
-                match *player {
-                    PlayerState::RankMove(key) => {
-                        for (i, rank) in table.table.iter().enumerate() {
-                            if rank.contains(&Some(key)) {
-                                movement_writer.send(PlayerMovementEvent {
-                                    direction: DIRECTION_ORDER[i],
-                                });
-                            }
-                        }
-                        *player = PlayerState::FileMove(key);
-                        timer.0.reset();
-                    }
-                    PlayerState::FileMove(key) => {
-                        for rank in table.table.iter() {
-                            for (i, cell) in rank.iter().enumerate() {
-                                if *cell == Some(key) {
-                                    movement_writer.send(PlayerMovementEvent {
-                                        direction: DIRECTION_ORDER[i],
-                                    });
-                                }
-                            }
-                        }
-                        *player = PlayerState::Waiting;
-                        timer.0.reset();
-                    }
-                    _ => {}
-                }
             }
         }
     }

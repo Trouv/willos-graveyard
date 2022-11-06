@@ -149,7 +149,7 @@ fn main() {
                 .after(SystemLabels::CheckDeath),
         )
         .add_system(
-            gameplay::systems::move_player_by_table
+            willo::move_player_by_table
                 .run_in_state(GameState::Gameplay)
                 .after(SystemLabels::MoveTableUpdate)
                 .after(history::FlushHistoryCommands),
