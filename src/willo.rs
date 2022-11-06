@@ -1,7 +1,7 @@
 use crate::gameplay::Direction;
 use crate::{
     animation::SpriteSheetAnimation,
-    gameplay::{components::*, xy_translation, *},
+    gameplay::{xy_translation, *},
     history::HistoryCommands,
     *,
 };
@@ -24,35 +24,6 @@ pub enum PlayerState {
 impl Default for PlayerState {
     fn default() -> PlayerState {
         PlayerState::Waiting
-    }
-}
-
-pub fn ease_movement(
-    mut commands: Commands,
-    mut grid_coords_query: Query<
-        (
-            Entity,
-            &GridCoords,
-            &Transform,
-            Option<&PlayerAnimationState>,
-        ),
-        (Changed<GridCoords>, Without<MoveTable>),
-    >,
-) {
-    for (entity, &grid_coords, transform, player_state) in grid_coords_query.iter_mut() {
-        let mut xy = xy_translation(grid_coords.into());
-
-        if let Some(PlayerAnimationState::Push(direction)) = player_state {
-            xy += IVec2::from(*direction).as_vec2() * 5.;
-        }
-
-        commands.entity(entity).insert(transform.ease_to(
-            Transform::from_xyz(xy.x, xy.y, transform.translation.z),
-            EaseFunction::CubicOut,
-            EasingType::Once {
-                duration: std::time::Duration::from_millis(110),
-            },
-        ));
     }
 }
 

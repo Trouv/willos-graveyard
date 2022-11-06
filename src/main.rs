@@ -11,6 +11,7 @@ mod level_select;
 mod nine_slice;
 mod previous_component;
 mod resources;
+mod sokoban;
 mod sugar;
 mod ui;
 mod willo;
@@ -115,7 +116,7 @@ fn main() {
                 .into(),
         )
         .add_system(
-            gameplay::systems::move_table_update
+            sokoban::move_table_update
                 .run_in_state(GameState::Gameplay)
                 .before(SystemLabels::Input),
         )
@@ -126,7 +127,7 @@ fn main() {
                 .before(history::FlushHistoryCommands),
         )
         .add_system(
-            gameplay::systems::perform_grid_coords_movement
+            sokoban::perform_grid_coords_movement
                 .run_in_state(GameState::Gameplay)
                 .label(SystemLabels::MoveTableUpdate)
                 .before(from_component::FromComponentLabel),
@@ -165,7 +166,7 @@ fn main() {
         )
         .add_system_to_stage(
             CoreStage::PostUpdate,
-            willo::ease_movement
+            sokoban::ease_movement
                 .run_not_in_state(GameState::AssetLoading)
                 .label("ease_movement"),
         )
