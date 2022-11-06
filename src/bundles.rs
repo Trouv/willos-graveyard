@@ -1,4 +1,8 @@
-use crate::{gameplay::components::*, history::History, willo::PlayerAnimationState};
+use crate::{
+    gameplay::components::*,
+    history::History,
+    willo::{PlayerAnimationState, PlayerState},
+};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 

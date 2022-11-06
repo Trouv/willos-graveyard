@@ -36,11 +36,6 @@ impl From<Direction> for IVec2 {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct PlayerMovementEvent {
-    direction: Direction,
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct DeathEvent {
     pub player_entity: Entity,
 }

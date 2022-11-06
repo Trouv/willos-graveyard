@@ -51,20 +51,6 @@ pub struct MoveTable {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum PlayerState {
-    Waiting,
-    Dead,
-    RankMove(KeyCode),
-    FileMove(KeyCode),
-}
-
-impl Default for PlayerState {
-    fn default() -> PlayerState {
-        PlayerState::Waiting
-    }
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum LevelCard {
     Rising,
     Holding,

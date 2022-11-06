@@ -1,12 +1,9 @@
 use crate::{
     event_scheduler::EventScheduler,
-    gameplay::{
-        components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, PlayerMovementEvent,
-        DIRECTION_ORDER,
-    },
+    gameplay::{components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
     history::HistoryCommands,
     resources::*,
-    willo::PlayerAnimationState,
+    willo::{PlayerAnimationState, PlayerMovementEvent, PlayerState},
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
