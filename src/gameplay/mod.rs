@@ -37,7 +37,7 @@ impl From<Direction> for IVec2 {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct DeathEvent {
-    pub player_entity: Entity,
+    pub willo_entity: Entity,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug)]

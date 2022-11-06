@@ -11,21 +11,21 @@ use bevy::{prelude::*, utils::Duration};
 use bevy_easings::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct PlayerMovementEvent {
+pub struct WilloMovementEvent {
     pub direction: Direction,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum PlayerState {
+pub enum WilloState {
     Waiting,
     Dead,
     RankMove(KeyCode),
     FileMove(KeyCode),
 }
 
-impl Default for PlayerState {
-    fn default() -> PlayerState {
-        PlayerState::Waiting
+impl Default for WilloState {
+    fn default() -> WilloState {
+        WilloState::Waiting
     }
 }
 
@@ -41,34 +41,34 @@ impl Default for MovementTimer {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
-pub enum PlayerAnimationState {
+pub enum WilloAnimationState {
     Idle(Direction),
     Push(Direction),
     Dying,
     None,
 }
 
-impl Default for PlayerAnimationState {
+impl Default for WilloAnimationState {
     fn default() -> Self {
-        PlayerAnimationState::Idle(Direction::Down)
+        WilloAnimationState::Idle(Direction::Down)
     }
 }
 
-impl Iterator for PlayerAnimationState {
+impl Iterator for WilloAnimationState {
     type Item = Self;
     fn next(&mut self) -> Option<Self::Item> {
         Some(match self {
-            PlayerAnimationState::Dying | PlayerAnimationState::None => PlayerAnimationState::None,
-            PlayerAnimationState::Push(d) => PlayerAnimationState::Idle(*d),
-            _ => PlayerAnimationState::Idle(Direction::Down),
+            WilloAnimationState::Dying | WilloAnimationState::None => WilloAnimationState::None,
+            WilloAnimationState::Push(d) => WilloAnimationState::Idle(*d),
+            _ => WilloAnimationState::Idle(Direction::Down),
         })
     }
 }
 
-impl From<PlayerAnimationState> for SpriteSheetAnimation {
-    fn from(state: PlayerAnimationState) -> SpriteSheetAnimation {
+impl From<WilloAnimationState> for SpriteSheetAnimation {
+    fn from(state: WilloAnimationState) -> SpriteSheetAnimation {
         use Direction::*;
-        use PlayerAnimationState::*;
+        use WilloAnimationState::*;
 
         let indices = match state {
             Push(Up) => 1..2,
@@ -96,31 +96,30 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-pub struct PlayerBundle {
+pub struct WilloBundle {
     #[grid_coords]
     pub grid_coords: GridCoords,
     pub history: History<GridCoords>,
     #[from_entity_instance]
     pub rigid_body: RigidBody,
-    pub player_state: PlayerState,
+    pub willo_state: WilloState,
     pub movement_timer: MovementTimer,
     #[sprite_sheet_bundle]
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,
-    pub player_animation_state: PlayerAnimationState,
+    pub willo_animation_state: WilloAnimationState,
 }
 
-pub fn reset_player_easing(
+pub fn reset_willo_easing(
     mut commands: Commands,
-    player_query: Query<
-        (Entity, &GridCoords, &Transform, &PlayerAnimationState),
-        Changed<PlayerAnimationState>,
+    willo_query: Query<
+        (Entity, &GridCoords, &Transform, &WilloAnimationState),
+        Changed<WilloAnimationState>,
     >,
 ) {
-    if let Ok((entity, &grid_coords, transform, player_animation_state)) = player_query.get_single()
-    {
-        match player_animation_state {
-            PlayerAnimationState::Push(_) => (),
+    if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.get_single() {
+        match animation_state {
+            WilloAnimationState::Push(_) => (),
             _ => {
                 let xy = xy_translation(grid_coords.into());
                 commands.entity(entity).insert(transform.ease_to(
@@ -137,14 +136,14 @@ pub fn reset_player_easing(
 
 pub fn history_sugar(
     mut history_commands: EventReader<HistoryCommands>,
-    mut player_query: Query<&mut PlayerAnimationState>,
+    mut willo_query: Query<&mut WilloAnimationState>,
     audio: Res<Audio>,
     sfx: Res<AssetHolder>,
 ) {
     for command in history_commands.iter() {
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
-                *player_query.single_mut() = PlayerAnimationState::Idle(Direction::Down);
+                *willo_query.single_mut() = WilloAnimationState::Idle(Direction::Down);
                 audio.play(sfx.undo_sound.clone_weak());
             }
             _ => (),
@@ -153,50 +152,50 @@ pub fn history_sugar(
 }
 
 pub fn play_death_animations(
-    mut player_query: Query<&mut PlayerAnimationState>,
+    mut willo_query: Query<&mut WilloAnimationState>,
     mut death_event_reader: EventReader<DeathEvent>,
 ) {
-    for DeathEvent { player_entity } in death_event_reader.iter() {
-        if let Ok(mut player_animation_state) = player_query.get_mut(*player_entity) {
-            *player_animation_state = PlayerAnimationState::Dying;
+    for DeathEvent { willo_entity } in death_event_reader.iter() {
+        if let Ok(mut animation_state) = willo_query.get_mut(*willo_entity) {
+            *animation_state = WilloAnimationState::Dying;
         }
     }
 }
 
-pub fn move_player_by_table(
+pub fn move_willo_by_table(
     table_query: Query<&MoveTable>,
-    mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
-    mut movement_writer: EventWriter<PlayerMovementEvent>,
+    mut willo_query: Query<(&mut MovementTimer, &mut WilloState)>,
+    mut movement_writer: EventWriter<WilloMovementEvent>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
-        if let Ok((mut timer, mut player)) = player_query.get_single_mut() {
+        if let Ok((mut timer, mut willo)) = willo_query.get_single_mut() {
             timer.0.tick(time.delta());
 
             if timer.0.finished() {
-                match *player {
-                    PlayerState::RankMove(key) => {
+                match *willo {
+                    WilloState::RankMove(key) => {
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
-                                movement_writer.send(PlayerMovementEvent {
+                                movement_writer.send(WilloMovementEvent {
                                     direction: DIRECTION_ORDER[i],
                                 });
                             }
                         }
-                        *player = PlayerState::FileMove(key);
+                        *willo = WilloState::FileMove(key);
                         timer.0.reset();
                     }
-                    PlayerState::FileMove(key) => {
+                    WilloState::FileMove(key) => {
                         for rank in table.table.iter() {
                             for (i, cell) in rank.iter().enumerate() {
                                 if *cell == Some(key) {
-                                    movement_writer.send(PlayerMovementEvent {
+                                    movement_writer.send(WilloMovementEvent {
                                         direction: DIRECTION_ORDER[i],
                                     });
                                 }
                             }
                         }
-                        *player = PlayerState::Waiting;
+                        *willo = WilloState::Waiting;
                         timer.0.reset();
                     }
                     _ => {}
@@ -206,34 +205,34 @@ pub fn move_player_by_table(
     }
 }
 
-pub fn player_state_input(
-    mut player_query: Query<&mut PlayerState>,
+pub fn willo_input(
+    mut willo_query: Query<&mut WilloState>,
     input: Res<Input<KeyCode>>,
     mut history_commands: EventWriter<HistoryCommands>,
     mut rewind_settings: ResMut<RewindSettings>,
     time: Res<Time>,
 ) {
-    for mut player in player_query.iter_mut() {
-        if *player == PlayerState::Waiting {
+    for mut willo in willo_query.iter_mut() {
+        if *willo == WilloState::Waiting {
             if input.just_pressed(KeyCode::W) {
                 history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::W)
+                *willo = WilloState::RankMove(KeyCode::W)
             } else if input.just_pressed(KeyCode::A) {
                 history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::A)
+                *willo = WilloState::RankMove(KeyCode::A)
             } else if input.just_pressed(KeyCode::S) {
                 history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::S)
+                *willo = WilloState::RankMove(KeyCode::S)
             } else if input.just_pressed(KeyCode::D) {
                 history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::D)
+                *willo = WilloState::RankMove(KeyCode::D)
             }
         }
 
-        if *player == PlayerState::Waiting || *player == PlayerState::Dead {
+        if *willo == WilloState::Waiting || *willo == WilloState::Dead {
             if input.just_pressed(KeyCode::Z) {
                 history_commands.send(HistoryCommands::Rewind);
-                *player = PlayerState::Waiting;
+                *willo = WilloState::Waiting;
                 rewind_settings.hold_timer =
                     Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
             } else if input.pressed(KeyCode::Z) {
@@ -248,14 +247,14 @@ pub fn player_state_input(
 
                     if timer.just_finished() {
                         history_commands.send(HistoryCommands::Rewind);
-                        *player = PlayerState::Waiting;
+                        *willo = WilloState::Waiting;
 
                         timer.set_duration(Duration::from_millis(*velocity as u64));
                     }
                 }
             } else if input.just_pressed(KeyCode::R) {
                 history_commands.send(HistoryCommands::Reset);
-                *player = PlayerState::Waiting;
+                *willo = WilloState::Waiting;
             }
         }
     }

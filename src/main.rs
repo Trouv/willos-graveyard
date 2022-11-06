@@ -65,7 +65,7 @@ fn main() {
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
-        .add_plugin(FromComponentAnimator::<willo::PlayerAnimationState>::new())
+        .add_plugin(FromComponentAnimator::<willo::WilloAnimationState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_loopless_state(GameState::AssetLoading)
         .add_loading_state(
@@ -75,7 +75,7 @@ fn main() {
         )
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
-        .add_event::<willo::PlayerMovementEvent>()
+        .add_event::<willo::WilloMovementEvent>()
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_event::<gameplay::GoalEvent>()
@@ -121,7 +121,7 @@ fn main() {
                 .before(SystemLabels::Input),
         )
         .add_system(
-            willo::player_state_input
+            willo::willo_input
                 .run_in_state(GameState::Gameplay)
                 .label(SystemLabels::Input)
                 .before(history::FlushHistoryCommands),
@@ -149,7 +149,7 @@ fn main() {
                 .after(SystemLabels::CheckDeath),
         )
         .add_system(
-            willo::move_player_by_table
+            willo::move_willo_by_table
                 .run_in_state(GameState::Gameplay)
                 .after(SystemLabels::MoveTableUpdate)
                 .after(history::FlushHistoryCommands),
@@ -160,7 +160,7 @@ fn main() {
         // see https://github.com/vleue/bevy_easings/issues/23
         .add_system_to_stage(
             CoreStage::PostUpdate,
-            willo::reset_player_easing
+            willo::reset_willo_easing
                 .run_not_in_state(GameState::AssetLoading)
                 .before("ease_movement"),
         )
@@ -175,7 +175,7 @@ fn main() {
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
         .add_system(willo::play_death_animations.run_not_in_state(GameState::AssetLoading))
         .add_system(willo::history_sugar.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<willo::PlayerBundle>("Willo")
+        .register_ldtk_entity::<willo::WilloBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")
         .register_ldtk_entity::<bundles::InputBlockBundle>("S")

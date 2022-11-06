@@ -4,7 +4,7 @@ use crate::{
     nine_slice::*,
     resources::*,
     sugar::GoalGhostAnimation,
-    willo::PlayerState,
+    willo::WilloState,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -149,13 +149,13 @@ pub fn spawn_control_display(
 pub fn spawn_death_card(
     mut commands: Commands,
     assets: Res<AssetServer>,
-    player_query: Query<&PlayerState, Changed<PlayerState>>,
+    willo_query: Query<&WilloState, Changed<WilloState>>,
     death_cards: Query<Entity, With<DeathCard>>,
-    mut last_state: Local<PlayerState>,
+    mut last_state: Local<WilloState>,
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
-    for state in player_query.iter() {
-        if *state == PlayerState::Dead && *last_state != PlayerState::Dead {
+    for state in willo_query.iter() {
+        if *state == WilloState::Dead && *last_state != WilloState::Dead {
             // Player just died
             let death_card_entity = commands
                 .spawn_bundle(NodeBundle {
@@ -227,7 +227,7 @@ pub fn spawn_death_card(
             commands
                 .entity(ui_root_query.single())
                 .add_child(death_card_entity);
-        } else if *state != PlayerState::Dead && *last_state == PlayerState::Dead {
+        } else if *state != WilloState::Dead && *last_state == WilloState::Dead {
             // Player just un-died
             if let Ok(entity) = death_cards.get_single() {
                 commands.entity(entity).despawn_recursive();

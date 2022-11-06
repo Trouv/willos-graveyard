@@ -1,7 +1,7 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
-    willo::PlayerState,
+    willo::WilloState,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -10,17 +10,15 @@ use iyes_loopless::prelude::*;
 use std::time::Duration;
 
 pub fn check_death(
-    mut player_query: Query<(Entity, &GridCoords, &mut PlayerState)>,
+    mut willo_query: Query<(Entity, &GridCoords, &mut WilloState)>,
     exorcism_query: Query<(Entity, &GridCoords), With<ExorcismBlock>>,
     mut death_event_writer: EventWriter<DeathEvent>,
 ) {
-    if let Ok((entity, player_coords, mut player_state)) = player_query.get_single_mut() {
-        if *player_state != PlayerState::Dead
-            && exorcism_query.iter().any(|(_, g)| *g == *player_coords)
-        {
-            *player_state = PlayerState::Dead;
+    if let Ok((entity, coords, mut willo)) = willo_query.get_single_mut() {
+        if *willo != WilloState::Dead && exorcism_query.iter().any(|(_, g)| *g == *coords) {
+            *willo = WilloState::Dead;
             death_event_writer.send(DeathEvent {
-                player_entity: entity,
+                willo_entity: entity,
             });
         }
     }

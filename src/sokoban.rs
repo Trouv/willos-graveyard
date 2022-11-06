@@ -1,7 +1,7 @@
 use crate::gameplay::Direction;
 use crate::{
     gameplay::{components::*, xy_translation},
-    willo::{PlayerAnimationState, PlayerMovementEvent},
+    willo::{WilloAnimationState, WilloMovementEvent},
     *,
 };
 use bevy::prelude::*;
@@ -38,15 +38,15 @@ pub fn ease_movement(
             Entity,
             &GridCoords,
             &Transform,
-            Option<&PlayerAnimationState>,
+            Option<&WilloAnimationState>,
         ),
         (Changed<GridCoords>, Without<MoveTable>),
     >,
 ) {
-    for (entity, &grid_coords, transform, player_state) in grid_coords_query.iter_mut() {
+    for (entity, &grid_coords, transform, willo_animation_state) in grid_coords_query.iter_mut() {
         let mut xy = xy_translation(grid_coords.into());
 
-        if let Some(PlayerAnimationState::Push(direction)) = player_state {
+        if let Some(WilloAnimationState::Push(direction)) = willo_animation_state {
             xy += IVec2::from(*direction).as_vec2() * 5.;
         }
 
@@ -97,9 +97,9 @@ pub fn perform_grid_coords_movement(
         Entity,
         &mut GridCoords,
         &RigidBody,
-        Option<&mut PlayerAnimationState>,
+        Option<&mut WilloAnimationState>,
     )>,
-    mut reader: EventReader<PlayerMovementEvent>,
+    mut reader: EventReader<WilloMovementEvent>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
     audio: Res<Audio>,
@@ -128,21 +128,21 @@ pub fn perform_grid_coords_movement(
                 Some((entity, *rigid_body));
         }
 
-        if let Some((_, player_grid_coords, _, Some(mut animation))) = grid_coords_query
+        if let Some((_, willo_grid_coords, _, Some(mut animation))) = grid_coords_query
             .iter_mut()
             .find(|(_, _, _, animation)| animation.is_some())
         {
             let pushed_entities = push_grid_coords_recursively(
                 collision_map,
-                IVec2::from(*player_grid_coords),
+                IVec2::from(*willo_grid_coords),
                 movement_event.direction,
             );
 
             if pushed_entities.len() > 1 {
                 audio.play(sfx.push_sound.clone_weak());
-                *animation.into_inner() = PlayerAnimationState::Push(movement_event.direction);
+                *animation.into_inner() = WilloAnimationState::Push(movement_event.direction);
             } else {
-                let new_state = PlayerAnimationState::Idle(movement_event.direction);
+                let new_state = WilloAnimationState::Idle(movement_event.direction);
                 if *animation != new_state {
                     *animation = new_state;
                 }
