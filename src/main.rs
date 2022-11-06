@@ -121,7 +121,7 @@ fn main() {
                 .before(SystemLabels::Input),
         )
         .add_system(
-            gameplay::systems::player_state_input
+            willo::player_state_input
                 .run_in_state(GameState::Gameplay)
                 .label(SystemLabels::Input)
                 .before(history::FlushHistoryCommands),

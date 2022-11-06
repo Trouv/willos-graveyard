@@ -1,8 +1,6 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::{components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
-    history::HistoryCommands,
-    resources::*,
     willo::PlayerState,
     AssetHolder, GameState,
 };
@@ -10,61 +8,6 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use std::time::Duration;
-
-pub fn player_state_input(
-    mut player_query: Query<&mut PlayerState>,
-    input: Res<Input<KeyCode>>,
-    mut history_commands: EventWriter<HistoryCommands>,
-    mut rewind_settings: ResMut<RewindSettings>,
-    time: Res<Time>,
-) {
-    for mut player in player_query.iter_mut() {
-        if *player == PlayerState::Waiting {
-            if input.just_pressed(KeyCode::W) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::W)
-            } else if input.just_pressed(KeyCode::A) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::A)
-            } else if input.just_pressed(KeyCode::S) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::S)
-            } else if input.just_pressed(KeyCode::D) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::D)
-            }
-        }
-
-        if *player == PlayerState::Waiting || *player == PlayerState::Dead {
-            if input.just_pressed(KeyCode::Z) {
-                history_commands.send(HistoryCommands::Rewind);
-                *player = PlayerState::Waiting;
-                rewind_settings.hold_timer =
-                    Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if input.pressed(KeyCode::Z) {
-                let range = rewind_settings.hold_range_millis.clone();
-                let acceleration = rewind_settings.hold_acceleration;
-
-                if let Some(RewindTimer { velocity, timer }) = &mut rewind_settings.hold_timer {
-                    *velocity = (*velocity - (acceleration * time.delta_seconds()))
-                        .clamp(range.start as f32, range.end as f32);
-
-                    timer.tick(time.delta());
-
-                    if timer.just_finished() {
-                        history_commands.send(HistoryCommands::Rewind);
-                        *player = PlayerState::Waiting;
-
-                        timer.set_duration(Duration::from_millis(*velocity as u64));
-                    }
-                }
-            } else if input.just_pressed(KeyCode::R) {
-                history_commands.send(HistoryCommands::Reset);
-                *player = PlayerState::Waiting;
-            }
-        }
-    }
-}
 
 pub fn check_death(
     mut player_query: Query<(Entity, &GridCoords, &mut PlayerState)>,
