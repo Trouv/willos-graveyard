@@ -1,8 +1,4 @@
-use crate::{
-    gameplay::components::*,
-    history::History,
-    willo::{PlayerAnimationState, PlayerState},
-};
+use crate::{gameplay::components::*, history::History, sokoban::RigidBody};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
@@ -34,21 +30,6 @@ pub struct GoalBundle {
     #[sprite_sheet_bundle]
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,
-}
-
-#[derive(Clone, Bundle, LdtkEntity)]
-pub struct PlayerBundle {
-    #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub history: History<GridCoords>,
-    #[from_entity_instance]
-    pub rigid_body: RigidBody,
-    pub player_state: PlayerState,
-    pub movement_timer: MovementTimer,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
-    pub player_animation_state: PlayerAnimationState,
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]

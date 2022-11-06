@@ -175,7 +175,7 @@ fn main() {
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
         .add_system(willo::play_death_animations.run_not_in_state(GameState::AssetLoading))
         .add_system(willo::history_sugar.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
+        .register_ldtk_entity::<willo::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")
         .register_ldtk_entity::<bundles::InputBlockBundle>("S")

@@ -1,12 +1,10 @@
 use crate::{
     animation::SpriteSheetAnimation,
-    gameplay::{
-        components::{MoveTable, MovementTimer},
-        Direction,
-    },
+    gameplay::{components::MoveTable, Direction},
     gameplay::{xy_translation, *},
-    history::HistoryCommands,
+    history::{History, HistoryCommands},
     resources::{RewindSettings, RewindTimer},
+    sokoban::RigidBody,
     *,
 };
 use bevy::{prelude::*, utils::Duration};
@@ -31,28 +29,14 @@ impl Default for PlayerState {
     }
 }
 
-pub fn reset_player_easing(
-    mut commands: Commands,
-    player_query: Query<
-        (Entity, &GridCoords, &Transform, &PlayerAnimationState),
-        Changed<PlayerAnimationState>,
-    >,
-) {
-    if let Ok((entity, &grid_coords, transform, player_animation_state)) = player_query.get_single()
-    {
-        match player_animation_state {
-            PlayerAnimationState::Push(_) => (),
-            _ => {
-                let xy = xy_translation(grid_coords.into());
-                commands.entity(entity).insert(transform.ease_to(
-                    Transform::from_xyz(xy.x, xy.y, transform.translation.z),
-                    EaseFunction::CubicOut,
-                    EasingType::Once {
-                        duration: std::time::Duration::from_millis(110),
-                    },
-                ));
-            }
-        }
+const MOVEMENT_SECONDS: f32 = 0.14;
+
+#[derive(Clone, Debug, Component)]
+pub struct MovementTimer(pub Timer);
+
+impl Default for MovementTimer {
+    fn default() -> MovementTimer {
+        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
     }
 }
 
@@ -107,6 +91,46 @@ impl From<PlayerAnimationState> for SpriteSheetAnimation {
             indices,
             frame_timer,
             repeat,
+        }
+    }
+}
+
+#[derive(Clone, Bundle, LdtkEntity)]
+pub struct PlayerBundle {
+    #[grid_coords]
+    pub grid_coords: GridCoords,
+    pub history: History<GridCoords>,
+    #[from_entity_instance]
+    pub rigid_body: RigidBody,
+    pub player_state: PlayerState,
+    pub movement_timer: MovementTimer,
+    #[sprite_sheet_bundle]
+    #[bundle]
+    pub sprite_sheet_bundle: SpriteSheetBundle,
+    pub player_animation_state: PlayerAnimationState,
+}
+
+pub fn reset_player_easing(
+    mut commands: Commands,
+    player_query: Query<
+        (Entity, &GridCoords, &Transform, &PlayerAnimationState),
+        Changed<PlayerAnimationState>,
+    >,
+) {
+    if let Ok((entity, &grid_coords, transform, player_animation_state)) = player_query.get_single()
+    {
+        match player_animation_state {
+            PlayerAnimationState::Push(_) => (),
+            _ => {
+                let xy = xy_translation(grid_coords.into());
+                commands.entity(entity).insert(transform.ease_to(
+                    Transform::from_xyz(xy.x, xy.y, transform.translation.z),
+                    EaseFunction::CubicOut,
+                    EasingType::Once {
+                        duration: std::time::Duration::from_millis(110),
+                    },
+                ));
+            }
         }
     }
 }

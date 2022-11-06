@@ -2,24 +2,6 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum RigidBody {
-    Static,
-    Dynamic,
-}
-
-impl From<EntityInstance> for RigidBody {
-    fn from(_: EntityInstance) -> RigidBody {
-        RigidBody::Dynamic
-    }
-}
-
-impl From<IntGridCell> for RigidBody {
-    fn from(_: IntGridCell) -> RigidBody {
-        RigidBody::Static
-    }
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub struct InputBlock {
     pub key_code: KeyCode,
 }
@@ -60,17 +42,6 @@ pub enum LevelCard {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct DeathCard;
-
-const MOVEMENT_SECONDS: f32 = 0.14;
-
-#[derive(Clone, Debug, Component)]
-pub struct MovementTimer(pub Timer);
-
-impl Default for MovementTimer {
-    fn default() -> MovementTimer {
-        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
-    }
-}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
 pub struct OrthographicCamera;

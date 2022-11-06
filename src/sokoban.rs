@@ -7,6 +7,24 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+pub enum RigidBody {
+    Static,
+    Dynamic,
+}
+
+impl From<EntityInstance> for RigidBody {
+    fn from(_: EntityInstance) -> RigidBody {
+        RigidBody::Dynamic
+    }
+}
+
+impl From<IntGridCell> for RigidBody {
+    fn from(_: IntGridCell) -> RigidBody {
+        RigidBody::Static
+    }
+}
+
 pub fn ease_movement(
     mut commands: Commands,
     mut grid_coords_query: Query<
