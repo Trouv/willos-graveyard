@@ -13,6 +13,7 @@ mod previous_component;
 mod resources;
 mod sugar;
 mod ui;
+mod willo;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::{prelude::*, render::texture::ImageSettings};
@@ -63,7 +64,7 @@ fn main() {
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
-        .add_plugin(FromComponentAnimator::<sugar::PlayerAnimationState>::new())
+        .add_plugin(FromComponentAnimator::<willo::PlayerAnimationState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_loopless_state(GameState::AssetLoading)
         .add_loading_state(
@@ -158,21 +159,21 @@ fn main() {
         // see https://github.com/vleue/bevy_easings/issues/23
         .add_system_to_stage(
             CoreStage::PostUpdate,
-            sugar::reset_player_easing
+            willo::reset_player_easing
                 .run_not_in_state(GameState::AssetLoading)
                 .before("ease_movement"),
         )
         .add_system_to_stage(
             CoreStage::PostUpdate,
-            sugar::ease_movement
+            willo::ease_movement
                 .run_not_in_state(GameState::AssetLoading)
                 .label("ease_movement"),
         )
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
-        .add_system(sugar::play_death_animations.run_not_in_state(GameState::AssetLoading))
-        .add_system(sugar::history_sugar.run_not_in_state(GameState::AssetLoading))
+        .add_system(willo::play_death_animations.run_not_in_state(GameState::AssetLoading))
+        .add_system(willo::history_sugar.run_not_in_state(GameState::AssetLoading))
         .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")

@@ -6,7 +6,7 @@ use crate::{
     },
     history::HistoryCommands,
     resources::*,
-    sugar::PlayerAnimationState,
+    willo::PlayerAnimationState,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
