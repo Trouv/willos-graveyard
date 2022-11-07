@@ -75,6 +75,7 @@ fn main() {
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
         .add_plugin(willo::WilloPlugin)
+        .add_plugin(sokoban::SokobanPlugin)
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_event::<gameplay::GoalEvent>()
@@ -115,17 +116,6 @@ fn main() {
                 .into(),
         )
         .add_system(
-            sokoban::move_table_update
-                .run_in_state(GameState::Gameplay)
-                .before(SystemLabels::Input),
-        )
-        .add_system(
-            sokoban::perform_grid_coords_movement
-                .run_in_state(GameState::Gameplay)
-                .label(SystemLabels::MoveTableUpdate)
-                .before(from_component::FromComponentLabel),
-        )
-        .add_system(
             gameplay::systems::check_death
                 .run_in_state(GameState::Gameplay)
                 .label(SystemLabels::CheckDeath)
@@ -143,12 +133,6 @@ fn main() {
         )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
         .add_system(gameplay::systems::update_control_display.run_in_state(GameState::Gameplay))
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-            sokoban::ease_movement
-                .run_not_in_state(GameState::AssetLoading)
-                .label("ease_movement"),
-        )
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
@@ -159,9 +143,6 @@ fn main() {
         .register_ldtk_entity::<bundles::GoalBundle>("Goal")
         .register_ldtk_entity::<bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<bundles::GrassBundle>("Grass")
-        .register_ldtk_int_cell::<sokoban::WallBundle>(1)
-        .register_ldtk_int_cell::<sokoban::WallBundle>(3)
-        .register_ldtk_int_cell::<sokoban::WallBundle>(4)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
 

@@ -7,6 +7,35 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 
+pub struct SokobanPlugin;
+
+impl Plugin for SokobanPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(
+            sokoban::move_table_update
+                .run_in_state(GameState::Gameplay)
+                .before(SystemLabels::Input),
+        )
+        .add_system(
+            sokoban::perform_grid_coords_movement
+                .run_in_state(GameState::Gameplay)
+                .label(SystemLabels::MoveTableUpdate)
+                .before(from_component::FromComponentLabel),
+        )
+        // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+        // see https://github.com/vleue/bevy_easings/issues/23
+        .add_system_to_stage(
+            CoreStage::PostUpdate,
+            sokoban::ease_movement
+                .run_not_in_state(GameState::AssetLoading)
+                .label("ease_movement"),
+        )
+        .register_ldtk_int_cell::<sokoban::WallBundle>(1)
+        .register_ldtk_int_cell::<sokoban::WallBundle>(3)
+        .register_ldtk_int_cell::<sokoban::WallBundle>(4);
+    }
+}
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum RigidBody {
     Static,
