@@ -10,6 +10,37 @@ use crate::{
 use bevy::{prelude::*, utils::Duration};
 use bevy_easings::*;
 
+pub struct WilloPlugin;
+
+impl Plugin for WilloPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugin(FromComponentAnimator::<WilloAnimationState>::new())
+            .add_event::<WilloMovementEvent>()
+            .add_system(
+                willo_input
+                    .run_in_state(GameState::Gameplay)
+                    .label(SystemLabels::Input)
+                    .before(history::FlushHistoryCommands),
+            )
+            .add_system(
+                move_willo_by_table
+                    .run_in_state(GameState::Gameplay)
+                    .after(SystemLabels::MoveTableUpdate)
+                    .after(history::FlushHistoryCommands),
+            ) // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            // see https://github.com/vleue/bevy_easings/issues/23
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                reset_willo_easing
+                    .run_not_in_state(GameState::AssetLoading)
+                    .before("ease_movement"),
+            )
+            .add_system(play_death_animations.run_not_in_state(GameState::AssetLoading))
+            .add_system(history_sugar.run_not_in_state(GameState::AssetLoading))
+            .register_ldtk_entity::<WilloBundle>("Willo");
+    }
+}
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct WilloMovementEvent {
     pub direction: Direction,
