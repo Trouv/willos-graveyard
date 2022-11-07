@@ -27,7 +27,8 @@ impl Plugin for WilloPlugin {
                     .run_in_state(GameState::Gameplay)
                     .after(SystemLabels::MoveTableUpdate)
                     .after(history::FlushHistoryCommands),
-            ) // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            )
+            // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system_to_stage(
                 CoreStage::PostUpdate,
@@ -63,7 +64,7 @@ impl Default for WilloState {
 const MOVEMENT_SECONDS: f32 = 0.14;
 
 #[derive(Clone, Debug, Component)]
-pub struct MovementTimer(pub Timer);
+struct MovementTimer(Timer);
 
 impl Default for MovementTimer {
     fn default() -> MovementTimer {
@@ -127,21 +128,21 @@ impl From<WilloAnimationState> for SpriteSheetAnimation {
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-pub struct WilloBundle {
+struct WilloBundle {
     #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub history: History<GridCoords>,
+    grid_coords: GridCoords,
+    history: History<GridCoords>,
     #[from_entity_instance]
-    pub rigid_body: RigidBody,
-    pub willo_state: WilloState,
-    pub movement_timer: MovementTimer,
+    rigid_body: RigidBody,
+    willo_state: WilloState,
+    movement_timer: MovementTimer,
     #[sprite_sheet_bundle]
     #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
-    pub willo_animation_state: WilloAnimationState,
+    sprite_sheet_bundle: SpriteSheetBundle,
+    willo_animation_state: WilloAnimationState,
 }
 
-pub fn reset_willo_easing(
+fn reset_willo_easing(
     mut commands: Commands,
     willo_query: Query<
         (Entity, &GridCoords, &Transform, &WilloAnimationState),
@@ -165,7 +166,7 @@ pub fn reset_willo_easing(
     }
 }
 
-pub fn history_sugar(
+fn history_sugar(
     mut history_commands: EventReader<HistoryCommands>,
     mut willo_query: Query<&mut WilloAnimationState>,
     audio: Res<Audio>,
@@ -182,7 +183,7 @@ pub fn history_sugar(
     }
 }
 
-pub fn play_death_animations(
+fn play_death_animations(
     mut willo_query: Query<&mut WilloAnimationState>,
     mut death_event_reader: EventReader<DeathEvent>,
 ) {
@@ -193,7 +194,7 @@ pub fn play_death_animations(
     }
 }
 
-pub fn move_willo_by_table(
+fn move_willo_by_table(
     table_query: Query<&MoveTable>,
     mut willo_query: Query<(&mut MovementTimer, &mut WilloState)>,
     mut movement_writer: EventWriter<WilloMovementEvent>,
@@ -236,7 +237,7 @@ pub fn move_willo_by_table(
     }
 }
 
-pub fn willo_input(
+fn willo_input(
     mut willo_query: Query<&mut WilloState>,
     input: Res<Input<KeyCode>>,
     mut history_commands: EventWriter<HistoryCommands>,
