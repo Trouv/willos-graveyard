@@ -1,3 +1,4 @@
+//! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::gameplay::Direction;
 use crate::{
     gameplay::{components::*, xy_translation},
@@ -7,6 +8,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 
+/// Plugin providing functionality for sokoban-style movement and collision.
 pub struct SokobanPlugin;
 
 impl Plugin for SokobanPlugin {
@@ -36,6 +38,7 @@ impl Plugin for SokobanPlugin {
     }
 }
 
+/// Component defining the behavior of sokoban entities on collision.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum RigidBody {
     Static,
@@ -187,6 +190,7 @@ fn perform_grid_coords_movement(
     }
 }
 
+// TODO: move to movement_table module once it is created
 fn move_table_update(
     mut table_query: Query<(&GridCoords, &mut MoveTable)>,
     input_block_query: Query<(&GridCoords, &InputBlock)>,
