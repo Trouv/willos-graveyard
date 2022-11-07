@@ -1,3 +1,4 @@
+//! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::SpriteSheetAnimation,
     gameplay::{components::MoveTable, Direction},
@@ -10,6 +11,7 @@ use crate::{
 use bevy::{prelude::*, utils::Duration};
 use bevy_easings::*;
 
+/// Plugin providing functionality for Willo, the player character.
 pub struct WilloPlugin;
 
 impl Plugin for WilloPlugin {
@@ -42,11 +44,15 @@ impl Plugin for WilloPlugin {
     }
 }
 
+/// Event that fires whenever Willo moves.
+///
+/// Only fires once per direction - so it fires twice during most moves.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct WilloMovementEvent {
     pub direction: Direction,
 }
 
+/// The main component for Willo, keeping track of their state.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum WilloState {
     Waiting,
@@ -72,6 +78,7 @@ impl Default for MovementTimer {
     }
 }
 
+/// Component enumerating the possible states of Willo's animation.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
 pub enum WilloAnimationState {
     Idle(Direction),
