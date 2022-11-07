@@ -43,7 +43,7 @@ pub enum RigidBody {
 }
 
 #[derive(Clone, Bundle, LdtkIntCell)]
-pub struct WallBundle {
+struct WallBundle {
     #[from_int_grid_cell]
     rigid_body: RigidBody,
 }
@@ -60,7 +60,7 @@ impl From<IntGridCell> for RigidBody {
     }
 }
 
-pub fn ease_movement(
+fn ease_movement(
     mut commands: Commands,
     mut grid_coords_query: Query<
         (
@@ -121,7 +121,7 @@ fn push_grid_coords_recursively(
     }
 }
 
-pub fn perform_grid_coords_movement(
+fn perform_grid_coords_movement(
     mut grid_coords_query: Query<(
         Entity,
         &mut GridCoords,
@@ -187,7 +187,7 @@ pub fn perform_grid_coords_movement(
     }
 }
 
-pub fn move_table_update(
+fn move_table_update(
     mut table_query: Query<(&GridCoords, &mut MoveTable)>,
     input_block_query: Query<(&GridCoords, &InputBlock)>,
 ) {
