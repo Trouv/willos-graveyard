@@ -153,7 +153,10 @@ fn main() {
                 .after(history::FlushHistoryCommands),
         )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
-        .add_system(gameplay::systems::update_control_display.run_in_state(GameState::Gameplay))
+        .add_system_to_stage(
+            CoreStage::PreUpdate,
+            gameplay::systems::update_control_display.run_in_state(GameState::Gameplay),
+        )
         // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
         // see https://github.com/vleue/bevy_easings/issues/23
         .add_system_to_stage(
