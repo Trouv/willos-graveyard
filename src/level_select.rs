@@ -4,7 +4,11 @@ use crate::{
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
     },
-    ui::{actions::UiAction, text_button},
+    ui::{
+        actions::UiAction,
+        font_scale::{FontScale, FontSize},
+        text_button,
+    },
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -112,30 +116,32 @@ fn spawn_level_select_card(
         .insert(LevelSelectCard)
         .with_children(|parent| {
             // spawn title
-            parent.spawn_bundle(TextBundle {
-                text: Text::from_section(
-                    "Level Select",
-                    TextStyle {
-                        font: asset_holder.font.clone(),
-                        font_size: 50.,
-                        color: Color::WHITE,
-                    },
-                )
-                .with_alignment(TextAlignment {
-                    vertical: VerticalAlign::Center,
-                    horizontal: HorizontalAlign::Center,
-                }),
-                style: Style {
-                    margin: UiRect {
-                        top: Val::Px(10.),
-                        bottom: Val::Px(10.),
-                        left: Val::Percent(10.),
-                        right: Val::Percent(10.),
+            parent
+                .spawn_bundle(TextBundle {
+                    text: Text::from_section(
+                        "Level Select",
+                        TextStyle {
+                            font: asset_holder.font.clone(),
+                            color: Color::WHITE,
+                            ..default()
+                        },
+                    )
+                    .with_alignment(TextAlignment {
+                        vertical: VerticalAlign::Center,
+                        horizontal: HorizontalAlign::Center,
+                    }),
+                    style: Style {
+                        margin: UiRect {
+                            top: Val::Px(10.),
+                            bottom: Val::Px(10.),
+                            left: Val::Percent(10.),
+                            right: Val::Percent(10.),
+                        },
+                        ..default()
                     },
                     ..default()
-                },
-                ..default()
-            });
+                })
+                .insert(FontScale::from(FontSize::Huge));
 
             // spawn level button container
             parent
@@ -167,6 +173,7 @@ fn spawn_level_select_card(
                                 format!("#{}", i + 1),
                                 &asset_holder,
                                 Val::Percent(2.),
+                                FontSize::Medium,
                             )
                             .insert(UiAction::GoToLevel(LevelSelection::Index(i)));
                         }

@@ -1,6 +1,8 @@
 use crate::{
     event_scheduler::EventScheduler,
-    gameplay::{components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
+    gameplay::components::*,
+    gameplay::{DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
+    ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
     AssetHolder, GameState,
 };
@@ -138,8 +140,8 @@ pub fn update_control_display(
 
         let style = TextStyle {
             font,
-            font_size: 30.,
             color: Color::WHITE,
+            ..default()
         };
         commands
             .entity(control_display_entity)
@@ -165,25 +167,27 @@ pub fn update_control_display(
                             for node in nodes {
                                 match node {
                                     ControlNode::Text(s) => {
-                                        parent.spawn_bundle(TextBundle {
-                                            text: Text::from_section(s, style.clone())
-                                                .with_alignment(TextAlignment {
-                                                    vertical: VerticalAlign::Center,
-                                                    horizontal: HorizontalAlign::Center,
-                                                }),
-                                            style: Style {
-                                                size: Size {
-                                                    height: Val::Percent(100.),
-                                                    ..Default::default()
-                                                },
-                                                margin: UiRect {
-                                                    right: Val::Px(16.),
+                                        parent
+                                            .spawn_bundle(TextBundle {
+                                                text: Text::from_section(s, style.clone())
+                                                    .with_alignment(TextAlignment {
+                                                        vertical: VerticalAlign::Center,
+                                                        horizontal: HorizontalAlign::Center,
+                                                    }),
+                                                style: Style {
+                                                    size: Size {
+                                                        height: Val::Percent(100.),
+                                                        ..Default::default()
+                                                    },
+                                                    margin: UiRect {
+                                                        right: Val::Px(16.),
+                                                        ..Default::default()
+                                                    },
                                                     ..Default::default()
                                                 },
                                                 ..Default::default()
-                                            },
-                                            ..Default::default()
-                                        });
+                                            })
+                                            .insert(FontScale::from(FontSize::Medium));
                                     }
                                     ControlNode::Image(h) => {
                                         parent.spawn_bundle(ImageBundle {
