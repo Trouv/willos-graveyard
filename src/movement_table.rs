@@ -2,7 +2,7 @@
 //! abilities based off the placement of gravestones.
 use crate::{
     gravestone::Gravestone,
-    willo::{WilloMovementEvent, WilloState},
+    willo::{MovementTimer, WilloMovementEvent, WilloState},
     *,
 };
 use bevy::prelude::*;
@@ -54,18 +54,6 @@ impl From<Direction> for IVec2 {
             Direction::Down => IVec2::new(0, -1),
             Direction::Right => IVec2::X,
         }
-    }
-}
-
-const MOVEMENT_SECONDS: f32 = 0.14;
-
-/// Component that provides the timer used to space out the movements Willo performs.
-#[derive(Clone, Debug, Component)]
-pub struct MovementTimer(Timer);
-
-impl Default for MovementTimer {
-    fn default() -> MovementTimer {
-        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
     }
 }
 

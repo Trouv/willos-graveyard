@@ -4,7 +4,6 @@ use crate::{
     gameplay::{xy_translation, *},
     history::{History, HistoryCommands},
     movement_table::Direction,
-    movement_table::MovementTimer,
     resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
     *,
@@ -115,6 +114,18 @@ impl From<WilloAnimationState> for SpriteSheetAnimation {
             frame_timer,
             repeat,
         }
+    }
+}
+
+const MOVEMENT_SECONDS: f32 = 0.14;
+
+/// Component that provides the timer used to space out the movements Willo performs.
+#[derive(Clone, Debug, Component)]
+pub struct MovementTimer(pub Timer);
+
+impl Default for MovementTimer {
+    fn default() -> MovementTimer {
+        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
     }
 }
 
