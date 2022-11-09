@@ -35,7 +35,7 @@ impl From<EntityInstance> for InputBlock {
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-pub struct InputBlockBundle {
+struct InputBlockBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     history: History<GridCoords>,
@@ -48,7 +48,7 @@ pub struct InputBlockBundle {
     sprite_sheet_bundle: SpriteSheetBundle,
 }
 
-pub fn spawn_gravestone_body(
+fn spawn_gravestone_body(
     mut commands: Commands,
     gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
 ) {
