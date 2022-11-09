@@ -2,6 +2,7 @@ use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
     gameplay::{DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
+    movement_table::MoveTable,
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
     AssetHolder, GameState,

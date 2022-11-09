@@ -6,8 +6,10 @@ mod bundles;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
+mod gravestone;
 mod history;
 mod level_select;
+mod movement_table;
 mod nine_slice;
 mod previous_component;
 mod resources;
@@ -76,6 +78,7 @@ fn main() {
         .add_plugin(level_select::LevelSelectPlugin)
         .add_plugin(willo::WilloPlugin)
         .add_plugin(sokoban::SokobanPlugin)
+        .add_plugin(movement_table::MovementTablePlugin)
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_event::<gameplay::GoalEvent>()
@@ -144,7 +147,6 @@ fn main() {
         .register_ldtk_entity::<bundles::InputBlockBundle>("S")
         .register_ldtk_entity::<bundles::InputBlockBundle>("D")
         .register_ldtk_entity::<bundles::GoalBundle>("Goal")
-        .register_ldtk_entity::<bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<bundles::GrassBundle>("Grass")
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);

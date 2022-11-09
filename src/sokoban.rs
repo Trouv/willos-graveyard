@@ -1,7 +1,8 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::gameplay::Direction;
 use crate::{
-    gameplay::{components::*, xy_translation},
+    gameplay::xy_translation,
+    movement_table::MoveTable,
     willo::{WilloAnimationState, WilloMovementEvent},
     *,
 };
@@ -14,11 +15,6 @@ pub struct SokobanPlugin;
 impl Plugin for SokobanPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
-            sokoban::move_table_update
-                .run_in_state(GameState::Gameplay)
-                .before(SystemLabels::Input),
-        )
-        .add_system(
             sokoban::perform_grid_coords_movement
                 .run_in_state(GameState::Gameplay)
                 .label(SystemLabels::MoveTableUpdate)
@@ -185,25 +181,6 @@ fn perform_grid_coords_movement(
                     .get_component_mut::<GridCoords>(entity)
                     .expect("Pushed should have GridCoords component") +=
                     GridCoords::from(IVec2::from(movement_event.direction));
-            }
-        }
-    }
-}
-
-// TODO: move to movement_table module once it is created
-fn move_table_update(
-    mut table_query: Query<(&GridCoords, &mut MoveTable)>,
-    input_block_query: Query<(&GridCoords, &InputBlock)>,
-) {
-    for (table_grid_coords, mut table) in table_query.iter_mut() {
-        table.table = [[None; 4]; 4];
-        for (input_grid_coords, input_block) in input_block_query.iter() {
-            let diff = *input_grid_coords - *table_grid_coords;
-            let x_index = diff.x - 1;
-            let y_index = -1 - diff.y;
-            if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
-                // key block is in table
-                table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
             }
         }
     }

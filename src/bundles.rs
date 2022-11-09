@@ -27,16 +27,6 @@ pub struct GoalBundle {
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-pub struct MoveTableBundle {
-    #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub move_table: MoveTable,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
-}
-
-#[derive(Clone, Bundle, LdtkEntity)]
 pub struct GrassBundle {
     #[sprite_sheet_bundle]
     #[bundle]

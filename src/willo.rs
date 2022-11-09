@@ -1,9 +1,10 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::SpriteSheetAnimation,
-    gameplay::{components::MoveTable, Direction},
+    gameplay::Direction,
     gameplay::{xy_translation, *},
     history::{History, HistoryCommands},
+    movement_table::MoveTable,
     resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
     *,

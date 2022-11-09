@@ -27,11 +27,6 @@ pub struct Goal {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ExorcismBlock;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct MoveTable {
-    pub table: [[Option<KeyCode>; 4]; 4],
-}
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum LevelCard {
     Rising,
