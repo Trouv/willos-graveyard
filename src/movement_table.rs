@@ -1,3 +1,5 @@
+//! Plugin and components providing functionality for the movement table, which alters Willo's
+//! abilities based off the placement of gravestones.
 use crate::{
     gravestone::Gravestone,
     willo::{WilloMovementEvent, WilloState},
@@ -6,6 +8,8 @@ use crate::{
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
+/// Plugin providing functionality for the movement table, which alters Willo's abilities based off
+/// the placement of gravestones.
 pub struct MovementTablePlugin;
 
 impl Plugin for MovementTablePlugin {
@@ -25,6 +29,7 @@ impl Plugin for MovementTablePlugin {
     }
 }
 
+/// Enumerates the four directions that are exposed on the movement table.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum Direction {
     Up,
@@ -33,6 +38,7 @@ pub enum Direction {
     Right,
 }
 
+/// Defines the order that the four [Direction]s go in on the table's rank and file.
 pub const DIRECTION_ORDER: [Direction; 4] = [
     Direction::Up,
     Direction::Left,
@@ -53,6 +59,7 @@ impl From<Direction> for IVec2 {
 
 const MOVEMENT_SECONDS: f32 = 0.14;
 
+/// Component that provides the timer used to space out the movements Willo performs.
 #[derive(Clone, Debug, Component)]
 pub struct MovementTimer(Timer);
 
@@ -62,8 +69,11 @@ impl Default for MovementTimer {
     }
 }
 
+/// Component that marks the movement table and stores the current placement of gravestones.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct MovementTable {
+    /// 4x4 table marking the locations of gravestones, identified by the [KeyCode] they are
+    /// associated with
     pub table: [[Option<KeyCode>; 4]; 4],
 }
 
