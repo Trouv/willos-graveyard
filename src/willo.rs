@@ -4,7 +4,7 @@ use crate::{
     gameplay::Direction,
     gameplay::{xy_translation, *},
     history::{History, HistoryCommands},
-    movement_table::MoveTable,
+    movement_table::MovementTable,
     resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
     *,
@@ -203,7 +203,7 @@ fn play_death_animations(
 }
 
 fn move_willo_by_table(
-    table_query: Query<&MoveTable>,
+    table_query: Query<&MovementTable>,
     mut willo_query: Query<(&mut MovementTimer, &mut WilloState)>,
     mut movement_writer: EventWriter<WilloMovementEvent>,
     time: Res<Time>,

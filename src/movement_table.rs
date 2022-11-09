@@ -6,31 +6,31 @@ pub struct MovementTablePlugin;
 impl Plugin for MovementTablePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
-            move_table_update
+            movement_table_update
                 .run_in_state(GameState::Gameplay)
                 .before(SystemLabels::Input),
         )
-        .register_ldtk_entity::<MoveTableBundle>("Table");
+        .register_ldtk_entity::<MovementTableBundle>("Table");
     }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct MoveTable {
+pub struct MovementTable {
     pub table: [[Option<KeyCode>; 4]; 4],
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-pub struct MoveTableBundle {
+struct MovementTableBundle {
     #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub move_table: MoveTable,
+    grid_coords: GridCoords,
+    move_table: MovementTable,
     #[sprite_sheet_bundle]
     #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
+    sprite_sheet_bundle: SpriteSheetBundle,
 }
 
-fn move_table_update(
-    mut table_query: Query<(&GridCoords, &mut MoveTable)>,
+fn movement_table_update(
+    mut table_query: Query<(&GridCoords, &mut MovementTable)>,
     input_block_query: Query<(&GridCoords, &InputBlock)>,
 ) {
     for (table_grid_coords, mut table) in table_query.iter_mut() {

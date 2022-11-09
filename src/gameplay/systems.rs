@@ -2,7 +2,7 @@ use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
     gameplay::{DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
-    movement_table::MoveTable,
+    movement_table::MovementTable,
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
     AssetHolder, GameState,
@@ -121,7 +121,7 @@ pub fn check_goal(
 
 pub fn update_control_display(
     mut commands: Commands,
-    move_table_query: Query<&MoveTable, Changed<MoveTable>>,
+    move_table_query: Query<&MovementTable, Changed<MovementTable>>,
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
     assets: Res<AssetServer>,
 ) {

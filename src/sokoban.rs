@@ -2,7 +2,7 @@
 use crate::gameplay::Direction;
 use crate::{
     gameplay::xy_translation,
-    movement_table::MoveTable,
+    movement_table::MovementTable,
     willo::{WilloAnimationState, WilloMovementEvent},
     *,
 };
@@ -68,7 +68,7 @@ fn ease_movement(
             &Transform,
             Option<&WilloAnimationState>,
         ),
-        (Changed<GridCoords>, Without<MoveTable>),
+        (Changed<GridCoords>, Without<MovementTable>),
     >,
 ) {
     for (entity, &grid_coords, transform, willo_animation_state) in grid_coords_query.iter_mut() {
