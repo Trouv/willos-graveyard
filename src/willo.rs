@@ -46,7 +46,7 @@ pub struct WilloMovementEvent {
     pub direction: Direction,
 }
 
-/// The main component for Willo, keeping track of their state.
+/// Component that marks Willo and keeps track of their state.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum WilloState {
     Waiting,
