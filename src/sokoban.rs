@@ -16,7 +16,7 @@ impl Plugin for SokobanPlugin {
         app.add_system(
             sokoban::perform_grid_coords_movement
                 .run_in_state(GameState::Gameplay)
-                .label(SystemLabels::MoveTableUpdate)
+                .label(SystemLabels::MovementTableUpdate)
                 .before(from_component::FromComponentLabel),
         )
         // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update

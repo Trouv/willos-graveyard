@@ -18,7 +18,7 @@ impl Plugin for MovementTablePlugin {
         .add_system(
             move_willo_by_table
                 .run_in_state(GameState::Gameplay)
-                .after(SystemLabels::MoveTableUpdate)
+                .after(SystemLabels::MovementTableUpdate)
                 .after(history::FlushHistoryCommands),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");
