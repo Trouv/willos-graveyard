@@ -2,6 +2,7 @@ use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
     gameplay::{DeathEvent, GoalEvent, LevelCardEvent},
+    gravestone::InputBlock,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,

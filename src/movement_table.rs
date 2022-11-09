@@ -1,5 +1,5 @@
 use crate::{
-    gameplay::components::*,
+    gravestone::InputBlock,
     willo::{WilloMovementEvent, WilloState},
     *,
 };

@@ -12,42 +12,12 @@ use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use iyes_loopless::prelude::*;
-use rand::{distributions::WeightedIndex, prelude::*};
 use std::time::Duration;
 
 pub fn spawn_camera(mut commands: Commands) {
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(OrthographicCamera);
-}
-
-pub fn spawn_gravestone_body(
-    mut commands: Commands,
-    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
-) {
-    for (entity, texture_handle) in gravestones.iter() {
-        let index_range = 11..22_usize;
-
-        let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
-
-        let dist = WeightedIndex::new(dist).unwrap();
-
-        let mut rng = rand::thread_rng();
-
-        let body_entity = commands
-            .spawn_bundle(SpriteSheetBundle {
-                sprite: TextureAtlasSprite {
-                    index: (11..22_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
-                    ..default()
-                },
-                texture_atlas: texture_handle.clone(),
-                transform: Transform::from_xyz(0., 0., -0.5),
-                ..default()
-            })
-            .id();
-
-        commands.entity(entity).add_child(body_entity);
-    }
 }
 
 pub fn spawn_goal_ghosts(
