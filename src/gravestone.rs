@@ -1,9 +1,19 @@
+//! Plugin and components providing functionality for gravestones.
+//!
+//! Gravestones are sokoban blocks that
+//! - interact with goals to complete levels
+//! - interact with the movement table to alter Willo's abilities
 use crate::{history::History, sokoban::RigidBody, GameState};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 
+/// Plugin providing functionality for gravestones.
+///
+/// Gravestones are sokoban blocks that
+/// - interact with goals to complete levels
+/// - interact with the movement table to alter Willo's abilities
 pub struct GravestonePlugin;
 
 impl Plugin for GravestonePlugin {
@@ -16,8 +26,13 @@ impl Plugin for GravestonePlugin {
     }
 }
 
+/// Component that marks gravestones and stores their associated [KeyCode].
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub struct Gravestone {
+    /// The associated key for this Gravestone.
+    ///
+    /// Defines which button the user can press to activate the movement that corresponds to this
+    /// gravestone according to the movement table.
     pub key_code: KeyCode,
 }
 
