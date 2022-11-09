@@ -1,13 +1,9 @@
 use crate::{
     event_scheduler::EventScheduler,
-    gameplay::{
-        components::*, DeathEvent, Direction, GoalEvent, LevelCardEvent, PlayerMovementEvent,
-        DIRECTION_ORDER,
-    },
-    history::HistoryCommands,
-    resources::*,
-    sugar::PlayerAnimationState,
+    gameplay::components::*,
+    gameplay::{DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
+    willo::WilloState,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -15,232 +11,16 @@ use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use std::time::Duration;
 
-fn push_grid_coords_recursively(
-    collision_map: Vec<Vec<Option<(Entity, RigidBody)>>>,
-    pusher_coords: IVec2,
-    direction: Direction,
-) -> Vec<Entity> {
-    let pusher = collision_map[pusher_coords.y as usize][pusher_coords.x as usize]
-        .expect("pusher should exist")
-        .0;
-    let destination = pusher_coords + IVec2::from(direction);
-    if destination.x < 0
-        || destination.y < 0
-        || destination.y as usize >= collision_map.len()
-        || destination.x as usize >= collision_map[0].len()
-    {
-        return Vec::new();
-    }
-    match collision_map[destination.y as usize][destination.x as usize] {
-        None => vec![pusher],
-        Some((_, RigidBody::Static)) => Vec::new(),
-        Some((_, RigidBody::Dynamic)) => {
-            let mut pushed_entities =
-                push_grid_coords_recursively(collision_map, destination, direction);
-            if pushed_entities.is_empty() {
-                Vec::new()
-            } else {
-                pushed_entities.push(pusher);
-                pushed_entities
-            }
-        }
-    }
-}
-
-pub fn perform_grid_coords_movement(
-    mut grid_coords_query: Query<(
-        Entity,
-        &mut GridCoords,
-        &RigidBody,
-        Option<&mut PlayerAnimationState>,
-    )>,
-    mut reader: EventReader<PlayerMovementEvent>,
-    level_query: Query<&Handle<LdtkLevel>>,
-    levels: Res<Assets<LdtkLevel>>,
-    audio: Res<Audio>,
-    sfx: Res<AssetHolder>,
-) {
-    for movement_event in reader.iter() {
-        let level = levels
-            .get(level_query.single())
-            .expect("Level should be loaded in gameplay state");
-
-        let LayerInstance {
-            c_wid: width,
-            c_hei: height,
-            ..
-        } = level
-            .level
-            .layer_instances
-            .clone()
-            .expect("Loaded level should have layers")[0];
-
-        let mut collision_map: Vec<Vec<Option<(Entity, RigidBody)>>> =
-            vec![vec![None; width as usize]; height as usize];
-
-        for (entity, grid_coords, rigid_body, _) in grid_coords_query.iter_mut() {
-            collision_map[grid_coords.y as usize][grid_coords.x as usize] =
-                Some((entity, *rigid_body));
-        }
-
-        if let Some((_, player_grid_coords, _, Some(mut animation))) = grid_coords_query
-            .iter_mut()
-            .find(|(_, _, _, animation)| animation.is_some())
-        {
-            let pushed_entities = push_grid_coords_recursively(
-                collision_map,
-                IVec2::from(*player_grid_coords),
-                movement_event.direction,
-            );
-
-            if pushed_entities.len() > 1 {
-                audio.play(sfx.push_sound.clone_weak());
-                *animation.into_inner() = PlayerAnimationState::Push(movement_event.direction);
-            } else {
-                let new_state = PlayerAnimationState::Idle(movement_event.direction);
-                if *animation != new_state {
-                    *animation = new_state;
-                }
-            }
-
-            for entity in pushed_entities {
-                *grid_coords_query
-                    .get_component_mut::<GridCoords>(entity)
-                    .expect("Pushed should have GridCoords component") +=
-                    GridCoords::from(IVec2::from(movement_event.direction));
-            }
-        }
-    }
-}
-
-pub fn move_table_update(
-    mut table_query: Query<(&GridCoords, &mut MoveTable)>,
-    input_block_query: Query<(&GridCoords, &InputBlock)>,
-) {
-    for (table_grid_coords, mut table) in table_query.iter_mut() {
-        table.table = [[None; 4]; 4];
-        for (input_grid_coords, input_block) in input_block_query.iter() {
-            let diff = *input_grid_coords - *table_grid_coords;
-            let x_index = diff.x - 1;
-            let y_index = -1 - diff.y;
-            if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
-                // key block is in table
-                table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
-            }
-        }
-    }
-}
-
-pub fn player_state_input(
-    mut player_query: Query<&mut PlayerState>,
-    input: Res<Input<KeyCode>>,
-    mut history_commands: EventWriter<HistoryCommands>,
-    mut rewind_settings: ResMut<RewindSettings>,
-    time: Res<Time>,
-) {
-    for mut player in player_query.iter_mut() {
-        if *player == PlayerState::Waiting {
-            if input.just_pressed(KeyCode::W) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::W)
-            } else if input.just_pressed(KeyCode::A) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::A)
-            } else if input.just_pressed(KeyCode::S) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::S)
-            } else if input.just_pressed(KeyCode::D) {
-                history_commands.send(HistoryCommands::Record);
-                *player = PlayerState::RankMove(KeyCode::D)
-            }
-        }
-
-        if *player == PlayerState::Waiting || *player == PlayerState::Dead {
-            if input.just_pressed(KeyCode::Z) {
-                history_commands.send(HistoryCommands::Rewind);
-                *player = PlayerState::Waiting;
-                rewind_settings.hold_timer =
-                    Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if input.pressed(KeyCode::Z) {
-                let range = rewind_settings.hold_range_millis.clone();
-                let acceleration = rewind_settings.hold_acceleration;
-
-                if let Some(RewindTimer { velocity, timer }) = &mut rewind_settings.hold_timer {
-                    *velocity = (*velocity - (acceleration * time.delta_seconds()))
-                        .clamp(range.start as f32, range.end as f32);
-
-                    timer.tick(time.delta());
-
-                    if timer.just_finished() {
-                        history_commands.send(HistoryCommands::Rewind);
-                        *player = PlayerState::Waiting;
-
-                        timer.set_duration(Duration::from_millis(*velocity as u64));
-                    }
-                }
-            } else if input.just_pressed(KeyCode::R) {
-                history_commands.send(HistoryCommands::Reset);
-                *player = PlayerState::Waiting;
-            }
-        }
-    }
-}
-
-pub fn move_player_by_table(
-    table_query: Query<&MoveTable>,
-    mut player_query: Query<(&mut MovementTimer, &mut PlayerState)>,
-    mut movement_writer: EventWriter<PlayerMovementEvent>,
-    time: Res<Time>,
-) {
-    for table in table_query.iter() {
-        if let Ok((mut timer, mut player)) = player_query.get_single_mut() {
-            timer.0.tick(time.delta());
-
-            if timer.0.finished() {
-                match *player {
-                    PlayerState::RankMove(key) => {
-                        for (i, rank) in table.table.iter().enumerate() {
-                            if rank.contains(&Some(key)) {
-                                movement_writer.send(PlayerMovementEvent {
-                                    direction: DIRECTION_ORDER[i],
-                                });
-                            }
-                        }
-                        *player = PlayerState::FileMove(key);
-                        timer.0.reset();
-                    }
-                    PlayerState::FileMove(key) => {
-                        for rank in table.table.iter() {
-                            for (i, cell) in rank.iter().enumerate() {
-                                if *cell == Some(key) {
-                                    movement_writer.send(PlayerMovementEvent {
-                                        direction: DIRECTION_ORDER[i],
-                                    });
-                                }
-                            }
-                        }
-                        *player = PlayerState::Waiting;
-                        timer.0.reset();
-                    }
-                    _ => {}
-                }
-            }
-        }
-    }
-}
-
 pub fn check_death(
-    mut player_query: Query<(Entity, &GridCoords, &mut PlayerState)>,
+    mut willo_query: Query<(Entity, &GridCoords, &mut WilloState)>,
     exorcism_query: Query<(Entity, &GridCoords), With<ExorcismBlock>>,
     mut death_event_writer: EventWriter<DeathEvent>,
 ) {
-    if let Ok((entity, player_coords, mut player_state)) = player_query.get_single_mut() {
-        if *player_state != PlayerState::Dead
-            && exorcism_query.iter().any(|(_, g)| *g == *player_coords)
-        {
-            *player_state = PlayerState::Dead;
+    if let Ok((entity, coords, mut willo)) = willo_query.get_single_mut() {
+        if *willo != WilloState::Dead && exorcism_query.iter().any(|(_, g)| *g == *coords) {
+            *willo = WilloState::Dead;
             death_event_writer.send(DeathEvent {
-                player_entity: entity,
+                willo_entity: entity,
             });
         }
     }

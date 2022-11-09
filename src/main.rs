@@ -11,8 +11,10 @@ mod level_select;
 mod nine_slice;
 mod previous_component;
 mod resources;
+mod sokoban;
 mod sugar;
 mod ui;
+mod willo;
 
 use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
 use bevy::{prelude::*, render::texture::ImageSettings};
@@ -63,7 +65,6 @@ fn main() {
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
-        .add_plugin(FromComponentAnimator::<sugar::PlayerAnimationState>::new())
         .add_event::<animation::AnimationEvent>()
         .add_loopless_state(GameState::AssetLoading)
         .add_loading_state(
@@ -73,7 +74,8 @@ fn main() {
         )
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
-        .add_event::<gameplay::PlayerMovementEvent>()
+        .add_plugin(willo::WilloPlugin)
+        .add_plugin(sokoban::SokobanPlugin)
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_event::<gameplay::GoalEvent>()
@@ -114,23 +116,6 @@ fn main() {
                 .into(),
         )
         .add_system(
-            gameplay::systems::move_table_update
-                .run_in_state(GameState::Gameplay)
-                .before(SystemLabels::Input),
-        )
-        .add_system(
-            gameplay::systems::player_state_input
-                .run_in_state(GameState::Gameplay)
-                .label(SystemLabels::Input)
-                .before(history::FlushHistoryCommands),
-        )
-        .add_system(
-            gameplay::systems::perform_grid_coords_movement
-                .run_in_state(GameState::Gameplay)
-                .label(SystemLabels::MoveTableUpdate)
-                .before(from_component::FromComponentLabel),
-        )
-        .add_system(
             gameplay::systems::check_death
                 .run_in_state(GameState::Gameplay)
                 .label(SystemLabels::CheckDeath)
@@ -146,37 +131,14 @@ fn main() {
                 .run_in_state(GameState::Gameplay)
                 .after(SystemLabels::CheckDeath),
         )
-        .add_system(
-            gameplay::systems::move_player_by_table
-                .run_in_state(GameState::Gameplay)
-                .after(SystemLabels::MoveTableUpdate)
-                .after(history::FlushHistoryCommands),
-        )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
         .add_system_to_stage(
             CoreStage::PreUpdate,
             gameplay::systems::update_control_display.run_in_state(GameState::Gameplay),
         )
-        // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
-        // see https://github.com/vleue/bevy_easings/issues/23
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-            sugar::reset_player_easing
-                .run_not_in_state(GameState::AssetLoading)
-                .before("ease_movement"),
-        )
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-            sugar::ease_movement
-                .run_not_in_state(GameState::AssetLoading)
-                .label("ease_movement"),
-        )
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
-        .add_system(sugar::play_death_animations.run_not_in_state(GameState::AssetLoading))
-        .add_system(sugar::history_sugar.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<bundles::PlayerBundle>("Willo")
         .register_ldtk_entity::<bundles::InputBlockBundle>("W")
         .register_ldtk_entity::<bundles::InputBlockBundle>("A")
         .register_ldtk_entity::<bundles::InputBlockBundle>("S")
@@ -184,9 +146,6 @@ fn main() {
         .register_ldtk_entity::<bundles::GoalBundle>("Goal")
         .register_ldtk_entity::<bundles::MoveTableBundle>("Table")
         .register_ldtk_entity::<bundles::GrassBundle>("Grass")
-        .register_ldtk_int_cell::<bundles::WallBundle>(1)
-        .register_ldtk_int_cell::<bundles::WallBundle>(3)
-        .register_ldtk_int_cell::<bundles::WallBundle>(4)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
 
