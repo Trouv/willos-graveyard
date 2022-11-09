@@ -1,8 +1,8 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
-    gameplay::{DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
-    movement_table::MovementTable,
+    gameplay::{DeathEvent, GoalEvent, LevelCardEvent},
+    movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
     AssetHolder, GameState,

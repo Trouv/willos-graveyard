@@ -1,10 +1,10 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::SpriteSheetAnimation,
-    gameplay::Direction,
     gameplay::{xy_translation, *},
     history::{History, HistoryCommands},
-    movement_table::MovementTable,
+    movement_table::Direction,
+    movement_table::MovementTimer,
     resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
     *,
@@ -24,12 +24,6 @@ impl Plugin for WilloPlugin {
                     .run_in_state(GameState::Gameplay)
                     .label(SystemLabels::Input)
                     .before(history::FlushHistoryCommands),
-            )
-            .add_system(
-                move_willo_by_table
-                    .run_in_state(GameState::Gameplay)
-                    .after(SystemLabels::MoveTableUpdate)
-                    .after(history::FlushHistoryCommands),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
@@ -65,17 +59,6 @@ pub enum WilloState {
 impl Default for WilloState {
     fn default() -> WilloState {
         WilloState::Waiting
-    }
-}
-
-const MOVEMENT_SECONDS: f32 = 0.14;
-
-#[derive(Clone, Debug, Component)]
-struct MovementTimer(Timer);
-
-impl Default for MovementTimer {
-    fn default() -> MovementTimer {
-        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
     }
 }
 
@@ -198,49 +181,6 @@ fn play_death_animations(
     for DeathEvent { willo_entity } in death_event_reader.iter() {
         if let Ok(mut animation_state) = willo_query.get_mut(*willo_entity) {
             *animation_state = WilloAnimationState::Dying;
-        }
-    }
-}
-
-fn move_willo_by_table(
-    table_query: Query<&MovementTable>,
-    mut willo_query: Query<(&mut MovementTimer, &mut WilloState)>,
-    mut movement_writer: EventWriter<WilloMovementEvent>,
-    time: Res<Time>,
-) {
-    for table in table_query.iter() {
-        if let Ok((mut timer, mut willo)) = willo_query.get_single_mut() {
-            timer.0.tick(time.delta());
-
-            if timer.0.finished() {
-                match *willo {
-                    WilloState::RankMove(key) => {
-                        for (i, rank) in table.table.iter().enumerate() {
-                            if rank.contains(&Some(key)) {
-                                movement_writer.send(WilloMovementEvent {
-                                    direction: DIRECTION_ORDER[i],
-                                });
-                            }
-                        }
-                        *willo = WilloState::FileMove(key);
-                        timer.0.reset();
-                    }
-                    WilloState::FileMove(key) => {
-                        for rank in table.table.iter() {
-                            for (i, cell) in rank.iter().enumerate() {
-                                if *cell == Some(key) {
-                                    movement_writer.send(WilloMovementEvent {
-                                        direction: DIRECTION_ORDER[i],
-                                    });
-                                }
-                            }
-                        }
-                        *willo = WilloState::Waiting;
-                        timer.0.reset();
-                    }
-                    _ => {}
-                }
-            }
         }
     }
 }

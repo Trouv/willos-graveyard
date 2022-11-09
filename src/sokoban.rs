@@ -1,8 +1,7 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
-use crate::gameplay::Direction;
 use crate::{
     gameplay::xy_translation,
-    movement_table::MovementTable,
+    movement_table::{Direction, MovementTable},
     willo::{WilloAnimationState, WilloMovementEvent},
     *,
 };
