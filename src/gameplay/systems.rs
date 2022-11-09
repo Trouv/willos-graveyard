@@ -2,7 +2,7 @@ use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
     gameplay::{DeathEvent, GoalEvent, LevelCardEvent},
-    gravestone::InputBlock,
+    gravestone::Gravestone,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
@@ -54,7 +54,7 @@ pub fn schedule_level_card(
 pub fn check_goal(
     mut commands: Commands,
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
-    block_query: Query<(Entity, &GridCoords), With<InputBlock>>,
+    block_query: Query<(Entity, &GridCoords), With<Gravestone>>,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut goal_events: EventWriter<GoalEvent>,
     level_selection: Res<LevelSelection>,

@@ -1,5 +1,5 @@
 use crate::{
-    gravestone::InputBlock,
+    gravestone::Gravestone,
     willo::{WilloMovementEvent, WilloState},
     *,
 };
@@ -79,7 +79,7 @@ struct MovementTableBundle {
 
 fn movement_table_update(
     mut table_query: Query<(&GridCoords, &mut MovementTable)>,
-    input_block_query: Query<(&GridCoords, &InputBlock)>,
+    input_block_query: Query<(&GridCoords, &Gravestone)>,
 ) {
     for (table_grid_coords, mut table) in table_query.iter_mut() {
         table.table = [[None; 4]; 4];

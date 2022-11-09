@@ -9,21 +9,21 @@ pub struct GravestonePlugin;
 impl Plugin for GravestonePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
-            .register_ldtk_entity::<InputBlockBundle>("W")
-            .register_ldtk_entity::<InputBlockBundle>("A")
-            .register_ldtk_entity::<InputBlockBundle>("S")
-            .register_ldtk_entity::<InputBlockBundle>("D");
+            .register_ldtk_entity::<GravestoneBundle>("W")
+            .register_ldtk_entity::<GravestoneBundle>("A")
+            .register_ldtk_entity::<GravestoneBundle>("S")
+            .register_ldtk_entity::<GravestoneBundle>("D");
     }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub struct InputBlock {
+pub struct Gravestone {
     pub key_code: KeyCode,
 }
 
-impl From<EntityInstance> for InputBlock {
+impl From<EntityInstance> for Gravestone {
     fn from(entity_instance: EntityInstance) -> Self {
-        InputBlock {
+        Gravestone {
             key_code: match entity_instance.identifier.as_ref() {
                 "W" => KeyCode::W,
                 "A" => KeyCode::A,
@@ -35,14 +35,14 @@ impl From<EntityInstance> for InputBlock {
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-struct InputBlockBundle {
+struct GravestoneBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     history: History<GridCoords>,
     #[from_entity_instance]
     rigid_body: RigidBody,
     #[from_entity_instance]
-    input_block: InputBlock,
+    gravestone: Gravestone,
     #[sprite_sheet_bundle]
     #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
@@ -50,7 +50,7 @@ struct InputBlockBundle {
 
 fn spawn_gravestone_body(
     mut commands: Commands,
-    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<InputBlock>>,
+    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<Gravestone>>,
 ) {
     for (entity, texture_handle) in gravestones.iter() {
         let index_range = 11..22_usize;
