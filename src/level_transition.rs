@@ -1,3 +1,4 @@
+//! Plugin, events, and utilities providing functionality for level transitions.
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
     gameplay::components::*,
@@ -11,6 +12,7 @@ use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use iyes_loopless::prelude::*;
 use std::time::Duration;
 
+/// Plugin providing functionality for level transitions.
 pub struct LevelTransitionPlugin;
 
 impl Plugin for LevelTransitionPlugin {
@@ -28,6 +30,7 @@ impl Plugin for LevelTransitionPlugin {
     }
 }
 
+/// Component that marks the level card and stores its current state.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 enum LevelCard {
     Rising,
@@ -36,6 +39,8 @@ enum LevelCard {
     End,
 }
 
+/// Event that fires during the level card rising/falling animation, describing the current stage
+/// of the animation.
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub enum LevelCardEvent {
     Rise(LevelSelection),
@@ -44,6 +49,9 @@ pub enum LevelCardEvent {
     Despawn,
 }
 
+/// Utility for causing a level card to perform its animation.
+///
+/// Must be accompanied by a change to the [GameState::LevelTransition] state to work.
 pub fn schedule_level_card(
     level_card_events: &mut EventScheduler<LevelCardEvent>,
     level_selection: LevelSelection,
