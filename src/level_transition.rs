@@ -1,5 +1,5 @@
 use crate::{
-    event_scheduler::EventScheduler,
+    event_scheduler::{EventScheduler, EventSchedulerPlugin},
     gameplay::components::*,
     nine_slice::*,
     ui::font_scale::{FontScale, FontSize},
@@ -11,8 +11,25 @@ use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use iyes_loopless::prelude::*;
 use std::time::Duration;
 
+pub struct LevelTransitionPlugin;
+
+impl Plugin for LevelTransitionPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugin(EventSchedulerPlugin::<LevelCardEvent>::new())
+            .add_startup_system(schedule_first_level_card)
+            .add_system_set(
+                ConditionSet::new()
+                    .run_in_state(GameState::LevelTransition)
+                    .with_system(spawn_level_card)
+                    .with_system(load_next_level)
+                    .with_system(level_card_update)
+                    .into(),
+            );
+    }
+}
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum LevelCard {
+enum LevelCard {
     Rising,
     Holding,
     Falling,
@@ -54,14 +71,14 @@ pub fn schedule_level_card(
 // add buffer to it if needed.
 //
 // Loading the first level bugs out sometimes because this is a startup system.
-pub fn schedule_first_level_card(
+fn schedule_first_level_card(
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     level_selection: Res<LevelSelection>,
 ) {
     schedule_level_card(&mut level_card_events, level_selection.clone(), 800);
 }
 
-pub fn load_next_level(
+fn load_next_level(
     mut commands: Commands,
     mut level_card_events: EventReader<LevelCardEvent>,
     mut level_selection: ResMut<LevelSelection>,
@@ -85,7 +102,7 @@ pub fn load_next_level(
     }
 }
 
-pub fn spawn_level_card(
+fn spawn_level_card(
     mut commands: Commands,
     mut reader: EventReader<LevelCardEvent>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
@@ -237,7 +254,7 @@ pub fn spawn_level_card(
     }
 }
 
-pub fn level_card_update(
+fn level_card_update(
     mut commands: Commands,
     mut card_query: Query<(Entity, &mut LevelCard, &mut Style)>,
     mut level_card_events: EventReader<LevelCardEvent>,
