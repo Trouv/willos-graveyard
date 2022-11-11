@@ -124,7 +124,6 @@ fn spawn_level_card(
     mut images: ResMut<Assets<Image>>,
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
-    dbg!(&transition_to);
     let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
     let mut level_num = None;
 
