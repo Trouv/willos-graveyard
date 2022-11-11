@@ -77,31 +77,6 @@ fn clean_up_transition_to_resource(mut commands: Commands) {
     commands.remove_resource::<TransitionTo>()
 }
 
-fn load_next_level(
-    mut commands: Commands,
-    mut level_card_events: EventReader<LevelCardEvent>,
-    mut level_selection: ResMut<LevelSelection>,
-    mut first_card_skipped: Local<bool>,
-    transition_to: Res<TransitionTo>,
-    asset_holder: Res<AssetHolder>,
-) {
-    for event in level_card_events.iter() {
-        if let LevelCardEvent::Block = event {
-            if *first_card_skipped {
-                *level_selection = transition_to.0.clone()
-            } else {
-                commands.spawn_bundle(LdtkWorldBundle {
-                    ldtk_handle: asset_holder.ldtk.clone(),
-                    transform: Transform::from_xyz(32., 32., 0.),
-                    ..Default::default()
-                });
-
-                *first_card_skipped = true;
-            }
-        }
-    }
-}
-
 fn spawn_level_card(
     mut commands: Commands,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
@@ -249,6 +224,31 @@ fn spawn_level_card(
     commands
         .entity(ui_root_query.single())
         .add_child(level_card_entity);
+}
+
+fn load_next_level(
+    mut commands: Commands,
+    mut level_card_events: EventReader<LevelCardEvent>,
+    mut level_selection: ResMut<LevelSelection>,
+    mut first_card_skipped: Local<bool>,
+    transition_to: Res<TransitionTo>,
+    asset_holder: Res<AssetHolder>,
+) {
+    for event in level_card_events.iter() {
+        if let LevelCardEvent::Block = event {
+            if *first_card_skipped {
+                *level_selection = transition_to.0.clone()
+            } else {
+                commands.spawn_bundle(LdtkWorldBundle {
+                    ldtk_handle: asset_holder.ldtk.clone(),
+                    transform: Transform::from_xyz(32., 32., 0.),
+                    ..Default::default()
+                });
+
+                *first_card_skipped = true;
+            }
+        }
+    }
 }
 
 fn level_card_update(
