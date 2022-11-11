@@ -18,6 +18,13 @@ pub struct LevelTransitionPlugin;
 impl Plugin for LevelTransitionPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EventSchedulerPlugin::<LevelCardEvent>::new())
+            .add_system(
+                trigger_level_transition_state
+                    .run_not_in_state(GameState::AssetLoading)
+                    .run_not_in_state(GameState::LevelTransition)
+                    .run_if_resource_added::<TransitionTo>(),
+            )
+            .add_exit_system(GameState::LevelTransition, clean_up_transition_to_resource)
             .add_startup_system(schedule_first_level_card)
             .add_system_set(
                 ConditionSet::new()
@@ -29,6 +36,9 @@ impl Plugin for LevelTransitionPlugin {
             );
     }
 }
+
+/// Resource that can be inserted to trigger a level transition.
+pub struct TransitionTo(pub LevelSelection);
 
 /// Component that marks the level card and stores its current state.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
@@ -73,6 +83,14 @@ pub fn schedule_level_card(
         LevelCardEvent::Despawn,
         Duration::from_millis(4500 + offset_millis),
     );
+}
+
+fn trigger_level_transition_state(mut commands: Commands) {
+    commands.insert_resource(NextState(GameState::LevelTransition));
+}
+
+fn clean_up_transition_to_resource(mut commands: Commands) {
+    commands.remove_resource::<TransitionTo>()
 }
 
 // TODO: change the logic for level cards to rise on entering `LevelTransition`, with some stage to
