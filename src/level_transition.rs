@@ -50,14 +50,9 @@ impl Plugin for LevelTransitionPlugin {
 #[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component)]
 pub struct TransitionTo(pub LevelSelection);
 
-/// Component that marks the level card and stores its current state.
+/// Component that marks the level card.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-enum LevelCard {
-    Rising,
-    Holding,
-    Falling,
-    End,
-}
+struct LevelCard;
 
 /// Event that fires during the level card rising/falling animation, describing the current stage
 /// of the animation.
@@ -244,13 +239,11 @@ fn spawn_level_card(
                 })
                 .insert(FontScale::from(FontSize::Medium));
         })
+        .insert(LevelCard)
         .id();
 
     if level_num.is_some() {
-        commands.entity(level_card_entity).insert(LevelCard::Rising);
         schedule_level_card(&mut level_card_events);
-    } else {
-        commands.entity(level_card_entity).insert(LevelCard::End);
     }
 
     commands
@@ -260,15 +253,12 @@ fn spawn_level_card(
 
 fn level_card_update(
     mut commands: Commands,
-    mut card_query: Query<(Entity, &mut LevelCard, &mut Style)>,
+    mut card_query: Query<(Entity, &mut Style), With<LevelCard>>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
     for event in level_card_events.iter() {
-        for (entity, mut card, style) in card_query.iter_mut() {
+        for (entity, style) in card_query.iter_mut() {
             match event {
-                LevelCardEvent::Block => {
-                    *card = LevelCard::Holding;
-                }
                 LevelCardEvent::Fall => {
                     commands.entity(entity).insert(style.clone().ease_to(
                         Style {
@@ -286,12 +276,12 @@ fn level_card_update(
                     ));
 
                     commands.insert_resource(NextState(GameState::Gameplay));
-                    *card = LevelCard::Falling;
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT
                     commands.entity(entity).despawn_recursive();
                 }
+                _ => (),
             }
         }
     }
