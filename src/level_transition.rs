@@ -1,4 +1,4 @@
-//! Plugin, events, and utilities providing functionality for level transitions.
+//! Plugin providing functionality for level transitions.
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
     gameplay::components::*,
@@ -68,9 +68,6 @@ enum LevelCardEvent {
     Despawn,
 }
 
-/// Utility for causing a level card to perform its animation.
-///
-/// Must be accompanied by a change to the [GameState::LevelTransition] state to work.
 fn schedule_level_card(level_card_events: &mut EventScheduler<LevelCardEvent>) {
     level_card_events.schedule(LevelCardEvent::Block, Duration::from_millis(1500));
     level_card_events.schedule(LevelCardEvent::Fall, Duration::from_millis(3000));
