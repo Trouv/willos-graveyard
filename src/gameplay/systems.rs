@@ -1,7 +1,9 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
-    gameplay::{DeathEvent, Direction, GoalEvent, LevelCardEvent, DIRECTION_ORDER},
+    gameplay::{DeathEvent, GoalEvent, LevelCardEvent},
+    gravestone::Gravestone,
+    movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
     AssetHolder, GameState,
@@ -52,7 +54,7 @@ pub fn schedule_level_card(
 pub fn check_goal(
     mut commands: Commands,
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
-    block_query: Query<(Entity, &GridCoords), With<InputBlock>>,
+    block_query: Query<(Entity, &GridCoords), With<Gravestone>>,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut goal_events: EventWriter<GoalEvent>,
     level_selection: Res<LevelSelection>,
@@ -120,7 +122,7 @@ pub fn check_goal(
 
 pub fn update_control_display(
     mut commands: Commands,
-    move_table_query: Query<&MoveTable, Changed<MoveTable>>,
+    move_table_query: Query<&MovementTable, Changed<MovementTable>>,
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
     assets: Res<AssetServer>,
 ) {

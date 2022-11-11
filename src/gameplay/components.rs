@@ -1,23 +1,4 @@
 use bevy::prelude::*;
-use bevy_ecs_ldtk::prelude::*;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub struct InputBlock {
-    pub key_code: KeyCode,
-}
-
-impl From<EntityInstance> for InputBlock {
-    fn from(entity_instance: EntityInstance) -> Self {
-        InputBlock {
-            key_code: match entity_instance.identifier.as_ref() {
-                "W" => KeyCode::W,
-                "A" => KeyCode::A,
-                "S" => KeyCode::S,
-                _ => KeyCode::D,
-            },
-        }
-    }
-}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct Goal {
@@ -26,11 +7,6 @@ pub struct Goal {
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ExorcismBlock;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct MoveTable {
-    pub table: [[Option<KeyCode>; 4]; 4],
-}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum LevelCard {

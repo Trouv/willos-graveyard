@@ -1,36 +1,12 @@
-use crate::{gameplay::components::*, history::History, sokoban::RigidBody};
+use crate::gameplay::components::*;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-
-#[derive(Clone, Bundle, LdtkEntity)]
-pub struct InputBlockBundle {
-    #[grid_coords]
-    grid_coords: GridCoords,
-    history: History<GridCoords>,
-    #[from_entity_instance]
-    rigid_body: RigidBody,
-    #[from_entity_instance]
-    input_block: InputBlock,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    sprite_sheet_bundle: SpriteSheetBundle,
-}
 
 #[derive(Clone, Default, Bundle, LdtkEntity)]
 pub struct GoalBundle {
     #[grid_coords]
     pub grid_coords: GridCoords,
     pub goal: Goal,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
-}
-
-#[derive(Clone, Bundle, LdtkEntity)]
-pub struct MoveTableBundle {
-    #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub move_table: MoveTable,
     #[sprite_sheet_bundle]
     #[bundle]
     pub sprite_sheet_bundle: SpriteSheetBundle,
