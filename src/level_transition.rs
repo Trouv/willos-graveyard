@@ -62,7 +62,7 @@ enum LevelCard {
 /// Event that fires during the level card rising/falling animation, describing the current stage
 /// of the animation.
 #[derive(Clone, Eq, PartialEq, Debug)]
-pub enum LevelCardEvent {
+enum LevelCardEvent {
     Block,
     Fall,
     Despawn,
