@@ -81,6 +81,7 @@ fn main() {
         .add_plugin(sokoban::SokobanPlugin)
         .add_plugin(movement_table::MovementTablePlugin)
         .add_plugin(gravestone::GravestonePlugin)
+        .add_plugin(level_transition::LevelTransitionPlugin)
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_event::<gameplay::GoalEvent>()
