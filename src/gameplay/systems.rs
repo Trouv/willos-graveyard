@@ -1,8 +1,9 @@
 use crate::{
     event_scheduler::EventScheduler,
     gameplay::components::*,
-    gameplay::{DeathEvent, GoalEvent, LevelCardEvent},
+    gameplay::{DeathEvent, GoalEvent},
     gravestone::Gravestone,
+    level_transition::{schedule_level_card, LevelCardEvent},
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
@@ -11,7 +12,6 @@ use crate::{
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
-use std::time::Duration;
 
 pub fn check_death(
     mut willo_query: Query<(Entity, &GridCoords, &mut WilloState)>,
@@ -26,29 +26,6 @@ pub fn check_death(
             });
         }
     }
-}
-
-pub fn schedule_level_card(
-    level_card_events: &mut EventScheduler<LevelCardEvent>,
-    level_selection: LevelSelection,
-    offset_millis: u64,
-) {
-    level_card_events.schedule(
-        LevelCardEvent::Rise(level_selection.clone()),
-        Duration::from_millis(offset_millis),
-    );
-    level_card_events.schedule(
-        LevelCardEvent::Block(level_selection),
-        Duration::from_millis(1500 + offset_millis),
-    );
-    level_card_events.schedule(
-        LevelCardEvent::Fall,
-        Duration::from_millis(3000 + offset_millis),
-    );
-    level_card_events.schedule(
-        LevelCardEvent::Despawn,
-        Duration::from_millis(4500 + offset_millis),
-    );
 }
 
 pub fn check_goal(

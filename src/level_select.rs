@@ -1,6 +1,7 @@
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
-    gameplay::{components::UiRoot, systems::schedule_level_card, LevelCardEvent},
+    gameplay::components::UiRoot,
+    level_transition::{schedule_level_card, LevelCardEvent},
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
     },

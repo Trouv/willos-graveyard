@@ -9,6 +9,7 @@ mod gameplay;
 mod gravestone;
 mod history;
 mod level_select;
+mod level_transition;
 mod movement_table;
 mod nine_slice;
 mod previous_component;
@@ -80,12 +81,10 @@ fn main() {
         .add_plugin(sokoban::SokobanPlugin)
         .add_plugin(movement_table::MovementTablePlugin)
         .add_plugin(gravestone::GravestonePlugin)
+        .add_plugin(level_transition::LevelTransitionPlugin)
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
         .add_event::<gameplay::GoalEvent>()
-        .add_plugin(event_scheduler::EventSchedulerPlugin::<
-            gameplay::LevelCardEvent,
-        >::new())
         .insert_resource(LdtkSettings {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
@@ -97,7 +96,6 @@ fn main() {
         .insert_resource(resources::PlayZonePortion(0.75))
         .add_startup_system(gameplay::transitions::spawn_camera)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
-        .add_startup_system(gameplay::transitions::schedule_first_level_card)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
         .add_enter_system(
             GameState::Gameplay,
@@ -111,10 +109,7 @@ fn main() {
         .add_system_set(
             ConditionSet::new()
                 .run_in_state(GameState::LevelTransition)
-                .with_system(gameplay::transitions::spawn_level_card)
                 .with_system(gameplay::transitions::spawn_control_display)
-                .with_system(gameplay::transitions::load_next_level)
-                .with_system(gameplay::transitions::level_card_update)
                 .with_system(gameplay::transitions::spawn_goal_ghosts)
                 .into(),
         )

@@ -1,6 +1,5 @@
 use crate::UNIT_LENGTH;
 use bevy::prelude::*;
-use bevy_ecs_ldtk::prelude::*;
 pub mod components;
 pub mod systems;
 pub mod transitions;
@@ -12,14 +11,6 @@ pub fn xy_translation(coords: IVec2) -> Vec2 {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct DeathEvent {
     pub willo_entity: Entity,
-}
-
-#[derive(Clone, Eq, PartialEq, Debug)]
-pub enum LevelCardEvent {
-    Rise(LevelSelection),
-    Block(LevelSelection),
-    Fall,
-    Despawn,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
