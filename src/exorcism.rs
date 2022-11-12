@@ -15,7 +15,7 @@ pub struct ExorcismPlugin;
 
 impl Plugin for ExorcismPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<DeathEvent>()
+        app.add_event::<ExorcismEvent>()
             .add_system(
                 check_death
                     .run_in_state(GameState::Gameplay)
@@ -23,35 +23,35 @@ impl Plugin for ExorcismPlugin {
                     .after(FlushHistoryCommands),
             )
             .add_system(spawn_death_card.run_in_state(GameState::Gameplay))
-            .register_ldtk_int_cell::<ExorcismBlockBundle>(2);
+            .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct DeathEvent {
+pub struct ExorcismEvent {
     pub willo_entity: Entity,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ExorcismBlock;
+struct ExorcismTile;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct DeathCard;
+struct ExorcismCard;
 
 #[derive(Clone, Bundle, LdtkIntCell)]
-struct ExorcismBlockBundle {
-    exorcism_block: ExorcismBlock,
+struct ExorcismTileBundle {
+    exorcism_tile: ExorcismTile,
 }
 
 fn check_death(
     mut willo_query: Query<(Entity, &GridCoords, &mut WilloState)>,
-    exorcism_query: Query<(Entity, &GridCoords), With<ExorcismBlock>>,
-    mut death_event_writer: EventWriter<DeathEvent>,
+    exorcism_query: Query<(Entity, &GridCoords), With<ExorcismTile>>,
+    mut death_event_writer: EventWriter<ExorcismEvent>,
 ) {
     if let Ok((entity, coords, mut willo)) = willo_query.get_single_mut() {
         if *willo != WilloState::Dead && exorcism_query.iter().any(|(_, g)| *g == *coords) {
             *willo = WilloState::Dead;
-            death_event_writer.send(DeathEvent {
+            death_event_writer.send(ExorcismEvent {
                 willo_entity: entity,
             });
         }
@@ -62,7 +62,7 @@ fn spawn_death_card(
     mut commands: Commands,
     assets: Res<AssetServer>,
     willo_query: Query<&WilloState, Changed<WilloState>>,
-    death_cards: Query<Entity, With<DeathCard>>,
+    death_cards: Query<Entity, With<ExorcismCard>>,
     mut last_state: Local<WilloState>,
     ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
@@ -115,7 +115,7 @@ fn spawn_death_card(
                         },
                     ),
                 )
-                .insert(DeathCard)
+                .insert(ExorcismCard)
                 .with_children(|parent| {
                     parent
                         .spawn_bundle(TextBundle {
