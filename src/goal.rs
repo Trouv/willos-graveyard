@@ -1,3 +1,4 @@
+//! Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 use crate::{
     gravestone::Gravestone, level_transition::TransitionTo, AssetHolder, GameState, SystemLabels,
 };
@@ -7,6 +8,7 @@ use iyes_loopless::prelude::*;
 use rand::Rng;
 use std::{ops::Range, time::Duration};
 
+/// Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 pub struct GoalPlugin;
 
 impl Plugin for GoalPlugin {
@@ -25,11 +27,13 @@ impl Plugin for GoalPlugin {
     }
 }
 
+/// Component that marks goal tiles and stores whether or not it is currently "satisfied".
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 struct Goal {
     met: bool,
 }
 
+/// Event that fires when a goal's state changes.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 enum GoalEvent {
     Met {
@@ -51,6 +55,7 @@ struct GoalBundle {
     sprite_sheet_bundle: SpriteSheetBundle,
 }
 
+/// Resource for defining the visual behavior of goal ghosts.
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 struct GoalGhostSettings {
     no_turn_length: Range<usize>,
@@ -84,6 +89,58 @@ impl Default for GoalGhostSettings {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+enum HandDirection {
+    Right,
+    Left,
+}
+
+/// Component defining the current abstract state of the goal ghost animation.
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+enum GoalAnimationState {
+    Idle,
+    Turn { hand: HandDirection, frames: usize },
+    Blinking { frames: usize },
+    Happy { frame: usize },
+    None,
+}
+
+impl Default for GoalAnimationState {
+    fn default() -> Self {
+        GoalAnimationState::Idle
+    }
+}
+
+/// Component tracking the goal ghost animation in detail.
+#[derive(Clone, Debug, Component)]
+struct GoalGhostAnimation {
+    goal_entity: Entity,
+    frame_timer: Timer,
+    column: usize,
+    frames_since_blink: usize,
+    frames_since_turn: usize,
+    state: GoalAnimationState,
+}
+
+impl GoalGhostAnimation {
+    fn new(goal_entity: Entity, frame_timer: Timer) -> GoalGhostAnimation {
+        GoalGhostAnimation {
+            goal_entity,
+            frame_timer,
+            column: 0,
+            frames_since_blink: 0,
+            frames_since_turn: 0,
+            state: GoalAnimationState::default(),
+        }
+    }
+}
+
+/// Utility for providing uniform probability over a range for a particular point in that range.
+///
+/// It behaves as if a random number was chosen within the range uniformly, but can be queried at
+/// any point in that range as if all the points below it weren't chosen.
+/// So, if the point chosen is near the end of the range, the resulting probability is higher,
+/// since the choice must have occurred *somewhere* in the range and it hasn't occurred yet.
 fn range_chance(range: &Range<usize>, current: usize) -> f32 {
     ((current as f32 - range.start as f32) / (range.end as f32 - range.start as f32)).clamp(0., 1.)
 }
@@ -153,51 +210,6 @@ fn check_goal(
         audio.play(asset_holder.victory_sound.clone_weak());
     }
 }
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-enum HandDirection {
-    Right,
-    Left,
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-enum GoalAnimationState {
-    Idle,
-    Turn { hand: HandDirection, frames: usize },
-    Blinking { frames: usize },
-    Happy { frame: usize },
-    None,
-}
-
-impl Default for GoalAnimationState {
-    fn default() -> Self {
-        GoalAnimationState::Idle
-    }
-}
-
-#[derive(Clone, Debug, Component)]
-struct GoalGhostAnimation {
-    goal_entity: Entity,
-    frame_timer: Timer,
-    column: usize,
-    frames_since_blink: usize,
-    frames_since_turn: usize,
-    state: GoalAnimationState,
-}
-
-impl GoalGhostAnimation {
-    fn new(goal_entity: Entity, frame_timer: Timer) -> GoalGhostAnimation {
-        GoalGhostAnimation {
-            goal_entity,
-            frame_timer,
-            column: 0,
-            frames_since_blink: 0,
-            frames_since_turn: 0,
-            state: GoalAnimationState::default(),
-        }
-    }
-}
-
 fn goal_ghost_event_sugar(
     mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
     mut goal_events: EventReader<GoalEvent>,
