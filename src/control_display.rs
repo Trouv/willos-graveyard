@@ -1,13 +1,15 @@
+//! Plugin providing functionality for the gameplay UI element showing the current controls.
 use crate::{
-    gameplay::components::*,
+    gameplay::components::UiRoot,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
-    resources::*,
+    resources::PlayZonePortion,
     ui::font_scale::{FontScale, FontSize},
     GameState,
 };
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
+/// Plugin providing functionality for the gameplay UI element showing the current controls.
 pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
@@ -20,6 +22,7 @@ impl Plugin for ControlDisplayPlugin {
     }
 }
 
+/// Component that marks the main ControlDisplay UI Node.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 struct ControlDisplay;
 
