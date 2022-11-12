@@ -1,12 +1,31 @@
 use crate::{
     gameplay::components::UiRoot,
+    history::FlushHistoryCommands,
     ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
+    GameState, SystemLabels,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
+use iyes_loopless::prelude::*;
 use std::time::Duration;
+
+pub struct ExorcismPlugin;
+
+impl Plugin for ExorcismPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<DeathEvent>()
+            .add_system(
+                check_death
+                    .run_in_state(GameState::Gameplay)
+                    .label(SystemLabels::CheckDeath)
+                    .after(FlushHistoryCommands),
+            )
+            .add_system(spawn_death_card.run_in_state(GameState::Gameplay))
+            .register_ldtk_int_cell::<ExorcismBlockBundle>(2);
+    }
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ExorcismBlock;
