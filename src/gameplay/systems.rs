@@ -1,5 +1,4 @@
 use crate::{
-    event_scheduler::EventScheduler,
     gameplay::components::*,
     gameplay::{DeathEvent, GoalEvent},
     gravestone::Gravestone,
@@ -30,7 +29,6 @@ pub fn check_goal(
     mut commands: Commands,
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
     block_query: Query<(Entity, &GridCoords), With<Gravestone>>,
-    mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     mut goal_events: EventWriter<GoalEvent>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
@@ -83,11 +81,9 @@ pub fn check_goal(
                 .enumerate()
                 .find(|(i, level)| level_selection.is_match(i, level))
             {
-                schedule_level_card(
-                    &mut level_card_events,
-                    LevelSelection::Index(level_index + 1),
-                    800,
-                );
+                // Currently this doesn't have a time buffer like it used to.
+                // This will change as we make a more elaborate level transition workflow.
+                commands.insert_resource(TransitionTo(LevelSelection::Index(level_index + 1)));
             }
         }
 

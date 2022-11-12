@@ -1,7 +1,7 @@
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
     gameplay::components::UiRoot,
-    level_transition::{schedule_level_card, LevelCardEvent},
+    level_transition::TransitionTo,
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
     },
@@ -202,15 +202,11 @@ fn unpause(mut commands: Commands, input: Res<Input<KeyCode>>) {
     }
 }
 
-fn select_level(
-    mut commands: Commands,
-    mut ui_actions: EventReader<UiAction>,
-    mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
-) {
+fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction>) {
     for action in ui_actions.iter() {
         if let UiAction::GoToLevel(level_selection) = action {
             commands.insert_resource(NextState(GameState::Gameplay));
-            schedule_level_card(&mut level_card_events, level_selection.clone(), 50);
+            commands.insert_resource(TransitionTo(level_selection.clone()));
             commands.insert_resource(NextState(GameState::LevelTransition));
         }
     }
