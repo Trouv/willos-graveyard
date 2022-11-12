@@ -12,14 +12,3 @@ pub fn xy_translation(coords: IVec2) -> Vec2 {
 pub struct DeathEvent {
     pub willo_entity: Entity,
 }
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum GoalEvent {
-    Met {
-        goal_entity: Entity,
-        stone_entity: Entity,
-    },
-    UnMet {
-        goal_entity: Entity,
-    },
-}
