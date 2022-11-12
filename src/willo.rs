@@ -1,7 +1,7 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    exorcism::DeathEvent,
+    exorcism::ExorcismEvent,
     gameplay::xy_translation,
     history::FlushHistoryCommands,
     history::{History, HistoryCommands},
@@ -191,9 +191,9 @@ fn history_sugar(
 
 fn play_death_animations(
     mut willo_query: Query<&mut WilloAnimationState>,
-    mut death_event_reader: EventReader<DeathEvent>,
+    mut death_event_reader: EventReader<ExorcismEvent>,
 ) {
-    for DeathEvent { willo_entity } in death_event_reader.iter() {
+    for ExorcismEvent { willo_entity } in death_event_reader.iter() {
         if let Ok(mut animation_state) = willo_query.get_mut(*willo_entity) {
             *animation_state = WilloAnimationState::Dying;
         }
