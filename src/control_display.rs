@@ -8,9 +8,9 @@ use crate::{
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-pub struct MovementDisplayPlugin;
+pub struct ControlDisplayPlugin;
 
-impl Plugin for MovementDisplayPlugin {
+impl Plugin for ControlDisplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(spawn_control_display.run_in_state(GameState::LevelTransition))
             .add_system_to_stage(
@@ -21,7 +21,7 @@ impl Plugin for MovementDisplayPlugin {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ControlDisplayNode;
+struct ControlDisplay;
 
 fn spawn_control_display(
     mut commands: Commands,
@@ -54,7 +54,7 @@ fn spawn_control_display(
                 transform: Transform::from_xyz(0., 0., 1.),
                 ..Default::default()
             })
-            .insert(ControlDisplayNode)
+            .insert(ControlDisplay)
             .id();
 
         commands
@@ -66,7 +66,7 @@ fn spawn_control_display(
 fn update_control_display(
     mut commands: Commands,
     move_table_query: Query<&MovementTable, Changed<MovementTable>>,
-    control_display_query: Query<Entity, With<ControlDisplayNode>>,
+    control_display_query: Query<Entity, With<ControlDisplay>>,
     assets: Res<AssetServer>,
 ) {
     enum ControlNode {

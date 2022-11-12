@@ -3,6 +3,7 @@
 
 mod animation;
 mod bundles;
+mod control_display;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
@@ -10,7 +11,6 @@ mod gravestone;
 mod history;
 mod level_select;
 mod level_transition;
-mod movement_display;
 mod movement_table;
 mod nine_slice;
 mod previous_component;
@@ -78,6 +78,7 @@ fn main() {
         )
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
+        .add_plugin(control_display::ControlDisplayPlugin)
         .add_plugin(willo::WilloPlugin)
         .add_plugin(sokoban::SokobanPlugin)
         .add_plugin(movement_table::MovementTablePlugin)
