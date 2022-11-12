@@ -3,8 +3,22 @@ use crate::{
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     resources::*,
     ui::font_scale::{FontScale, FontSize},
+    GameState,
 };
 use bevy::prelude::*;
+use iyes_loopless::prelude::*;
+
+pub struct MovementDisplayPlugin;
+
+impl Plugin for MovementDisplayPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(spawn_control_display.run_in_state(GameState::LevelTransition))
+            .add_system_to_stage(
+                CoreStage::PreUpdate,
+                update_control_display.run_in_state(GameState::Gameplay),
+            );
+    }
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ControlDisplayNode;

@@ -110,7 +110,6 @@ fn main() {
         .add_system_set(
             ConditionSet::new()
                 .run_in_state(GameState::LevelTransition)
-                .with_system(movement_display::spawn_control_display)
                 .with_system(gameplay::transitions::spawn_goal_ghosts)
                 .into(),
         )
@@ -131,10 +130,6 @@ fn main() {
                 .after(SystemLabels::CheckDeath),
         )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
-        .add_system_to_stage(
-            CoreStage::PreUpdate,
-            movement_display::update_control_display.run_in_state(GameState::Gameplay),
-        )
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
