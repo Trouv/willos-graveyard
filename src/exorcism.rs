@@ -1,3 +1,4 @@
+//! Plugin providing functionality for exorcism tiles, including death logic.
 use crate::{
     gameplay::components::UiRoot,
     history::FlushHistoryCommands,
@@ -11,6 +12,7 @@ use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use std::time::Duration;
 
+/// Plugin providing functionality for exorcism tiles, including death logic.
 pub struct ExorcismPlugin;
 
 impl Plugin for ExorcismPlugin {
@@ -27,14 +29,17 @@ impl Plugin for ExorcismPlugin {
     }
 }
 
+/// Component that marks exorcism tiles.
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
+struct ExorcismTile;
+
+/// Event that fires when willo steps on an exorcism tile.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct ExorcismEvent {
     pub willo_entity: Entity,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ExorcismTile;
-
+/// Component that marks the "Exorcized" card UI element.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 struct ExorcismCard;
 
