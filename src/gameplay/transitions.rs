@@ -73,46 +73,6 @@ pub fn spawn_ui_root(mut commands: Commands) {
         .insert(UiRoot);
 }
 
-pub fn spawn_control_display(
-    mut commands: Commands,
-    ui_root_query: Query<Entity, Added<UiRoot>>,
-    play_zone_portion: Res<PlayZonePortion>,
-) {
-    for ui_root_entity in ui_root_query.iter() {
-        let control_zone_ratio = 1. - **play_zone_portion;
-
-        let control_display_entity = commands
-            .spawn_bundle(NodeBundle {
-                color: UiColor(Color::NONE),
-                style: Style {
-                    flex_direction: FlexDirection::ColumnReverse,
-                    align_items: AlignItems::FlexStart,
-                    justify_content: JustifyContent::Center,
-                    align_content: AlignContent::Center,
-                    position_type: PositionType::Absolute,
-                    size: Size {
-                        width: Val::Percent(100. * control_zone_ratio),
-                        height: Val::Percent(100.),
-                    },
-                    position: UiRect {
-                        top: Val::Percent(0.),
-                        right: Val::Percent(0.),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
-                transform: Transform::from_xyz(0., 0., 1.),
-                ..Default::default()
-            })
-            .insert(ControlDisplayNode)
-            .id();
-
-        commands
-            .entity(ui_root_entity)
-            .add_child(control_display_entity);
-    }
-}
-
 pub fn spawn_death_card(
     mut commands: Commands,
     assets: Res<AssetServer>,
