@@ -1,15 +1,19 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
-    animation::SpriteSheetAnimation,
-    gameplay::{xy_translation, *},
+    animation::{FromComponentAnimator, SpriteSheetAnimation},
+    exorcism::DeathEvent,
+    gameplay::xy_translation,
+    history::FlushHistoryCommands,
     history::{History, HistoryCommands},
     movement_table::Direction,
     resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
-    *,
+    AssetHolder, GameState, SystemLabels,
 };
 use bevy::{prelude::*, utils::Duration};
 use bevy_easings::*;
+use bevy_ecs_ldtk::prelude::*;
+use iyes_loopless::prelude::*;
 
 /// Plugin providing functionality for Willo, the player character.
 pub struct WilloPlugin;
@@ -22,7 +26,7 @@ impl Plugin for WilloPlugin {
                 willo_input
                     .run_in_state(GameState::Gameplay)
                     .label(SystemLabels::Input)
-                    .before(history::FlushHistoryCommands),
+                    .before(FlushHistoryCommands),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
