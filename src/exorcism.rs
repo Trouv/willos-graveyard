@@ -27,23 +27,23 @@ impl Plugin for ExorcismPlugin {
     }
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ExorcismBlock;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct DeathCard;
-
-#[derive(Clone, Bundle, LdtkIntCell)]
-pub struct ExorcismBlockBundle {
-    pub exorcism_block: ExorcismBlock,
-}
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct DeathEvent {
     pub willo_entity: Entity,
 }
 
-pub fn check_death(
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
+struct ExorcismBlock;
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
+struct DeathCard;
+
+#[derive(Clone, Bundle, LdtkIntCell)]
+struct ExorcismBlockBundle {
+    exorcism_block: ExorcismBlock,
+}
+
+fn check_death(
     mut willo_query: Query<(Entity, &GridCoords, &mut WilloState)>,
     exorcism_query: Query<(Entity, &GridCoords), With<ExorcismBlock>>,
     mut death_event_writer: EventWriter<DeathEvent>,
@@ -58,7 +58,7 @@ pub fn check_death(
     }
 }
 
-pub fn spawn_death_card(
+fn spawn_death_card(
     mut commands: Commands,
     assets: Res<AssetServer>,
     willo_query: Query<&WilloState, Changed<WilloState>>,
