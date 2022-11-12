@@ -108,11 +108,8 @@ fn main() {
                 .run_not_in_state(GameState::AssetLoading)
                 .run_on_event::<bevy::window::WindowResized>(),
         )
-        .add_system_set(
-            ConditionSet::new()
-                .run_in_state(GameState::LevelTransition)
-                .with_system(gameplay::transitions::spawn_goal_ghosts)
-                .into(),
+        .add_system(
+            gameplay::transitions::spawn_goal_ghosts.run_in_state(GameState::LevelTransition),
         )
         .add_system(
             gameplay::systems::check_death
