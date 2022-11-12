@@ -21,9 +21,9 @@ impl Plugin for MovementDisplayPlugin {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ControlDisplayNode;
+struct ControlDisplayNode;
 
-pub fn spawn_control_display(
+fn spawn_control_display(
     mut commands: Commands,
     ui_root_query: Query<Entity, Added<UiRoot>>,
     play_zone_portion: Res<PlayZonePortion>,
@@ -63,7 +63,7 @@ pub fn spawn_control_display(
     }
 }
 
-pub fn update_control_display(
+fn update_control_display(
     mut commands: Commands,
     move_table_query: Query<&MovementTable, Changed<MovementTable>>,
     control_display_query: Query<Entity, With<ControlDisplayNode>>,
