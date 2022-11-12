@@ -12,7 +12,7 @@ pub struct GoalPlugin;
 impl Plugin for GoalPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GoalEvent>()
-            .insert_resource(GoalGhostSettings::NORMAL)
+            .init_resource::<GoalGhostSettings>()
             .add_system(spawn_goal_ghosts.run_in_state(GameState::LevelTransition))
             .add_system(
                 check_goal
@@ -66,20 +66,22 @@ struct GoalGhostSettings {
     atlas: Option<Handle<TextureAtlas>>,
 }
 
-impl GoalGhostSettings {
-    const NORMAL: GoalGhostSettings = GoalGhostSettings {
-        no_turn_length: 32..64,
-        turn_length: 12..20,
-        no_blink_length: 50..100,
-        blink_length: 0..1,
-        frame_duration: Duration::from_millis(150),
-        idle_frame_count: 8,
-        happy_frame_count: 10,
-        none_frame_index: 8,
-        num_columns: 10,
-        num_rows: 5,
-        atlas: None,
-    };
+impl Default for GoalGhostSettings {
+    fn default() -> Self {
+        GoalGhostSettings {
+            no_turn_length: 32..64,
+            turn_length: 12..20,
+            no_blink_length: 50..100,
+            blink_length: 0..1,
+            frame_duration: Duration::from_millis(150),
+            idle_frame_count: 8,
+            happy_frame_count: 10,
+            none_frame_index: 8,
+            num_columns: 10,
+            num_rows: 5,
+            atlas: None,
+        }
+    }
 }
 
 fn range_chance(range: &Range<usize>, current: usize) -> f32 {
