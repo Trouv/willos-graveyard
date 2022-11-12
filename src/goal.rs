@@ -26,12 +26,12 @@ impl Plugin for GoalPlugin {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct Goal {
-    pub met: bool,
+struct Goal {
+    met: bool,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum GoalEvent {
+enum GoalEvent {
     Met {
         goal_entity: Entity,
         stone_entity: Entity,
@@ -42,32 +42,32 @@ pub enum GoalEvent {
 }
 
 #[derive(Clone, Default, Bundle, LdtkEntity)]
-pub struct GoalBundle {
+struct GoalBundle {
     #[grid_coords]
-    pub grid_coords: GridCoords,
-    pub goal: Goal,
+    grid_coords: GridCoords,
+    goal: Goal,
     #[sprite_sheet_bundle]
     #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
+    sprite_sheet_bundle: SpriteSheetBundle,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
-pub struct GoalGhostSettings {
-    pub no_turn_length: Range<usize>,
-    pub turn_length: Range<usize>,
-    pub no_blink_length: Range<usize>,
-    pub blink_length: Range<usize>,
-    pub frame_duration: Duration,
-    pub idle_frame_count: usize,
-    pub happy_frame_count: usize,
-    pub none_frame_index: usize,
-    pub num_columns: usize,
-    pub num_rows: usize,
-    pub atlas: Option<Handle<TextureAtlas>>,
+struct GoalGhostSettings {
+    no_turn_length: Range<usize>,
+    turn_length: Range<usize>,
+    no_blink_length: Range<usize>,
+    blink_length: Range<usize>,
+    frame_duration: Duration,
+    idle_frame_count: usize,
+    happy_frame_count: usize,
+    none_frame_index: usize,
+    num_columns: usize,
+    num_rows: usize,
+    atlas: Option<Handle<TextureAtlas>>,
 }
 
 impl GoalGhostSettings {
-    pub const NORMAL: GoalGhostSettings = GoalGhostSettings {
+    const NORMAL: GoalGhostSettings = GoalGhostSettings {
         no_turn_length: 32..64,
         turn_length: 12..20,
         no_blink_length: 50..100,
@@ -82,7 +82,11 @@ impl GoalGhostSettings {
     };
 }
 
-pub fn check_goal(
+fn range_chance(range: &Range<usize>, current: usize) -> f32 {
+    ((current as f32 - range.start as f32) / (range.end as f32 - range.start as f32)).clamp(0., 1.)
+}
+
+fn check_goal(
     mut commands: Commands,
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
     block_query: Query<(Entity, &GridCoords), With<Gravestone>>,
@@ -149,13 +153,13 @@ pub fn check_goal(
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum HandDirection {
+enum HandDirection {
     Right,
     Left,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum GoalAnimationState {
+enum GoalAnimationState {
     Idle,
     Turn { hand: HandDirection, frames: usize },
     Blinking { frames: usize },
@@ -170,17 +174,17 @@ impl Default for GoalAnimationState {
 }
 
 #[derive(Clone, Debug, Component)]
-pub struct GoalGhostAnimation {
-    pub goal_entity: Entity,
-    pub frame_timer: Timer,
-    pub column: usize,
-    pub frames_since_blink: usize,
-    pub frames_since_turn: usize,
-    pub state: GoalAnimationState,
+struct GoalGhostAnimation {
+    goal_entity: Entity,
+    frame_timer: Timer,
+    column: usize,
+    frames_since_blink: usize,
+    frames_since_turn: usize,
+    state: GoalAnimationState,
 }
 
 impl GoalGhostAnimation {
-    pub fn new(goal_entity: Entity, frame_timer: Timer) -> GoalGhostAnimation {
+    fn new(goal_entity: Entity, frame_timer: Timer) -> GoalGhostAnimation {
         GoalGhostAnimation {
             goal_entity,
             frame_timer,
@@ -192,7 +196,7 @@ impl GoalGhostAnimation {
     }
 }
 
-pub fn goal_ghost_event_sugar(
+fn goal_ghost_event_sugar(
     mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
     mut goal_events: EventReader<GoalEvent>,
 ) {
@@ -214,7 +218,7 @@ pub fn goal_ghost_event_sugar(
     }
 }
 
-pub fn goal_ghost_animation(
+fn goal_ghost_animation(
     mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
     goal_ghost_settings: Res<GoalGhostSettings>,
     time: Res<Time>,
@@ -320,11 +324,7 @@ pub fn goal_ghost_animation(
     }
 }
 
-fn range_chance(range: &Range<usize>, current: usize) -> f32 {
-    ((current as f32 - range.start as f32) / (range.end as f32 - range.start as f32)).clamp(0., 1.)
-}
-
-pub fn spawn_goal_ghosts(
+fn spawn_goal_ghosts(
     mut commands: Commands,
     goals: Query<Entity, Added<Goal>>,
     mut goal_ghost_settings: ResMut<GoalGhostSettings>,
