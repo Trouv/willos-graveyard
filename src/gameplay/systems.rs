@@ -2,7 +2,7 @@ use crate::{
     gameplay::components::*,
     gameplay::{DeathEvent, GoalEvent},
     gravestone::Gravestone,
-    level_transition::{schedule_level_card, LevelCardEvent},
+    level_transition::TransitionTo,
     willo::WilloState,
     AssetHolder, GameState,
 };
