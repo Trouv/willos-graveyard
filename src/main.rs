@@ -84,10 +84,10 @@ fn main() {
         .add_plugin(sokoban::SokobanPlugin)
         .add_plugin(movement_table::MovementTablePlugin)
         .add_plugin(gravestone::GravestonePlugin)
+        .add_plugin(goal::GoalPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
         .add_event::<history::HistoryCommands>()
         .add_event::<gameplay::DeathEvent>()
-        .add_event::<goal::GoalEvent>()
         .insert_resource(LdtkSettings {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
@@ -95,7 +95,6 @@ fn main() {
         .insert_resource(Msaa { samples: 1 })
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection))
-        .insert_resource(goal::GoalGhostSettings::NORMAL)
         .insert_resource(resources::RewindSettings::NORMAL)
         .insert_resource(resources::PlayZonePortion(0.75))
         .add_startup_system(gameplay::transitions::spawn_camera)
@@ -110,7 +109,6 @@ fn main() {
                 .run_not_in_state(GameState::AssetLoading)
                 .run_on_event::<bevy::window::WindowResized>(),
         )
-        .add_system(goal::spawn_goal_ghosts.run_in_state(GameState::LevelTransition))
         .add_system(
             gameplay::systems::check_death
                 .run_in_state(GameState::Gameplay)
@@ -122,16 +120,8 @@ fn main() {
                 .run_in_state(GameState::Gameplay)
                 .label(history::FlushHistoryCommands),
         )
-        .add_system(
-            goal::check_goal
-                .run_in_state(GameState::Gameplay)
-                .after(SystemLabels::CheckDeath),
-        )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
-        .add_system(goal::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
-        .add_system(goal::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<goal::GoalBundle>("Goal")
         .register_ldtk_entity::<bundles::GrassBundle>("Grass")
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
 

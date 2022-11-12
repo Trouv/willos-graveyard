@@ -1,9 +1,29 @@
-use crate::{gravestone::Gravestone, level_transition::TransitionTo, AssetHolder, GameState};
+use crate::{
+    gravestone::Gravestone, level_transition::TransitionTo, AssetHolder, GameState, SystemLabels,
+};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use rand::Rng;
 use std::{ops::Range, time::Duration};
+
+pub struct GoalPlugin;
+
+impl Plugin for GoalPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<GoalEvent>()
+            .insert_resource(GoalGhostSettings::NORMAL)
+            .add_system(spawn_goal_ghosts.run_in_state(GameState::LevelTransition))
+            .add_system(
+                check_goal
+                    .run_in_state(GameState::Gameplay)
+                    .after(SystemLabels::CheckDeath),
+            )
+            .add_system(goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
+            .add_system(goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
+            .register_ldtk_entity::<GoalBundle>("Goal");
+    }
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct Goal {
