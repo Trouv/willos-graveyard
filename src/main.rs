@@ -3,6 +3,7 @@
 
 mod animation;
 mod bundles;
+mod control_display;
 mod event_scheduler;
 mod from_component;
 mod gameplay;
@@ -77,6 +78,7 @@ fn main() {
         )
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
+        .add_plugin(control_display::ControlDisplayPlugin)
         .add_plugin(willo::WilloPlugin)
         .add_plugin(sokoban::SokobanPlugin)
         .add_plugin(movement_table::MovementTablePlugin)
@@ -107,12 +109,8 @@ fn main() {
                 .run_not_in_state(GameState::AssetLoading)
                 .run_on_event::<bevy::window::WindowResized>(),
         )
-        .add_system_set(
-            ConditionSet::new()
-                .run_in_state(GameState::LevelTransition)
-                .with_system(gameplay::transitions::spawn_control_display)
-                .with_system(gameplay::transitions::spawn_goal_ghosts)
-                .into(),
+        .add_system(
+            gameplay::transitions::spawn_goal_ghosts.run_in_state(GameState::LevelTransition),
         )
         .add_system(
             gameplay::systems::check_death
@@ -131,16 +129,11 @@ fn main() {
                 .after(SystemLabels::CheckDeath),
         )
         .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
-        .add_system_to_stage(
-            CoreStage::PreUpdate,
-            gameplay::systems::update_control_display.run_in_state(GameState::Gameplay),
-        )
         .add_system(sugar::goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
         .register_ldtk_entity::<bundles::GoalBundle>("Goal")
         .register_ldtk_entity::<bundles::GrassBundle>("Grass")
-        .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2)
         .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
 
     #[cfg(feature = "hot")]

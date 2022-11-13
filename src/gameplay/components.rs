@@ -24,7 +24,4 @@ impl Default for WindTimer {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ControlDisplayNode;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct UiRoot;
