@@ -1,5 +1,22 @@
+use crate::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
+use iyes_loopless::prelude::*;
+
+pub struct CameraPlugin;
+
+impl Plugin for CameraPlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(PlayZonePortion(0.75))
+            .add_startup_system(spawn_camera)
+            .add_enter_system(GameState::Gameplay, fit_camera_around_play_zone_padded)
+            .add_system(
+                fit_camera_around_play_zone_padded
+                    .run_not_in_state(GameState::AssetLoading)
+                    .run_on_event::<bevy::window::WindowResized>(),
+            );
+    }
+}
 
 #[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
 pub struct PlayZonePortion(pub f32);

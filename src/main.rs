@@ -82,6 +82,7 @@ fn main() {
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
         .add_plugin(control_display::ControlDisplayPlugin)
+        .add_plugin(camera::CameraPlugin)
         .add_plugin(willo::WilloPlugin)
         .add_plugin(sokoban::SokobanPlugin)
         .add_plugin(movement_table::MovementTablePlugin)
@@ -98,19 +99,8 @@ fn main() {
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection))
         .insert_resource(resources::RewindSettings::NORMAL)
-        .insert_resource(camera::PlayZonePortion(0.75))
-        .add_startup_system(camera::spawn_camera)
         .add_startup_system(gameplay::transitions::spawn_ui_root)
         .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
-        .add_enter_system(
-            GameState::Gameplay,
-            camera::fit_camera_around_play_zone_padded,
-        )
-        .add_system(
-            camera::fit_camera_around_play_zone_padded
-                .run_not_in_state(GameState::AssetLoading)
-                .run_on_event::<bevy::window::WindowResized>(),
-        )
         .add_system(
             history::flush_history_commands::<GridCoords>
                 .run_in_state(GameState::Gameplay)
