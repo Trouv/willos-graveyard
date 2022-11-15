@@ -21,11 +21,11 @@ impl Plugin for CameraPlugin {
 #[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
 pub struct PlayZonePortion(pub f32);
 
-pub fn spawn_camera(mut commands: Commands) {
+fn spawn_camera(mut commands: Commands) {
     commands.spawn_bundle(Camera2dBundle::default());
 }
 
-pub fn fit_camera_around_play_zone_padded(
+fn fit_camera_around_play_zone_padded(
     mut camera_query: Query<(&mut Transform, &mut OrthographicProjection), With<Camera>>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
