@@ -1,19 +1,13 @@
-use crate::{
-    gameplay::components::*,
-    resources::*,
-    ui::font_scale::{FontScale, FontSize},
-    willo::WilloState,
-};
+use crate::{gameplay::components::*, resources::*};
 use bevy::prelude::*;
-use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
-use std::time::Duration;
 
 pub fn spawn_camera(mut commands: Commands) {
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(OrthographicCamera);
 }
+
 pub fn spawn_ui_root(mut commands: Commands) {
     commands
         .spawn_bundle(NodeBundle {
@@ -28,100 +22,6 @@ pub fn spawn_ui_root(mut commands: Commands) {
             ..Default::default()
         })
         .insert(UiRoot);
-}
-
-pub fn spawn_death_card(
-    mut commands: Commands,
-    assets: Res<AssetServer>,
-    willo_query: Query<&WilloState, Changed<WilloState>>,
-    death_cards: Query<Entity, With<DeathCard>>,
-    mut last_state: Local<WilloState>,
-    ui_root_query: Query<Entity, With<UiRoot>>,
-) {
-    for state in willo_query.iter() {
-        if *state == WilloState::Dead && *last_state != WilloState::Dead {
-            // Player just died
-            let death_card_entity = commands
-                .spawn_bundle(NodeBundle {
-                    color: UiColor(Color::rgba(0., 0., 0., 0.9)),
-                    visibility: Visibility { is_visible: false },
-                    ..Default::default()
-                })
-                .insert(
-                    Style {
-                        justify_content: JustifyContent::Center,
-                        align_items: AlignItems::Center,
-                        position_type: PositionType::Absolute,
-                        flex_direction: FlexDirection::ColumnReverse,
-                        size: Size {
-                            width: Val::Percent(100.),
-                            height: Val::Percent(100.),
-                        },
-                        position: UiRect {
-                            top: Val::Percent(100.),
-                            left: Val::Percent(0.),
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    }
-                    .ease_to(
-                        Style {
-                            justify_content: JustifyContent::Center,
-                            align_items: AlignItems::Center,
-                            position_type: PositionType::Absolute,
-                            flex_direction: FlexDirection::ColumnReverse,
-                            size: Size {
-                                width: Val::Percent(100.),
-                                height: Val::Percent(100.),
-                            },
-                            position: UiRect {
-                                top: Val::Percent(0.),
-                                left: Val::Percent(0.),
-                                ..Default::default()
-                            },
-                            ..Default::default()
-                        },
-                        EaseFunction::QuadraticOut,
-                        EasingType::Once {
-                            duration: Duration::from_millis(600),
-                        },
-                    ),
-                )
-                .insert(DeathCard)
-                .with_children(|parent| {
-                    parent
-                        .spawn_bundle(TextBundle {
-                            text: Text::from_section(
-                                "EXORCISED\n\nR to restart\nZ to undo",
-                                TextStyle {
-                                    font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                    color: Color::WHITE,
-                                    ..default()
-                                },
-                            )
-                            .with_alignment(TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            }),
-                            visibility: Visibility { is_visible: false },
-                            ..Default::default()
-                        })
-                        .insert(FontScale::from(FontSize::Medium));
-                })
-                .id();
-
-            commands
-                .entity(ui_root_query.single())
-                .add_child(death_card_entity);
-        } else if *state != WilloState::Dead && *last_state == WilloState::Dead {
-            // Player just un-died
-            if let Ok(entity) = death_cards.get_single() {
-                commands.entity(entity).despawn_recursive();
-            }
-        }
-
-        *last_state = *state;
-    }
 }
 
 pub fn fit_camera_around_play_zone_padded(

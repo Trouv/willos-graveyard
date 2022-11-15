@@ -1,15 +1,19 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
-    animation::SpriteSheetAnimation,
-    gameplay::{xy_translation, *},
+    animation::{FromComponentAnimator, SpriteSheetAnimation},
+    exorcism::ExorcismEvent,
+    gameplay::xy_translation,
+    history::FlushHistoryCommands,
     history::{History, HistoryCommands},
     movement_table::Direction,
     resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
-    *,
+    AssetHolder, GameState, SystemLabels,
 };
 use bevy::{prelude::*, utils::Duration};
 use bevy_easings::*;
+use bevy_ecs_ldtk::prelude::*;
+use iyes_loopless::prelude::*;
 
 /// Plugin providing functionality for Willo, the player character.
 pub struct WilloPlugin;
@@ -22,7 +26,7 @@ impl Plugin for WilloPlugin {
                 willo_input
                     .run_in_state(GameState::Gameplay)
                     .label(SystemLabels::Input)
-                    .before(history::FlushHistoryCommands),
+                    .before(FlushHistoryCommands),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
@@ -187,9 +191,9 @@ fn history_sugar(
 
 fn play_death_animations(
     mut willo_query: Query<&mut WilloAnimationState>,
-    mut death_event_reader: EventReader<DeathEvent>,
+    mut death_event_reader: EventReader<ExorcismEvent>,
 ) {
-    for DeathEvent { willo_entity } in death_event_reader.iter() {
+    for ExorcismEvent { willo_entity } in death_event_reader.iter() {
         if let Ok(mut animation_state) = willo_query.get_mut(*willo_entity) {
             *animation_state = WilloAnimationState::Dying;
         }

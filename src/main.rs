@@ -5,6 +5,7 @@ mod animation;
 mod bundles;
 mod control_display;
 mod event_scheduler;
+mod exorcism;
 mod from_component;
 mod gameplay;
 mod goal;
@@ -21,7 +22,7 @@ mod sugar;
 mod ui;
 mod willo;
 
-use animation::{FromComponentAnimator, SpriteSheetAnimationPlugin};
+use animation::SpriteSheetAnimationPlugin;
 use bevy::{prelude::*, render::texture::ImageSettings};
 
 use bevy_asset_loader::prelude::*;
@@ -85,9 +86,9 @@ fn main() {
         .add_plugin(movement_table::MovementTablePlugin)
         .add_plugin(gravestone::GravestonePlugin)
         .add_plugin(goal::GoalPlugin)
+        .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
         .add_event::<history::HistoryCommands>()
-        .add_event::<gameplay::DeathEvent>()
         .insert_resource(LdtkSettings {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
@@ -110,20 +111,12 @@ fn main() {
                 .run_on_event::<bevy::window::WindowResized>(),
         )
         .add_system(
-            gameplay::systems::check_death
-                .run_in_state(GameState::Gameplay)
-                .label(SystemLabels::CheckDeath)
-                .after(history::FlushHistoryCommands),
-        )
-        .add_system(
             history::flush_history_commands::<GridCoords>
                 .run_in_state(GameState::Gameplay)
                 .label(history::FlushHistoryCommands),
         )
-        .add_system(gameplay::transitions::spawn_death_card.run_in_state(GameState::Gameplay))
         .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<bundles::GrassBundle>("Grass")
-        .register_ldtk_int_cell::<bundles::ExorcismBlockBundle>(2);
+        .register_ldtk_entity::<bundles::GrassBundle>("Grass");
 
     #[cfg(feature = "hot")]
     {

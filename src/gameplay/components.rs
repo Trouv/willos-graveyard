@@ -1,11 +1,5 @@
 use bevy::prelude::*;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ExorcismBlock;
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct DeathCard;
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
 pub struct OrthographicCamera;
 
