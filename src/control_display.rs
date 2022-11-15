@@ -1,8 +1,8 @@
 //! Plugin providing functionality for the gameplay UI element showing the current controls.
 use crate::{
+    camera::PlayZonePortion,
     gameplay::components::UiRoot,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
-    resources::PlayZonePortion,
     ui::font_scale::{FontScale, FontSize},
     GameState,
 };
