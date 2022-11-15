@@ -4,20 +4,12 @@ use bevy_ecs_ldtk::prelude::*;
 #[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
 pub struct PlayZonePortion(pub f32);
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
-pub struct OrthographicCamera;
-
 pub fn spawn_camera(mut commands: Commands) {
-    commands
-        .spawn_bundle(Camera2dBundle::default())
-        .insert(OrthographicCamera);
+    commands.spawn_bundle(Camera2dBundle::default());
 }
 
 pub fn fit_camera_around_play_zone_padded(
-    mut camera_query: Query<
-        (&mut Transform, &mut OrthographicProjection),
-        With<OrthographicCamera>,
-    >,
+    mut camera_query: Query<(&mut Transform, &mut OrthographicProjection), With<Camera>>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
     windows: Res<Windows>,
