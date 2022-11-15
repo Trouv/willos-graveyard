@@ -1,11 +1,6 @@
 use bevy::prelude::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct Goal {
-    pub met: bool,
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ExorcismBlock;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
