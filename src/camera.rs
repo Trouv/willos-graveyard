@@ -1,8 +1,10 @@
+//! Plugin for providing the game's camera logic, fitting around the play zone and control-display.
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 
+/// Plugin for providing the game's camera logic, fitting around the play zone and control-display.
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -18,6 +20,8 @@ impl Plugin for CameraPlugin {
     }
 }
 
+/// Resource for defining the percentage of the screen ([0-1]) that should be reserved for
+/// rendering the level.
 #[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
 pub struct PlayZonePortion(pub f32);
 
