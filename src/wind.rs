@@ -15,7 +15,7 @@ impl Plugin for WindPlugin {
 }
 
 #[derive(Clone, Debug, Component)]
-pub struct WindTimer(pub Timer);
+struct WindTimer(Timer);
 
 impl Default for WindTimer {
     fn default() -> WindTimer {
@@ -24,14 +24,14 @@ impl Default for WindTimer {
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
-pub struct GrassBundle {
+struct GrassBundle {
     #[sprite_sheet_bundle]
     #[bundle]
-    pub sprite_sheet_bundle: SpriteSheetBundle,
-    pub wind_timer: WindTimer,
+    sprite_sheet_bundle: SpriteSheetBundle,
+    wind_timer: WindTimer,
 }
 
-pub fn animate_grass_system(
+fn animate_grass_system(
     time: Res<Time>,
     texture_atlases: Res<Assets<TextureAtlas>>,
     mut query: Query<(
