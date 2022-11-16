@@ -134,6 +134,9 @@ impl Default for MovementTimer {
     }
 }
 
+/// Part of the [RewindSettings] resource.
+///
+/// Provides space between rewinds and tracking rewind velocity for acceleration.
 #[derive(Clone, Debug, Default)]
 struct RewindTimer {
     velocity: f32,
@@ -149,6 +152,7 @@ impl RewindTimer {
     }
 }
 
+/// Resource defining the behavior of the rewind feature and storing its state for acceleration.
 #[derive(Clone, Debug)]
 struct RewindSettings {
     hold_range_millis: Range<u64>,
