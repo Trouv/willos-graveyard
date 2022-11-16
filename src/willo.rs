@@ -135,13 +135,13 @@ impl Default for MovementTimer {
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct RewindTimer {
-    pub velocity: f32,
-    pub timer: Timer,
+struct RewindTimer {
+    velocity: f32,
+    timer: Timer,
 }
 
 impl RewindTimer {
-    pub fn new(millis: u64) -> RewindTimer {
+    fn new(millis: u64) -> RewindTimer {
         RewindTimer {
             velocity: millis as f32,
             timer: Timer::new(Duration::from_millis(millis), true),
@@ -150,10 +150,10 @@ impl RewindTimer {
 }
 
 #[derive(Clone, Debug)]
-pub struct RewindSettings {
-    pub hold_range_millis: Range<u64>,
-    pub hold_acceleration: f32,
-    pub hold_timer: Option<RewindTimer>,
+struct RewindSettings {
+    hold_range_millis: Range<u64>,
+    hold_acceleration: f32,
+    hold_timer: Option<RewindTimer>,
 }
 
 impl Default for RewindSettings {
