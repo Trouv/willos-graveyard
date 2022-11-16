@@ -16,7 +16,6 @@ mod level_transition;
 mod movement_table;
 mod nine_slice;
 mod previous_component;
-mod resources;
 mod sokoban;
 mod sugar;
 mod ui;
