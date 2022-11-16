@@ -43,7 +43,7 @@ pub struct FlushHistoryCommands;
 #[derive(Clone, PartialEq, Eq, Debug, Default, Component, Deref, DerefMut)]
 pub struct History<C: Component + Clone>(Vec<C>);
 
-pub fn flush_history_commands<C: Component + Clone>(
+fn flush_history_commands<C: Component + Clone>(
     mut history_query: Query<(&mut History<C>, &mut C)>,
     mut history_commands: EventReader<HistoryCommands>,
 ) {
