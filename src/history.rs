@@ -1,4 +1,34 @@
 use bevy::prelude::*;
+use iyes_loopless::prelude::*;
+use std::any::Any;
+use std::marker::PhantomData;
+
+pub struct HistoryPlugin<C: Component + Clone, S> {
+    state: S,
+    phantom: PhantomData<C>,
+}
+
+impl<C: Component + Clone, S> HistoryPlugin<C, S> {
+    pub fn run_in_state(state: S) -> Self {
+        HistoryPlugin {
+            state,
+            phantom: PhantomData::<C>,
+        }
+    }
+}
+
+impl<C: Component + Clone, S> Plugin for HistoryPlugin<C, S>
+where
+    S: Any + Send + Sync + Clone + std::fmt::Debug + std::hash::Hash + Eq,
+{
+    fn build(&self, app: &mut App) {
+        app.add_event::<HistoryCommands>().add_system(
+            flush_history_commands::<C>
+                .run_in_state(self.state.clone())
+                .label(FlushHistoryCommands),
+        );
+    }
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HistoryCommands {

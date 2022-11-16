@@ -3,8 +3,7 @@ use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     exorcism::ExorcismEvent,
     gameplay::xy_translation,
-    history::FlushHistoryCommands,
-    history::{History, HistoryCommands},
+    history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
     sokoban::RigidBody,
     AssetHolder, GameState, SystemLabels,
@@ -21,6 +20,9 @@ pub struct WilloPlugin;
 impl Plugin for WilloPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentAnimator::<WilloAnimationState>::new())
+            .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
+                GameState::Gameplay,
+            ))
             .init_resource::<RewindSettings>()
             .add_event::<WilloMovementEvent>()
             .add_system(

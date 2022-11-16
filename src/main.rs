@@ -69,6 +69,10 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
+        .insert_resource(LdtkSettings {
+            set_clear_color: SetClearColor::FromEditorBackground,
+            ..default()
+        })
         .add_plugin(SpriteSheetAnimationPlugin)
         .add_event::<animation::AnimationEvent>()
         .add_loopless_state(GameState::AssetLoading)
@@ -89,21 +93,11 @@ fn main() {
         .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
         .add_plugin(wind::WindPlugin)
-        .add_event::<history::HistoryCommands>()
-        .insert_resource(LdtkSettings {
-            set_clear_color: SetClearColor::FromEditorBackground,
-            ..default()
-        })
         .insert_resource(Msaa { samples: 1 })
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection))
         .add_startup_system(gameplay::transitions::spawn_ui_root)
-        .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible)
-        .add_system(
-            history::flush_history_commands::<GridCoords>
-                .run_in_state(GameState::Gameplay)
-                .label(history::FlushHistoryCommands),
-        );
+        .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible);
 
     #[cfg(feature = "hot")]
     {
