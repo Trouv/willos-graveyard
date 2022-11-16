@@ -89,6 +89,7 @@ fn main() {
         .add_plugin(goal::GoalPlugin)
         .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
+        .add_plugin(wind::WindPlugin)
         .add_event::<history::HistoryCommands>()
         .insert_resource(LdtkSettings {
             set_clear_color: SetClearColor::FromEditorBackground,
@@ -104,9 +105,7 @@ fn main() {
             history::flush_history_commands::<GridCoords>
                 .run_in_state(GameState::Gameplay)
                 .label(history::FlushHistoryCommands),
-        )
-        .add_system(wind::animate_grass_system.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<wind::GrassBundle>("Grass");
+        );
 
     #[cfg(feature = "hot")]
     {
