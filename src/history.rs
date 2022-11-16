@@ -1,14 +1,19 @@
+//! Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 use std::any::Any;
 use std::marker::PhantomData;
 
+/// Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
 pub struct HistoryPlugin<C: Component + Clone, S> {
     state: S,
     phantom: PhantomData<C>,
 }
 
 impl<C: Component + Clone, S> HistoryPlugin<C, S> {
+    /// Constructor for the plugin.
+    ///
+    /// Allows the user to specify a particular iyes_loopless state to run the plugin in.
     pub fn run_in_state(state: S) -> Self {
         HistoryPlugin {
             state,
@@ -30,6 +35,7 @@ where
     }
 }
 
+/// Event that can be fired by the user to command the plugin to perform various history tasks.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HistoryCommands {
     Record,
@@ -37,9 +43,11 @@ pub enum HistoryCommands {
     Reset,
 }
 
+/// System label for the system that handles history commands.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
 pub struct FlushHistoryCommands;
 
+/// Component that stores the history of another component generically.
 #[derive(Clone, PartialEq, Eq, Debug, Default, Component, Deref, DerefMut)]
 pub struct History<C: Component + Clone>(Vec<C>);
 
