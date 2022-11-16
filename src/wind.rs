@@ -1,3 +1,4 @@
+//! Plugin providing the wind systems and components that react to it (currently just grass).
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
@@ -5,6 +6,7 @@ use iyes_loopless::prelude::*;
 use rand::Rng;
 use std::cmp;
 
+/// Plugin providing the wind systems and components that react to it (currently just grass).
 pub struct WindPlugin;
 
 impl Plugin for WindPlugin {
@@ -14,6 +16,7 @@ impl Plugin for WindPlugin {
     }
 }
 
+/// Component with timer defining spacing between animation updates of wind-reactive components.
 #[derive(Clone, Debug, Component)]
 struct WindTimer(Timer);
 
