@@ -1,9 +1,11 @@
 //! Plugin providing functionality for level transitions.
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
-    gameplay::components::*,
     nine_slice::*,
-    ui::font_scale::{FontScale, FontSize},
+    ui::{
+        font_scale::{FontScale, FontSize},
+        UiRoot,
+    },
     AssetHolder, GameState,
 };
 use bevy::prelude::*;

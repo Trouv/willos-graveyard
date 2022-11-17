@@ -136,7 +136,7 @@ pub(super) fn text_button_visuals(
 #[cfg(feature = "ui-debug")]
 pub mod debug {
     use super::*;
-    use crate::{gameplay::components::UiRoot, ui::actions::UiAction};
+    use crate::ui::{actions::UiAction, UiRoot};
 
     pub fn debug_spawn_button(
         mut commands: Commands,

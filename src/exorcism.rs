@@ -1,8 +1,10 @@
 //! Plugin providing functionality for exorcism tiles, including death logic.
 use crate::{
-    gameplay::components::UiRoot,
     history::FlushHistoryCommands,
-    ui::font_scale::{FontScale, FontSize},
+    ui::{
+        font_scale::{FontScale, FontSize},
+        UiRoot,
+    },
     willo::WilloState,
     GameState, SystemLabels,
 };

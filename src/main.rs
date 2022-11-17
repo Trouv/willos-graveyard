@@ -94,8 +94,7 @@ fn main() {
         .add_plugin(wind::WindPlugin)
         .insert_resource(Msaa { samples: 1 })
         .insert_resource(level_selection.clone())
-        .insert_resource(level_transition::TransitionTo(level_selection))
-        .add_startup_system(gameplay::transitions::spawn_ui_root);
+        .insert_resource(level_transition::TransitionTo(level_selection));
 
     #[cfg(feature = "hot")]
     {
