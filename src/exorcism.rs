@@ -24,6 +24,7 @@ impl Plugin for ExorcismPlugin {
                     .label(SystemLabels::CheckDeath)
                     .after(FlushHistoryCommands),
             )
+            .add_system_to_stage(CoreStage::PreUpdate, make_exorcism_card_visible)
             .add_system(spawn_death_card.run_in_state(GameState::Gameplay))
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
@@ -77,6 +78,8 @@ fn spawn_death_card(
             let death_card_entity = commands
                 .spawn_bundle(NodeBundle {
                     color: UiColor(Color::rgba(0., 0., 0., 0.9)),
+                    // The color renders before the transform is updated, so it needs to be
+                    // invisible for the first update
                     visibility: Visibility { is_visible: false },
                     ..Default::default()
                 })
@@ -136,7 +139,6 @@ fn spawn_death_card(
                                 horizontal: HorizontalAlign::Center,
                                 vertical: VerticalAlign::Center,
                             }),
-                            visibility: Visibility { is_visible: false },
                             ..Default::default()
                         })
                         .insert(FontScale::from(FontSize::Medium));
@@ -154,5 +156,11 @@ fn spawn_death_card(
         }
 
         *last_state = *state;
+    }
+}
+
+fn make_exorcism_card_visible(mut ui_query: Query<&mut Visibility, Added<ExorcismCard>>) {
+    for mut visibility in ui_query.iter_mut() {
+        visibility.is_visible = true;
     }
 }

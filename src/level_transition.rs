@@ -135,7 +135,6 @@ fn spawn_level_card(
     let level_card_entity = commands
         .spawn_bundle(ImageBundle {
             image: UiImage(level_card_texture),
-            visibility: Visibility { is_visible: false },
             ..Default::default()
         })
         .insert(
@@ -194,7 +193,6 @@ fn spawn_level_card(
                             vertical: VerticalAlign::Center,
                             horizontal: HorizontalAlign::Center,
                         }),
-                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(FontScale::from(FontSize::Huge));
@@ -209,7 +207,6 @@ fn spawn_level_card(
                             ..default()
                         },
                     ),
-                    visibility: Visibility { is_visible: false },
                     ..Default::default()
                 })
                 .insert(FontScale::from(FontSize::Medium));

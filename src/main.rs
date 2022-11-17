@@ -17,7 +17,6 @@ mod movement_table;
 mod nine_slice;
 mod previous_component;
 mod sokoban;
-mod sugar;
 mod ui;
 mod willo;
 mod wind;
@@ -96,8 +95,7 @@ fn main() {
         .insert_resource(Msaa { samples: 1 })
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection))
-        .add_startup_system(gameplay::transitions::spawn_ui_root)
-        .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible);
+        .add_startup_system(gameplay::transitions::spawn_ui_root);
 
     #[cfg(feature = "hot")]
     {
