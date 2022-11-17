@@ -7,7 +7,6 @@ mod control_display;
 mod event_scheduler;
 mod exorcism;
 mod from_component;
-mod gameplay;
 mod goal;
 mod gravestone;
 mod history;
@@ -29,7 +28,7 @@ use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 
-pub const UNIT_LENGTH: f32 = 32.;
+pub const UNIT_LENGTH: i32 = 32;
 
 #[cfg(feature = "inspector")]
 use bevy_inspector_egui::prelude::*;

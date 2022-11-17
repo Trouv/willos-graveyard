@@ -2,15 +2,14 @@
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     exorcism::ExorcismEvent,
-    gameplay::xy_translation,
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
     sokoban::RigidBody,
-    AssetHolder, GameState, SystemLabels,
+    AssetHolder, GameState, SystemLabels, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::prelude::*;
+use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
 use iyes_loopless::prelude::*;
 use std::{ops::Range, time::Duration};
 
@@ -198,7 +197,8 @@ fn reset_willo_easing(
         match animation_state {
             WilloAnimationState::Push(_) => (),
             _ => {
-                let xy = xy_translation(grid_coords.into());
+                let xy =
+                    grid_coords_to_translation_centered(grid_coords, IVec2::splat(UNIT_LENGTH));
                 commands.entity(entity).insert(transform.ease_to(
                     Transform::from_xyz(xy.x, xy.y, transform.translation.z),
                     EaseFunction::CubicOut,
