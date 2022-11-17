@@ -19,6 +19,7 @@ pub enum UiLabels {
     Action,
 }
 
+/// Plugin providing functionality for common UI patterns.
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
@@ -44,6 +45,7 @@ impl Plugin for UiPlugin {
 }
 
 // TODO: delete this in favor of z-indices after upgrading to bevy 0.9
+/// Component that marks the parent-most UiNode.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct UiRoot;
 
