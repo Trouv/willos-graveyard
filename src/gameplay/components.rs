@@ -1,8 +1,5 @@
 use bevy::prelude::*;
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component)]
-pub struct OrthographicCamera;
-
 #[derive(Clone, Debug, Component)]
 pub struct WindTimer(pub Timer);
 
