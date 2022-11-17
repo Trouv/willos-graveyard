@@ -64,6 +64,7 @@ fn main() {
     let mut app = App::new();
 
     app.insert_resource(ImageSettings::default_nearest())
+        .insert_resource(Msaa { samples: 1 })
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
@@ -71,14 +72,13 @@ fn main() {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
         })
-        .add_plugin(SpriteSheetAnimationPlugin)
-        .add_event::<animation::AnimationEvent>()
         .add_loopless_state(GameState::AssetLoading)
         .add_loading_state(
             LoadingState::new(GameState::AssetLoading)
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>(),
         )
+        .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
         .add_plugin(control_display::ControlDisplayPlugin)
@@ -91,7 +91,6 @@ fn main() {
         .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
         .add_plugin(wind::WindPlugin)
-        .insert_resource(Msaa { samples: 1 })
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection));
 
