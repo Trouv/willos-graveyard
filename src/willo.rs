@@ -3,17 +3,16 @@ use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     exorcism::ExorcismEvent,
     gameplay::xy_translation,
-    history::FlushHistoryCommands,
-    history::{History, HistoryCommands},
+    history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
-    resources::{RewindSettings, RewindTimer},
     sokoban::RigidBody,
     AssetHolder, GameState, SystemLabels,
 };
-use bevy::{prelude::*, utils::Duration};
+use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
+use std::{ops::Range, time::Duration};
 
 /// Plugin providing functionality for Willo, the player character.
 pub struct WilloPlugin;
@@ -21,6 +20,10 @@ pub struct WilloPlugin;
 impl Plugin for WilloPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentAnimator::<WilloAnimationState>::new())
+            .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
+                GameState::Gameplay,
+            ))
+            .init_resource::<RewindSettings>()
             .add_event::<WilloMovementEvent>()
             .add_system(
                 willo_input
@@ -130,6 +133,42 @@ pub struct MovementTimer(pub Timer);
 impl Default for MovementTimer {
     fn default() -> MovementTimer {
         MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
+    }
+}
+
+/// Part of the [RewindSettings] resource.
+///
+/// Provides space between rewinds and tracking rewind velocity for acceleration.
+#[derive(Clone, Debug, Default)]
+struct RewindTimer {
+    velocity: f32,
+    timer: Timer,
+}
+
+impl RewindTimer {
+    fn new(millis: u64) -> RewindTimer {
+        RewindTimer {
+            velocity: millis as f32,
+            timer: Timer::new(Duration::from_millis(millis), true),
+        }
+    }
+}
+
+/// Resource defining the behavior of the rewind feature and storing its state for acceleration.
+#[derive(Clone, Debug)]
+struct RewindSettings {
+    hold_range_millis: Range<u64>,
+    hold_acceleration: f32,
+    hold_timer: Option<RewindTimer>,
+}
+
+impl Default for RewindSettings {
+    fn default() -> Self {
+        RewindSettings {
+            hold_range_millis: 50..200,
+            hold_acceleration: 50.,
+            hold_timer: None,
+        }
     }
 }
 
