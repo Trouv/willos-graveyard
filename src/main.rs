@@ -2,7 +2,6 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
 mod animation;
-mod bundles;
 mod camera;
 mod control_display;
 mod event_scheduler;
@@ -22,6 +21,7 @@ mod sokoban;
 mod sugar;
 mod ui;
 mod willo;
+mod wind;
 
 use animation::SpriteSheetAnimationPlugin;
 use bevy::{prelude::*, render::texture::ImageSettings};
@@ -30,7 +30,6 @@ use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
-use rand::Rng;
 
 pub const UNIT_LENGTH: f32 = 32.;
 
@@ -90,6 +89,7 @@ fn main() {
         .add_plugin(goal::GoalPlugin)
         .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
+        .add_plugin(wind::WindPlugin)
         .add_event::<history::HistoryCommands>()
         .insert_resource(LdtkSettings {
             set_clear_color: SetClearColor::FromEditorBackground,
@@ -105,9 +105,7 @@ fn main() {
             history::flush_history_commands::<GridCoords>
                 .run_in_state(GameState::Gameplay)
                 .label(history::FlushHistoryCommands),
-        )
-        .add_system(sugar::animate_grass_system.run_not_in_state(GameState::AssetLoading))
-        .register_ldtk_entity::<bundles::GrassBundle>("Grass");
+        );
 
     #[cfg(feature = "hot")]
     {
