@@ -37,7 +37,6 @@ use bevy_inspector_egui::prelude::*;
 pub enum SystemLabels {
     LoadAssets,
     Input,
-    MovementTableUpdate,
     CheckDeath,
 }
 
