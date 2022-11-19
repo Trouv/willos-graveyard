@@ -53,16 +53,17 @@ pub struct SpriteSheetAnimationPlugin;
 
 impl Plugin for SpriteSheetAnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            sprite_sheet_animation
-                .label(AnimationLabel)
-                .after(FromComponentLabel),
-        )
-        .add_system(
-            set_initial_sprite_index
-                .label(AnimationLabel)
-                .after(FromComponentLabel),
-        );
+        app.add_event::<AnimationEvent>()
+            .add_system(
+                sprite_sheet_animation
+                    .label(AnimationLabel)
+                    .after(FromComponentLabel),
+            )
+            .add_system(
+                set_initial_sprite_index
+                    .label(AnimationLabel)
+                    .after(FromComponentLabel),
+            );
     }
 }
 

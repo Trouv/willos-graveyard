@@ -1,6 +1,5 @@
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
-    gameplay::components::UiRoot,
     level_transition::TransitionTo,
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
@@ -8,7 +7,7 @@ use crate::{
     ui::{
         actions::UiAction,
         font_scale::{FontScale, FontSize},
-        text_button,
+        text_button, UiRoot,
     },
     AssetHolder, GameState,
 };

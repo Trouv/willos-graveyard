@@ -7,7 +7,6 @@ mod control_display;
 mod event_scheduler;
 mod exorcism;
 mod from_component;
-mod gameplay;
 mod goal;
 mod gravestone;
 mod history;
@@ -17,7 +16,6 @@ mod movement_table;
 mod nine_slice;
 mod previous_component;
 mod sokoban;
-mod sugar;
 mod ui;
 mod willo;
 mod wind;
@@ -30,7 +28,7 @@ use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 
-pub const UNIT_LENGTH: f32 = 32.;
+pub const UNIT_LENGTH: i32 = 32;
 
 #[cfg(feature = "inspector")]
 use bevy_inspector_egui::prelude::*;
@@ -66,6 +64,7 @@ fn main() {
     let mut app = App::new();
 
     app.insert_resource(ImageSettings::default_nearest())
+        .insert_resource(Msaa { samples: 1 })
         .add_plugins(DefaultPlugins)
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
@@ -73,14 +72,13 @@ fn main() {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
         })
-        .add_plugin(SpriteSheetAnimationPlugin)
-        .add_event::<animation::AnimationEvent>()
         .add_loopless_state(GameState::AssetLoading)
         .add_loading_state(
             LoadingState::new(GameState::AssetLoading)
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>(),
         )
+        .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
         .add_plugin(control_display::ControlDisplayPlugin)
@@ -93,11 +91,8 @@ fn main() {
         .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
         .add_plugin(wind::WindPlugin)
-        .insert_resource(Msaa { samples: 1 })
         .insert_resource(level_selection.clone())
-        .insert_resource(level_transition::TransitionTo(level_selection))
-        .add_startup_system(gameplay::transitions::spawn_ui_root)
-        .add_system_to_stage(CoreStage::PreUpdate, sugar::make_ui_visible);
+        .insert_resource(level_transition::TransitionTo(level_selection));
 
     #[cfg(feature = "hot")]
     {

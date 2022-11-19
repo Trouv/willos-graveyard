@@ -1,12 +1,12 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::{
-    gameplay::xy_translation,
     movement_table::{Direction, MovementTable},
     willo::{WilloAnimationState, WilloMovementEvent},
     *,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
+use bevy_ecs_ldtk::utils::grid_coords_to_translation_centered;
 
 /// Plugin providing functionality for sokoban-style movement and collision.
 pub struct SokobanPlugin;
@@ -71,7 +71,7 @@ fn ease_movement(
     >,
 ) {
     for (entity, &grid_coords, transform, willo_animation_state) in grid_coords_query.iter_mut() {
-        let mut xy = xy_translation(grid_coords.into());
+        let mut xy = grid_coords_to_translation_centered(grid_coords, IVec2::splat(UNIT_LENGTH));
 
         if let Some(WilloAnimationState::Push(direction)) = willo_animation_state {
             xy += IVec2::from(*direction).as_vec2() * 5.;
