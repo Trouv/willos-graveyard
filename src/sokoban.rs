@@ -8,6 +8,12 @@ use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::utils::grid_coords_to_translation_centered;
 
+/// Labels used by sokoban systems
+#[derive(SystemLabel)]
+pub enum SokobanLabels {
+    EaseMovement,
+}
+
 /// Plugin providing functionality for sokoban-style movement and collision.
 pub struct SokobanPlugin;
 
@@ -25,7 +31,7 @@ impl Plugin for SokobanPlugin {
             CoreStage::PostUpdate,
             sokoban::ease_movement
                 .run_not_in_state(GameState::AssetLoading)
-                .label("ease_movement"),
+                .label(SokobanLabels::EaseMovement),
         )
         .register_ldtk_int_cell::<sokoban::WallBundle>(1)
         .register_ldtk_int_cell::<sokoban::WallBundle>(3)

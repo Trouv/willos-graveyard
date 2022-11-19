@@ -4,7 +4,7 @@ use crate::{
     exorcism::ExorcismEvent,
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
-    sokoban::RigidBody,
+    sokoban::{RigidBody, SokobanLabels},
     AssetHolder, GameState, SystemLabels, UNIT_LENGTH,
 };
 use bevy::prelude::*;
@@ -36,7 +36,7 @@ impl Plugin for WilloPlugin {
                 CoreStage::PostUpdate,
                 reset_willo_easing
                     .run_not_in_state(GameState::AssetLoading)
-                    .before("ease_movement"),
+                    .before(SokobanLabels::EaseMovement),
             )
             .add_system(play_death_animations.run_not_in_state(GameState::AssetLoading))
             .add_system(history_sugar.run_not_in_state(GameState::AssetLoading))
