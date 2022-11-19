@@ -1,6 +1,7 @@
 //! Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 use crate::{
-    gravestone::Gravestone, level_transition::TransitionTo, AssetHolder, GameState, SystemLabels,
+    exorcism::ExorcismLabels, gravestone::Gravestone, level_transition::TransitionTo, AssetHolder,
+    GameState,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
@@ -19,7 +20,7 @@ impl Plugin for GoalPlugin {
             .add_system(
                 check_goal
                     .run_in_state(GameState::Gameplay)
-                    .after(SystemLabels::CheckDeath),
+                    .after(ExorcismLabels::CheckDeath),
             )
             .add_system(goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
             .add_system(goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))

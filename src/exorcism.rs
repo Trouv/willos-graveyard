@@ -6,13 +6,19 @@ use crate::{
         UiRoot,
     },
     willo::WilloState,
-    GameState, SystemLabels,
+    GameState,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use std::time::Duration;
+
+/// Labels used by exorcism systems.
+#[derive(SystemLabel)]
+pub enum ExorcismLabels {
+    CheckDeath,
+}
 
 /// Plugin providing functionality for exorcism tiles, including death logic.
 pub struct ExorcismPlugin;
@@ -23,7 +29,7 @@ impl Plugin for ExorcismPlugin {
             .add_system(
                 check_death
                     .run_in_state(GameState::Gameplay)
-                    .label(SystemLabels::CheckDeath)
+                    .label(ExorcismLabels::CheckDeath)
                     .after(FlushHistoryCommands),
             )
             .add_system_to_stage(CoreStage::PreUpdate, make_exorcism_card_visible)
