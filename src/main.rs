@@ -35,8 +35,6 @@ use bevy_inspector_egui::prelude::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
 pub enum SystemLabels {
-    LoadAssets,
-    Input,
     CheckDeath,
 }
 

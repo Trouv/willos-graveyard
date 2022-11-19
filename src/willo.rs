@@ -5,13 +5,18 @@ use crate::{
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
     sokoban::{RigidBody, SokobanLabels},
-    AssetHolder, GameState, SystemLabels, UNIT_LENGTH,
+    AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
 use iyes_loopless::prelude::*;
 use std::{ops::Range, time::Duration};
+
+#[derive(SystemLabel)]
+pub enum WilloLabels {
+    Input,
+}
 
 /// Plugin providing functionality for Willo, the player character.
 pub struct WilloPlugin;
@@ -27,7 +32,7 @@ impl Plugin for WilloPlugin {
             .add_system(
                 willo_input
                     .run_in_state(GameState::Gameplay)
-                    .label(SystemLabels::Input)
+                    .label(WilloLabels::Input)
                     .before(FlushHistoryCommands),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update

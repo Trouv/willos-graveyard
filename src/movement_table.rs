@@ -4,8 +4,8 @@ use crate::{
     gravestone::Gravestone,
     history::FlushHistoryCommands,
     sokoban::SokobanLabels,
-    willo::{MovementTimer, WilloMovementEvent, WilloState},
-    GameState, SystemLabels,
+    willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+    GameState,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
@@ -20,7 +20,7 @@ impl Plugin for MovementTablePlugin {
         app.add_system(
             movement_table_update
                 .run_in_state(GameState::Gameplay)
-                .before(SystemLabels::Input),
+                .before(WilloLabels::Input),
         )
         .add_system(
             move_willo_by_table
