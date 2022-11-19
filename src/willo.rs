@@ -13,6 +13,7 @@ use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
 use iyes_loopless::prelude::*;
 use std::{ops::Range, time::Duration};
 
+/// Labels used by Willo systems.
 #[derive(SystemLabel)]
 pub enum WilloLabels {
     Input,
