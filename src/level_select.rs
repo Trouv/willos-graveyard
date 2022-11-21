@@ -91,7 +91,7 @@ fn spawn_level_select_card(
     .unwrap();
 
     let level_select_entity = commands
-        .spawn_bundle(ImageBundle {
+        .spawn(ImageBundle {
             image: UiImage(level_card_texture),
             ..default()
         })
@@ -117,7 +117,7 @@ fn spawn_level_select_card(
         .with_children(|parent| {
             // spawn title
             parent
-                .spawn_bundle(TextBundle {
+                .spawn(TextBundle {
                     text: Text::from_section(
                         "Level Select",
                         TextStyle {
@@ -145,7 +145,7 @@ fn spawn_level_select_card(
 
             // spawn level button container
             parent
-                .spawn_bundle(NodeBundle {
+                .spawn(NodeBundle {
                     color: UiColor(Color::NONE),
                     style: Style {
                         flex_wrap: FlexWrap::WrapReverse,

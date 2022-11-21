@@ -365,7 +365,7 @@ fn spawn_goal_ghosts(
         };
 
         let ghost_entity = commands
-            .spawn_bundle(SpriteSheetBundle {
+            .spawn(SpriteSheetBundle {
                 texture_atlas: atlas_handle,
                 transform: Transform::from_xyz(0., 1., 2.5),
                 ..default()

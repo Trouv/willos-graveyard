@@ -31,7 +31,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
 ) -> EntityCommands<'w, 's, 'b> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
-    let mut e = child_builder.spawn_bundle(ButtonBundle {
+    let mut e = child_builder.spawn(ButtonBundle {
         style: Style {
             flex_direction: FlexDirection::ColumnReverse,
             justify_content: JustifyContent::Center,
@@ -56,7 +56,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     e.with_children(|button| {
         // spawn the background/highlight radial
         button
-            .spawn_bundle(ImageBundle {
+            .spawn(ImageBundle {
                 image: UiImage(asset_holder.button_radial.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
@@ -75,7 +75,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
 
         // spawn the text
         button
-            .spawn_bundle(TextBundle::from_section(
+            .spawn(TextBundle::from_section(
                 button_text,
                 TextStyle {
                     font: asset_holder.font.clone(),
@@ -94,7 +94,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             });
 
         // spawn the underline decoration
-        button.spawn_bundle(ImageBundle {
+        button.spawn(ImageBundle {
             image: UiImage(asset_holder.button_underline.clone()),
             style: Style {
                 min_size: Size::new(Val::Percent(50.), Val::Px(16.)),

@@ -137,7 +137,7 @@ fn spawn_level_card(
     .unwrap();
 
     let level_card_entity = commands
-        .spawn_bundle(ImageBundle {
+        .spawn(ImageBundle {
             image: UiImage(level_card_texture),
             ..Default::default()
         })
@@ -184,7 +184,7 @@ fn spawn_level_card(
         .with_children(|parent| {
             if let Some(level_num) = level_num {
                 parent
-                    .spawn_bundle(TextBundle {
+                    .spawn(TextBundle {
                         text: Text::from_section(
                             format!("#{level_num}"),
                             TextStyle {
@@ -202,7 +202,7 @@ fn spawn_level_card(
                     .insert(FontScale::from(FontSize::Huge));
             }
             parent
-                .spawn_bundle(TextBundle {
+                .spawn(TextBundle {
                     text: Text::from_section(
                         title,
                         TextStyle {
@@ -240,7 +240,7 @@ fn load_next_level(
             if *first_card_skipped {
                 *level_selection = transition_to.0.clone()
             } else {
-                commands.spawn_bundle(LdtkWorldBundle {
+                commands.spawn(LdtkWorldBundle {
                     ldtk_handle: asset_holder.ldtk.clone(),
                     transform: Transform::from_xyz(32., 32., 0.),
                     ..Default::default()

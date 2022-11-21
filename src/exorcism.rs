@@ -84,7 +84,7 @@ fn spawn_death_card(
         if *state == WilloState::Dead && *last_state != WilloState::Dead {
             // Player just died
             let death_card_entity = commands
-                .spawn_bundle(NodeBundle {
+                .spawn(NodeBundle {
                     color: UiColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
@@ -134,7 +134,7 @@ fn spawn_death_card(
                 .insert(ExorcismCard)
                 .with_children(|parent| {
                     parent
-                        .spawn_bundle(TextBundle {
+                        .spawn(TextBundle {
                             text: Text::from_section(
                                 "EXORCISED\n\nR to restart\nZ to undo",
                                 TextStyle {
