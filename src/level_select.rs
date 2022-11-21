@@ -146,7 +146,7 @@ fn spawn_level_select_card(
             // spawn level button container
             parent
                 .spawn(NodeBundle {
-                    color: BackgroundColor(Color::NONE),
+                    background_color: BackgroundColor(Color::NONE),
                     style: Style {
                         flex_wrap: FlexWrap::Wrap,
                         justify_content: JustifyContent::SpaceAround,

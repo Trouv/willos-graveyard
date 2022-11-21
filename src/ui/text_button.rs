@@ -45,7 +45,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             },
             ..default()
         },
-        color: BackgroundColor(Color::NONE),
+        background_color: BackgroundColor(Color::NONE),
         ..default()
     });
 
