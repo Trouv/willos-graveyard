@@ -55,9 +55,15 @@ fn main() {
 
     let mut app = App::new();
 
-    app.insert_resource(ImageSettings::default_nearest())
-        .insert_resource(Msaa { samples: 1 })
-        .add_plugins(DefaultPlugins)
+    app.insert_resource(Msaa { samples: 1 })
+        .add_plugins(
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(AssetPlugin {
+                    watch_for_changes: cfg!(feature = "hot"),
+                    ..default()
+                }),
+        )
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .insert_resource(LdtkSettings {
@@ -85,11 +91,6 @@ fn main() {
         .add_plugin(wind::WindPlugin)
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection));
-
-    #[cfg(feature = "hot")]
-    {
-        app.add_startup_system(enable_hot_reloading);
-    }
 
     #[cfg(feature = "inspector")]
     {
