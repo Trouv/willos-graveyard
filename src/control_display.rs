@@ -41,7 +41,7 @@ fn spawn_control_display(
                 background_color: BackgroundColor(Color::NONE),
                 style: Style {
                     flex_direction: FlexDirection::Column,
-                    align_items: AlignItems::FlexEnd,
+                    align_items: AlignItems::FlexStart,
                     justify_content: JustifyContent::Center,
                     align_content: AlignContent::Center,
                     position_type: PositionType::Absolute,
