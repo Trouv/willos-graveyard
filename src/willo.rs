@@ -117,7 +117,7 @@ impl From<WilloAnimationState> for SpriteSheetAnimation {
             None => 3..4,
         };
 
-        let frame_timer = Timer::new(Duration::from_millis(150), true);
+        let frame_timer = Timer::new(Duration::from_millis(150), TimerMode::Repeating);
 
         let repeat = matches!(state, Idle(Down));
 
@@ -137,7 +137,7 @@ pub struct MovementTimer(pub Timer);
 
 impl Default for MovementTimer {
     fn default() -> MovementTimer {
-        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
+        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, TimerMode::Once))
     }
 }
 
@@ -154,7 +154,7 @@ impl RewindTimer {
     fn new(millis: u64) -> RewindTimer {
         RewindTimer {
             velocity: millis as f32,
-            timer: Timer::new(Duration::from_millis(millis), true),
+            timer: Timer::new(Duration::from_millis(millis), TimerMode::Repeating),
         }
     }
 }

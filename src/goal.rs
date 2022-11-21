@@ -372,7 +372,7 @@ fn spawn_goal_ghosts(
             })
             .insert(GoalGhostAnimation::new(
                 goal_entity,
-                Timer::new(goal_ghost_settings.frame_duration, true),
+                Timer::new(goal_ghost_settings.frame_duration, TimerMode::Repeating),
             ))
             .id();
 

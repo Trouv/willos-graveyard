@@ -22,7 +22,7 @@ struct WindTimer(Timer);
 
 impl Default for WindTimer {
     fn default() -> WindTimer {
-        WindTimer(Timer::from_seconds(0.2, true))
+        WindTimer(Timer::from_seconds(0.2, TimerMode::Repeating))
     }
 }
 

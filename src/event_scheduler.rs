@@ -50,7 +50,7 @@ where
     E: 'static + Send + Sync,
 {
     pub fn schedule(&mut self, event: E, duration: Duration) {
-        self.events.push_back((event, Timer::new(duration, false)));
+        self.events.push_back((event, Timer::new(duration, TimerMode::Once)));
     }
 }
 
