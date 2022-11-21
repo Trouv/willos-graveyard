@@ -45,7 +45,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             },
             ..default()
         },
-        color: UiColor(Color::NONE),
+        color: BackgroundColor(Color::NONE),
         ..default()
     });
 
@@ -111,7 +111,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
 /// System that alters the visuals of a text button to show interaction
 pub(super) fn text_button_visuals(
     text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
-    mut button_radials: Query<(&mut UiColor, &Parent), With<TextButtonRadial>>,
+    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<TextButtonRadial>>,
 ) {
     for (button_entity, interaction) in text_buttons.iter() {
         let (mut radial_color, _) = button_radials
@@ -121,13 +121,13 @@ pub(super) fn text_button_visuals(
 
         match interaction {
             Interaction::None => {
-                *radial_color = UiColor(Color::NONE);
+                *radial_color = BackgroundColor(Color::NONE);
             }
             Interaction::Hovered => {
-                *radial_color = UiColor(Color::WHITE);
+                *radial_color = BackgroundColor(Color::WHITE);
             }
             Interaction::Clicked => {
-                *radial_color = UiColor(Color::GRAY);
+                *radial_color = BackgroundColor(Color::GRAY);
             }
         }
     }

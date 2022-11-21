@@ -85,7 +85,7 @@ fn spawn_death_card(
             // Player just died
             let death_card_entity = commands
                 .spawn(NodeBundle {
-                    color: UiColor(Color::rgba(0., 0., 0., 0.9)),
+                    color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
                     visibility: Visibility { is_visible: false },

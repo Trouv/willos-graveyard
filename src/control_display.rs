@@ -38,7 +38,7 @@ fn spawn_control_display(
 
         let control_display_entity = commands
             .spawn(NodeBundle {
-                color: UiColor(Color::NONE),
+                color: BackgroundColor(Color::NONE),
                 style: Style {
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::FlexEnd,
@@ -110,7 +110,7 @@ fn update_control_display(
                                 },
                                 ..Default::default()
                             },
-                            color: UiColor(Color::NONE),
+                            color: BackgroundColor(Color::NONE),
                             ..Default::default()
                         })
                         .with_children(|parent| {
