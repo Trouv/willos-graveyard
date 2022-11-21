@@ -36,7 +36,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            size: Size::new(Val::Auto, Val::Px(40.)),
+            size: Size::new(Val::Auto, Val::Px(50.)),
             margin: UiRect {
                 top: margin,
                 bottom: margin,
