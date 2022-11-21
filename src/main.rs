@@ -21,7 +21,7 @@ mod willo;
 mod wind;
 
 use animation::SpriteSheetAnimationPlugin;
-use bevy::{prelude::*, render::texture::ImageSettings};
+use bevy::prelude::*;
 
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -118,9 +118,4 @@ pub struct AssetHolder {
     pub undo_sound: Handle<AudioSource>,
     #[asset(path = "textures/tarot.png")]
     pub tarot_sheet: Handle<Image>,
-}
-
-#[cfg(feature = "hot")]
-pub fn enable_hot_reloading(asset_server: ResMut<AssetServer>) {
-    asset_server.watch_for_changes().unwrap();
 }
