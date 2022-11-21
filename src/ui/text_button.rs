@@ -33,7 +33,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     // EntityCommands
     let mut e = child_builder.spawn(ButtonBundle {
         style: Style {
-            flex_direction: FlexDirection::ColumnReverse,
+            flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             size: Size::new(Val::Auto, Val::Px(40.)),

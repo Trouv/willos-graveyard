@@ -146,7 +146,7 @@ fn spawn_level_card(
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
                 position_type: PositionType::Absolute,
-                flex_direction: FlexDirection::ColumnReverse,
+                flex_direction: FlexDirection::Column,
                 size: Size {
                     width: Val::Percent(100.),
                     height: Val::Percent(100.),
@@ -163,7 +163,7 @@ fn spawn_level_card(
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     position_type: PositionType::Absolute,
-                    flex_direction: FlexDirection::ColumnReverse,
+                    flex_direction: FlexDirection::Column,
                     size: Size {
                         width: Val::Percent(100.),
                         height: Val::Percent(100.),

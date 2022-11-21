@@ -40,8 +40,8 @@ fn spawn_control_display(
             .spawn(NodeBundle {
                 color: UiColor(Color::NONE),
                 style: Style {
-                    flex_direction: FlexDirection::ColumnReverse,
-                    align_items: AlignItems::FlexStart,
+                    flex_direction: FlexDirection::Column,
+                    align_items: AlignItems::FlexEnd,
                     justify_content: JustifyContent::Center,
                     align_content: AlignContent::Center,
                     position_type: PositionType::Absolute,

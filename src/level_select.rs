@@ -51,7 +51,7 @@ fn level_select_card_style(position: UiRect<Val>) -> Style {
     Style {
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
-        flex_direction: FlexDirection::ColumnReverse,
+        flex_direction: FlexDirection::Column,
         position_type: PositionType::Absolute,
         size: Size {
             width: Val::Percent(100.),
@@ -148,7 +148,7 @@ fn spawn_level_select_card(
                 .spawn(NodeBundle {
                     color: UiColor(Color::NONE),
                     style: Style {
-                        flex_wrap: FlexWrap::WrapReverse,
+                        flex_wrap: FlexWrap::Wrap,
                         justify_content: JustifyContent::SpaceAround,
                         margin: UiRect {
                             top: Val::Px(10.),
