@@ -25,7 +25,7 @@ where
     }
 }
 
-#[derive(Clone, Debug, Component)]
+#[derive(Clone, Debug, Resource)]
 pub struct EventScheduler<E>
 where
     E: 'static + Send + Sync,
@@ -50,7 +50,8 @@ where
     E: 'static + Send + Sync,
 {
     pub fn schedule(&mut self, event: E, duration: Duration) {
-        self.events.push_back((event, Timer::new(duration, TimerMode::Once)));
+        self.events
+            .push_back((event, Timer::new(duration, TimerMode::Once)));
     }
 }
 

@@ -59,7 +59,7 @@ impl From<FontSize> for FontScale {
 ///
 /// These values can be calculated as the result of `desired_font_size / given_screen_height` for
 /// wide screens, and `desired_font_size / given_screen_width` for tall screens.
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug, Resource)]
 pub struct FontSizeRatios {
     pub tiny: f32,
     pub small: f32,

@@ -22,7 +22,7 @@ impl Plugin for CameraPlugin {
 
 /// Resource for defining the percentage of the screen ([0-1]) that should be reserved for
 /// rendering the level.
-#[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
+#[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut, Resource)]
 pub struct PlayZonePortion(pub f32);
 
 fn spawn_camera(mut commands: Commands) {

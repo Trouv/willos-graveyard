@@ -51,7 +51,7 @@ impl Plugin for LevelTransitionPlugin {
 }
 
 /// Resource that can be inserted to trigger a level transition.
-#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component)]
+#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Resource)]
 pub struct TransitionTo(pub LevelSelection);
 
 /// Component that marks the level card.

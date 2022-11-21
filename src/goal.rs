@@ -57,7 +57,7 @@ struct GoalBundle {
 }
 
 /// Resource for defining the visual behavior of goal ghosts.
-#[derive(Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Resource)]
 struct GoalGhostSettings {
     no_turn_length: Range<usize>,
     turn_length: Range<usize>,
@@ -356,6 +356,8 @@ fn spawn_goal_ghosts(
                     Vec2::splat(32.),
                     goal_ghost_settings.num_columns,
                     goal_ghost_settings.num_rows,
+                    None,
+                    None,
                 );
                 let atlas_handle = texture_atlases.add(texture_atlas);
 

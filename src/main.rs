@@ -100,7 +100,7 @@ fn main() {
     app.run()
 }
 
-#[derive(Debug, Default, AssetCollection)]
+#[derive(Debug, Default, AssetCollection, Resource)]
 pub struct AssetHolder {
     #[asset(path = "levels/willos-graveyard.ldtk")]
     pub ldtk: Handle<LdtkAsset>,

@@ -9,7 +9,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
+use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
 use std::{ops::Range, time::Duration};
 
@@ -160,7 +160,7 @@ impl RewindTimer {
 }
 
 /// Resource defining the behavior of the rewind feature and storing its state for acceleration.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Resource)]
 struct RewindSettings {
     hold_range_millis: Range<u64>,
     hold_acceleration: f32,
@@ -203,8 +203,7 @@ fn reset_willo_easing(
         match animation_state {
             WilloAnimationState::Push(_) => (),
             _ => {
-                let xy =
-                    grid_coords_to_translation_centered(grid_coords, IVec2::splat(UNIT_LENGTH));
+                let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
                 commands.entity(entity).insert(transform.ease_to(
                     Transform::from_xyz(xy.x, xy.y, transform.translation.z),
                     EaseFunction::CubicOut,
