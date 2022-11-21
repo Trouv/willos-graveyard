@@ -2,10 +2,13 @@
 //! abilities based off the placement of gravestones.
 use crate::{
     gravestone::Gravestone,
-    willo::{MovementTimer, WilloMovementEvent, WilloState},
-    *,
+    history::FlushHistoryCommands,
+    sokoban::SokobanLabels,
+    willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+    GameState,
 };
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 
 /// Plugin providing functionality for the movement table, which alters Willo's abilities based off
@@ -17,13 +20,13 @@ impl Plugin for MovementTablePlugin {
         app.add_system(
             movement_table_update
                 .run_in_state(GameState::Gameplay)
-                .before(SystemLabels::Input),
+                .before(WilloLabels::Input),
         )
         .add_system(
             move_willo_by_table
                 .run_in_state(GameState::Gameplay)
-                .after(SystemLabels::MovementTableUpdate)
-                .after(history::FlushHistoryCommands),
+                .after(SokobanLabels::GridCoordsMovement)
+                .after(FlushHistoryCommands),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");
     }

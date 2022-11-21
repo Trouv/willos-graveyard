@@ -4,14 +4,20 @@ use crate::{
     exorcism::ExorcismEvent,
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
-    sokoban::RigidBody,
-    AssetHolder, GameState, SystemLabels, UNIT_LENGTH,
+    sokoban::{RigidBody, SokobanLabels},
+    AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
 use iyes_loopless::prelude::*;
 use std::{ops::Range, time::Duration};
+
+/// Labels used by Willo systems.
+#[derive(SystemLabel)]
+pub enum WilloLabels {
+    Input,
+}
 
 /// Plugin providing functionality for Willo, the player character.
 pub struct WilloPlugin;
@@ -27,7 +33,7 @@ impl Plugin for WilloPlugin {
             .add_system(
                 willo_input
                     .run_in_state(GameState::Gameplay)
-                    .label(SystemLabels::Input)
+                    .label(WilloLabels::Input)
                     .before(FlushHistoryCommands),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
@@ -36,7 +42,7 @@ impl Plugin for WilloPlugin {
                 CoreStage::PostUpdate,
                 reset_willo_easing
                     .run_not_in_state(GameState::AssetLoading)
-                    .before("ease_movement"),
+                    .before(SokobanLabels::EaseMovement),
             )
             .add_system(play_death_animations.run_not_in_state(GameState::AssetLoading))
             .add_system(history_sugar.run_not_in_state(GameState::AssetLoading))

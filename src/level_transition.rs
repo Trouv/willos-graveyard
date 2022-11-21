@@ -1,7 +1,9 @@
 //! Plugin providing functionality for level transitions.
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
-    nine_slice::*,
+    nine_slice::{
+        generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
+    },
     ui::{
         font_scale::{FontScale, FontSize},
         UiRoot,

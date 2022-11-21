@@ -1,12 +1,21 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::{
+    from_component::FromComponentLabel,
     movement_table::{Direction, MovementTable},
     willo::{WilloAnimationState, WilloMovementEvent},
-    *,
+    AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::utils::grid_coords_to_translation_centered;
+use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
+use iyes_loopless::prelude::*;
+
+/// Labels used by sokoban systems
+#[derive(SystemLabel)]
+pub enum SokobanLabels {
+    EaseMovement,
+    GridCoordsMovement,
+}
 
 /// Plugin providing functionality for sokoban-style movement and collision.
 pub struct SokobanPlugin;
@@ -14,22 +23,22 @@ pub struct SokobanPlugin;
 impl Plugin for SokobanPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
-            sokoban::perform_grid_coords_movement
+            perform_grid_coords_movement
                 .run_in_state(GameState::Gameplay)
-                .label(SystemLabels::MovementTableUpdate)
-                .before(from_component::FromComponentLabel),
+                .label(SokobanLabels::GridCoordsMovement)
+                .before(FromComponentLabel),
         )
         // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
         // see https://github.com/vleue/bevy_easings/issues/23
         .add_system_to_stage(
             CoreStage::PostUpdate,
-            sokoban::ease_movement
+            ease_movement
                 .run_not_in_state(GameState::AssetLoading)
-                .label("ease_movement"),
+                .label(SokobanLabels::EaseMovement),
         )
-        .register_ldtk_int_cell::<sokoban::WallBundle>(1)
-        .register_ldtk_int_cell::<sokoban::WallBundle>(3)
-        .register_ldtk_int_cell::<sokoban::WallBundle>(4);
+        .register_ldtk_int_cell::<WallBundle>(1)
+        .register_ldtk_int_cell::<WallBundle>(3)
+        .register_ldtk_int_cell::<WallBundle>(4);
     }
 }
 
