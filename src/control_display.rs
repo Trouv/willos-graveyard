@@ -56,7 +56,7 @@ fn spawn_control_display(
                     },
                     ..Default::default()
                 },
-                transform: Transform::from_xyz(0., 0., 1.),
+                z_index: ZIndex::Local(-1),
                 ..Default::default()
             })
             .insert(ControlDisplay)
