@@ -47,7 +47,7 @@ pub enum LevelSelectCardEvent {
     Offscreen(Entity),
 }
 
-fn level_select_card_style(position: UiRect<Val>) -> Style {
+fn level_select_card_style(position: UiRect) -> Style {
     Style {
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
