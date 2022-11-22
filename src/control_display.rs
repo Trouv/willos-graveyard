@@ -2,10 +2,7 @@
 use crate::{
     camera::PlayZonePortion,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
-    ui::{
-        font_scale::{FontScale, FontSize},
-        UiRoot,
-    },
+    ui::font_scale::{FontScale, FontSize},
     GameState,
 };
 use bevy::prelude::*;
@@ -28,44 +25,33 @@ impl Plugin for ControlDisplayPlugin {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 struct ControlDisplay;
 
-fn spawn_control_display(
-    mut commands: Commands,
-    ui_root_query: Query<Entity, Added<UiRoot>>,
-    play_zone_portion: Res<PlayZonePortion>,
-) {
-    for ui_root_entity in ui_root_query.iter() {
-        let control_zone_ratio = 1. - **play_zone_portion;
+fn spawn_control_display(mut commands: Commands, play_zone_portion: Res<PlayZonePortion>) {
+    let control_zone_ratio = 1. - **play_zone_portion;
 
-        let control_display_entity = commands
-            .spawn(NodeBundle {
-                background_color: BackgroundColor(Color::NONE),
-                style: Style {
-                    flex_direction: FlexDirection::Column,
-                    align_items: AlignItems::FlexStart,
-                    justify_content: JustifyContent::Center,
-                    align_content: AlignContent::Center,
-                    position_type: PositionType::Absolute,
-                    size: Size {
-                        width: Val::Percent(100. * control_zone_ratio),
-                        height: Val::Percent(100.),
-                    },
-                    position: UiRect {
-                        top: Val::Percent(0.),
-                        right: Val::Percent(0.),
-                        ..Default::default()
-                    },
+    commands
+        .spawn(NodeBundle {
+            background_color: BackgroundColor(Color::NONE),
+            style: Style {
+                flex_direction: FlexDirection::Column,
+                align_items: AlignItems::FlexStart,
+                justify_content: JustifyContent::Center,
+                align_content: AlignContent::Center,
+                position_type: PositionType::Absolute,
+                size: Size {
+                    width: Val::Percent(100. * control_zone_ratio),
+                    height: Val::Percent(100.),
+                },
+                position: UiRect {
+                    top: Val::Percent(0.),
+                    right: Val::Percent(0.),
                     ..Default::default()
                 },
-                z_index: ZIndex::Local(-1),
                 ..Default::default()
-            })
-            .insert(ControlDisplay)
-            .id();
-
-        commands
-            .entity(ui_root_entity)
-            .add_child(control_display_entity);
-    }
+            },
+            z_index: ZIndex::Local(-1),
+            ..Default::default()
+        })
+        .insert(ControlDisplay);
 }
 
 fn update_control_display(

@@ -1,10 +1,7 @@
 //! Plugin providing functionality for exorcism tiles, including death logic.
 use crate::{
     history::FlushHistoryCommands,
-    ui::{
-        font_scale::{FontScale, FontSize},
-        UiRoot,
-    },
+    ui::font_scale::{FontScale, FontSize},
     willo::WilloState,
     GameState,
 };
@@ -78,12 +75,11 @@ fn spawn_death_card(
     willo_query: Query<&WilloState, Changed<WilloState>>,
     death_cards: Query<Entity, With<ExorcismCard>>,
     mut last_state: Local<WilloState>,
-    ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
     for state in willo_query.iter() {
         if *state == WilloState::Dead && *last_state != WilloState::Dead {
             // Player just died
-            let death_card_entity = commands
+            commands
                 .spawn(NodeBundle {
                     background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
@@ -150,12 +146,7 @@ fn spawn_death_card(
                             ..Default::default()
                         })
                         .insert(FontScale::from(FontSize::Medium));
-                })
-                .id();
-
-            commands
-                .entity(ui_root_query.single())
-                .add_child(death_card_entity);
+                });
         } else if *state != WilloState::Dead && *last_state == WilloState::Dead {
             // Player just un-died
             if let Ok(entity) = death_cards.get_single() {
