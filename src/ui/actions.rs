@@ -32,10 +32,3 @@ pub(super) fn ui_action(
         }
     }
 }
-
-#[cfg(feature = "ui-debug")]
-pub fn debug_print_action(mut event_reader: EventReader<UiAction>) {
-    for action in event_reader.iter() {
-        info!("UiAction fired: {:?}", action)
-    }
-}
