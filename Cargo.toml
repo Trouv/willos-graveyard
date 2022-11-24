@@ -25,4 +25,4 @@ bevy-inspector-egui = { version = "0.13", optional = true }
 thiserror = "1"
 
 [target.wasm32-unknown-unknown.dependencies]
-bevy_ecs_ldtk = { version = "0.4", features = ["atlas"] }
+bevy_ecs_ldtk = { version = "0.5", features = ["atlas"] }
