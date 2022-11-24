@@ -22,13 +22,13 @@ pub struct TextButtonRadial;
 ///
 /// To give this button simple functionality, consider inserting a [crate::ui::actions::UiAction].
 #[allow(dead_code)]
-pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
-    child_builder: &'b mut ChildBuilder<'w, 's, 'a>,
+pub fn spawn<'w, 's, 'a, S: Into<String>>(
+    child_builder: &'a mut ChildBuilder<'w, 's, '_>,
     button_text: S,
     asset_holder: &AssetHolder,
     margin: Val,
     font_size: FontSize,
-) -> EntityCommands<'w, 's, 'b> {
+) -> EntityCommands<'w, 's, 'a> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
     let mut e = child_builder.spawn(ButtonBundle {
