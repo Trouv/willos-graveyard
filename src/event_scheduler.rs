@@ -62,7 +62,7 @@ where
     }
 }
 
-pub fn fire_scheduled_events<E>(
+fn fire_scheduled_events<E>(
     time: Res<Time>,
     mut event_scheduler: ResMut<EventScheduler<E>>,
     mut writer: EventWriter<E>,
