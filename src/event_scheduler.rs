@@ -1,6 +1,11 @@
+//! Plugin that provides functionality for scheduling events to fire in the future.
 use bevy::prelude::*;
 use std::{collections::VecDeque, marker::PhantomData, time::Duration};
 
+/// Plugin that provides functionality for scheduling events to fire in the future.
+///
+/// Supply the event type with the generic parameter.
+/// This plugin needs to be added once per event you plan to do scheduling for.
 pub struct EventSchedulerPlugin<E> {
     data: PhantomData<E>,
 }
@@ -25,6 +30,7 @@ where
     }
 }
 
+/// Resource providing the API for scheduling events to fire in the future.
 #[derive(Clone, Debug, Resource)]
 pub struct EventScheduler<E>
 where
@@ -49,6 +55,7 @@ impl<E> EventScheduler<E>
 where
     E: 'static + Send + Sync,
 {
+    /// Schedule an event to fire in the future.
     pub fn schedule(&mut self, event: E, duration: Duration) {
         self.events
             .push_back((event, Timer::new(duration, TimerMode::Once)));
