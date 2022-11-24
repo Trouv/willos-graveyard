@@ -9,8 +9,6 @@ edition = "2021"
 default = ["hot", "fast-compile"]
 dev = ["inspector"]
 
-ui-debug = []
-
 hot = []
 fast-compile = ["bevy/dynamic"]
 inspector = ["bevy-inspector-egui"]

@@ -4,10 +4,7 @@ use crate::{
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
     },
-    ui::{
-        font_scale::{FontScale, FontSize},
-        UiRoot,
-    },
+    ui::font_scale::{FontScale, FontSize},
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -89,7 +86,6 @@ fn spawn_level_card(
     assets: Res<AssetServer>,
     asset_holder: Res<AssetHolder>,
     mut images: ResMut<Assets<Image>>,
-    ui_root_query: Query<Entity, With<UiRoot>>,
 ) {
     let mut title = "Thank you for playing!\n\nMade by Trevor Lovell and Gabe Machado\n\nWayfarer's Toy Box font by Chequered Ink".to_string();
     let mut level_num = None;
@@ -136,7 +132,7 @@ fn spawn_level_card(
     )
     .unwrap();
 
-    let level_card_entity = commands
+    commands
         .spawn(ImageBundle {
             image: UiImage(level_card_texture),
             ..Default::default()
@@ -215,16 +211,11 @@ fn spawn_level_card(
                 })
                 .insert(FontScale::from(FontSize::Medium));
         })
-        .insert(LevelCard)
-        .id();
+        .insert(LevelCard);
 
     if level_num.is_some() {
         schedule_level_card(&mut level_card_events);
     }
-
-    commands
-        .entity(ui_root_query.single())
-        .add_child(level_card_entity);
 }
 
 fn load_next_level(

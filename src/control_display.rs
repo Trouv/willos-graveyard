@@ -2,10 +2,7 @@
 use crate::{
     camera::PlayZonePortion,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
-    ui::{
-        font_scale::{FontScale, FontSize},
-        UiRoot,
-    },
+    ui::font_scale::{FontScale, FontSize},
     GameState,
 };
 use bevy::prelude::*;
@@ -16,7 +13,7 @@ pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_control_display.run_in_state(GameState::LevelTransition))
+        app.add_enter_system(GameState::LevelTransition, spawn_control_display)
             .add_system_to_stage(
                 CoreStage::PreUpdate,
                 update_control_display.run_in_state(GameState::Gameplay),
@@ -30,13 +27,13 @@ struct ControlDisplay;
 
 fn spawn_control_display(
     mut commands: Commands,
-    ui_root_query: Query<Entity, Added<UiRoot>>,
     play_zone_portion: Res<PlayZonePortion>,
+    mut already_spawned: Local<bool>,
 ) {
-    for ui_root_entity in ui_root_query.iter() {
+    if !*already_spawned {
         let control_zone_ratio = 1. - **play_zone_portion;
 
-        let control_display_entity = commands
+        commands
             .spawn(NodeBundle {
                 background_color: BackgroundColor(Color::NONE),
                 style: Style {
@@ -59,12 +56,9 @@ fn spawn_control_display(
                 z_index: ZIndex::Local(-1),
                 ..Default::default()
             })
-            .insert(ControlDisplay)
-            .id();
+            .insert(ControlDisplay);
 
-        commands
-            .entity(ui_root_entity)
-            .add_child(control_display_entity);
+        *already_spawned = true;
     }
 }
 

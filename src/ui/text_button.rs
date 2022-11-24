@@ -22,13 +22,13 @@ pub struct TextButtonRadial;
 ///
 /// To give this button simple functionality, consider inserting a [crate::ui::actions::UiAction].
 #[allow(dead_code)]
-pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
-    child_builder: &'b mut ChildBuilder<'w, 's, 'a>,
+pub fn spawn<'w, 's, 'a, S: Into<String>>(
+    child_builder: &'a mut ChildBuilder<'w, 's, '_>,
     button_text: S,
     asset_holder: &AssetHolder,
     margin: Val,
     font_size: FontSize,
-) -> EntityCommands<'w, 's, 'b> {
+) -> EntityCommands<'w, 's, 'a> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
     let mut e = child_builder.spawn(ButtonBundle {
@@ -130,46 +130,5 @@ pub(super) fn text_button_visuals(
                 *radial_color = BackgroundColor(Color::GRAY);
             }
         }
-    }
-}
-
-#[cfg(feature = "ui-debug")]
-pub mod debug {
-    use super::*;
-    use crate::ui::{actions::UiAction, UiRoot};
-
-    pub fn debug_spawn_button(
-        mut commands: Commands,
-        asset_holder: Res<AssetHolder>,
-        ui_root: Query<Entity, With<UiRoot>>,
-    ) {
-        commands.entity(ui_root.single()).with_children(|mut root| {
-            spawn(&mut root, "#1", &asset_holder, Val::Px(4.), FontSize::Small)
-                .insert(UiAction::Debug("#1"));
-            spawn(
-                &mut root,
-                "help",
-                &asset_holder,
-                Val::Px(4.),
-                FontSize::Small,
-            )
-            .insert(UiAction::Debug("Help 1"));
-            spawn(
-                &mut root,
-                "ooh this one is really long!!",
-                &asset_holder,
-                Val::Px(4.),
-                FontSize::Small,
-            )
-            .insert(UiAction::Debug("long"));
-            spawn(
-                &mut root,
-                "help",
-                &asset_holder,
-                Val::Px(4.),
-                FontSize::Small,
-            )
-            .insert(UiAction::Debug("Help 2"));
-        });
     }
 }

@@ -7,7 +7,7 @@ use crate::{
     ui::{
         actions::UiAction,
         font_scale::{FontScale, FontSize},
-        text_button, UiRoot,
+        text_button,
     },
     AssetHolder, GameState,
 };
@@ -68,7 +68,6 @@ fn spawn_level_select_card(
     mut images: ResMut<Assets<Image>>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     mut event_writer: EventWriter<LevelSelectCardEvent>,
-    ui_root: Query<Entity, With<UiRoot>>,
 ) {
     // TODO: refactor this to avoid repeated code with spawn_level_card
     let level_card_atlas = texture_atlas_from_nine_slice(
@@ -181,10 +180,6 @@ fn spawn_level_select_card(
                 });
         })
         .id();
-
-    commands
-        .entity(ui_root.single())
-        .add_child(level_select_entity);
 
     event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
 }
