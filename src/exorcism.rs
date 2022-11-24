@@ -84,8 +84,8 @@ fn spawn_death_card(
         if *state == WilloState::Dead && *last_state != WilloState::Dead {
             // Player just died
             let death_card_entity = commands
-                .spawn_bundle(NodeBundle {
-                    color: UiColor(Color::rgba(0., 0., 0., 0.9)),
+                .spawn(NodeBundle {
+                    background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
                     visibility: Visibility { is_visible: false },
@@ -96,7 +96,7 @@ fn spawn_death_card(
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         position_type: PositionType::Absolute,
-                        flex_direction: FlexDirection::ColumnReverse,
+                        flex_direction: FlexDirection::Column,
                         size: Size {
                             width: Val::Percent(100.),
                             height: Val::Percent(100.),
@@ -113,7 +113,7 @@ fn spawn_death_card(
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
                             position_type: PositionType::Absolute,
-                            flex_direction: FlexDirection::ColumnReverse,
+                            flex_direction: FlexDirection::Column,
                             size: Size {
                                 width: Val::Percent(100.),
                                 height: Val::Percent(100.),
@@ -134,7 +134,7 @@ fn spawn_death_card(
                 .insert(ExorcismCard)
                 .with_children(|parent| {
                     parent
-                        .spawn_bundle(TextBundle {
+                        .spawn(TextBundle {
                             text: Text::from_section(
                                 "EXORCISED\n\nR to restart\nZ to undo",
                                 TextStyle {

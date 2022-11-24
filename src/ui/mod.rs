@@ -51,8 +51,8 @@ pub struct UiRoot;
 
 fn spawn_ui_root(mut commands: Commands) {
     commands
-        .spawn_bundle(NodeBundle {
-            color: UiColor(Color::NONE),
+        .spawn(NodeBundle {
+            background_color: BackgroundColor(Color::NONE),
             style: Style {
                 size: Size {
                     width: Val::Percent(100.),

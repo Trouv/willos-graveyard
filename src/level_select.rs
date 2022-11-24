@@ -47,11 +47,11 @@ pub enum LevelSelectCardEvent {
     Offscreen(Entity),
 }
 
-fn level_select_card_style(position: UiRect<Val>) -> Style {
+fn level_select_card_style(position: UiRect) -> Style {
     Style {
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
-        flex_direction: FlexDirection::ColumnReverse,
+        flex_direction: FlexDirection::Column,
         position_type: PositionType::Absolute,
         size: Size {
             width: Val::Percent(100.),
@@ -91,7 +91,7 @@ fn spawn_level_select_card(
     .unwrap();
 
     let level_select_entity = commands
-        .spawn_bundle(ImageBundle {
+        .spawn(ImageBundle {
             image: UiImage(level_card_texture),
             ..default()
         })
@@ -117,7 +117,7 @@ fn spawn_level_select_card(
         .with_children(|parent| {
             // spawn title
             parent
-                .spawn_bundle(TextBundle {
+                .spawn(TextBundle {
                     text: Text::from_section(
                         "Level Select",
                         TextStyle {
@@ -145,10 +145,10 @@ fn spawn_level_select_card(
 
             // spawn level button container
             parent
-                .spawn_bundle(NodeBundle {
-                    color: UiColor(Color::NONE),
+                .spawn(NodeBundle {
+                    background_color: BackgroundColor(Color::NONE),
                     style: Style {
-                        flex_wrap: FlexWrap::WrapReverse,
+                        flex_wrap: FlexWrap::Wrap,
                         justify_content: JustifyContent::SpaceAround,
                         margin: UiRect {
                             top: Val::Px(10.),

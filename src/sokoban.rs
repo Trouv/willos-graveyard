@@ -7,7 +7,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
+use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
 
 /// Labels used by sokoban systems
@@ -80,7 +80,7 @@ fn ease_movement(
     >,
 ) {
     for (entity, &grid_coords, transform, willo_animation_state) in grid_coords_query.iter_mut() {
-        let mut xy = grid_coords_to_translation_centered(grid_coords, IVec2::splat(UNIT_LENGTH));
+        let mut xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
 
         if let Some(WilloAnimationState::Push(direction)) = willo_animation_state {
             xy += IVec2::from(*direction).as_vec2() * 5.;

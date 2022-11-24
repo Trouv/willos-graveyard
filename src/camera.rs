@@ -22,11 +22,11 @@ impl Plugin for CameraPlugin {
 
 /// Resource for defining the percentage of the screen ([0-1]) that should be reserved for
 /// rendering the level.
-#[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut)]
+#[derive(Copy, Clone, PartialEq, Debug, Default, Deref, DerefMut, Resource)]
 pub struct PlayZonePortion(pub f32);
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 }
 
 fn fit_camera_around_play_zone_padded(
@@ -54,22 +54,22 @@ fn fit_camera_around_play_zone_padded(
 
             let play_zone_size = if padded_level_ratio > play_zone_ratio {
                 // Level is "wide"
-                Size {
-                    width: padded_level_size.x as f32,
-                    height: padded_level_size.x as f32 / play_zone_ratio,
-                }
+                Vec2::new(
+                    padded_level_size.x as f32,
+                    padded_level_size.x as f32 / play_zone_ratio,
+                )
             } else {
                 // Level is "tall"
-                Size {
-                    width: padded_level_size.y as f32 * play_zone_ratio,
-                    height: padded_level_size.y as f32,
-                }
+                Vec2::new(
+                    padded_level_size.y as f32 * play_zone_ratio,
+                    padded_level_size.y as f32,
+                )
             };
 
             if play_zone_ratio > aspect_ratio {
                 // Play zone is "wide"
                 let pixel_perfect_width =
-                    ((play_zone_size.width / aspect_ratio).round() * aspect_ratio).round();
+                    ((play_zone_size.x / aspect_ratio).round() * aspect_ratio).round();
 
                 projection.right = pixel_perfect_width;
                 projection.top = (pixel_perfect_width / aspect_ratio).round();
@@ -77,16 +77,16 @@ fn fit_camera_around_play_zone_padded(
                 // Play zone is "tall"
 
                 let pixel_perfect_height =
-                    ((play_zone_size.height / aspect_ratio).round() * aspect_ratio).round();
+                    ((play_zone_size.y / aspect_ratio).round() * aspect_ratio).round();
 
                 projection.right = (pixel_perfect_height * aspect_ratio).round();
                 projection.top = pixel_perfect_height;
             };
 
             transform.translation.x =
-                ((play_zone_size.width - padded_level_size.x as f32) / -2.).round();
+                ((play_zone_size.x - padded_level_size.x as f32) / -2.).round();
             transform.translation.y =
-                ((play_zone_size.height - padded_level_size.y as f32) / -2.).round();
+                ((play_zone_size.y - padded_level_size.y as f32) / -2.).round();
         }
     }
 }

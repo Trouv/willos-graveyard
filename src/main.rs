@@ -21,7 +21,7 @@ mod willo;
 mod wind;
 
 use animation::SpriteSheetAnimationPlugin;
-use bevy::{prelude::*, render::texture::ImageSettings};
+use bevy::prelude::*;
 
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -55,9 +55,15 @@ fn main() {
 
     let mut app = App::new();
 
-    app.insert_resource(ImageSettings::default_nearest())
-        .insert_resource(Msaa { samples: 1 })
-        .add_plugins(DefaultPlugins)
+    app.insert_resource(Msaa { samples: 1 })
+        .add_plugins(
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(AssetPlugin {
+                    watch_for_changes: cfg!(feature = "hot"),
+                    ..default()
+                }),
+        )
         .add_plugin(EasingsPlugin)
         .add_plugin(LdtkPlugin)
         .insert_resource(LdtkSettings {
@@ -86,11 +92,6 @@ fn main() {
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection));
 
-    #[cfg(feature = "hot")]
-    {
-        app.add_startup_system(enable_hot_reloading);
-    }
-
     #[cfg(feature = "inspector")]
     {
         app.add_plugin(WorldInspectorPlugin::new());
@@ -99,7 +100,7 @@ fn main() {
     app.run()
 }
 
-#[derive(Debug, Default, AssetCollection)]
+#[derive(Debug, Default, AssetCollection, Resource)]
 pub struct AssetHolder {
     #[asset(path = "levels/willos-graveyard.ldtk")]
     pub ldtk: Handle<LdtkAsset>,
@@ -117,9 +118,4 @@ pub struct AssetHolder {
     pub undo_sound: Handle<AudioSource>,
     #[asset(path = "textures/tarot.png")]
     pub tarot_sheet: Handle<Image>,
-}
-
-#[cfg(feature = "hot")]
-pub fn enable_hot_reloading(asset_server: ResMut<AssetServer>) {
-    asset_server.watch_for_changes().unwrap();
 }

@@ -9,7 +9,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation_centered};
+use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
 use std::{ops::Range, time::Duration};
 
@@ -117,7 +117,7 @@ impl From<WilloAnimationState> for SpriteSheetAnimation {
             None => 3..4,
         };
 
-        let frame_timer = Timer::new(Duration::from_millis(150), true);
+        let frame_timer = Timer::new(Duration::from_millis(150), TimerMode::Repeating);
 
         let repeat = matches!(state, Idle(Down));
 
@@ -137,7 +137,7 @@ pub struct MovementTimer(pub Timer);
 
 impl Default for MovementTimer {
     fn default() -> MovementTimer {
-        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, false))
+        MovementTimer(Timer::from_seconds(MOVEMENT_SECONDS, TimerMode::Once))
     }
 }
 
@@ -154,13 +154,13 @@ impl RewindTimer {
     fn new(millis: u64) -> RewindTimer {
         RewindTimer {
             velocity: millis as f32,
-            timer: Timer::new(Duration::from_millis(millis), true),
+            timer: Timer::new(Duration::from_millis(millis), TimerMode::Repeating),
         }
     }
 }
 
 /// Resource defining the behavior of the rewind feature and storing its state for acceleration.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Resource)]
 struct RewindSettings {
     hold_range_millis: Range<u64>,
     hold_acceleration: f32,
@@ -203,8 +203,7 @@ fn reset_willo_easing(
         match animation_state {
             WilloAnimationState::Push(_) => (),
             _ => {
-                let xy =
-                    grid_coords_to_translation_centered(grid_coords, IVec2::splat(UNIT_LENGTH));
+                let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
                 commands.entity(entity).insert(transform.ease_to(
                     Transform::from_xyz(xy.x, xy.y, transform.translation.z),
                     EaseFunction::CubicOut,

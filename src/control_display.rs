@@ -37,10 +37,10 @@ fn spawn_control_display(
         let control_zone_ratio = 1. - **play_zone_portion;
 
         let control_display_entity = commands
-            .spawn_bundle(NodeBundle {
-                color: UiColor(Color::NONE),
+            .spawn(NodeBundle {
+                background_color: BackgroundColor(Color::NONE),
                 style: Style {
-                    flex_direction: FlexDirection::ColumnReverse,
+                    flex_direction: FlexDirection::Column,
                     align_items: AlignItems::FlexStart,
                     justify_content: JustifyContent::Center,
                     align_content: AlignContent::Center,
@@ -56,7 +56,7 @@ fn spawn_control_display(
                     },
                     ..Default::default()
                 },
-                transform: Transform::from_xyz(0., 0., 1.),
+                z_index: ZIndex::Local(-1),
                 ..Default::default()
             })
             .insert(ControlDisplay)
@@ -98,7 +98,7 @@ fn update_control_display(
             .with_children(|parent| {
                 let mut add_row = |nodes: Vec<ControlNode>| {
                     parent
-                        .spawn_bundle(NodeBundle {
+                        .spawn(NodeBundle {
                             style: Style {
                                 size: Size {
                                     height: Val::Percent(100. / 18.),
@@ -110,7 +110,7 @@ fn update_control_display(
                                 },
                                 ..Default::default()
                             },
-                            color: UiColor(Color::NONE),
+                            background_color: BackgroundColor(Color::NONE),
                             ..Default::default()
                         })
                         .with_children(|parent| {
@@ -118,7 +118,7 @@ fn update_control_display(
                                 match node {
                                     ControlNode::Text(s) => {
                                         parent
-                                            .spawn_bundle(TextBundle {
+                                            .spawn(TextBundle {
                                                 text: Text::from_section(s, style.clone())
                                                     .with_alignment(TextAlignment {
                                                         vertical: VerticalAlign::Center,
@@ -140,7 +140,7 @@ fn update_control_display(
                                             .insert(FontScale::from(FontSize::Medium));
                                     }
                                     ControlNode::Image(h) => {
-                                        parent.spawn_bundle(ImageBundle {
+                                        parent.spawn(ImageBundle {
                                             image: UiImage(h),
                                             style: Style {
                                                 size: Size {

@@ -77,7 +77,7 @@ fn spawn_gravestone_body(
         let mut rng = rand::thread_rng();
 
         let body_entity = commands
-            .spawn_bundle(SpriteSheetBundle {
+            .spawn(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
                     index: (11..22_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
                     ..default()

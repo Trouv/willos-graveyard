@@ -51,7 +51,7 @@ impl Plugin for LevelTransitionPlugin {
 }
 
 /// Resource that can be inserted to trigger a level transition.
-#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component)]
+#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Resource)]
 pub struct TransitionTo(pub LevelSelection);
 
 /// Component that marks the level card.
@@ -137,7 +137,7 @@ fn spawn_level_card(
     .unwrap();
 
     let level_card_entity = commands
-        .spawn_bundle(ImageBundle {
+        .spawn(ImageBundle {
             image: UiImage(level_card_texture),
             ..Default::default()
         })
@@ -146,7 +146,7 @@ fn spawn_level_card(
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
                 position_type: PositionType::Absolute,
-                flex_direction: FlexDirection::ColumnReverse,
+                flex_direction: FlexDirection::Column,
                 size: Size {
                     width: Val::Percent(100.),
                     height: Val::Percent(100.),
@@ -163,7 +163,7 @@ fn spawn_level_card(
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     position_type: PositionType::Absolute,
-                    flex_direction: FlexDirection::ColumnReverse,
+                    flex_direction: FlexDirection::Column,
                     size: Size {
                         width: Val::Percent(100.),
                         height: Val::Percent(100.),
@@ -184,7 +184,7 @@ fn spawn_level_card(
         .with_children(|parent| {
             if let Some(level_num) = level_num {
                 parent
-                    .spawn_bundle(TextBundle {
+                    .spawn(TextBundle {
                         text: Text::from_section(
                             format!("#{level_num}"),
                             TextStyle {
@@ -202,7 +202,7 @@ fn spawn_level_card(
                     .insert(FontScale::from(FontSize::Huge));
             }
             parent
-                .spawn_bundle(TextBundle {
+                .spawn(TextBundle {
                     text: Text::from_section(
                         title,
                         TextStyle {
@@ -240,7 +240,7 @@ fn load_next_level(
             if *first_card_skipped {
                 *level_selection = transition_to.0.clone()
             } else {
-                commands.spawn_bundle(LdtkWorldBundle {
+                commands.spawn(LdtkWorldBundle {
                     ldtk_handle: asset_holder.ldtk.clone(),
                     transform: Transform::from_xyz(32., 32., 0.),
                     ..Default::default()

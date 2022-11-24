@@ -1,10 +1,10 @@
 use bevy::{
+    math::Rect,
     prelude::*,
     render::{
         render_resource::{Extent3d, TextureDimension},
         texture::TextureFormatPixelInfo,
     },
-    sprite::Rect,
 };
 use thiserror::Error;
 

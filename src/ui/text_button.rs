@@ -31,12 +31,12 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
 ) -> EntityCommands<'w, 's, 'b> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
-    let mut e = child_builder.spawn_bundle(ButtonBundle {
+    let mut e = child_builder.spawn(ButtonBundle {
         style: Style {
-            flex_direction: FlexDirection::ColumnReverse,
+            flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            size: Size::new(Val::Auto, Val::Px(40.)),
+            size: Size::new(Val::Auto, Val::Px(50.)),
             margin: UiRect {
                 top: margin,
                 bottom: margin,
@@ -45,7 +45,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             },
             ..default()
         },
-        color: UiColor(Color::NONE),
+        background_color: BackgroundColor(Color::NONE),
         ..default()
     });
 
@@ -56,7 +56,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
     e.with_children(|button| {
         // spawn the background/highlight radial
         button
-            .spawn_bundle(ImageBundle {
+            .spawn(ImageBundle {
                 image: UiImage(asset_holder.button_radial.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
@@ -75,7 +75,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
 
         // spawn the text
         button
-            .spawn_bundle(TextBundle::from_section(
+            .spawn(TextBundle::from_section(
                 button_text,
                 TextStyle {
                     font: asset_holder.font.clone(),
@@ -94,7 +94,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
             });
 
         // spawn the underline decoration
-        button.spawn_bundle(ImageBundle {
+        button.spawn(ImageBundle {
             image: UiImage(asset_holder.button_underline.clone()),
             style: Style {
                 min_size: Size::new(Val::Percent(50.), Val::Px(16.)),
@@ -111,7 +111,7 @@ pub fn spawn<'w, 's, 'a, 'b, S: Into<String>>(
 /// System that alters the visuals of a text button to show interaction
 pub(super) fn text_button_visuals(
     text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
-    mut button_radials: Query<(&mut UiColor, &Parent), With<TextButtonRadial>>,
+    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<TextButtonRadial>>,
 ) {
     for (button_entity, interaction) in text_buttons.iter() {
         let (mut radial_color, _) = button_radials
@@ -121,13 +121,13 @@ pub(super) fn text_button_visuals(
 
         match interaction {
             Interaction::None => {
-                *radial_color = UiColor(Color::NONE);
+                *radial_color = BackgroundColor(Color::NONE);
             }
             Interaction::Hovered => {
-                *radial_color = UiColor(Color::WHITE);
+                *radial_color = BackgroundColor(Color::WHITE);
             }
             Interaction::Clicked => {
-                *radial_color = UiColor(Color::GRAY);
+                *radial_color = BackgroundColor(Color::GRAY);
             }
         }
     }
