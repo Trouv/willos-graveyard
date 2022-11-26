@@ -1,10 +1,33 @@
+//! Plugin providing functionality for basic sprite sheet animations.
 use crate::from_component::{FromComponentLabel, FromComponentPlugin};
 use bevy::prelude::*;
 use std::{marker::PhantomData, ops::Range};
 
+/// Label used by animation systems.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
 pub struct AnimationLabel;
 
+/// Plugin providing functionality for basic sprite sheet animations.
+pub struct SpriteSheetAnimationPlugin;
+
+impl Plugin for SpriteSheetAnimationPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<AnimationEvent>()
+            .add_system(
+                sprite_sheet_animation
+                    .label(AnimationLabel)
+                    .after(FromComponentLabel),
+            )
+            .add_system(
+                set_initial_sprite_index
+                    .label(AnimationLabel)
+                    .after(FromComponentLabel),
+            );
+    }
+}
+
+/// Component for giving a sprite sheet bundle a basic animation, with some settings for its
+/// behaviour.
 #[derive(Clone, Debug, Default, Component)]
 pub struct SpriteSheetAnimation {
     pub indices: Range<usize>,
@@ -49,29 +72,14 @@ pub fn set_initial_sprite_index(
     }
 }
 
-pub struct SpriteSheetAnimationPlugin;
-
-impl Plugin for SpriteSheetAnimationPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_event::<AnimationEvent>()
-            .add_system(
-                sprite_sheet_animation
-                    .label(AnimationLabel)
-                    .after(FromComponentLabel),
-            )
-            .add_system(
-                set_initial_sprite_index
-                    .label(AnimationLabel)
-                    .after(FromComponentLabel),
-            );
-    }
-}
-
+/// Event that fires at certain points during an animation.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum AnimationEvent {
     Finished(Entity),
 }
 
+/// Plugin providing functionality for animation graphs through `From` and `Iterator`
+/// implementations.
 pub struct FromComponentAnimator<F>
 where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
@@ -83,6 +91,7 @@ impl<F> FromComponentAnimator<F>
 where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
+    /// Basic constructor for [FromComponentAnimator].
     pub fn new() -> Self {
         FromComponentAnimator {
             from_type: PhantomData,
