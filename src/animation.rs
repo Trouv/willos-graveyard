@@ -26,6 +26,12 @@ impl Plugin for SpriteSheetAnimationPlugin {
     }
 }
 
+/// Event that fires at certain points during an animation.
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum AnimationEvent {
+    Finished(Entity),
+}
+
 /// Component for giving a sprite sheet bundle a basic animation, with some settings for its
 /// behaviour.
 #[derive(Clone, Debug, Default, Component)]
@@ -35,7 +41,7 @@ pub struct SpriteSheetAnimation {
     pub repeat: bool,
 }
 
-pub fn sprite_sheet_animation(
+fn sprite_sheet_animation(
     mut query: Query<(Entity, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
     time: Res<Time>,
     mut event_writer: EventWriter<AnimationEvent>,
@@ -58,7 +64,7 @@ pub fn sprite_sheet_animation(
     }
 }
 
-pub fn set_initial_sprite_index(
+fn set_initial_sprite_index(
     mut query: Query<
         (&mut TextureAtlasSprite, &SpriteSheetAnimation),
         Changed<SpriteSheetAnimation>,
@@ -70,12 +76,6 @@ pub fn set_initial_sprite_index(
             sprite.index = indices.start;
         }
     }
-}
-
-/// Event that fires at certain points during an animation.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum AnimationEvent {
-    Finished(Entity),
 }
 
 /// Plugin providing functionality for animation graphs through `From` and `Iterator`
