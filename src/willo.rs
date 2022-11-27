@@ -11,7 +11,9 @@ use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
-use std::{ops::Range, time::Duration};
+use leafwing_input_manager::prelude::*;
+use serde::{Deserialize, Serialize};
+use std::{fs::File, io::BufReader, ops::Range, time::Duration};
 
 /// Labels used by Willo systems.
 #[derive(SystemLabel)]
@@ -28,6 +30,11 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Gameplay,
             ))
+            .add_plugin(InputManagerPlugin::<WilloAction>::default())
+            .init_resource::<ActionState<WilloAction>>()
+            .insert_resource(
+                load_gameplay_control_settings().expect("unable to load gameplay control settings"),
+            )
             .init_resource::<RewindSettings>()
             .add_event::<WilloMovementEvent>()
             .add_system(
@@ -48,6 +55,23 @@ impl Plugin for WilloPlugin {
             .add_system(history_sugar.run_not_in_state(GameState::AssetLoading))
             .register_ldtk_entity::<WilloBundle>("Willo");
     }
+}
+
+#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
+pub enum WilloAction {
+    North,
+    West,
+    South,
+    East,
+    Undo,
+    Restart,
+    Pause,
+}
+
+fn load_gameplay_control_settings() -> std::io::Result<InputMap<WilloAction>> {
+    Ok(serde_json::from_reader(BufReader::new(File::open(
+        "settings/willo_input_map.json",
+    )?))?)
 }
 
 /// Event that fires whenever Willo moves.

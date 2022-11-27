@@ -1,0 +1,88 @@
+{
+  "map": [
+    [
+      {
+        "Single": {
+          "Keyboard": "W"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "North"
+        }
+      }
+    ],
+    [
+      {
+        "Single": {
+          "Keyboard": "A"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "West"
+        }
+      }
+    ],
+    [
+      {
+        "Single": {
+          "Keyboard": "S"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "South"
+        }
+      }
+    ],
+    [
+      {
+        "Single": {
+          "Keyboard": "D"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "East"
+        }
+      }
+    ],
+    [
+      {
+        "Single": {
+          "Keyboard": "Z"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "LeftTrigger"
+        }
+      }
+    ],
+    [
+      {
+        "Single": {
+          "Keyboard": "R"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "RightTrigger"
+        }
+      }
+    ],
+    [
+      {
+        "Single": {
+          "Keyboard": "Escape"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "Start"
+        }
+      }
+    ]
+  ]
+}
