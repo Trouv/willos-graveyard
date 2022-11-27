@@ -3,7 +3,7 @@
 //! Gravestones are sokoban blocks that
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
-use crate::{history::History, sokoban::RigidBody, GameState};
+use crate::{history::History, sokoban::RigidBody, willo::WilloAction, GameState};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
@@ -33,17 +33,17 @@ pub struct Gravestone {
     ///
     /// Defines which button the user can press to activate the movement that corresponds to this
     /// gravestone according to the movement table.
-    pub key_code: KeyCode,
+    pub key_code: WilloAction,
 }
 
 impl From<EntityInstance> for Gravestone {
     fn from(entity_instance: EntityInstance) -> Self {
         Gravestone {
             key_code: match entity_instance.identifier.as_ref() {
-                "W" => KeyCode::W,
-                "A" => KeyCode::A,
-                "S" => KeyCode::S,
-                _ => KeyCode::D,
+                "W" => WilloAction::North,
+                "A" => WilloAction::West,
+                "S" => WilloAction::South,
+                _ => WilloAction::East,
             },
         }
     }

@@ -87,8 +87,8 @@ pub struct WilloMovementEvent {
 pub enum WilloState {
     Waiting,
     Dead,
-    RankMove(KeyCode),
-    FileMove(KeyCode),
+    RankMove(WilloAction),
+    FileMove(WilloAction),
 }
 
 impl Default for WilloState {
@@ -270,35 +270,35 @@ fn play_death_animations(
 
 fn willo_input(
     mut willo_query: Query<&mut WilloState>,
-    input: Res<Input<KeyCode>>,
+    input: Res<ActionState<WilloAction>>,
     mut history_commands: EventWriter<HistoryCommands>,
     mut rewind_settings: ResMut<RewindSettings>,
     time: Res<Time>,
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == WilloState::Waiting {
-            if input.just_pressed(KeyCode::W) {
+            if input.just_pressed(WilloAction::North) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::W)
-            } else if input.just_pressed(KeyCode::A) {
+                *willo = WilloState::RankMove(WilloAction::North)
+            } else if input.just_pressed(WilloAction::West) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::A)
-            } else if input.just_pressed(KeyCode::S) {
+                *willo = WilloState::RankMove(WilloAction::West)
+            } else if input.just_pressed(WilloAction::South) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::S)
-            } else if input.just_pressed(KeyCode::D) {
+                *willo = WilloState::RankMove(WilloAction::South)
+            } else if input.just_pressed(WilloAction::East) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::D)
+                *willo = WilloState::RankMove(WilloAction::East)
             }
         }
 
         if *willo == WilloState::Waiting || *willo == WilloState::Dead {
-            if input.just_pressed(KeyCode::Z) {
+            if input.just_pressed(WilloAction::Undo) {
                 history_commands.send(HistoryCommands::Rewind);
                 *willo = WilloState::Waiting;
                 rewind_settings.hold_timer =
                     Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if input.pressed(KeyCode::Z) {
+            } else if input.pressed(WilloAction::Undo) {
                 let range = rewind_settings.hold_range_millis.clone();
                 let acceleration = rewind_settings.hold_acceleration;
 
@@ -315,7 +315,7 @@ fn willo_input(
                         timer.set_duration(Duration::from_millis(*velocity as u64));
                     }
                 }
-            } else if input.just_pressed(KeyCode::R) {
+            } else if input.just_pressed(WilloAction::Restart) {
                 history_commands.send(HistoryCommands::Reset);
                 *willo = WilloState::Waiting;
             }

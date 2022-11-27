@@ -4,7 +4,7 @@ use crate::{
     gravestone::Gravestone,
     history::FlushHistoryCommands,
     sokoban::SokobanLabels,
-    willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+    willo::{MovementTimer, WilloAction, WilloLabels, WilloMovementEvent, WilloState},
     GameState,
 };
 use bevy::prelude::*;
@@ -65,7 +65,7 @@ impl From<Direction> for IVec2 {
 pub struct MovementTable {
     /// 4x4 table marking the locations of gravestones, identified by the [KeyCode] they are
     /// associated with
-    pub table: [[Option<KeyCode>; 4]; 4],
+    pub table: [[Option<WilloAction>; 4]; 4],
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
