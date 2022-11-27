@@ -9,12 +9,14 @@ use crate::{
         font_scale::{FontScale, FontSize},
         text_button,
     },
+    willo::WilloAction,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
+use leafwing_input_manager::prelude::*;
 use std::time::Duration;
 
 /// Plugin for systems and events related to the level select card.
@@ -184,14 +186,14 @@ fn spawn_level_select_card(
     event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
 }
 
-fn pause(mut commands: Commands, input: Res<Input<KeyCode>>) {
-    if input.just_pressed(KeyCode::Escape) || input.just_pressed(KeyCode::P) {
+fn pause(mut commands: Commands, input: Res<ActionState<WilloAction>>) {
+    if input.just_pressed(WilloAction::Pause) {
         commands.insert_resource(NextState(GameState::LevelSelect));
     }
 }
 
-fn unpause(mut commands: Commands, input: Res<Input<KeyCode>>) {
-    if input.just_pressed(KeyCode::Escape) || input.just_pressed(KeyCode::P) {
+fn unpause(mut commands: Commands, input: Res<ActionState<WilloAction>>) {
+    if input.just_pressed(WilloAction::Pause) {
         commands.insert_resource(NextState(GameState::Gameplay));
     }
 }
