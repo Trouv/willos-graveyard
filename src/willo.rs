@@ -2,6 +2,7 @@
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     exorcism::ExorcismEvent,
+    gravestone::GraveId,
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     movement_table::Direction,
     sokoban::{RigidBody, SokobanLabels},
@@ -13,7 +14,7 @@ use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::{fs::File, io::BufReader, ops::Range, time::Duration};
+use std::{ops::Range, time::Duration};
 
 /// Labels used by Willo systems.
 #[derive(SystemLabel)]
@@ -30,11 +31,6 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Gameplay,
             ))
-            .add_plugin(InputManagerPlugin::<WilloAction>::default())
-            .init_resource::<ActionState<WilloAction>>()
-            .insert_resource(
-                load_gameplay_control_settings().expect("unable to load gameplay control settings"),
-            )
             .init_resource::<RewindSettings>()
             .add_event::<WilloMovementEvent>()
             .add_system(
@@ -59,19 +55,9 @@ impl Plugin for WilloPlugin {
 
 #[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
 pub enum WilloAction {
-    North,
-    West,
-    South,
-    East,
     Undo,
     Restart,
     Pause,
-}
-
-fn load_gameplay_control_settings() -> std::io::Result<InputMap<WilloAction>> {
-    Ok(serde_json::from_reader(BufReader::new(File::open(
-        "settings/willo_input_map.json",
-    )?))?)
 }
 
 /// Event that fires whenever Willo moves.
@@ -87,8 +73,8 @@ pub struct WilloMovementEvent {
 pub enum WilloState {
     Waiting,
     Dead,
-    RankMove(WilloAction),
-    FileMove(WilloAction),
+    RankMove(GraveId),
+    FileMove(GraveId),
 }
 
 impl Default for WilloState {
@@ -270,35 +256,36 @@ fn play_death_animations(
 
 fn willo_input(
     mut willo_query: Query<&mut WilloState>,
-    input: Res<ActionState<WilloAction>>,
+    grave_input: Res<ActionState<GraveId>>,
+    gameplay_input: Res<ActionState<WilloAction>>,
     mut history_commands: EventWriter<HistoryCommands>,
     mut rewind_settings: ResMut<RewindSettings>,
     time: Res<Time>,
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == WilloState::Waiting {
-            if input.just_pressed(WilloAction::North) {
+            if grave_input.just_pressed(GraveId::North) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(WilloAction::North)
-            } else if input.just_pressed(WilloAction::West) {
+                *willo = WilloState::RankMove(GraveId::North)
+            } else if grave_input.just_pressed(GraveId::West) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(WilloAction::West)
-            } else if input.just_pressed(WilloAction::South) {
+                *willo = WilloState::RankMove(GraveId::West)
+            } else if grave_input.just_pressed(GraveId::South) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(WilloAction::South)
-            } else if input.just_pressed(WilloAction::East) {
+                *willo = WilloState::RankMove(GraveId::South)
+            } else if grave_input.just_pressed(GraveId::East) {
                 history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(WilloAction::East)
+                *willo = WilloState::RankMove(GraveId::East)
             }
         }
 
         if *willo == WilloState::Waiting || *willo == WilloState::Dead {
-            if input.just_pressed(WilloAction::Undo) {
+            if gameplay_input.just_pressed(WilloAction::Undo) {
                 history_commands.send(HistoryCommands::Rewind);
                 *willo = WilloState::Waiting;
                 rewind_settings.hold_timer =
                     Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if input.pressed(WilloAction::Undo) {
+            } else if gameplay_input.pressed(WilloAction::Undo) {
                 let range = rewind_settings.hold_range_millis.clone();
                 let acceleration = rewind_settings.hold_acceleration;
 
@@ -315,7 +302,7 @@ fn willo_input(
                         timer.set_duration(Duration::from_millis(*velocity as u64));
                     }
                 }
-            } else if input.just_pressed(WilloAction::Restart) {
+            } else if gameplay_input.just_pressed(WilloAction::Restart) {
                 history_commands.send(HistoryCommands::Reset);
                 *willo = WilloState::Waiting;
             }

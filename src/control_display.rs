@@ -1,9 +1,9 @@
 //! Plugin providing functionality for the gameplay UI element showing the current controls.
 use crate::{
     camera::PlayZonePortion,
+    gravestone::GraveId,
     movement_table::{Direction, MovementTable, DIRECTION_ORDER},
     ui::font_scale::{FontScale, FontSize},
-    willo::WilloAction,
     GameState,
 };
 use bevy::prelude::*;
@@ -156,30 +156,30 @@ fn update_control_display(
                         });
                 };
 
-                let mut keys_to_controls: Vec<(WilloAction, Vec<ControlNode>)> = vec![
+                let mut keys_to_controls: Vec<(GraveId, Vec<ControlNode>)> = vec![
                     (
-                        WilloAction::North,
+                        GraveId::North,
                         vec![
                             ControlNode::Image(assets.load("textures/w.png")),
                             ControlNode::Text("=".to_string()),
                         ],
                     ),
                     (
-                        WilloAction::West,
+                        GraveId::West,
                         vec![
                             ControlNode::Image(assets.load("textures/a.png")),
                             ControlNode::Text("=".to_string()),
                         ],
                     ),
                     (
-                        WilloAction::South,
+                        GraveId::South,
                         vec![
                             ControlNode::Image(assets.load("textures/s.png")),
                             ControlNode::Text("=".to_string()),
                         ],
                     ),
                     (
-                        WilloAction::East,
+                        GraveId::East,
                         vec![
                             ControlNode::Image(assets.load("textures/d.png")),
                             ControlNode::Text("=".to_string()),

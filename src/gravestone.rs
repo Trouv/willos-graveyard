@@ -3,11 +3,14 @@
 //! Gravestones are sokoban blocks that
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
-use crate::{history::History, sokoban::RigidBody, willo::WilloAction, GameState};
+use crate::{history::History, sokoban::RigidBody, GameState};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
+use leafwing_input_manager::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
+use serde::{Deserialize, Serialize};
+use std::{fs::File, io::BufReader};
 
 /// Plugin providing functionality for gravestones.
 ///
@@ -18,12 +21,32 @@ pub struct GravestonePlugin;
 
 impl Plugin for GravestonePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
+        app.add_plugin(InputManagerPlugin::<GraveId>::default())
+            .init_resource::<ActionState<GraveId>>()
+            .insert_resource(
+                load_gravestone_control_settings()
+                    .expect("unable to load gameplay control settings"),
+            )
+            .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
             .register_ldtk_entity::<GravestoneBundle>("W")
             .register_ldtk_entity::<GravestoneBundle>("A")
             .register_ldtk_entity::<GravestoneBundle>("S")
             .register_ldtk_entity::<GravestoneBundle>("D");
     }
+}
+
+#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
+pub enum GraveId {
+    North,
+    West,
+    South,
+    East,
+}
+
+fn load_gravestone_control_settings() -> std::io::Result<InputMap<GraveId>> {
+    Ok(serde_json::from_reader(BufReader::new(File::open(
+        "settings/gravestone_controls.json",
+    )?))?)
 }
 
 /// Component that marks gravestones and stores their associated [WilloAction].
@@ -33,17 +56,18 @@ pub struct Gravestone {
     ///
     /// Defines which button the user can press to activate the movement that corresponds to this
     /// gravestone according to the movement table.
-    pub key_code: WilloAction,
+    pub key_code: GraveId,
 }
 
 impl From<EntityInstance> for Gravestone {
     fn from(entity_instance: EntityInstance) -> Self {
         Gravestone {
             key_code: match entity_instance.identifier.as_ref() {
-                "W" => WilloAction::North,
-                "A" => WilloAction::West,
-                "S" => WilloAction::South,
-                _ => WilloAction::East,
+                "W" => GraveId::North,
+                "A" => GraveId::West,
+                "S" => GraveId::South,
+                "D" => GraveId::East,
+                g => panic!("encountered bad gravestone identifier: {}", g),
             },
         }
     }
