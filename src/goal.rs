@@ -1,6 +1,6 @@
 //! Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 use crate::{
-    exorcism::ExorcismLabels, gravestone::Gravestone, level_transition::TransitionTo, AssetHolder,
+    exorcism::ExorcismLabels, gravestone::GraveId, level_transition::TransitionTo, AssetHolder,
     GameState,
 };
 use bevy::prelude::*;
@@ -149,7 +149,7 @@ fn range_chance(range: &Range<usize>, current: usize) -> f32 {
 fn check_goal(
     mut commands: Commands,
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
-    block_query: Query<(Entity, &GridCoords), With<Gravestone>>,
+    block_query: Query<(Entity, &GridCoords), With<GraveId>>,
     mut goal_events: EventWriter<GoalEvent>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,

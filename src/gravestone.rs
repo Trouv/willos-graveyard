@@ -35,7 +35,9 @@ impl Plugin for GravestonePlugin {
     }
 }
 
-#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
+#[derive(
+    Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize,
+)]
 pub enum GraveId {
     North,
     West,
@@ -49,26 +51,14 @@ fn load_gravestone_control_settings() -> std::io::Result<InputMap<GraveId>> {
     )?))?)
 }
 
-/// Component that marks gravestones and stores their associated [WilloAction].
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub struct Gravestone {
-    /// The associated key for this Gravestone.
-    ///
-    /// Defines which button the user can press to activate the movement that corresponds to this
-    /// gravestone according to the movement table.
-    pub key_code: GraveId,
-}
-
-impl From<EntityInstance> for Gravestone {
+impl From<EntityInstance> for GraveId {
     fn from(entity_instance: EntityInstance) -> Self {
-        Gravestone {
-            key_code: match entity_instance.identifier.as_ref() {
-                "W" => GraveId::North,
-                "A" => GraveId::West,
-                "S" => GraveId::South,
-                "D" => GraveId::East,
-                g => panic!("encountered bad gravestone identifier: {}", g),
-            },
+        match entity_instance.identifier.as_ref() {
+            "W" => GraveId::North,
+            "A" => GraveId::West,
+            "S" => GraveId::South,
+            "D" => GraveId::East,
+            g => panic!("encountered bad gravestone identifier: {}", g),
         }
     }
 }
@@ -81,7 +71,7 @@ struct GravestoneBundle {
     #[from_entity_instance]
     rigid_body: RigidBody,
     #[from_entity_instance]
-    gravestone: Gravestone,
+    gravestone: GraveId,
     #[sprite_sheet_bundle]
     #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
@@ -89,7 +79,7 @@ struct GravestoneBundle {
 
 fn spawn_gravestone_body(
     mut commands: Commands,
-    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<Gravestone>>,
+    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<GraveId>>,
 ) {
     for (entity, texture_handle) in gravestones.iter() {
         let index_range = 11..22_usize;

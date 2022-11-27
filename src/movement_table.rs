@@ -1,7 +1,7 @@
 //! Plugin and components providing functionality for the movement table, which alters Willo's
 //! abilities based off the placement of gravestones.
 use crate::{
-    gravestone::{GraveId, Gravestone},
+    gravestone::GraveId,
     history::FlushHistoryCommands,
     sokoban::SokobanLabels,
     willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
@@ -80,7 +80,7 @@ struct MovementTableBundle {
 
 fn movement_table_update(
     mut table_query: Query<(&GridCoords, &mut MovementTable)>,
-    input_block_query: Query<(&GridCoords, &Gravestone)>,
+    input_block_query: Query<(&GridCoords, &GraveId)>,
 ) {
     for (table_grid_coords, mut table) in table_query.iter_mut() {
         table.table = [[None; 4]; 4];
@@ -90,7 +90,7 @@ fn movement_table_update(
             let y_index = -1 - diff.y;
             if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
                 // key block is in table
-                table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
+                table.table[y_index as usize][x_index as usize] = Some(*input_block);
             }
         }
     }
