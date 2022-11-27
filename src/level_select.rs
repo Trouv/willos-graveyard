@@ -9,7 +9,7 @@ use crate::{
         font_scale::{FontScale, FontSize},
         text_button,
     },
-    willo::WilloAction,
+    willo::GameplayAction,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -186,14 +186,14 @@ fn spawn_level_select_card(
     event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
 }
 
-fn pause(mut commands: Commands, input: Res<ActionState<WilloAction>>) {
-    if input.just_pressed(WilloAction::Pause) {
+fn pause(mut commands: Commands, input: Res<ActionState<GameplayAction>>) {
+    if input.just_pressed(GameplayAction::Pause) {
         commands.insert_resource(NextState(GameState::LevelSelect));
     }
 }
 
-fn unpause(mut commands: Commands, input: Res<ActionState<WilloAction>>) {
-    if input.just_pressed(WilloAction::Pause) {
+fn unpause(mut commands: Commands, input: Res<ActionState<GameplayAction>>) {
+    if input.just_pressed(GameplayAction::Pause) {
         commands.insert_resource(NextState(GameState::Gameplay));
     }
 }

@@ -25,7 +25,7 @@ impl Plugin for GravestonePlugin {
             .init_resource::<ActionState<GraveId>>()
             .insert_resource(
                 load_gravestone_control_settings()
-                    .expect("unable to load gameplay control settings"),
+                    .expect("unable to load gravestone control settings"),
             )
             .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
             .register_ldtk_entity::<GravestoneBundle>("W")
