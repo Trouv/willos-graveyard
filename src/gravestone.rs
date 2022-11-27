@@ -26,7 +26,7 @@ impl Plugin for GravestonePlugin {
     }
 }
 
-/// Component that marks gravestones and stores their associated [KeyCode].
+/// Component that marks gravestones and stores their associated [WilloAction].
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub struct Gravestone {
     /// The associated key for this Gravestone.

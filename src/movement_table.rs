@@ -63,7 +63,7 @@ impl From<Direction> for IVec2 {
 /// Component that marks the movement table and stores the current placement of gravestones.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct MovementTable {
-    /// 4x4 table marking the locations of gravestones, identified by the [KeyCode] they are
+    /// 4x4 table marking the locations of gravestones, identified by the [WilloAction] they are
     /// associated with
     pub table: [[Option<WilloAction>; 4]; 4],
 }
