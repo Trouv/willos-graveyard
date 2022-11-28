@@ -1,4 +1,6 @@
-use bevy::prelude::*;
+//! Plugin providing logic for all graveyard entities and the entire graveyard state.
+//!
+//! So, the logic for core gameplay lives here.
 
 pub mod control_display;
 pub mod exorcism;
@@ -9,6 +11,11 @@ pub mod sokoban;
 pub mod willo;
 pub mod wind;
 
+use bevy::prelude::*;
+
+/// Plugin providing logic for all graveyard entities and the entire graveyard state.
+///
+/// So, the logic for core gameplay lives here.
 pub struct GraveyardPlugin;
 
 impl Plugin for GraveyardPlugin {
