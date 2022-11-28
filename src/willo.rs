@@ -58,6 +58,7 @@ impl Plugin for WilloPlugin {
     }
 }
 
+/// Actions other than grave-actions that can be performed during the gameplay state.
 #[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
 pub enum GameplayAction {
     Undo,

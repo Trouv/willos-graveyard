@@ -35,6 +35,9 @@ impl Plugin for GravestonePlugin {
     }
 }
 
+/// Component that marks gravestones and associates them with an action.
+///
+/// Also acts as the grave-action itself by implementing Actionlike.
 #[derive(
     Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize,
 )]
