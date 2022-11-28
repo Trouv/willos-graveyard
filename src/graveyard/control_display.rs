@@ -1,8 +1,10 @@
 //! Plugin providing functionality for the graveyard UI element showing the current controls.
 use crate::{
     camera::PlayZonePortion,
-    gravestone::GraveId,
-    movement_table::{Direction, MovementTable, DIRECTION_ORDER},
+    graveyard::{
+        gravestone::GraveId,
+        movement_table::{Direction, MovementTable, DIRECTION_ORDER},
+    },
     ui::font_scale::{FontScale, FontSize},
     GameState,
 };

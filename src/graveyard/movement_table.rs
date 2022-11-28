@@ -1,7 +1,11 @@
 //! Plugin and components providing functionality for the movement table, which alters Willo's
 //! abilities based off the placement of gravestones.
 use crate::{
-    gravestone::GraveId,
+    graveyard::{
+        gravestone::GraveId,
+        sokoban::SokobanLabels,
+        willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+    },
     history::FlushHistoryCommands,
     GameState,
 };

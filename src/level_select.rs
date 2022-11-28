@@ -1,5 +1,6 @@
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
+    graveyard::willo::GameplayAction,
     level_transition::TransitionTo,
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
@@ -9,7 +10,6 @@ use crate::{
         font_scale::{FontScale, FontSize},
         text_button,
     },
-    willo::GameplayAction,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
@@ -194,7 +194,7 @@ fn pause(mut commands: Commands, input: Res<ActionState<GameplayAction>>) {
 
 fn unpause(mut commands: Commands, input: Res<ActionState<GameplayAction>>) {
     if input.just_pressed(GameplayAction::Pause) {
-        commands.insert_resource(NextState(GameState::Gameplay));
+        commands.insert_resource(NextState(GameState::Graveyard));
     }
 }
 

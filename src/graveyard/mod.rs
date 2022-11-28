@@ -8,7 +8,7 @@ mod goal;
 mod gravestone;
 mod movement_table;
 mod sokoban;
-mod willo;
+pub mod willo;
 mod wind;
 
 use bevy::prelude::*;

@@ -1,8 +1,12 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    exorcism::ExorcismEvent,
-    gravestone::GraveId,
+    graveyard::{
+        exorcism::ExorcismEvent,
+        gravestone::GraveId,
+        movement_table::Direction,
+        sokoban::{RigidBody, SokobanLabels},
+    },
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
     AssetHolder, GameState, UNIT_LENGTH,
 };

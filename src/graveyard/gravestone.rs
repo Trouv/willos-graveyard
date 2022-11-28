@@ -4,10 +4,11 @@
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
-    history::History,
-    history::{FlushHistoryCommands, HistoryCommands},
-    sokoban::RigidBody,
-    willo::{WilloLabels, WilloState},
+    graveyard::{
+        sokoban::RigidBody,
+        willo::{WilloLabels, WilloState},
+    },
+    history::{FlushHistoryCommands, History, HistoryCommands},
     GameState,
 };
 use bevy::prelude::*;
@@ -36,7 +37,7 @@ impl Plugin for GravestonePlugin {
             .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
             .add_system(
                 gravestone_input
-                    .run_in_state(GameState::Gameplay)
+                    .run_in_state(GameState::Graveyard)
                     .label(WilloLabels::Input)
                     .before(FlushHistoryCommands),
             )
