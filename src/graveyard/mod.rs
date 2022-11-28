@@ -2,14 +2,14 @@
 //!
 //! So, the logic for core gameplay lives here.
 
-pub mod control_display;
-pub mod exorcism;
-pub mod goal;
-pub mod gravestone;
-pub mod movement_table;
-pub mod sokoban;
-pub mod willo;
-pub mod wind;
+mod control_display;
+mod exorcism;
+mod goal;
+mod gravestone;
+mod movement_table;
+mod sokoban;
+mod willo;
+mod wind;
 
 use bevy::prelude::*;
 
