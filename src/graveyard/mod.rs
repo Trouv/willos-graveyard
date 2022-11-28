@@ -28,11 +28,15 @@ pub struct GraveyardPlugin;
 
 impl Plugin for GraveyardPlugin {
     fn build(&self, app: &mut App) {
+        let asset_folder = app.get_added_plugins::<AssetPlugin>()[0]
+            .asset_folder
+            .clone();
+
         app.init_resource::<RewindSettings>()
             .add_plugin(InputManagerPlugin::<GraveyardAction>::default())
             .init_resource::<ActionState<GraveyardAction>>()
             .insert_resource(
-                load_graveyard_control_settings()
+                load_graveyard_control_settings(asset_folder)
                     .expect("unable to load gameplay control settings"),
             )
             .add_plugin(control_display::ControlDisplayPlugin)
@@ -60,9 +64,11 @@ pub enum GraveyardAction {
     Pause,
 }
 
-fn load_graveyard_control_settings() -> std::io::Result<InputMap<GraveyardAction>> {
+fn load_graveyard_control_settings(
+    asset_folder: String,
+) -> std::io::Result<InputMap<GraveyardAction>> {
     Ok(serde_json::from_reader(BufReader::new(File::open(
-        "settings/graveyard_controls.json",
+        format!("{}/../settings/graveyard_controls.json", asset_folder),
     )?))?)
 }
 

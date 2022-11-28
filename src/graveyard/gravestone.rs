@@ -28,10 +28,14 @@ pub struct GravestonePlugin;
 
 impl Plugin for GravestonePlugin {
     fn build(&self, app: &mut App) {
+        let asset_folder = app.get_added_plugins::<AssetPlugin>()[0]
+            .asset_folder
+            .clone();
+
         app.add_plugin(InputManagerPlugin::<GraveId>::default())
             .init_resource::<ActionState<GraveId>>()
             .insert_resource(
-                load_gravestone_control_settings()
+                load_gravestone_control_settings(asset_folder)
                     .expect("unable to load gravestone control settings"),
             )
             .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
@@ -61,9 +65,9 @@ pub enum GraveId {
     East,
 }
 
-fn load_gravestone_control_settings() -> std::io::Result<InputMap<GraveId>> {
+fn load_gravestone_control_settings(asset_folder: String) -> std::io::Result<InputMap<GraveId>> {
     Ok(serde_json::from_reader(BufReader::new(File::open(
-        "settings/gravestone_controls.json",
+        format!("{}/../settings/gravestone_controls.json", asset_folder),
     )?))?)
 }
 
