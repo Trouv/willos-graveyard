@@ -146,7 +146,7 @@ fn perform_grid_coords_movement(
     for movement_event in reader.iter() {
         let level = levels
             .get(level_query.single())
-            .expect("Level should be loaded in gameplay state");
+            .expect("Level should be loaded in graveyard state");
 
         let LayerInstance {
             c_wid: width,

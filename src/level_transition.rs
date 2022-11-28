@@ -36,8 +36,8 @@ impl Plugin for LevelTransitionPlugin {
                     .with_system(load_next_level)
                     .into(),
             )
-            // level_card_update should be performed during both gameplay and level transition
-            // states since it cleans up the level card after it's done falling during the gameplay
+            // level_card_update should be performed during both graveyard and level transition
+            // states since it cleans up the level card after it's done falling during the graveyard
             // state
             .add_system(
                 level_card_update

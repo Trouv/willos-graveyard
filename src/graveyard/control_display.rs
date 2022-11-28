@@ -1,4 +1,4 @@
-//! Plugin providing functionality for the gameplay UI element showing the current controls.
+//! Plugin providing functionality for the graveyard UI element showing the current controls.
 use crate::{
     camera::PlayZonePortion,
     graveyard::movement_table::{Direction, MovementTable, DIRECTION_ORDER},
@@ -8,7 +8,7 @@ use crate::{
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-/// Plugin providing functionality for the gameplay UI element showing the current controls.
+/// Plugin providing functionality for the graveyard UI element showing the current controls.
 pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
