@@ -3,22 +3,15 @@
 
 mod animation;
 mod camera;
-mod control_display;
 mod event_scheduler;
-mod exorcism;
 mod from_component;
-mod goal;
-mod gravestone;
+mod graveyard;
 mod history;
 mod level_select;
 mod level_transition;
-mod movement_table;
 mod nine_slice;
 mod previous_component;
-mod sokoban;
 mod ui;
-mod willo;
-mod wind;
 
 use animation::SpriteSheetAnimationPlugin;
 use bevy::prelude::*;
@@ -37,7 +30,7 @@ use bevy_inspector_egui::prelude::*;
 pub enum GameState {
     AssetLoading,
     LevelTransition,
-    Gameplay,
+    Graveyard,
     LevelSelect,
 }
 
@@ -76,19 +69,12 @@ fn main() {
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>(),
         )
+        .add_plugin(graveyard::GraveyardPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
-        .add_plugin(control_display::ControlDisplayPlugin)
         .add_plugin(camera::CameraPlugin)
-        .add_plugin(willo::WilloPlugin)
-        .add_plugin(sokoban::SokobanPlugin)
-        .add_plugin(movement_table::MovementTablePlugin)
-        .add_plugin(gravestone::GravestonePlugin)
-        .add_plugin(goal::GoalPlugin)
-        .add_plugin(exorcism::ExorcismPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
-        .add_plugin(wind::WindPlugin)
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection));
 

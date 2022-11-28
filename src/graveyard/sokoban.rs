@@ -1,8 +1,10 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::{
     from_component::FromComponentLabel,
-    movement_table::{Direction, MovementTable},
-    willo::{WilloAnimationState, WilloMovementEvent},
+    graveyard::{
+        movement_table::{Direction, MovementTable},
+        willo::{WilloAnimationState, WilloMovementEvent},
+    },
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
@@ -24,7 +26,7 @@ impl Plugin for SokobanPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             perform_grid_coords_movement
-                .run_in_state(GameState::Gameplay)
+                .run_in_state(GameState::Graveyard)
                 .label(SokobanLabels::GridCoordsMovement)
                 .before(FromComponentLabel),
         )
@@ -144,7 +146,7 @@ fn perform_grid_coords_movement(
     for movement_event in reader.iter() {
         let level = levels
             .get(level_query.single())
-            .expect("Level should be loaded in gameplay state");
+            .expect("Level should be loaded in graveyard state");
 
         let LayerInstance {
             c_wid: width,

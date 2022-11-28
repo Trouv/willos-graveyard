@@ -36,12 +36,12 @@ impl Plugin for LevelTransitionPlugin {
                     .with_system(load_next_level)
                     .into(),
             )
-            // level_card_update should be performed during both gameplay and level transition
-            // states since it cleans up the level card after it's done falling during the gameplay
+            // level_card_update should be performed during both graveyard and level transition
+            // states since it cleans up the level card after it's done falling during the graveyard
             // state
             .add_system(
                 level_card_update
-                    .run_in_state(GameState::Gameplay)
+                    .run_in_state(GameState::Graveyard)
                     .run_on_event::<LevelCardEvent>(),
             );
     }
@@ -267,7 +267,7 @@ fn level_card_update(
                         },
                     ));
 
-                    commands.insert_resource(NextState(GameState::Gameplay));
+                    commands.insert_resource(NextState(GameState::Graveyard));
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT
