@@ -3,21 +3,15 @@
 
 mod animation;
 mod camera;
-mod control_display;
 mod event_scheduler;
-mod exorcism;
 mod from_component;
-mod goal;
-mod gravestone;
+mod graveyard;
 mod history;
 mod level_select;
 mod level_transition;
-mod movement_table;
 mod nine_slice;
 mod previous_component;
-mod sokoban;
 mod ui;
-mod willo;
 mod wind;
 
 use animation::SpriteSheetAnimationPlugin;
@@ -79,16 +73,16 @@ fn main() {
         .add_plugin(SpriteSheetAnimationPlugin)
         .add_plugin(ui::UiPlugin)
         .add_plugin(level_select::LevelSelectPlugin)
-        .add_plugin(control_display::ControlDisplayPlugin)
         .add_plugin(camera::CameraPlugin)
-        .add_plugin(willo::WilloPlugin)
-        .add_plugin(sokoban::SokobanPlugin)
-        .add_plugin(movement_table::MovementTablePlugin)
-        .add_plugin(gravestone::GravestonePlugin)
-        .add_plugin(goal::GoalPlugin)
-        .add_plugin(exorcism::ExorcismPlugin)
+        .add_plugin(graveyard::control_display::ControlDisplayPlugin)
+        .add_plugin(graveyard::willo::WilloPlugin)
+        .add_plugin(graveyard::sokoban::SokobanPlugin)
+        .add_plugin(graveyard::movement_table::MovementTablePlugin)
+        .add_plugin(graveyard::gravestone::GravestonePlugin)
+        .add_plugin(graveyard::goal::GoalPlugin)
+        .add_plugin(graveyard::exorcism::ExorcismPlugin)
+        .add_plugin(graveyard::wind::WindPlugin)
         .add_plugin(level_transition::LevelTransitionPlugin)
-        .add_plugin(wind::WindPlugin)
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection));
 

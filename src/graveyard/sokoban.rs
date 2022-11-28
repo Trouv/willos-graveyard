@@ -1,8 +1,10 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::{
     from_component::FromComponentLabel,
-    movement_table::{Direction, MovementTable},
-    willo::{WilloAnimationState, WilloMovementEvent},
+    graveyard::{
+        movement_table::{Direction, MovementTable},
+        willo::{WilloAnimationState, WilloMovementEvent},
+    },
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;

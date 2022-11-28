@@ -1,7 +1,8 @@
 //! Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 use crate::{
-    exorcism::ExorcismLabels, gravestone::Gravestone, level_transition::TransitionTo, AssetHolder,
-    GameState,
+    graveyard::{exorcism::ExorcismLabels, gravestone::Gravestone},
+    level_transition::TransitionTo,
+    AssetHolder, GameState,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;

@@ -1,8 +1,8 @@
 //! Plugin providing functionality for exorcism tiles, including death logic.
 use crate::{
+    graveyard::willo::WilloState,
     history::FlushHistoryCommands,
     ui::font_scale::{FontScale, FontSize},
-    willo::WilloState,
     GameState,
 };
 use bevy::prelude::*;

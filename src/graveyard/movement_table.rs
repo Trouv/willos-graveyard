@@ -1,10 +1,12 @@
 //! Plugin and components providing functionality for the movement table, which alters Willo's
 //! abilities based off the placement of gravestones.
 use crate::{
-    gravestone::Gravestone,
+    graveyard::{
+        gravestone::Gravestone,
+        sokoban::SokobanLabels,
+        willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+    },
     history::FlushHistoryCommands,
-    sokoban::SokobanLabels,
-    willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
     GameState,
 };
 use bevy::prelude::*;

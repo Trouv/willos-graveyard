@@ -1,10 +1,12 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    exorcism::ExorcismEvent,
+    graveyard::{
+        exorcism::ExorcismEvent,
+        movement_table::Direction,
+        sokoban::{RigidBody, SokobanLabels},
+    },
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
-    movement_table::Direction,
-    sokoban::{RigidBody, SokobanLabels},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
