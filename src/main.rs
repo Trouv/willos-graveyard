@@ -12,7 +12,6 @@ mod level_transition;
 mod nine_slice;
 mod previous_component;
 mod ui;
-mod wind;
 
 use animation::SpriteSheetAnimationPlugin;
 use bevy::prelude::*;
@@ -31,7 +30,7 @@ use bevy_inspector_egui::prelude::*;
 pub enum GameState {
     AssetLoading,
     LevelTransition,
-    Gameplay,
+    Graveyard,
     LevelSelect,
 }
 

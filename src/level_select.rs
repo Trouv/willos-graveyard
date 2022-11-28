@@ -24,7 +24,7 @@ impl Plugin for LevelSelectPlugin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(GameState::LevelSelect, spawn_level_select_card)
             .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
-            .add_system(pause.run_in_state(GameState::Gameplay))
+            .add_system(pause.run_in_state(GameState::Graveyard))
             .add_system(unpause.run_in_state(GameState::LevelSelect))
             .add_system(
                 select_level
@@ -192,14 +192,14 @@ fn pause(mut commands: Commands, input: Res<Input<KeyCode>>) {
 
 fn unpause(mut commands: Commands, input: Res<Input<KeyCode>>) {
     if input.just_pressed(KeyCode::Escape) || input.just_pressed(KeyCode::P) {
-        commands.insert_resource(NextState(GameState::Gameplay));
+        commands.insert_resource(NextState(GameState::Graveyard));
     }
 }
 
 fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction>) {
     for action in ui_actions.iter() {
         if let UiAction::GoToLevel(level_selection) = action {
-            commands.insert_resource(NextState(GameState::Gameplay));
+            commands.insert_resource(NextState(GameState::Graveyard));
             commands.insert_resource(TransitionTo(level_selection.clone()));
             commands.insert_resource(NextState(GameState::LevelTransition));
         }

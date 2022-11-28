@@ -20,7 +20,7 @@ impl Plugin for GoalPlugin {
             .add_system(spawn_goal_ghosts.run_in_state(GameState::LevelTransition))
             .add_system(
                 check_goal
-                    .run_in_state(GameState::Gameplay)
+                    .run_in_state(GameState::Graveyard)
                     .after(ExorcismLabels::CheckDeath),
             )
             .add_system(goal_ghost_animation.run_not_in_state(GameState::AssetLoading))

@@ -21,12 +21,12 @@ impl Plugin for MovementTablePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             movement_table_update
-                .run_in_state(GameState::Gameplay)
+                .run_in_state(GameState::Graveyard)
                 .before(WilloLabels::Input),
         )
         .add_system(
             move_willo_by_table
-                .run_in_state(GameState::Gameplay)
+                .run_in_state(GameState::Graveyard)
                 .after(SokobanLabels::GridCoordsMovement)
                 .after(FlushHistoryCommands),
         )

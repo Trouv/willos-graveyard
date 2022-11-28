@@ -41,7 +41,7 @@ impl Plugin for LevelTransitionPlugin {
             // state
             .add_system(
                 level_card_update
-                    .run_in_state(GameState::Gameplay)
+                    .run_in_state(GameState::Graveyard)
                     .run_on_event::<LevelCardEvent>(),
             );
     }
@@ -267,7 +267,7 @@ fn level_card_update(
                         },
                     ));
 
-                    commands.insert_resource(NextState(GameState::Gameplay));
+                    commands.insert_resource(NextState(GameState::Graveyard));
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT

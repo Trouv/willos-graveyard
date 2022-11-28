@@ -26,7 +26,7 @@ impl Plugin for SokobanPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             perform_grid_coords_movement
-                .run_in_state(GameState::Gameplay)
+                .run_in_state(GameState::Graveyard)
                 .label(SokobanLabels::GridCoordsMovement)
                 .before(FromComponentLabel),
         )
