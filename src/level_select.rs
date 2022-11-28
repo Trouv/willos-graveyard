@@ -1,6 +1,6 @@
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
-    graveyard::willo::GameplayAction,
+    graveyard::GameplayAction,
     level_transition::TransitionTo,
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
