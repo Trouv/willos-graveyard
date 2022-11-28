@@ -1,6 +1,6 @@
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
-    graveyard::GameplayAction,
+    graveyard::GraveyardAction,
     level_transition::TransitionTo,
     nine_slice::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
@@ -186,14 +186,14 @@ fn spawn_level_select_card(
     event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
 }
 
-fn pause(mut commands: Commands, input: Res<ActionState<GameplayAction>>) {
-    if input.just_pressed(GameplayAction::Pause) {
+fn pause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
+    if input.just_pressed(GraveyardAction::Pause) {
         commands.insert_resource(NextState(GameState::LevelSelect));
     }
 }
 
-fn unpause(mut commands: Commands, input: Res<ActionState<GameplayAction>>) {
-    if input.just_pressed(GameplayAction::Pause) {
+fn unpause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
+    if input.just_pressed(GraveyardAction::Pause) {
         commands.insert_resource(NextState(GameState::Graveyard));
     }
 }

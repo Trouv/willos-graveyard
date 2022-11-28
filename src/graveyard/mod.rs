@@ -29,10 +29,11 @@ pub struct GraveyardPlugin;
 impl Plugin for GraveyardPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<RewindSettings>()
-            .add_plugin(InputManagerPlugin::<GameplayAction>::default())
-            .init_resource::<ActionState<GameplayAction>>()
+            .add_plugin(InputManagerPlugin::<GraveyardAction>::default())
+            .init_resource::<ActionState<GraveyardAction>>()
             .insert_resource(
-                load_gameplay_control_settings().expect("unable to load gameplay control settings"),
+                load_graveyard_control_settings()
+                    .expect("unable to load gameplay control settings"),
             )
             .add_plugin(control_display::ControlDisplayPlugin)
             .add_plugin(willo::WilloPlugin)
@@ -53,15 +54,15 @@ impl Plugin for GraveyardPlugin {
 
 /// Actions other than grave-actions that can be performed during the gameplay state.
 #[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
-pub enum GameplayAction {
+pub enum GraveyardAction {
     Undo,
     Restart,
     Pause,
 }
 
-fn load_gameplay_control_settings() -> std::io::Result<InputMap<GameplayAction>> {
+fn load_graveyard_control_settings() -> std::io::Result<InputMap<GraveyardAction>> {
     Ok(serde_json::from_reader(BufReader::new(File::open(
-        "settings/gameplay_controls.json",
+        "settings/graveyard_controls.json",
     )?))?)
 }
 
@@ -103,19 +104,19 @@ impl Default for RewindSettings {
 
 fn graveyard_input(
     mut willo_query: Query<&mut willo::WilloState>,
-    gameplay_input: Res<ActionState<GameplayAction>>,
+    gameplay_input: Res<ActionState<GraveyardAction>>,
     mut history_commands: EventWriter<HistoryCommands>,
     mut rewind_settings: ResMut<RewindSettings>,
     time: Res<Time>,
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == willo::WilloState::Waiting || *willo == willo::WilloState::Dead {
-            if gameplay_input.just_pressed(GameplayAction::Undo) {
+            if gameplay_input.just_pressed(GraveyardAction::Undo) {
                 history_commands.send(HistoryCommands::Rewind);
                 *willo = willo::WilloState::Waiting;
                 rewind_settings.hold_timer =
                     Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if gameplay_input.pressed(GameplayAction::Undo) {
+            } else if gameplay_input.pressed(GraveyardAction::Undo) {
                 let range = rewind_settings.hold_range_millis.clone();
                 let acceleration = rewind_settings.hold_acceleration;
 
@@ -132,7 +133,7 @@ fn graveyard_input(
                         timer.set_duration(Duration::from_millis(*velocity as u64));
                     }
                 }
-            } else if gameplay_input.just_pressed(GameplayAction::Restart) {
+            } else if gameplay_input.just_pressed(GraveyardAction::Restart) {
                 history_commands.send(HistoryCommands::Reset);
                 *willo = willo::WilloState::Waiting;
             }
