@@ -268,29 +268,12 @@ fn play_death_animations(
 
 fn willo_input(
     mut willo_query: Query<&mut WilloState>,
-    grave_input: Res<ActionState<GraveId>>,
     gameplay_input: Res<ActionState<GameplayAction>>,
     mut history_commands: EventWriter<HistoryCommands>,
     mut rewind_settings: ResMut<RewindSettings>,
     time: Res<Time>,
 ) {
     for mut willo in willo_query.iter_mut() {
-        if *willo == WilloState::Waiting {
-            if grave_input.just_pressed(GraveId::North) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(GraveId::North)
-            } else if grave_input.just_pressed(GraveId::West) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(GraveId::West)
-            } else if grave_input.just_pressed(GraveId::South) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(GraveId::South)
-            } else if grave_input.just_pressed(GraveId::East) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(GraveId::East)
-            }
-        }
-
         if *willo == WilloState::Waiting || *willo == WilloState::Dead {
             if gameplay_input.just_pressed(GameplayAction::Undo) {
                 history_commands.send(HistoryCommands::Rewind);

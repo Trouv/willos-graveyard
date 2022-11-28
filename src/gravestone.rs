@@ -3,7 +3,13 @@
 //! Gravestones are sokoban blocks that
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
-use crate::{history::History, sokoban::RigidBody, GameState};
+use crate::{
+    history::History,
+    history::{FlushHistoryCommands, HistoryCommands},
+    sokoban::RigidBody,
+    willo::{WilloLabels, WilloState},
+    GameState,
+};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
@@ -28,6 +34,12 @@ impl Plugin for GravestonePlugin {
                     .expect("unable to load gravestone control settings"),
             )
             .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
+            .add_system(
+                gravestone_input
+                    .run_in_state(GameState::Gameplay)
+                    .label(WilloLabels::Input)
+                    .before(FlushHistoryCommands),
+            )
             .register_ldtk_entity::<GravestoneBundle>("W")
             .register_ldtk_entity::<GravestoneBundle>("A")
             .register_ldtk_entity::<GravestoneBundle>("S")
@@ -106,5 +118,29 @@ fn spawn_gravestone_body(
             .id();
 
         commands.entity(entity).add_child(body_entity);
+    }
+}
+
+fn gravestone_input(
+    mut willo_query: Query<&mut WilloState>,
+    grave_input: Res<ActionState<GraveId>>,
+    mut history_commands: EventWriter<HistoryCommands>,
+) {
+    for mut willo in willo_query.iter_mut() {
+        if *willo == WilloState::Waiting {
+            if grave_input.just_pressed(GraveId::North) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::North)
+            } else if grave_input.just_pressed(GraveId::West) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::West)
+            } else if grave_input.just_pressed(GraveId::South) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::South)
+            } else if grave_input.just_pressed(GraveId::East) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::East)
+            }
+        }
     }
 }
