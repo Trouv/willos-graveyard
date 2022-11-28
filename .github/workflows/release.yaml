@@ -63,6 +63,7 @@ jobs:
           mkdir linux
           cp target/x86_64-unknown-linux-gnu/release/${{ env.binary }} linux/
           cp -r assets linux/
+          cp -r settings linux/
       - name: Package as a zip
         uses: vimtor/action-zip@v1
         with:
@@ -103,6 +104,7 @@ jobs:
           mkdir windows
           cp target/x86_64-pc-windows-msvc/release/${{ env.binary }}.exe windows/
           cp -r assets windows/
+          cp -r settings windows/
       - name: Package as a zip
         uses: vimtor/action-zip@v1
         with:
@@ -146,6 +148,7 @@ jobs:
           mkdir -p ${{ env.binary }}.app/Contents/MacOS
           cp target/x86_64-apple-darwin/release/${{ env.binary }} ${{ env.binary }}.app/Contents/MacOS/
           cp -r assets ${{ env.binary }}.app/Contents/MacOS/
+          cp -r settings ${{ env.binary }}.app/Contents/MacOS/
           hdiutil create -fs HFS+ -volname "${{ env.binary }}" -srcfolder ${{ env.binary }}.app ${{ env.binary }}.dmg
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
