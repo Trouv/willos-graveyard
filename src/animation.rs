@@ -1,10 +1,39 @@
+//! Plugin providing functionality for basic sprite sheet animations.
 use crate::from_component::{FromComponentLabel, FromComponentPlugin};
 use bevy::prelude::*;
 use std::{marker::PhantomData, ops::Range};
 
+/// Label used by animation systems.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
 pub struct AnimationLabel;
 
+/// Plugin providing functionality for basic sprite sheet animations.
+pub struct SpriteSheetAnimationPlugin;
+
+impl Plugin for SpriteSheetAnimationPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<AnimationEvent>()
+            .add_system(
+                sprite_sheet_animation
+                    .label(AnimationLabel)
+                    .after(FromComponentLabel),
+            )
+            .add_system(
+                set_initial_sprite_index
+                    .label(AnimationLabel)
+                    .after(FromComponentLabel),
+            );
+    }
+}
+
+/// Event that fires at certain points during an animation.
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum AnimationEvent {
+    Finished(Entity),
+}
+
+/// Component for giving a sprite sheet bundle a basic animation, with some settings for its
+/// behaviour.
 #[derive(Clone, Debug, Default, Component)]
 pub struct SpriteSheetAnimation {
     pub indices: Range<usize>,
@@ -12,7 +41,7 @@ pub struct SpriteSheetAnimation {
     pub repeat: bool,
 }
 
-pub fn sprite_sheet_animation(
+fn sprite_sheet_animation(
     mut query: Query<(Entity, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
     time: Res<Time>,
     mut event_writer: EventWriter<AnimationEvent>,
@@ -35,7 +64,7 @@ pub fn sprite_sheet_animation(
     }
 }
 
-pub fn set_initial_sprite_index(
+fn set_initial_sprite_index(
     mut query: Query<
         (&mut TextureAtlasSprite, &SpriteSheetAnimation),
         Changed<SpriteSheetAnimation>,
@@ -49,29 +78,18 @@ pub fn set_initial_sprite_index(
     }
 }
 
-pub struct SpriteSheetAnimationPlugin;
-
-impl Plugin for SpriteSheetAnimationPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_event::<AnimationEvent>()
-            .add_system(
-                sprite_sheet_animation
-                    .label(AnimationLabel)
-                    .after(FromComponentLabel),
-            )
-            .add_system(
-                set_initial_sprite_index
-                    .label(AnimationLabel)
-                    .after(FromComponentLabel),
-            );
-    }
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum AnimationEvent {
-    Finished(Entity),
-}
-
+/// Plugin providing functionality for animation graphs through `From` and `Iterator`
+/// implementations.
+///
+/// To use this plugin, follow these steps:
+/// 1. Create an enum component of animation states.
+/// 2. Provide an implementation of `From` from your enum component to [SpriteSheetAnimation].
+/// This `From` implementation defines what specific animation settings are associated with
+/// variants of your animation state.
+/// 3. Provide an implementation of `Iterator` for your enum component with itself as the item.
+/// This `Iterator` implementation defines which states lead into other states, like an animation
+/// graph.
+/// Simply point an animation state to itself when it is complete.
 pub struct FromComponentAnimator<F>
 where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
@@ -83,6 +101,7 @@ impl<F> FromComponentAnimator<F>
 where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
+    /// Basic constructor for [FromComponentAnimator].
     pub fn new() -> Self {
         FromComponentAnimator {
             from_type: PhantomData,
