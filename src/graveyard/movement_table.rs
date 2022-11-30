@@ -2,7 +2,7 @@
 //! abilities based off the placement of gravestones.
 use crate::{
     graveyard::{
-        gravestone::Gravestone,
+        gravestone::GraveId,
         sokoban::SokobanLabels,
         willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
     },
@@ -65,9 +65,9 @@ impl From<Direction> for IVec2 {
 /// Component that marks the movement table and stores the current placement of gravestones.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct MovementTable {
-    /// 4x4 table marking the locations of gravestones, identified by the [KeyCode] they are
+    /// 4x4 table marking the locations of gravestones, identified by the [GraveId] they are
     /// associated with
-    pub table: [[Option<KeyCode>; 4]; 4],
+    pub table: [[Option<GraveId>; 4]; 4],
 }
 
 #[derive(Clone, Bundle, LdtkEntity)]
@@ -82,7 +82,7 @@ struct MovementTableBundle {
 
 fn movement_table_update(
     mut table_query: Query<(&GridCoords, &mut MovementTable)>,
-    input_block_query: Query<(&GridCoords, &Gravestone)>,
+    input_block_query: Query<(&GridCoords, &GraveId)>,
 ) {
     for (table_grid_coords, mut table) in table_query.iter_mut() {
         table.table = [[None; 4]; 4];
@@ -92,7 +92,7 @@ fn movement_table_update(
             let y_index = -1 - diff.y;
             if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
                 // key block is in table
-                table.table[y_index as usize][x_index as usize] = Some(input_block.key_code);
+                table.table[y_index as usize][x_index as usize] = Some(*input_block);
             }
         }
     }

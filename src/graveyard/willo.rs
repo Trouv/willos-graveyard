@@ -3,17 +3,18 @@ use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     graveyard::{
         exorcism::ExorcismEvent,
+        gravestone::GraveId,
         movement_table::Direction,
         sokoban::{RigidBody, SokobanLabels},
     },
-    history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
+    history::{History, HistoryCommands, HistoryPlugin},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
-use std::{ops::Range, time::Duration};
+use std::time::Duration;
 
 /// Labels used by Willo systems.
 #[derive(SystemLabel)]
@@ -30,14 +31,7 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Graveyard,
             ))
-            .init_resource::<RewindSettings>()
             .add_event::<WilloMovementEvent>()
-            .add_system(
-                willo_input
-                    .run_in_state(GameState::Graveyard)
-                    .label(WilloLabels::Input)
-                    .before(FlushHistoryCommands),
-            )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system_to_stage(
@@ -65,8 +59,8 @@ pub struct WilloMovementEvent {
 pub enum WilloState {
     Waiting,
     Dead,
-    RankMove(KeyCode),
-    FileMove(KeyCode),
+    RankMove(GraveId),
+    FileMove(GraveId),
 }
 
 impl Default for WilloState {
@@ -143,42 +137,6 @@ impl Default for MovementTimer {
     }
 }
 
-/// Part of the [RewindSettings] resource.
-///
-/// Provides space between rewinds and tracking rewind velocity for acceleration.
-#[derive(Clone, Debug, Default)]
-struct RewindTimer {
-    velocity: f32,
-    timer: Timer,
-}
-
-impl RewindTimer {
-    fn new(millis: u64) -> RewindTimer {
-        RewindTimer {
-            velocity: millis as f32,
-            timer: Timer::new(Duration::from_millis(millis), TimerMode::Repeating),
-        }
-    }
-}
-
-/// Resource defining the behavior of the rewind feature and storing its state for acceleration.
-#[derive(Clone, Debug, Resource)]
-struct RewindSettings {
-    hold_range_millis: Range<u64>,
-    hold_acceleration: f32,
-    hold_timer: Option<RewindTimer>,
-}
-
-impl Default for RewindSettings {
-    fn default() -> Self {
-        RewindSettings {
-            hold_range_millis: 50..200,
-            hold_acceleration: 50.,
-            hold_timer: None,
-        }
-    }
-}
-
 #[derive(Clone, Bundle, LdtkEntity)]
 struct WilloBundle {
     #[grid_coords]
@@ -242,61 +200,6 @@ fn play_death_animations(
     for ExorcismEvent { willo_entity } in death_event_reader.iter() {
         if let Ok(mut animation_state) = willo_query.get_mut(*willo_entity) {
             *animation_state = WilloAnimationState::Dying;
-        }
-    }
-}
-
-fn willo_input(
-    mut willo_query: Query<&mut WilloState>,
-    input: Res<Input<KeyCode>>,
-    mut history_commands: EventWriter<HistoryCommands>,
-    mut rewind_settings: ResMut<RewindSettings>,
-    time: Res<Time>,
-) {
-    for mut willo in willo_query.iter_mut() {
-        if *willo == WilloState::Waiting {
-            if input.just_pressed(KeyCode::W) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::W)
-            } else if input.just_pressed(KeyCode::A) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::A)
-            } else if input.just_pressed(KeyCode::S) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::S)
-            } else if input.just_pressed(KeyCode::D) {
-                history_commands.send(HistoryCommands::Record);
-                *willo = WilloState::RankMove(KeyCode::D)
-            }
-        }
-
-        if *willo == WilloState::Waiting || *willo == WilloState::Dead {
-            if input.just_pressed(KeyCode::Z) {
-                history_commands.send(HistoryCommands::Rewind);
-                *willo = WilloState::Waiting;
-                rewind_settings.hold_timer =
-                    Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if input.pressed(KeyCode::Z) {
-                let range = rewind_settings.hold_range_millis.clone();
-                let acceleration = rewind_settings.hold_acceleration;
-
-                if let Some(RewindTimer { velocity, timer }) = &mut rewind_settings.hold_timer {
-                    *velocity = (*velocity - (acceleration * time.delta_seconds()))
-                        .clamp(range.start as f32, range.end as f32);
-
-                    timer.tick(time.delta());
-
-                    if timer.just_finished() {
-                        history_commands.send(HistoryCommands::Rewind);
-                        *willo = WilloState::Waiting;
-
-                        timer.set_duration(Duration::from_millis(*velocity as u64));
-                    }
-                }
-            } else if input.just_pressed(KeyCode::R) {
-                history_commands.send(HistoryCommands::Reset);
-                *willo = WilloState::Waiting;
-            }
         }
     }
 }

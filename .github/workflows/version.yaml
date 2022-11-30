@@ -27,7 +27,7 @@ jobs:
           echo "LAST_VERSION=$( git tag --list v*.*.* --sort taggerdate | tail -n 1 )" >> $GITHUB_ENV
       - name: Update version
         run: |
-          CHANGED_ASSETS=$(git diff --name-only ${{ env.LAST_VERSION }} -- assets/)
+          CHANGED_ASSETS=$(git diff --name-only ${{ env.LAST_VERSION }} -- assets/ settings/)
           CHANGED_CODE=$(git diff --name-only ${{ env.LAST_VERSION }} -- src/ Cargo.*)
           if [[ $CHANGED_ASSETS || $CHANGED_CODE ]]; then
             echo "changes made, updating version"
