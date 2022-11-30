@@ -1,10 +1,12 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    exorcism::ExorcismEvent,
+    graveyard::{
+        exorcism::ExorcismEvent,
+        movement_table::Direction,
+        sokoban::{RigidBody, SokobanLabels},
+    },
     history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
-    movement_table::Direction,
-    sokoban::{RigidBody, SokobanLabels},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
@@ -26,13 +28,13 @@ impl Plugin for WilloPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentAnimator::<WilloAnimationState>::new())
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
-                GameState::Gameplay,
+                GameState::Graveyard,
             ))
             .init_resource::<RewindSettings>()
             .add_event::<WilloMovementEvent>()
             .add_system(
                 willo_input
-                    .run_in_state(GameState::Gameplay)
+                    .run_in_state(GameState::Graveyard)
                     .label(WilloLabels::Input)
                     .before(FlushHistoryCommands),
             )

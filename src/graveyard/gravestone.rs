@@ -3,7 +3,7 @@
 //! Gravestones are sokoban blocks that
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
-use crate::{history::History, sokoban::RigidBody, GameState};
+use crate::{graveyard::sokoban::RigidBody, history::History, GameState};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;

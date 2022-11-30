@@ -1,8 +1,8 @@
 //! Plugin providing functionality for exorcism tiles, including death logic.
 use crate::{
+    graveyard::willo::WilloState,
     history::FlushHistoryCommands,
     ui::font_scale::{FontScale, FontSize},
-    willo::WilloState,
     GameState,
 };
 use bevy::prelude::*;
@@ -25,12 +25,12 @@ impl Plugin for ExorcismPlugin {
         app.add_event::<ExorcismEvent>()
             .add_system(
                 check_death
-                    .run_in_state(GameState::Gameplay)
+                    .run_in_state(GameState::Graveyard)
                     .label(ExorcismLabels::CheckDeath)
                     .after(FlushHistoryCommands),
             )
             .add_system_to_stage(CoreStage::PreUpdate, make_exorcism_card_visible)
-            .add_system(spawn_death_card.run_in_state(GameState::Gameplay))
+            .add_system(spawn_death_card.run_in_state(GameState::Graveyard))
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }
