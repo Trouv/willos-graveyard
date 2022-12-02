@@ -41,7 +41,11 @@ impl Plugin for WilloPlugin {
                     .before(SokobanLabels::EaseMovement),
             )
             .add_system(play_death_animations.run_not_in_state(GameState::AssetLoading))
-            .add_system(history_sugar.run_not_in_state(GameState::AssetLoading))
+            .add_system(
+                history_sugar
+                    .run_not_in_state(GameState::AssetLoading)
+                    .run_on_event::<HistoryCommands>(),
+            )
             .register_ldtk_entity::<WilloBundle>("Willo");
     }
 }
