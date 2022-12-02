@@ -40,7 +40,11 @@ impl Plugin for WilloPlugin {
                     .run_not_in_state(GameState::AssetLoading)
                     .before(SokobanLabels::EaseMovement),
             )
-            .add_system(play_death_animations.run_not_in_state(GameState::AssetLoading))
+            .add_system(
+                play_exorcism_animaton
+                    .run_not_in_state(GameState::AssetLoading)
+                    .run_on_event::<ExorcismEvent>(),
+            )
             .add_system(
                 history_sugar
                     .run_not_in_state(GameState::AssetLoading)
@@ -197,13 +201,8 @@ fn history_sugar(
     }
 }
 
-fn play_death_animations(
-    mut willo_query: Query<&mut WilloAnimationState>,
-    mut death_event_reader: EventReader<ExorcismEvent>,
-) {
-    for ExorcismEvent { willo_entity } in death_event_reader.iter() {
-        if let Ok(mut animation_state) = willo_query.get_mut(*willo_entity) {
-            *animation_state = WilloAnimationState::Dying;
-        }
+fn play_exorcism_animaton(mut willo_query: Query<&mut WilloAnimationState>) {
+    if let Ok(mut animation_state) = willo_query.get_single_mut() {
+        *animation_state = WilloAnimationState::Dying;
     }
 }

@@ -41,9 +41,7 @@ struct ExorcismTile;
 
 /// Event that fires when willo steps on an exorcism tile.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct ExorcismEvent {
-    pub willo_entity: Entity,
-}
+pub struct ExorcismEvent;
 
 /// Component that marks the "Exorcized" card UI element.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
@@ -55,16 +53,14 @@ struct ExorcismTileBundle {
 }
 
 fn check_death(
-    mut willo_query: Query<(Entity, &GridCoords, &mut WilloState)>,
+    mut willo_query: Query<(&GridCoords, &mut WilloState)>,
     exorcism_query: Query<(Entity, &GridCoords), With<ExorcismTile>>,
     mut death_event_writer: EventWriter<ExorcismEvent>,
 ) {
-    if let Ok((entity, coords, mut willo)) = willo_query.get_single_mut() {
+    if let Ok((coords, mut willo)) = willo_query.get_single_mut() {
         if *willo != WilloState::Dead && exorcism_query.iter().any(|(_, g)| *g == *coords) {
             *willo = WilloState::Dead;
-            death_event_writer.send(ExorcismEvent {
-                willo_entity: entity,
-            });
+            death_event_writer.send(ExorcismEvent);
         }
     }
 }
