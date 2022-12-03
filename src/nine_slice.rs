@@ -1,3 +1,4 @@
+//! Utilities for generating nine-slice images from texture atlases.
 use bevy::{
     math::Rect,
     prelude::*,
@@ -8,6 +9,7 @@ use bevy::{
 };
 use thiserror::Error;
 
+/// Errors encountered by the nine-slice API.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Error)]
 pub enum NineSliceError {
     #[error("source image not found")]
@@ -32,11 +34,16 @@ impl Default for NineSliceIndex {
     }
 }
 
+/// Size of a nine-slice image expressed in terms of "inner" tile-count.
+///
+/// The "inner" tile-counts exclude the border tiles.
+/// This type is designed that way so that all possible values of the [u32] fields are valid.
+/// For example, even a size of `(0, 0)` will produce a valid image of just border tiles.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash)]
 pub struct NineSliceSize {
-    /// the width of the 9-slice object in "inner" tiles, excluding the borders
+    /// the width of the 9-slice object in "inner" tiles, excluding the borders.
     pub inner_width: u32,
-    /// the height of the 9-slice object in "inner" tiles, excluding the borders
+    /// the height of the 9-slice object in "inner" tiles, excluding the borders.
     pub inner_height: u32,
 }
 
@@ -84,7 +91,7 @@ fn push_nine_slice_row_data(
     }
 }
 
-/// Generate a new image from 9-slice data
+/// Generate a new image from 9-slice data.
 pub fn generate_nineslice_image(
     size: NineSliceSize,
     NineSliceIndex { indices }: NineSliceIndex,
@@ -161,7 +168,7 @@ pub fn generate_nineslice_image(
     Ok(images.add(image))
 }
 
-/// Construct a texture atlas from 9-slice data
+/// Construct a texture atlas from 9-slice data.
 ///
 /// The `left`, `right`, `top` and `bottom` arguments represent the locations of the slices in
 /// terms of their distance from the border.
