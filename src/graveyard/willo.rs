@@ -19,6 +19,7 @@ use std::time::Duration;
 /// Labels used by Willo systems.
 #[derive(SystemLabel)]
 pub enum WilloLabels {
+    /// TODO: replace this with graveyard-level label since this is no longer used in this module.
     Input,
 }
 
@@ -48,18 +49,27 @@ impl Plugin for WilloPlugin {
 
 /// Event that fires whenever Willo moves.
 ///
-/// Only fires once per direction - so it fires twice during most moves.
+/// Only fires once per direction - so it fires twice during most grave actions.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub struct WilloMovementEvent {
+    /// The direction that willo just performed as part of their grave action.
     pub direction: Direction,
 }
 
 /// Component that marks Willo and keeps track of their state.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum WilloState {
+    /// Willo is idle, waiting for input.
     Waiting,
+    /// Willo is dead and cannot accept input.
     Dead,
+    /// Willo is performing the first part of a grave action.
+    ///
+    /// This move is defined by the rank of the gravestone on the movement table.
     RankMove(GraveId),
+    /// Willo is performing the second part of a grave action.
+    ///
+    /// This move is defined by the file of the gravestone on the movement table.
     FileMove(GraveId),
 }
 
@@ -72,9 +82,13 @@ impl Default for WilloState {
 /// Component enumerating the possible states of Willo's animation.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Component)]
 pub enum WilloAnimationState {
+    /// Willo is Idle, and facing a particular direction.
     Idle(Direction),
+    /// Willo is pushing a gravestione in a particular direction.
     Push(Direction),
+    /// Willo is dying.
     Dying,
+    /// Willo is invisible (post-death).
     None,
 }
 
