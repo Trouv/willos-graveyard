@@ -38,8 +38,15 @@ where
 /// Event that can be fired by the user to command the plugin to perform various history tasks.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum HistoryCommands {
+    /// Record the current state of all tracked components to their histories.
     Record,
+    /// Update the current state of all tracked components with the previous state and remove it
+    /// from the history.
     Rewind,
+    /// Update the current state of all tracked components to the first state in the history.
+    ///
+    /// Note: This also records the current state to the history before updating it.
+    /// This allows the act of resetting the history to be rewound via [HistoryCommands::Rewind].
     Reset,
 }
 
