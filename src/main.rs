@@ -1,5 +1,7 @@
+//! TODO: provide crate documentation after writing README.
 // these two lints are triggered by normal system code a lot
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
+#![deny(missing_docs)]
 
 mod animation;
 mod camera;
@@ -21,16 +23,22 @@ use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 
+/// Length of the sides of tiles on the game-grid in bevy's coordinate space.
 pub const UNIT_LENGTH: i32 = 32;
 
 #[cfg(feature = "inspector")]
 use bevy_inspector_egui::prelude::*;
 
+/// All possible bevy states that the game can be in.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum GameState {
+    /// Initial state of the game that perpares assets with `bevy_asset_loader`.
     AssetLoading,
+    /// State that facilitates level transitions, see [level_transition].
     LevelTransition,
+    /// State for the core gameplay that takes place on graveyards, see [graveyard].
     Graveyard,
+    /// State for the level select menu, see [level_select].
     LevelSelect,
 }
 
@@ -86,22 +94,33 @@ fn main() {
     app.run()
 }
 
+/// Asset collection loaded during the `GameState::AssetLoading` state.
+///
+/// Each field provides a handle for a different core asset of the game.
 #[derive(Debug, Default, AssetCollection, Resource)]
 pub struct AssetHolder {
+    /// Handle for all the LDtk info (level design).
     #[asset(path = "levels/willos-graveyard.ldtk")]
     pub ldtk: Handle<LdtkAsset>,
+    /// Handle for the game's spooky font.
     #[asset(path = "fonts/WayfarersToyBoxRegular-gxxER.ttf")]
     pub font: Handle<Font>,
+    /// Handle for the image used to underline text on text buttons.
     #[asset(path = "textures/button-underline.png")]
     pub button_underline: Handle<Image>,
+    /// Handle for the image used to highlight buttons on hover.
     #[asset(path = "textures/button-radial.png")]
     pub button_radial: Handle<Image>,
+    /// Handle for the sound that plays on level completion.
     #[asset(path = "sfx/victory.wav")]
     pub victory_sound: Handle<AudioSource>,
+    /// Handle for the sound that plays when Willo pushes a gravestone.
     #[asset(path = "sfx/push.wav")]
     pub push_sound: Handle<AudioSource>,
+    /// Handle for the sound that plays when the player hits undo/reset.
     #[asset(path = "sfx/undo.wav")]
     pub undo_sound: Handle<AudioSource>,
+    /// Handle for the tarot-card-inspired 9-slice image.
     #[asset(path = "textures/tarot.png")]
     pub tarot_sheet: Handle<Image>,
 }
