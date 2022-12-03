@@ -37,9 +37,13 @@ impl Plugin for MovementTablePlugin {
 /// Enumerates the four directions that are exposed on the movement table.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum Direction {
+    /// North direction.
     Up,
+    /// West direction.
     Left,
+    /// South direction.
     Down,
+    /// East direction.
     Right,
 }
 
