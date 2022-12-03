@@ -1,3 +1,4 @@
+//! Plugin providing functionality for the level select card/menu.
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
     graveyard::GraveyardAction,
@@ -19,7 +20,7 @@ use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use std::time::Duration;
 
-/// Plugin for systems and events related to the level select card.
+/// Plugin providing functionality for the level select card/menu.
 pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
@@ -38,7 +39,7 @@ impl Plugin for LevelSelectPlugin {
     }
 }
 
-/// Marker component for the level select UI card.
+/// Component that marks the level select UI card.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Component)]
 pub struct LevelSelectCard;
 
