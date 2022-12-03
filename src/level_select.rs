@@ -45,8 +45,11 @@ pub struct LevelSelectCard;
 
 /// Events regarding the visual state of the level select card.
 pub enum LevelSelectCardEvent {
+    /// Fires when the level select card entity is spawned.
     Spawned(Entity),
+    /// Fires when the level select card entity has begun falling again.
     Falling(Entity),
+    /// Fires when the level select card entity has fallen offscreen and should be despawned.
     Offscreen(Entity),
 }
 
