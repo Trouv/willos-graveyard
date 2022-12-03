@@ -59,8 +59,11 @@ impl Plugin for GraveyardPlugin {
 /// Actions other than grave-actions that can be performed during the gameplay state.
 #[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
 pub enum GraveyardAction {
+    /// Undo the last grave-action or restart.
     Undo,
+    /// Restart the level to its initial state.
     Restart,
+    /// Pause the graveyard state and open up the pause menu.
     Pause,
 }
 
