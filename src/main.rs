@@ -1,7 +1,7 @@
 //! TODO: provide crate documentation after writing README.
 // these two lints are triggered by normal system code a lot
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
-#![deny(missing_docs)]
+#![warn(missing_docs)]
 
 mod animation;
 mod camera;
