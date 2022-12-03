@@ -67,9 +67,27 @@ pub enum GraveyardAction {
 fn load_graveyard_control_settings(
     asset_folder: String,
 ) -> std::io::Result<InputMap<GraveyardAction>> {
-    Ok(serde_json::from_reader(BufReader::new(File::open(
-        format!("{}/../settings/graveyard_controls.json", asset_folder),
-    )?))?)
+    if cfg!(not(target_arch = "wasm32")) {
+        Ok(serde_json::from_reader(BufReader::new(File::open(
+            format!("{}/../settings/graveyard_controls.json", asset_folder),
+        )?))?)
+    } else {
+        // Keyboard defaults
+        let mut input_map = InputMap::new([
+            (KeyCode::Z, GraveyardAction::Undo),
+            (KeyCode::R, GraveyardAction::Restart),
+            (KeyCode::Escape, GraveyardAction::Pause),
+        ]);
+
+        // Gamepad defaults
+        input_map.insert_multiple([
+            (GamepadButtonType::LeftTrigger, GraveyardAction::Undo),
+            (GamepadButtonType::RightTrigger, GraveyardAction::Restart),
+            (GamepadButtonType::Start, GraveyardAction::Pause),
+        ]);
+
+        Ok(input_map)
+    }
 }
 
 /// Part of the [RewindSettings] resource.
