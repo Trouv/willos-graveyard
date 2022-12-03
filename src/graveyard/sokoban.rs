@@ -15,7 +15,9 @@ use iyes_loopless::prelude::*;
 /// Labels used by sokoban systems
 #[derive(SystemLabel)]
 pub enum SokobanLabels {
+    /// Label for the system that updates the visual position of sokoban entities via bevy_easings.
     EaseMovement,
+    /// Label for the system that updates the logical position of sokoban entities.
     GridCoordsMovement,
 }
 
@@ -47,7 +49,9 @@ impl Plugin for SokobanPlugin {
 /// Component defining the behavior of sokoban entities on collision.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum RigidBody {
+    /// The entity cannot move, push, or be pushed - but can block movement.
     Static,
+    /// The entity can move, push, or be pushed.
     Dynamic,
 }
 
