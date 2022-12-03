@@ -69,7 +69,7 @@ fn load_graveyard_control_settings(
 ) -> std::io::Result<InputMap<GraveyardAction>> {
     if cfg!(not(target_arch = "wasm32")) {
         Ok(serde_json::from_reader(BufReader::new(File::open(
-            format!("{}/../settings/graveyard_controls.json", asset_folder),
+            format!("{asset_folder}/../settings/graveyard_controls.json"),
         )?))?)
     } else {
         // Keyboard defaults
