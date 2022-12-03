@@ -12,9 +12,7 @@ use bevy_ecs_ldtk::prelude::*;
 #[allow(dead_code)]
 #[derive(Clone, Eq, PartialEq, Debug, Component)]
 pub enum UiAction {
-    Debug(&'static str),
-    RestartLevel,
-    NextLevel,
+    /// Action used by the level select menu to kick off a level transition.
     GoToLevel(LevelSelection),
 }
 
