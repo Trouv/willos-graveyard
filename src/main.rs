@@ -3,17 +3,17 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 #![warn(missing_docs)]
 
-mod animation;
-mod camera;
-mod event_scheduler;
-mod from_component;
-mod graveyard;
-mod history;
-mod level_select;
-mod level_transition;
-mod nine_slice;
-mod previous_component;
-mod ui;
+pub mod animation;
+pub mod camera;
+pub mod event_scheduler;
+pub mod from_component;
+pub mod graveyard;
+pub mod history;
+pub mod level_select;
+pub mod level_transition;
+pub mod nine_slice;
+pub mod previous_component;
+pub mod ui;
 
 use animation::SpriteSheetAnimationPlugin;
 use bevy::prelude::*;
