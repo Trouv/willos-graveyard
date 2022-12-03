@@ -29,6 +29,7 @@ impl Plugin for SpriteSheetAnimationPlugin {
 /// Event that fires at certain points during an animation.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum AnimationEvent {
+    /// Event that fires when an animation finishes, storing the animated entity.
     Finished(Entity),
 }
 
@@ -36,8 +37,17 @@ pub enum AnimationEvent {
 /// behaviour.
 #[derive(Clone, Debug, Default, Component)]
 pub struct SpriteSheetAnimation {
+    /// The range of indices of the texture atlas that provide the frames of the animation.
     pub indices: Range<usize>,
+    /// Timer that defines the duration of a frame in the animation and tracks its progress.
+    ///
+    /// Currently, the timer mode must be repeating.
+    // TODO: provide a constructor privatizing this field so it's always repeating.
     pub frame_timer: Timer,
+    /// Whether the animation should loop or not.
+    ///
+    /// Note: Animations that loop never fire [AnimationEvent::Finished], and can never
+    /// automatically transition to another animation in an animation graph.
     pub repeat: bool,
 }
 
