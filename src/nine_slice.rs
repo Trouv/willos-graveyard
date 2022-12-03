@@ -12,6 +12,7 @@ use thiserror::Error;
 /// Errors encountered by the nine-slice API.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Error)]
 pub enum NineSliceError {
+    /// Source Image for the 9-slice texture atlas not found in `Assets<Image>`.
     #[error("source image not found")]
     ImageNotFound,
 }
