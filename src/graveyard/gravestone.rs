@@ -66,9 +66,21 @@ pub enum GraveId {
 }
 
 fn load_gravestone_control_settings(asset_folder: String) -> std::io::Result<InputMap<GraveId>> {
-    Ok(serde_json::from_reader(BufReader::new(File::open(
-        format!("{}/../settings/gravestone_controls.json", asset_folder),
-    )?))?)
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        Ok(serde_json::from_reader(BufReader::new(File::open(
+            format!("{asset_folder}/../settings/gravestone_controls.json"),
+        )?))?)
+    }
+
+    // placed in a `#[cfg]` block rather than `if cfg!` so that changes to the file don't
+    // recompile non-wasm builds.
+    #[cfg(target_arch = "wasm32")]
+    {
+        Ok(serde_json::from_str(include_str!(
+            "../../settings/gravestone_controls.json"
+        ))?)
+    }
 }
 
 impl From<EntityInstance> for GraveId {
@@ -78,7 +90,7 @@ impl From<EntityInstance> for GraveId {
             "A" => GraveId::West,
             "S" => GraveId::South,
             "D" => GraveId::East,
-            g => panic!("encountered bad gravestone identifier: {}", g),
+            g => panic!("encountered bad gravestone identifier: {g}"),
         }
     }
 }
