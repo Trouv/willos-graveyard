@@ -1,9 +1,19 @@
+//! Plugin that maintains `Into` components from entities' corresponding `From` component.
 use bevy::prelude::*;
 use std::marker::PhantomData;
 
+/// Label used by systems in the [FromComponentPlugin].
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
 pub struct FromComponentLabel;
 
+/// Plugin that maintains `Into` components from entities' corresponding `From` component.
+///
+/// Generic paramaters `F` and `I` define the `From` and `Into` components the plugin should apply
+/// to respectively.
+/// The `Into` component should implement `From<..>` the `From` component.
+/// Then, when an entity gains the `From` component, this plugin will also give it the
+/// corresponding `Into` component.
+/// The plugin will also update the `Into` component whenever the `From` component changes.
 pub struct FromComponentPlugin<F, I>
 where
     F: Into<I> + Component + 'static + Send + Sync + Clone,
@@ -18,6 +28,7 @@ where
     F: Into<I> + Component + 'static + Send + Sync + Clone,
     I: Component + 'static + Send + Sync,
 {
+    /// Construct a new [FromComponentPlugin].
     pub fn new() -> Self {
         FromComponentPlugin {
             from_type: PhantomData,
