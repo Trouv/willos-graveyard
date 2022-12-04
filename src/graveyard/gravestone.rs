@@ -66,28 +66,20 @@ pub enum GraveId {
 }
 
 fn load_gravestone_control_settings(asset_folder: String) -> std::io::Result<InputMap<GraveId>> {
-    if cfg!(not(target_arch = "wasm32")) {
+    #[cfg(not(target_arch = "wasm32"))]
+    {
         Ok(serde_json::from_reader(BufReader::new(File::open(
             format!("{asset_folder}/../settings/gravestone_controls.json"),
         )?))?)
-    } else {
-        // Keyboard defaults
-        let mut input_map = InputMap::new([
-            (KeyCode::W, GraveId::North),
-            (KeyCode::A, GraveId::West),
-            (KeyCode::S, GraveId::South),
-            (KeyCode::D, GraveId::East),
-        ]);
+    }
 
-        // Gamepad defaults
-        input_map.insert_multiple([
-            (GamepadButtonType::North, GraveId::North),
-            (GamepadButtonType::West, GraveId::West),
-            (GamepadButtonType::South, GraveId::South),
-            (GamepadButtonType::East, GraveId::East),
-        ]);
-
-        Ok(input_map)
+    // placed in a `#[cfg]` block rather than `if cfg!` so that changes to the file don't
+    // recompile non-wasm builds.
+    #[cfg(target_arch = "wasm32")]
+    {
+        Ok(serde_json::from_str(include_str!(
+            "../../settings/gravestone_controls.json"
+        ))?)
     }
 }
 

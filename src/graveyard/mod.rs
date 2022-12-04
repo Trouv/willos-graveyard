@@ -67,26 +67,20 @@ pub enum GraveyardAction {
 fn load_graveyard_control_settings(
     asset_folder: String,
 ) -> std::io::Result<InputMap<GraveyardAction>> {
-    if cfg!(not(target_arch = "wasm32")) {
+    #[cfg(not(target_arch = "wasm32"))]
+    {
         Ok(serde_json::from_reader(BufReader::new(File::open(
             format!("{asset_folder}/../settings/graveyard_controls.json"),
         )?))?)
-    } else {
-        // Keyboard defaults
-        let mut input_map = InputMap::new([
-            (KeyCode::Z, GraveyardAction::Undo),
-            (KeyCode::R, GraveyardAction::Restart),
-            (KeyCode::Escape, GraveyardAction::Pause),
-        ]);
+    }
 
-        // Gamepad defaults
-        input_map.insert_multiple([
-            (GamepadButtonType::LeftTrigger, GraveyardAction::Undo),
-            (GamepadButtonType::RightTrigger, GraveyardAction::Restart),
-            (GamepadButtonType::Start, GraveyardAction::Pause),
-        ]);
-
-        Ok(input_map)
+    // placed in a `#[cfg]` block rather than `if cfg!` so that changes to the file don't
+    // recompile non-wasm builds.
+    #[cfg(target_arch = "wasm32")]
+    {
+        Ok(serde_json::from_str(include_str!(
+            "../../settings/graveyard_controls.json"
+        ))?)
     }
 }
 
