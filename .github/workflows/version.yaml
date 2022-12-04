@@ -39,7 +39,8 @@ jobs:
 
               UPDATE_CARGO=0
               MAJOR_COMMITS=$(git log ${{ env.LAST_VERSION }}..HEAD --grep '^\w+!:')
-              if [[ $MAJOR_COMMITS ]]; then
+              MINOR_COMMITS=$(git log ${{ env.LAST_VERSION }}..HEAD --grep '^feat:')
+              if [[ $MAJOR_COMMITS || $MINOR_COMMITS ]]; then
                 echo "incrementing code version (minor)"
                 CODE_VERSION_MINOR=$(( $CODE_VERSION_MINOR + 1 ))
                 CODE_VERSION_PATCH=0
