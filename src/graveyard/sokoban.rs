@@ -3,11 +3,11 @@ use crate::{
     from_component::FromComponentLabel,
     graveyard::{
         movement_table::{Direction, MovementTable},
-        willo::{WilloAnimationState, WilloMovementEvent},
+        willo::WilloAnimationState,
     },
-    AssetHolder, GameState, UNIT_LENGTH,
+    GameState, UNIT_LENGTH,
 };
-use bevy::prelude::*;
+use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
@@ -20,29 +20,70 @@ pub enum SokobanLabels {
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision.
-pub struct SokobanPlugin;
+pub struct SokobanPlugin {
+    layer_identifier: SokobanLayerIdentifier,
+}
+
+impl SokobanPlugin {
+    pub fn new(layer_identifier: impl Into<String>) -> Self {
+        let layer_identifier = SokobanLayerIdentifier(layer_identifier.into());
+        SokobanPlugin { layer_identifier }
+    }
+}
 
 impl Plugin for SokobanPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            perform_grid_coords_movement
-                .run_in_state(GameState::Graveyard)
-                .run_on_event::<WilloMovementEvent>()
-                .label(SokobanLabels::GridCoordsMovement)
-                .before(FromComponentLabel),
-        )
-        // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
-        // see https://github.com/vleue/bevy_easings/issues/23
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-            ease_movement
-                .run_not_in_state(GameState::AssetLoading)
-                .label(SokobanLabels::EaseMovement),
-        )
-        .register_ldtk_int_cell::<WallBundle>(1)
-        .register_ldtk_int_cell::<WallBundle>(3)
-        .register_ldtk_int_cell::<WallBundle>(4);
+        app.add_event::<SokobanCommand>()
+            .add_event::<PushEvent>()
+            .insert_resource(self.layer_identifier.clone())
+            .add_system(
+                flush_sokoban_commands
+                    .run_in_state(GameState::Graveyard)
+                    .run_on_event::<SokobanCommand>()
+                    .label(SokobanLabels::GridCoordsMovement)
+                    .before(FromComponentLabel),
+            )
+            // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            // see https://github.com/vleue/bevy_easings/issues/23
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                ease_movement
+                    .run_not_in_state(GameState::AssetLoading)
+                    .label(SokobanLabels::EaseMovement),
+            )
+            .register_ldtk_int_cell::<WallBundle>(1)
+            .register_ldtk_int_cell::<WallBundle>(3)
+            .register_ldtk_int_cell::<WallBundle>(4);
     }
+}
+
+#[derive(Debug, Clone, Deref, DerefMut, Resource)]
+pub struct SokobanLayerIdentifier(String);
+
+#[derive(Debug, Clone)]
+pub enum SokobanCommand {
+    Move {
+        entity: Entity,
+        direction: Direction,
+    },
+}
+
+#[derive(SystemParam)]
+pub struct SokobanCommands<'w, 's> {
+    writer: EventWriter<'w, 's, SokobanCommand>,
+}
+
+impl<'w, 's> SokobanCommands<'w, 's> {
+    pub fn move_entity(&mut self, entity: Entity, direction: Direction) {
+        self.writer.send(SokobanCommand::Move { entity, direction });
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PushEvent {
+    pub entity: Entity,
+    pub direction: Direction,
+    pub pushed: Vec<Entity>,
 }
 
 /// Component defining the behavior of sokoban entities on collision.
@@ -131,67 +172,49 @@ fn push_grid_coords_recursively(
     }
 }
 
-fn perform_grid_coords_movement(
-    mut grid_coords_query: Query<(
-        Entity,
-        &mut GridCoords,
-        &SokobanBlock,
-        Option<&mut WilloAnimationState>,
-    )>,
-    mut reader: EventReader<WilloMovementEvent>,
-    level_query: Query<&Handle<LdtkLevel>>,
-    levels: Res<Assets<LdtkLevel>>,
-    audio: Res<Audio>,
-    sfx: Res<AssetHolder>,
+fn flush_sokoban_commands(
+    mut grid_coords_query: Query<(Entity, &mut GridCoords, &SokobanBlock)>,
+    mut sokoban_commands: EventReader<SokobanCommand>,
+    mut push_events: EventWriter<PushEvent>,
+    layers: Query<&LayerMetadata>,
+    layer_id: Res<SokobanLayerIdentifier>,
 ) {
-    for movement_event in reader.iter() {
-        let level = levels
-            .get(level_query.single())
-            .expect("Level should be loaded in graveyard state");
-
-        let LayerInstance {
-            c_wid: width,
-            c_hei: height,
-            ..
-        } = level
-            .level
-            .layer_instances
-            .clone()
-            .expect("Loaded level should have layers")[0];
-
-        let mut collision_map: Vec<Vec<Option<(Entity, SokobanBlock)>>> =
-            vec![vec![None; width as usize]; height as usize];
-
-        for (entity, grid_coords, sokoban_block, _) in grid_coords_query.iter_mut() {
-            collision_map[grid_coords.y as usize][grid_coords.x as usize] =
-                Some((entity, *sokoban_block));
-        }
-
-        if let Some((_, willo_grid_coords, _, Some(mut animation))) = grid_coords_query
-            .iter_mut()
-            .find(|(_, _, _, animation)| animation.is_some())
+    for sokoban_command in sokoban_commands.iter() {
+        // Get dimensions of current level
+        if let Some(LayerMetadata { c_wid, c_hei, .. }) =
+            layers.iter().find(|l| l.identifier == **layer_id)
         {
-            let pushed_entities = push_grid_coords_recursively(
-                collision_map,
-                IVec2::from(*willo_grid_coords),
-                movement_event.direction,
-            );
+            let SokobanCommand::Move { entity, direction } = sokoban_command;
 
-            if pushed_entities.len() > 1 {
-                audio.play(sfx.push_sound.clone_weak());
-                *animation.into_inner() = WilloAnimationState::Push(movement_event.direction);
-            } else {
-                let new_state = WilloAnimationState::Idle(movement_event.direction);
-                if *animation != new_state {
-                    *animation = new_state;
-                }
+            let mut collision_map: Vec<Vec<Option<(Entity, SokobanBlock)>>> =
+                vec![vec![None; *c_wid as usize]; *c_hei as usize];
+
+            for (entity, grid_coords, sokoban_block) in grid_coords_query.iter_mut() {
+                collision_map[grid_coords.y as usize][grid_coords.x as usize] =
+                    Some((entity, *sokoban_block));
             }
 
-            for entity in pushed_entities {
-                *grid_coords_query
-                    .get_component_mut::<GridCoords>(entity)
-                    .expect("Pushed should have GridCoords component") +=
-                    GridCoords::from(IVec2::from(movement_event.direction));
+            if let Ok((_, grid_coords, _)) = grid_coords_query.get(*entity) {
+                let pushed = push_grid_coords_recursively(
+                    collision_map,
+                    IVec2::from(*grid_coords),
+                    *direction,
+                );
+
+                for pushed_entity in &pushed {
+                    *grid_coords_query
+                        .get_component_mut::<GridCoords>(*pushed_entity)
+                        .expect("pushed entity should have GridCoords component") +=
+                        GridCoords::from(IVec2::from(*direction));
+                }
+
+                if pushed.len() > 1 {
+                    push_events.send(PushEvent {
+                        entity: *entity,
+                        direction: *direction,
+                        pushed,
+                    });
+                }
             }
         }
     }

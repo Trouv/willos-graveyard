@@ -31,7 +31,6 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Graveyard,
             ))
-            .add_event::<WilloMovementEvent>()
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system_to_stage(
@@ -52,14 +51,6 @@ impl Plugin for WilloPlugin {
             )
             .register_ldtk_entity::<WilloBundle>("Willo");
     }
-}
-
-/// Event that fires whenever Willo moves.
-///
-/// Only fires once per direction - so it fires twice during most moves.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct WilloMovementEvent {
-    pub direction: Direction,
 }
 
 /// Component that marks Willo and keeps track of their state.

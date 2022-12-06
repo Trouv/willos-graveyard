@@ -3,8 +3,8 @@
 use crate::{
     graveyard::{
         gravestone::GraveId,
-        sokoban::SokobanLabels,
-        willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+        sokoban::{SokobanCommands, SokobanLabels},
+        willo::{MovementTimer, WilloLabels, WilloState},
     },
     history::FlushHistoryCommands,
     GameState,
@@ -100,12 +100,12 @@ fn movement_table_update(
 
 fn move_willo_by_table(
     table_query: Query<&MovementTable>,
-    mut willo_query: Query<(&mut MovementTimer, &mut WilloState)>,
-    mut movement_writer: EventWriter<WilloMovementEvent>,
+    mut willo_query: Query<(Entity, &mut MovementTimer, &mut WilloState)>,
+    mut sokoban_commands: SokobanCommands,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
-        if let Ok((mut timer, mut willo)) = willo_query.get_single_mut() {
+        if let Ok((entity, mut timer, mut willo)) = willo_query.get_single_mut() {
             timer.0.tick(time.delta());
 
             if timer.0.finished() {
@@ -113,9 +113,7 @@ fn move_willo_by_table(
                     WilloState::RankMove(key) => {
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
-                                movement_writer.send(WilloMovementEvent {
-                                    direction: DIRECTION_ORDER[i],
-                                });
+                                sokoban_commands.move_entity(entity, DIRECTION_ORDER[i]);
                             }
                         }
                         *willo = WilloState::FileMove(key);
@@ -125,9 +123,7 @@ fn move_willo_by_table(
                         for rank in table.table.iter() {
                             for (i, cell) in rank.iter().enumerate() {
                                 if *cell == Some(key) {
-                                    movement_writer.send(WilloMovementEvent {
-                                        direction: DIRECTION_ORDER[i],
-                                    });
+                                    sokoban_commands.move_entity(entity, DIRECTION_ORDER[i]);
                                 }
                             }
                         }
