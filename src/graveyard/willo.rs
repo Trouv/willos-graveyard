@@ -5,7 +5,7 @@ use crate::{
         exorcism::ExorcismEvent,
         gravestone::GraveId,
         movement_table::Direction,
-        sokoban::{RigidBody, SokobanLabels},
+        sokoban::{SokobanBlock, SokobanLabels},
     },
     history::{History, HistoryCommands, HistoryPlugin},
     AssetHolder, GameState, UNIT_LENGTH,
@@ -151,7 +151,7 @@ struct WilloBundle {
     grid_coords: GridCoords,
     history: History<GridCoords>,
     #[from_entity_instance]
-    rigid_body: RigidBody,
+    sokoban_block: SokobanBlock,
     willo_state: WilloState,
     movement_timer: MovementTimer,
     #[sprite_sheet_bundle]

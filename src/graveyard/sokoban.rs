@@ -47,7 +47,7 @@ impl Plugin for SokobanPlugin {
 
 /// Component defining the behavior of sokoban entities on collision.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
-pub enum RigidBody {
+pub enum SokobanBlock {
     Static,
     Dynamic,
 }
@@ -55,18 +55,18 @@ pub enum RigidBody {
 #[derive(Clone, Bundle, LdtkIntCell)]
 struct WallBundle {
     #[from_int_grid_cell]
-    rigid_body: RigidBody,
+    sokoban_block: SokobanBlock,
 }
 
-impl From<EntityInstance> for RigidBody {
-    fn from(_: EntityInstance) -> RigidBody {
-        RigidBody::Dynamic
+impl From<EntityInstance> for SokobanBlock {
+    fn from(_: EntityInstance) -> SokobanBlock {
+        SokobanBlock::Dynamic
     }
 }
 
-impl From<IntGridCell> for RigidBody {
-    fn from(_: IntGridCell) -> RigidBody {
-        RigidBody::Static
+impl From<IntGridCell> for SokobanBlock {
+    fn from(_: IntGridCell) -> SokobanBlock {
+        SokobanBlock::Static
     }
 }
 
@@ -100,7 +100,7 @@ fn ease_movement(
 }
 
 fn push_grid_coords_recursively(
-    collision_map: Vec<Vec<Option<(Entity, RigidBody)>>>,
+    collision_map: Vec<Vec<Option<(Entity, SokobanBlock)>>>,
     pusher_coords: IVec2,
     direction: Direction,
 ) -> Vec<Entity> {
@@ -117,8 +117,8 @@ fn push_grid_coords_recursively(
     }
     match collision_map[destination.y as usize][destination.x as usize] {
         None => vec![pusher],
-        Some((_, RigidBody::Static)) => Vec::new(),
-        Some((_, RigidBody::Dynamic)) => {
+        Some((_, SokobanBlock::Static)) => Vec::new(),
+        Some((_, SokobanBlock::Dynamic)) => {
             let mut pushed_entities =
                 push_grid_coords_recursively(collision_map, destination, direction);
             if pushed_entities.is_empty() {
@@ -135,7 +135,7 @@ fn perform_grid_coords_movement(
     mut grid_coords_query: Query<(
         Entity,
         &mut GridCoords,
-        &RigidBody,
+        &SokobanBlock,
         Option<&mut WilloAnimationState>,
     )>,
     mut reader: EventReader<WilloMovementEvent>,
@@ -159,12 +159,12 @@ fn perform_grid_coords_movement(
             .clone()
             .expect("Loaded level should have layers")[0];
 
-        let mut collision_map: Vec<Vec<Option<(Entity, RigidBody)>>> =
+        let mut collision_map: Vec<Vec<Option<(Entity, SokobanBlock)>>> =
             vec![vec![None; width as usize]; height as usize];
 
-        for (entity, grid_coords, rigid_body, _) in grid_coords_query.iter_mut() {
+        for (entity, grid_coords, sokoban_block, _) in grid_coords_query.iter_mut() {
             collision_map[grid_coords.y as usize][grid_coords.x as usize] =
-                Some((entity, *rigid_body));
+                Some((entity, *sokoban_block));
         }
 
         if let Some((_, willo_grid_coords, _, Some(mut animation))) = grid_coords_query

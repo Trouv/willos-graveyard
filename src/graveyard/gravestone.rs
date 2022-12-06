@@ -5,7 +5,7 @@
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
     graveyard::{
-        sokoban::RigidBody,
+        sokoban::SokobanBlock,
         willo::{WilloLabels, WilloState},
     },
     history::{FlushHistoryCommands, History, HistoryCommands},
@@ -101,7 +101,7 @@ struct GravestoneBundle {
     grid_coords: GridCoords,
     history: History<GridCoords>,
     #[from_entity_instance]
-    rigid_body: RigidBody,
+    sokoban_block: SokobanBlock,
     #[from_entity_instance]
     gravestone: GraveId,
     #[sprite_sheet_bundle]
