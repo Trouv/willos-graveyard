@@ -1,3 +1,4 @@
+//! Plugin providing functionality for the level select card/menu.
 use crate::{
     event_scheduler::{EventScheduler, EventSchedulerPlugin},
     graveyard::GraveyardAction,
@@ -19,7 +20,7 @@ use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use std::time::Duration;
 
-/// Plugin for systems and events related to the level select card.
+/// Plugin providing functionality for the level select card/menu.
 pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
@@ -38,14 +39,17 @@ impl Plugin for LevelSelectPlugin {
     }
 }
 
-/// Marker component for the level select UI card.
+/// Component that marks the level select UI card.
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Component)]
 pub struct LevelSelectCard;
 
 /// Events regarding the visual state of the level select card.
 pub enum LevelSelectCardEvent {
+    /// Fires when the level select card entity is spawned.
     Spawned(Entity),
+    /// Fires when the level select card entity has begun falling again.
     Falling(Entity),
+    /// Fires when the level select card entity has fallen offscreen and should be despawned.
     Offscreen(Entity),
 }
 
