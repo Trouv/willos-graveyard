@@ -27,6 +27,7 @@ impl Plugin for SokobanPlugin {
         app.add_system(
             perform_grid_coords_movement
                 .run_in_state(GameState::Graveyard)
+                .run_on_event::<WilloMovementEvent>()
                 .label(SokobanLabels::GridCoordsMovement)
                 .before(FromComponentLabel),
         )
