@@ -70,9 +70,21 @@ pub enum GraveyardAction {
 fn load_graveyard_control_settings(
     asset_folder: String,
 ) -> std::io::Result<InputMap<GraveyardAction>> {
-    Ok(serde_json::from_reader(BufReader::new(File::open(
-        format!("{}/../settings/graveyard_controls.json", asset_folder),
-    )?))?)
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        Ok(serde_json::from_reader(BufReader::new(File::open(
+            format!("{asset_folder}/../settings/graveyard_controls.json"),
+        )?))?)
+    }
+
+    // placed in a `#[cfg]` block rather than `if cfg!` so that changes to the file don't
+    // recompile non-wasm builds.
+    #[cfg(target_arch = "wasm32")]
+    {
+        Ok(serde_json::from_str(include_str!(
+            "../../settings/graveyard_controls.json"
+        ))?)
+    }
 }
 
 /// Part of the [RewindSettings] resource.

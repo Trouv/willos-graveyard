@@ -25,6 +25,7 @@ impl<E> EventSchedulerPlugin<E>
 where
     E: 'static + Send + Sync,
 {
+    /// Construct a new [EventSchedulerPlugin].
     pub fn new() -> Self {
         EventSchedulerPlugin::<E> { data: PhantomData }
     }
