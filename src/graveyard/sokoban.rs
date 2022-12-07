@@ -142,34 +142,55 @@ fn ease_movement(
 
 type CollisionMap = Vec<Vec<Option<(Entity, SokobanBlock)>>>;
 
+/// Pushes the entry at the given coordinates in the collision_map in the given direction.
+///
+/// If possible, it will also push any entries it collides with.
+///
+/// # Returns
+/// Returns a tuple containing the updated collision_map, and an optional list of pushed entities.
+///
+/// If the optional list is `None`, no entities were pushed due to collision with either a
+/// [SokobanBlock::Static] entry or a boundary of the map.
+///
+/// If the optional list is empty, no entities were pushed due to the provided coordinates pointing
+/// to an empty entry. This distinction is important for the recursive algorithm.
 fn push_grid_coords_recursively(
     collision_map: CollisionMap,
     pusher_coords: IVec2,
     direction: Direction,
 ) -> (CollisionMap, Option<Vec<Entity>>) {
+    // check if pusher is out-of-bounds
     if pusher_coords.x < 0
         || pusher_coords.y < 0
         || pusher_coords.y as usize >= collision_map.len()
         || pusher_coords.x as usize >= collision_map[0].len()
     {
+        // no updates to collision_map, no pushes can be performed
         return (collision_map, None);
     }
 
+    // match against the pusher's CollisionMap entry
     match collision_map[pusher_coords.y as usize][pusher_coords.x as usize] {
         Some((pusher, SokobanBlock::Dynamic)) => {
+            // pusher is dynamic, so we try to push
             let destination = IVec2::from(pusher_coords) + IVec2::from(direction);
 
             match push_grid_coords_recursively(collision_map, destination, direction) {
                 (mut collision_map, Some(mut pushed_entities)) => {
+                    // destination is either empty or has been pushed, so we can push the pusher
                     collision_map[destination.y as usize][destination.x as usize] =
                         collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
                     pushed_entities.push(pusher);
+
                     (collision_map, Some(pushed_entities))
                 }
+                // destination can't be pushed, so the pusher can't be pushed either
                 none_case => none_case,
             }
         }
+        // pusher is static, no pushes can be performed
         Some((_, SokobanBlock::Static)) => (collision_map, None),
+        // pusher's entry is empty, no push is performed here but the caller is able to
         None => (collision_map, Some(Vec::new())),
     }
 }
