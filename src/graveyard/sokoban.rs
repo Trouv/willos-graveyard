@@ -146,7 +146,7 @@ fn push_grid_coords_recursively(
     collision_map: CollisionMap,
     pusher_coords: IVec2,
     direction: Direction,
-) -> Vec<Entity> {
+) -> (CollisionMap, Vec<Entity>) {
     let pusher = collision_map[pusher_coords.y as usize][pusher_coords.x as usize]
         .expect("pusher should exist")
         .0;
@@ -156,19 +156,21 @@ fn push_grid_coords_recursively(
         || destination.y as usize >= collision_map.len()
         || destination.x as usize >= collision_map[0].len()
     {
-        return Vec::new();
+        return (collision_map, Vec::new());
     }
     match collision_map[destination.y as usize][destination.x as usize] {
-        None => vec![pusher],
-        Some((_, SokobanBlock::Static)) => Vec::new(),
+        None => (collision_map, vec![pusher]),
+        Some((_, SokobanBlock::Static)) => (collision_map, Vec::new()),
         Some((_, SokobanBlock::Dynamic)) => {
-            let mut pushed_entities =
+            let (mut collision_map, mut pushed_entities) =
                 push_grid_coords_recursively(collision_map, destination, direction);
             if pushed_entities.is_empty() {
-                Vec::new()
+                (collision_map, Vec::new())
             } else {
                 pushed_entities.push(pusher);
-                pushed_entities
+                collision_map[destination.y as usize][destination.x as usize] =
+                    collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
+                (collision_map, pushed_entities)
             }
         }
     }
@@ -181,27 +183,28 @@ fn flush_sokoban_commands(
     layers: Query<&LayerMetadata>,
     layer_id: Res<SokobanLayerIdentifier>,
 ) {
-    for sokoban_command in sokoban_commands.iter() {
-        // Get dimensions of current level
-        if let Some(LayerMetadata { c_wid, c_hei, .. }) =
-            layers.iter().find(|l| l.identifier == **layer_id)
-        {
+    // Get dimensions of current level
+    if let Some(LayerMetadata { c_wid, c_hei, .. }) =
+        layers.iter().find(|l| l.identifier == **layer_id)
+    {
+        let mut collision_map: CollisionMap = vec![vec![None; *c_wid as usize]; *c_hei as usize];
+
+        for (entity, grid_coords, sokoban_block) in grid_coords_query.iter_mut() {
+            collision_map[grid_coords.y as usize][grid_coords.x as usize] =
+                Some((entity, *sokoban_block));
+        }
+
+        for sokoban_command in sokoban_commands.iter() {
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
-            let mut collision_map: CollisionMap =
-                vec![vec![None; *c_wid as usize]; *c_hei as usize];
-
-            for (entity, grid_coords, sokoban_block) in grid_coords_query.iter_mut() {
-                collision_map[grid_coords.y as usize][grid_coords.x as usize] =
-                    Some((entity, *sokoban_block));
-            }
-
             if let Ok((_, grid_coords, _)) = grid_coords_query.get(*entity) {
-                let pushed = push_grid_coords_recursively(
+                let (new_collision_map, pushed) = push_grid_coords_recursively(
                     collision_map,
                     IVec2::from(*grid_coords),
                     *direction,
                 );
+
+                collision_map = new_collision_map;
 
                 for pushed_entity in &pushed {
                     *grid_coords_query
