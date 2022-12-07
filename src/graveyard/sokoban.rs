@@ -144,13 +144,13 @@ type CollisionMap = Vec<Vec<Option<(Entity, SokobanBlock)>>>;
 
 fn push_grid_coords_recursively(
     collision_map: CollisionMap,
-    pusher_coords: IVec2,
+    pusher_coords: GridCoords,
     direction: Direction,
 ) -> (CollisionMap, Vec<Entity>) {
     let pusher = collision_map[pusher_coords.y as usize][pusher_coords.x as usize]
         .expect("pusher should exist")
         .0;
-    let destination = pusher_coords + IVec2::from(direction);
+    let destination = IVec2::from(pusher_coords) + IVec2::from(direction);
     if destination.x < 0
         || destination.y < 0
         || destination.y as usize >= collision_map.len()
@@ -163,7 +163,7 @@ fn push_grid_coords_recursively(
         Some((_, SokobanBlock::Static)) => (collision_map, Vec::new()),
         Some((_, SokobanBlock::Dynamic)) => {
             let (mut collision_map, mut pushed_entities) =
-                push_grid_coords_recursively(collision_map, destination, direction);
+                push_grid_coords_recursively(collision_map, destination.into(), direction);
             if pushed_entities.is_empty() {
                 (collision_map, Vec::new())
             } else {
@@ -198,11 +198,8 @@ fn flush_sokoban_commands(
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
             if let Ok((_, grid_coords, _)) = grid_coords_query.get(*entity) {
-                let (new_collision_map, pushed) = push_grid_coords_recursively(
-                    collision_map,
-                    IVec2::from(*grid_coords),
-                    *direction,
-                );
+                let (new_collision_map, pushed) =
+                    push_grid_coords_recursively(collision_map, *grid_coords, *direction);
 
                 collision_map = new_collision_map;
 
