@@ -113,6 +113,15 @@ where
 {
     /// Basic constructor for [FromComponentAnimator].
     pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<F> Default for FromComponentAnimator<F>
+where
+    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+{
+    fn default() -> Self {
         FromComponentAnimator {
             from_type: PhantomData,
         }
