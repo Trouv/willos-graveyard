@@ -169,8 +169,8 @@ fn push_grid_coords_recursively(
                 none_case => none_case,
             }
         }
-        Some((_, SokobanBlock::Static)) => (collision_map, Some(Vec::new())),
-        None => (collision_map, None),
+        Some((_, SokobanBlock::Static)) => (collision_map, None),
+        None => (collision_map, Some(Vec::new())),
     }
 }
 
