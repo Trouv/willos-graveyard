@@ -144,35 +144,33 @@ type CollisionMap = Vec<Vec<Option<(Entity, SokobanBlock)>>>;
 
 fn push_grid_coords_recursively(
     collision_map: CollisionMap,
-    pusher_coords: GridCoords,
+    pusher_coords: IVec2,
     direction: Direction,
-) -> (CollisionMap, Vec<Entity>) {
-    let pusher = collision_map[pusher_coords.y as usize][pusher_coords.x as usize]
-        .expect("pusher should exist")
-        .0;
-    let destination = IVec2::from(pusher_coords) + IVec2::from(direction);
-    if destination.x < 0
-        || destination.y < 0
-        || destination.y as usize >= collision_map.len()
-        || destination.x as usize >= collision_map[0].len()
+) -> (CollisionMap, Option<Vec<Entity>>) {
+    if pusher_coords.x < 0
+        || pusher_coords.y < 0
+        || pusher_coords.y as usize >= collision_map.len()
+        || pusher_coords.x as usize >= collision_map[0].len()
     {
-        return (collision_map, Vec::new());
+        return (collision_map, None);
     }
-    match collision_map[destination.y as usize][destination.x as usize] {
-        None => (collision_map, vec![pusher]),
-        Some((_, SokobanBlock::Static)) => (collision_map, Vec::new()),
-        Some((_, SokobanBlock::Dynamic)) => {
-            let (mut collision_map, mut pushed_entities) =
-                push_grid_coords_recursively(collision_map, destination.into(), direction);
-            if pushed_entities.is_empty() {
-                (collision_map, Vec::new())
-            } else {
-                pushed_entities.push(pusher);
-                collision_map[destination.y as usize][destination.x as usize] =
-                    collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
-                (collision_map, pushed_entities)
+
+    match collision_map[pusher_coords.y as usize][pusher_coords.x as usize] {
+        Some((pusher, SokobanBlock::Dynamic)) => {
+            let destination = IVec2::from(pusher_coords) + IVec2::from(direction);
+
+            match push_grid_coords_recursively(collision_map, destination, direction) {
+                (mut collision_map, Some(mut pushed_entities)) => {
+                    collision_map[destination.y as usize][destination.x as usize] =
+                        collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
+                    pushed_entities.push(pusher);
+                    (collision_map, Some(pushed_entities))
+                }
+                none_case => none_case,
             }
         }
+        Some((_, SokobanBlock::Static)) => (collision_map, Some(Vec::new())),
+        None => (collision_map, None),
     }
 }
 
@@ -198,24 +196,29 @@ fn flush_sokoban_commands(
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
             if let Ok((_, grid_coords, _)) = grid_coords_query.get(*entity) {
-                let (new_collision_map, pushed) =
-                    push_grid_coords_recursively(collision_map, *grid_coords, *direction);
+                let (new_collision_map, pushed_entities) = push_grid_coords_recursively(
+                    collision_map,
+                    IVec2::from(*grid_coords),
+                    *direction,
+                );
 
                 collision_map = new_collision_map;
 
-                for pushed_entity in &pushed {
-                    *grid_coords_query
-                        .get_component_mut::<GridCoords>(*pushed_entity)
-                        .expect("pushed entity should have GridCoords component") +=
-                        GridCoords::from(IVec2::from(*direction));
-                }
+                if let Some(pushed_entities) = pushed_entities {
+                    for pushed_entity in &pushed_entities {
+                        *grid_coords_query
+                            .get_component_mut::<GridCoords>(*pushed_entity)
+                            .expect("pushed entity should have GridCoords component") +=
+                            GridCoords::from(IVec2::from(*direction));
+                    }
 
-                if pushed.len() > 1 {
-                    push_events.send(PushEvent {
-                        entity: *entity,
-                        direction: *direction,
-                        pushed,
-                    });
+                    if pushed_entities.len() > 1 {
+                        push_events.send(PushEvent {
+                            entity: *entity,
+                            direction: *direction,
+                            pushed: pushed_entities,
+                        });
+                    }
                 }
             }
         }
