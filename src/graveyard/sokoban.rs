@@ -140,8 +140,10 @@ fn ease_movement(
     }
 }
 
+type CollisionMap = Vec<Vec<Option<(Entity, SokobanBlock)>>>;
+
 fn push_grid_coords_recursively(
-    collision_map: Vec<Vec<Option<(Entity, SokobanBlock)>>>,
+    collision_map: CollisionMap,
     pusher_coords: IVec2,
     direction: Direction,
 ) -> Vec<Entity> {
@@ -186,7 +188,7 @@ fn flush_sokoban_commands(
         {
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
-            let mut collision_map: Vec<Vec<Option<(Entity, SokobanBlock)>>> =
+            let mut collision_map: CollisionMap =
                 vec![vec![None; *c_wid as usize]; *c_hei as usize];
 
             for (entity, grid_coords, sokoban_block) in grid_coords_query.iter_mut() {
