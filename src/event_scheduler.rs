@@ -27,6 +27,15 @@ where
 {
     /// Construct a new [EventSchedulerPlugin].
     pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<E> Default for EventSchedulerPlugin<E>
+where
+    E: 'static + Send + Sync,
+{
+    fn default() -> Self {
         EventSchedulerPlugin::<E> { data: PhantomData }
     }
 }

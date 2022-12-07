@@ -1,4 +1,4 @@
-//! Provides a generic component + plugin for tracking the previous value of other components.
+//! Plugin for tracking the previous value of a component via an additional generic component.
 //!
 //! Similar to the [crate::history] API, but keeps track of only one change.
 use bevy::prelude::*;
@@ -9,7 +9,7 @@ use std::marker::PhantomData;
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
 pub struct TrackPreviousComponent;
 
-/// Generic plugin for updating [PreviousComponent]s.
+/// Plugin for tracking the previous value of a component via an additional generic component.
 ///
 /// You'll need to insert this plugin to the app multiple times for every component you want to track.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash)]
@@ -31,6 +31,7 @@ pub struct PreviousComponent<C: Component> {
 }
 
 impl<C: Component> PreviousComponent<C> {
+    /// Gets the previous value for the tracked component `C` on this entity.
     pub fn get(&self) -> &C {
         &self.last
     }

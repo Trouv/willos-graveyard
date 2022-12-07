@@ -25,11 +25,19 @@ impl Plugin for FontScalePlugin {
 #[allow(dead_code)]
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum FontSize {
+    /// A tiny font size, good for footnotes.
     Tiny,
+    /// A small font size, good for description bodies.
     Small,
+    /// A medium font size, good for button text and sub-titles.
     Medium,
+    /// A large font size, good for section titles.
     Large,
+    /// A huge font size, good for menu titles.
     Huge,
+    /// A custom font size defined by the font size ratio.
+    ///
+    /// See [FontSizeRatios] for more details on font size ratios.
     Custom(f32),
 }
 
@@ -61,15 +69,20 @@ impl From<FontSize> for FontScale {
 /// wide screens, and `desired_font_size / given_screen_width` for tall screens.
 #[derive(Copy, Clone, PartialEq, Debug, Resource)]
 pub struct FontSizeRatios {
+    /// Font size ratio corresponding to [FontSize::Tiny]
     pub tiny: f32,
+    /// Font size ratio corresponding to [FontSize::Small]
     pub small: f32,
+    /// Font size ratio corresponding to [FontSize::Medium]
     pub medium: f32,
+    /// Font size ratio corresponding to [FontSize::Large]
     pub large: f32,
+    /// Font size ratio corresponding to [FontSize::Huge]
     pub huge: f32,
 }
 
 impl FontSizeRatios {
-    pub fn get(&self, font_size: &FontSize) -> f32 {
+    fn get(&self, font_size: &FontSize) -> f32 {
         match font_size {
             FontSize::Tiny => self.tiny,
             FontSize::Small => self.small,

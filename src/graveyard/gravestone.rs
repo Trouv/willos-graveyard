@@ -59,9 +59,13 @@ impl Plugin for GravestonePlugin {
     Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize,
 )]
 pub enum GraveId {
+    /// Gravestone/action that applies to "northy" buttons like W and Triangle.
     North,
+    /// Gravestone/action that applies to "westy" buttons like A and Square.
     West,
+    /// Gravestone/action that applies to "southy" buttons like S and X/Cross.
     South,
+    /// Gravestone/action that applies to "northy" buttons like D and Circle.
     East,
 }
 

@@ -204,11 +204,10 @@ fn unpause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
 
 fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction>) {
     for action in ui_actions.iter() {
-        if let UiAction::GoToLevel(level_selection) = action {
-            commands.insert_resource(NextState(GameState::Graveyard));
-            commands.insert_resource(TransitionTo(level_selection.clone()));
-            commands.insert_resource(NextState(GameState::LevelTransition));
-        }
+        let UiAction::GoToLevel(level_selection) = action;
+        commands.insert_resource(NextState(GameState::Graveyard));
+        commands.insert_resource(TransitionTo(level_selection.clone()));
+        commands.insert_resource(NextState(GameState::LevelTransition));
     }
 }
 
