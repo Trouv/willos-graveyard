@@ -202,7 +202,7 @@ fn flush_sokoban_commands(
     layers: Query<&LayerMetadata>,
     layer_id: Res<SokobanLayerIdentifier>,
 ) {
-    // Get dimensions of current level
+    // Get dimensions of the currently-loaded level
     if let Some(LayerMetadata { c_wid, c_hei, .. }) =
         layers.iter().find(|l| l.identifier == **layer_id)
     {
@@ -243,5 +243,10 @@ fn flush_sokoban_commands(
                 }
             }
         }
+    } else {
+        warn!(
+            "could not find {} layer specified by SokobanLayerIdentifier resource",
+            **layer_id
+        );
     }
 }
