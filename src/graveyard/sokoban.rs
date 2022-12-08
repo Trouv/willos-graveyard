@@ -11,6 +11,7 @@ use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
+use std::collections::VecDeque;
 
 /// Labels used by sokoban systems
 #[derive(SystemLabel)]
@@ -158,7 +159,7 @@ fn push_grid_coords_recursively(
     collision_map: CollisionMap,
     pusher_coords: IVec2,
     direction: Direction,
-) -> (CollisionMap, Option<Vec<Entity>>) {
+) -> (CollisionMap, Option<VecDeque<Entity>>) {
     // check if pusher is out-of-bounds
     if pusher_coords.x < 0
         || pusher_coords.y < 0
@@ -180,7 +181,7 @@ fn push_grid_coords_recursively(
                     // destination is either empty or has been pushed, so we can push the pusher
                     collision_map[destination.y as usize][destination.x as usize] =
                         collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
-                    pushed_entities.push(pusher);
+                    pushed_entities.push_front(pusher);
 
                     (collision_map, Some(pushed_entities))
                 }
@@ -191,7 +192,7 @@ fn push_grid_coords_recursively(
         // pusher is static, no pushes can be performed
         Some((_, SokobanBlock::Static)) => (collision_map, None),
         // pusher's entry is empty, no push is performed here but the caller is able to
-        None => (collision_map, Some(Vec::new())),
+        None => (collision_map, Some(VecDeque::new())),
     }
 }
 
@@ -242,7 +243,7 @@ fn flush_sokoban_commands(
                         push_events.send(PushEvent {
                             entity: *entity,
                             direction: *direction,
-                            pushed: pushed_entities,
+                            pushed: pushed_entities.into(),
                         });
                     }
                 }
