@@ -89,6 +89,9 @@ pub struct PushEvent {
     pub pushed: Vec<Entity>,
 }
 
+#[derive(Debug, Component)]
+pub struct PushTracker;
+
 /// Component defining the behavior of sokoban entities on collision.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
 pub enum SokobanBlock {
@@ -214,7 +217,7 @@ fn flush_sokoban_commands(
         // Generate current collision map
         let mut collision_map: CollisionMap = vec![vec![None; *c_wid as usize]; *c_hei as usize];
 
-        for (entity, grid_coords, sokoban_block) in grid_coords_query.iter_mut() {
+        for (entity, grid_coords, sokoban_block, _) in grid_coords_query.iter_mut() {
             collision_map[grid_coords.y as usize][grid_coords.x as usize] =
                 Some((entity, *sokoban_block));
         }
@@ -222,7 +225,7 @@ fn flush_sokoban_commands(
         for sokoban_command in sokoban_commands.iter() {
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
-            if let Ok((_, grid_coords, _)) = grid_coords_query.get(*entity) {
+            if let Ok((_, grid_coords, ..)) = grid_coords_query.get(*entity) {
                 // Determine if move can happen, who moves, how the collision_map should be
                 // updated...
                 let (new_collision_map, pushed_entities) = push_grid_coords_recursively(
@@ -233,7 +236,9 @@ fn flush_sokoban_commands(
 
                 collision_map = new_collision_map;
 
-                if let Some(pushed_entities) = pushed_entities {
+                if let Some(mut pushed_entities) = pushed_entities {
+                    pushed_entities.reverse();
+
                     // update GridCoords components of pushed entities
                     for pushed_entity in &pushed_entities {
                         *grid_coords_query
@@ -243,12 +248,18 @@ fn flush_sokoban_commands(
                     }
 
                     // send push events
-                    if pushed_entities.len() > 1 {
-                        push_events.send(PushEvent {
-                            entity: *entity,
-                            direction: *direction,
-                            pushed: pushed_entities.into(),
-                        });
+                    for (i, pusher) in pushed_entities.iter().enumerate() {
+                        let pushed = &pushed_entities[i + 1..];
+
+                        if pushed.len() > 1 {
+                            if let Ok((.., Some(_))) = grid_coords_query.get(*pusher) {
+                                push_events.send(PushEvent {
+                                    entity: *pusher,
+                                    direction: *direction,
+                                    pushed: pushed.into(),
+                                });
+                            }
+                        }
                     }
                 }
             }
