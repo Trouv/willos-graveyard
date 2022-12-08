@@ -3,7 +3,8 @@ use crate::{
     camera::PlayZonePortion,
     graveyard::{
         gravestone::GraveId,
-        movement_table::{Direction, MovementTable, DIRECTION_ORDER},
+        movement_table::{MovementTable, DIRECTION_ORDER},
+        sokoban::Direction,
     },
     ui::font_scale::{FontScale, FontSize},
     GameState,

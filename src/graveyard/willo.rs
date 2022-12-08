@@ -4,8 +4,7 @@ use crate::{
     graveyard::{
         exorcism::ExorcismEvent,
         gravestone::GraveId,
-        movement_table::Direction,
-        sokoban::{SokobanBlock, SokobanLabels},
+        sokoban::{Direction, SokobanBlock, SokobanLabels},
     },
     history::{History, HistoryCommands, HistoryPlugin},
     AssetHolder, GameState, UNIT_LENGTH,

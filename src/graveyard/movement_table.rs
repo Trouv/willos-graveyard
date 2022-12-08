@@ -3,7 +3,7 @@
 use crate::{
     graveyard::{
         gravestone::GraveId,
-        sokoban::{SokobanCommands, SokobanLabels},
+        sokoban::{Direction, SokobanCommands, SokobanLabels},
         willo::{MovementTimer, WilloLabels, WilloState},
     },
     history::FlushHistoryCommands,
@@ -34,19 +34,6 @@ impl Plugin for MovementTablePlugin {
     }
 }
 
-/// Enumerates the four directions that are exposed on the movement table.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum Direction {
-    /// North direction.
-    Up,
-    /// West direction.
-    Left,
-    /// South direction.
-    Down,
-    /// East direction.
-    Right,
-}
-
 /// Defines the order that the four [Direction]s go in on the table's rank and file.
 pub const DIRECTION_ORDER: [Direction; 4] = [
     Direction::Up,
@@ -54,17 +41,6 @@ pub const DIRECTION_ORDER: [Direction; 4] = [
     Direction::Down,
     Direction::Right,
 ];
-
-impl From<Direction> for IVec2 {
-    fn from(direction: Direction) -> IVec2 {
-        match direction {
-            Direction::Up => IVec2::Y,
-            Direction::Left => IVec2::new(-1, 0),
-            Direction::Down => IVec2::new(0, -1),
-            Direction::Right => IVec2::X,
-        }
-    }
-}
 
 /// Component that marks the movement table and stores the current placement of gravestones.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]

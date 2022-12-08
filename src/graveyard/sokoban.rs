@@ -1,8 +1,7 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::{
-    from_component::FromComponentLabel,
-    graveyard::movement_table::{Direction, MovementTable},
-    GameState, UNIT_LENGTH,
+    from_component::FromComponentLabel, graveyard::movement_table::MovementTable, GameState,
+    UNIT_LENGTH,
 };
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
@@ -58,6 +57,30 @@ impl Plugin for SokobanPlugin {
 
 #[derive(Debug, Clone, Deref, DerefMut, Resource)]
 pub struct SokobanLayerIdentifier(String);
+
+/// Enumerates the four directions that are exposed on the movement table.
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+pub enum Direction {
+    /// North direction.
+    Up,
+    /// West direction.
+    Left,
+    /// South direction.
+    Down,
+    /// East direction.
+    Right,
+}
+
+impl From<Direction> for IVec2 {
+    fn from(direction: Direction) -> IVec2 {
+        match direction {
+            Direction::Up => IVec2::Y,
+            Direction::Left => IVec2::new(-1, 0),
+            Direction::Down => IVec2::new(0, -1),
+            Direction::Right => IVec2::X,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub enum SokobanCommand {
