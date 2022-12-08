@@ -4,6 +4,7 @@ use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
+use std::any::Any;
 
 /// Labels used by sokoban systems
 #[derive(SystemLabel)]
@@ -15,25 +16,32 @@ pub enum SokobanLabels {
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision.
-pub struct SokobanPlugin {
+pub struct SokobanPlugin<S> {
+    state: S,
     layer_identifier: SokobanLayerIdentifier,
 }
 
-impl SokobanPlugin {
-    pub fn new(layer_identifier: impl Into<String>) -> Self {
+impl<S> SokobanPlugin<S> {
+    pub fn new(state: S, layer_identifier: impl Into<String>) -> Self {
         let layer_identifier = SokobanLayerIdentifier(layer_identifier.into());
-        SokobanPlugin { layer_identifier }
+        SokobanPlugin {
+            state,
+            layer_identifier,
+        }
     }
 }
 
-impl Plugin for SokobanPlugin {
+impl<S> Plugin for SokobanPlugin<S>
+where
+    S: Any + Send + Sync + Clone + std::fmt::Debug + std::hash::Hash + Eq,
+{
     fn build(&self, app: &mut App) {
         app.add_event::<SokobanCommand>()
             .add_event::<PushEvent>()
             .insert_resource(self.layer_identifier.clone())
             .add_system(
                 flush_sokoban_commands
-                    .run_in_state(GameState::Graveyard)
+                    .run_in_state(self.state.clone())
                     .run_on_event::<SokobanCommand>()
                     .label(SokobanLabels::GridCoordsMovement)
                     .before(FromComponentLabel),
@@ -43,7 +51,7 @@ impl Plugin for SokobanPlugin {
             .add_system_to_stage(
                 CoreStage::PostUpdate,
                 ease_movement
-                    .run_not_in_state(GameState::AssetLoading)
+                    .run_in_state(self.state.clone())
                     .label(SokobanLabels::EaseMovement),
             )
             .register_ldtk_int_cell::<WallBundle>(1)
