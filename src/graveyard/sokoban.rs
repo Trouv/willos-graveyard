@@ -163,7 +163,7 @@ fn push_grid_coords_recursively(
     collision_map: CollisionMap,
     pusher_coords: IVec2,
     direction: Direction,
-) -> (CollisionMap, Option<VecDeque<Entity>>) {
+) -> (CollisionMap, Option<Vec<Entity>>) {
     // check if pusher is out-of-bounds
     if pusher_coords.x < 0
         || pusher_coords.y < 0
@@ -185,7 +185,7 @@ fn push_grid_coords_recursively(
                     // destination is either empty or has been pushed, so we can push the pusher
                     collision_map[destination.y as usize][destination.x as usize] =
                         collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
-                    pushed_entities.push_front(pusher);
+                    pushed_entities.push(pusher);
 
                     (collision_map, Some(pushed_entities))
                 }
@@ -196,12 +196,12 @@ fn push_grid_coords_recursively(
         // pusher is static, no pushes can be performed
         Some((_, SokobanBlock::Static)) => (collision_map, None),
         // pusher's entry is empty, no push is performed here but the caller is able to
-        None => (collision_map, Some(VecDeque::new())),
+        None => (collision_map, Some(Vec::new())),
     }
 }
 
 fn flush_sokoban_commands(
-    mut grid_coords_query: Query<(Entity, &mut GridCoords, &SokobanBlock)>,
+    mut grid_coords_query: Query<(Entity, &mut GridCoords, &SokobanBlock, Option<&PushTracker>)>,
     mut sokoban_commands: EventReader<SokobanCommand>,
     mut push_events: EventWriter<PushEvent>,
     layers: Query<&LayerMetadata>,
