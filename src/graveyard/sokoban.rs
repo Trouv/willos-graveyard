@@ -21,6 +21,13 @@ pub struct SokobanPlugin<S> {
 }
 
 impl<S> SokobanPlugin<S> {
+    /// Constructor for the plugin.
+    ///
+    /// Allows the user to specify a particular iyes_loopless state to run the plugin in.
+    ///
+    /// The `layer_identifier` should refer to a non-entity layer in LDtk that can be treated as
+    /// the Sokoban grid.
+    /// This layer should have the tile-size and dimensions for your desired sokoban functionality.
     pub fn new(state: S, layer_identifier: impl Into<String>) -> Self {
         let layer_identifier = SokobanLayerIdentifier(layer_identifier.into());
         SokobanPlugin {
@@ -58,10 +65,11 @@ where
     }
 }
 
+/// Resource referring to the LDtk layer that should be treated as a sokoban grid.
 #[derive(Debug, Clone, Deref, DerefMut, Resource)]
-pub struct SokobanLayerIdentifier(String);
+struct SokobanLayerIdentifier(String);
 
-/// Enumerates the four directions that are exposed on the movement table.
+/// Enumerates the four directions that sokoban blocks can be pushed in.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 pub enum Direction {
     /// North direction.
@@ -85,34 +93,32 @@ impl From<Direction> for IVec2 {
     }
 }
 
+/// Enumerates commands that can be performed via [SokobanCommands].
 #[derive(Debug, Clone)]
 pub enum SokobanCommand {
+    /// Move a [SokobanBlock] entity in the given direction.
     Move {
+        /// The [SokobanBlock] entity to move.
         entity: Entity,
+        /// The direction to move the block in.
         direction: Direction,
     },
 }
 
+/// System parameter providing an interface for commanding the SokobanPlugin.
 #[derive(SystemParam)]
 pub struct SokobanCommands<'w, 's> {
     writer: EventWriter<'w, 's, SokobanCommand>,
 }
 
 impl<'w, 's> SokobanCommands<'w, 's> {
-    pub fn move_entity(&mut self, entity: Entity, direction: Direction) {
+    /// Move a [SokobanBlock] entity in the given direction.
+    ///
+    /// Will perform the necessary collision checks and block pushes.
+    pub fn move_block(&mut self, entity: Entity, direction: Direction) {
         self.writer.send(SokobanCommand::Move { entity, direction });
     }
 }
-
-#[derive(Debug, Clone)]
-pub struct PushEvent {
-    pub entity: Entity,
-    pub direction: Direction,
-    pub pushed: Vec<Entity>,
-}
-
-#[derive(Debug, Component)]
-pub struct PushTracker;
 
 /// Component defining the behavior of sokoban entities on collision.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
@@ -121,6 +127,21 @@ pub enum SokobanBlock {
     Static,
     /// The entity can move, push, or be pushed.
     Dynamic,
+}
+
+/// Component that marks [SokobanBlock]s that should fire [PushEvent]s when they push other blocks.
+#[derive(Debug, Component)]
+pub struct PushTracker;
+
+/// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
+#[derive(Debug, Clone)]
+pub struct PushEvent {
+    /// The [PushTracker] entity that pushed other [SokobanBlock]s.
+    pub pusher: Entity,
+    /// The direction of the push.
+    pub direction: Direction,
+    /// The list of [SokobanBlock] entities that were pushed.
+    pub pushed: Vec<Entity>,
 }
 
 #[derive(Clone, Bundle, LdtkIntCell)]
@@ -154,7 +175,7 @@ fn ease_movement(
         if let Some(LayerMetadata { grid_size, .. }) =
             layers.iter().find(|l| l.identifier == **layer_id)
         {
-            let mut xy = grid_coords_to_translation(grid_coords, IVec2::splat(*grid_size));
+            let xy = grid_coords_to_translation(grid_coords, IVec2::splat(*grid_size));
 
             commands.entity(entity).insert(transform.ease_to(
                 Transform::from_xyz(xy.x, xy.y, transform.translation.z),
@@ -273,7 +294,7 @@ fn flush_sokoban_commands(
                         if pushed.len() > 1 {
                             if let Ok((.., Some(_))) = grid_coords_query.get(*pusher) {
                                 push_events.send(PushEvent {
-                                    entity: *pusher,
+                                    pusher: *pusher,
                                     direction: *direction,
                                     pushed: pushed.into(),
                                 });

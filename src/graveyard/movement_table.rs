@@ -93,7 +93,7 @@ fn move_willo_by_table(
                     WilloState::RankMove(key) => {
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
-                                sokoban_commands.move_entity(entity, DIRECTION_ORDER[i]);
+                                sokoban_commands.move_block(entity, DIRECTION_ORDER[i]);
                             }
                         }
                         *willo = WilloState::FileMove(key);
@@ -103,7 +103,7 @@ fn move_willo_by_table(
                         for rank in table.table.iter() {
                             for (i, cell) in rank.iter().enumerate() {
                                 if *cell == Some(key) {
-                                    sokoban_commands.move_entity(entity, DIRECTION_ORDER[i]);
+                                    sokoban_commands.move_block(entity, DIRECTION_ORDER[i]);
                                 }
                             }
                         }
