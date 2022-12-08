@@ -1,10 +1,7 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
 use crate::{
     from_component::FromComponentLabel,
-    graveyard::{
-        movement_table::{Direction, MovementTable},
-        willo::WilloAnimationState,
-    },
+    graveyard::movement_table::{Direction, MovementTable},
     GameState, UNIT_LENGTH,
 };
 use bevy::{ecs::system::SystemParam, prelude::*};
@@ -121,21 +118,12 @@ impl From<IntGridCell> for SokobanBlock {
 fn ease_movement(
     mut commands: Commands,
     mut grid_coords_query: Query<
-        (
-            Entity,
-            &GridCoords,
-            &Transform,
-            Option<&WilloAnimationState>,
-        ),
+        (Entity, &GridCoords, &Transform),
         (Changed<GridCoords>, Without<MovementTable>),
     >,
 ) {
-    for (entity, &grid_coords, transform, willo_animation_state) in grid_coords_query.iter_mut() {
+    for (entity, &grid_coords, transform) in grid_coords_query.iter_mut() {
         let mut xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
-
-        if let Some(WilloAnimationState::Push(direction)) = willo_animation_state {
-            xy += IVec2::from(*direction).as_vec2() * 5.;
-        }
 
         commands.entity(entity).insert(transform.ease_to(
             Transform::from_xyz(xy.x, xy.y, transform.translation.z),
