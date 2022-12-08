@@ -1,5 +1,5 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
-use crate::{from_component::FromComponentLabel, GameState, UNIT_LENGTH};
+use crate::UNIT_LENGTH;
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
@@ -43,8 +43,7 @@ where
                 flush_sokoban_commands
                     .run_in_state(self.state.clone())
                     .run_on_event::<SokobanCommand>()
-                    .label(SokobanLabels::GridCoordsMovement)
-                    .before(FromComponentLabel),
+                    .label(SokobanLabels::GridCoordsMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
