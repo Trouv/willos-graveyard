@@ -206,6 +206,7 @@ fn flush_sokoban_commands(
     if let Some(LayerMetadata { c_wid, c_hei, .. }) =
         layers.iter().find(|l| l.identifier == **layer_id)
     {
+        // Generate current collision map
         let mut collision_map: CollisionMap = vec![vec![None; *c_wid as usize]; *c_hei as usize];
 
         for (entity, grid_coords, sokoban_block) in grid_coords_query.iter_mut() {
@@ -217,6 +218,8 @@ fn flush_sokoban_commands(
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
             if let Ok((_, grid_coords, _)) = grid_coords_query.get(*entity) {
+                // Determine if move can happen, who moves, how the collision_map should be
+                // updated...
                 let (new_collision_map, pushed_entities) = push_grid_coords_recursively(
                     collision_map,
                     IVec2::from(*grid_coords),
@@ -226,6 +229,7 @@ fn flush_sokoban_commands(
                 collision_map = new_collision_map;
 
                 if let Some(pushed_entities) = pushed_entities {
+                    // update GridCoords components of pushed entities
                     for pushed_entity in &pushed_entities {
                         *grid_coords_query
                             .get_component_mut::<GridCoords>(*pushed_entity)
@@ -233,6 +237,7 @@ fn flush_sokoban_commands(
                             GridCoords::from(IVec2::from(*direction));
                     }
 
+                    // send push events
                     if pushed_entities.len() > 1 {
                         push_events.send(PushEvent {
                             entity: *entity,
