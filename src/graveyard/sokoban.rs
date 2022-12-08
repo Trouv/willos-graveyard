@@ -1,8 +1,5 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
-use crate::{
-    from_component::FromComponentLabel, graveyard::movement_table::MovementTable, GameState,
-    UNIT_LENGTH,
-};
+use crate::{from_component::FromComponentLabel, GameState, UNIT_LENGTH};
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
@@ -142,7 +139,7 @@ fn ease_movement(
     mut commands: Commands,
     mut grid_coords_query: Query<
         (Entity, &GridCoords, &Transform),
-        (Changed<GridCoords>, Without<MovementTable>),
+        (Changed<GridCoords>, With<SokobanBlock>),
     >,
 ) {
     for (entity, &grid_coords, transform) in grid_coords_query.iter_mut() {
