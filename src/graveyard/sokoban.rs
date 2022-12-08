@@ -1,5 +1,4 @@
 //! Plugin and components providing functionality for sokoban-style movement and collision.
-use crate::UNIT_LENGTH;
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
@@ -148,17 +147,23 @@ fn ease_movement(
         (Entity, &GridCoords, &Transform),
         (Changed<GridCoords>, With<SokobanBlock>),
     >,
+    layers: Query<&LayerMetadata>,
+    layer_id: Res<SokobanLayerIdentifier>,
 ) {
     for (entity, &grid_coords, transform) in grid_coords_query.iter_mut() {
-        let mut xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
+        if let Some(LayerMetadata { grid_size, .. }) =
+            layers.iter().find(|l| l.identifier == **layer_id)
+        {
+            let mut xy = grid_coords_to_translation(grid_coords, IVec2::splat(*grid_size));
 
-        commands.entity(entity).insert(transform.ease_to(
-            Transform::from_xyz(xy.x, xy.y, transform.translation.z),
-            EaseFunction::CubicOut,
-            EasingType::Once {
-                duration: std::time::Duration::from_millis(110),
-            },
-        ));
+            commands.entity(entity).insert(transform.ease_to(
+                Transform::from_xyz(xy.x, xy.y, transform.translation.z),
+                EaseFunction::CubicOut,
+                EasingType::Once {
+                    duration: std::time::Duration::from_millis(110),
+                },
+            ));
+        }
     }
 }
 
