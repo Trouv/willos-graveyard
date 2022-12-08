@@ -11,7 +11,6 @@ use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use iyes_loopless::prelude::*;
-use std::collections::VecDeque;
 
 /// Labels used by sokoban systems
 #[derive(SystemLabel)]
