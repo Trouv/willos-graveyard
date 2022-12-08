@@ -14,6 +14,7 @@ use std::time::Duration;
 /// Labels used by exorcism systems.
 #[derive(SystemLabel)]
 pub enum ExorcismLabels {
+    /// Label used by the system that checks Willo's position kills Willo if appropriate.
     CheckDeath,
 }
 

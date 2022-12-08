@@ -30,6 +30,16 @@ where
 {
     /// Construct a new [FromComponentPlugin].
     pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<F, I> Default for FromComponentPlugin<F, I>
+where
+    F: Into<I> + Component + 'static + Send + Sync + Clone,
+    I: Component + 'static + Send + Sync,
+{
+    fn default() -> Self {
         FromComponentPlugin {
             from_type: PhantomData,
             into_type: PhantomData,

@@ -2,14 +2,14 @@
 //!
 //! So, the logic for core gameplay lives here.
 
-mod control_display;
-mod exorcism;
-mod goal;
-mod gravestone;
-mod movement_table;
-mod sokoban;
+pub mod control_display;
+pub mod exorcism;
+pub mod goal;
+pub mod gravestone;
+pub mod movement_table;
+pub mod sokoban;
 pub mod willo;
-mod wind;
+pub mod wind;
 
 use crate::{
     history::{FlushHistoryCommands, HistoryCommands},
@@ -59,8 +59,11 @@ impl Plugin for GraveyardPlugin {
 /// Actions other than grave-actions that can be performed during the gameplay state.
 #[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
 pub enum GraveyardAction {
+    /// Undo the last grave-action or restart.
     Undo,
+    /// Restart the level to its initial state.
     Restart,
+    /// Pause the graveyard state and open up the pause menu.
     Pause,
 }
 
