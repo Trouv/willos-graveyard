@@ -27,7 +27,7 @@ impl Plugin for MovementTablePlugin {
         .add_system(
             move_willo_by_table
                 .run_in_state(GameState::Graveyard)
-                .after(SokobanLabels::GridCoordsMovement)
+                .after(SokobanLabels::LogicalMovement)
                 .after(FlushHistoryCommands),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");

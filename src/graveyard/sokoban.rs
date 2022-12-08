@@ -11,7 +11,7 @@ pub enum SokobanLabels {
     /// Label for the system that updates the visual position of sokoban entities via bevy_easings.
     EaseMovement,
     /// Label for the system that updates the logical position of sokoban entities.
-    GridCoordsMovement,
+    LogicalMovement,
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision.
@@ -49,7 +49,7 @@ where
                 flush_sokoban_commands
                     .run_in_state(self.state.clone())
                     .run_on_event::<SokobanCommand>()
-                    .label(SokobanLabels::GridCoordsMovement),
+                    .label(SokobanLabels::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
