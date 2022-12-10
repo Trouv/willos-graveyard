@@ -42,7 +42,7 @@ impl Plugin for WilloPlugin {
             )
             .add_system_to_stage(
                 CoreStage::PostUpdate,
-                reset_willo_easing
+                push_translation
                     .run_not_in_state(GameState::AssetLoading)
                     .before(SokobanLabels::EaseMovement),
             )
@@ -187,7 +187,7 @@ fn push_sugar(
     }
 }
 
-fn reset_willo_easing(
+fn push_translation(
     mut commands: Commands,
     willo_query: Query<
         (Entity, &GridCoords, &Transform, &WilloAnimationState),
@@ -195,19 +195,19 @@ fn reset_willo_easing(
     >,
 ) {
     if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.get_single() {
-        match animation_state {
-            WilloAnimationState::Push(_) => (),
-            _ => {
-                let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
-                commands.entity(entity).insert(transform.ease_to(
-                    Transform::from_xyz(xy.x, xy.y, transform.translation.z),
-                    EaseFunction::CubicOut,
-                    EasingType::Once {
-                        duration: std::time::Duration::from_millis(110),
-                    },
-                ));
-            }
-        }
+        let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
+            + match animation_state {
+                WilloAnimationState::Push(direction) => IVec2::from(*direction).as_vec2() * 5.,
+                _ => Vec2::splat(0.),
+            };
+
+        commands.entity(entity).insert(transform.ease_to(
+            Transform::from_xyz(xy.x, xy.y, transform.translation.z),
+            EaseFunction::CubicOut,
+            EasingType::Once {
+                duration: std::time::Duration::from_millis(100),
+            },
+        ));
     }
 }
 
