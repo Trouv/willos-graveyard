@@ -305,7 +305,7 @@ fn flush_sokoban_commands(
                     for pushed_entity in &pushed_entities {
                         *grid_coords_query
                             .get_component_mut::<GridCoords>(*pushed_entity)
-                            .expect("pushed entity should have GridCoords component") +=
+                            .expect("pushed entity should be valid sokoban entity") +=
                             GridCoords::from(IVec2::from(*direction));
                     }
 
@@ -314,7 +314,10 @@ fn flush_sokoban_commands(
                         let pushed = &pushed_entities[i + 1..];
 
                         if !pushed.is_empty() {
-                            if let Ok((.., Some(_))) = grid_coords_query.get(*pusher) {
+                            if let (.., Some(_)) = grid_coords_query
+                                .get(*pusher)
+                                .expect("pusher should be valid sokoban entity")
+                            {
                                 push_events.send(PushEvent {
                                     pusher: *pusher,
                                     direction: *direction,
@@ -324,6 +327,8 @@ fn flush_sokoban_commands(
                         }
                     }
                 }
+            } else {
+                warn!("attempted to move sokoban entity {entity:?}, but it does not exist or is malformed")
             }
         }
     } else {
