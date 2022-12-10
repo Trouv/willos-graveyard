@@ -450,4 +450,61 @@ mod tests {
             (collision_map, None)
         );
     }
+
+    #[test]
+    fn push_with_sokoban_commands() {
+        #[derive(Clone, PartialEq, Eq, Debug, Hash)]
+        struct State;
+
+        let mut app = App::new();
+
+        app.add_loopless_state(State)
+            .add_plugin(SokobanPlugin::new(State, "MyLayerIdentifier"));
+
+        app.world.spawn(LayerMetadata {
+            c_wid: 3,
+            c_hei: 4,
+            grid_size: 32,
+            identifier: "MyLayerIdentifier".to_string(),
+            ..default()
+        });
+
+        let block_a = app
+            .world
+            .spawn((GridCoords::new(1, 1), SokobanBlock::Dynamic))
+            .id();
+        let block_b = app
+            .world
+            .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic))
+            .id();
+        let block_c = app
+            .world
+            .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
+            .id();
+
+        app.add_system(
+            {
+                move |mut commands: SokobanCommands| {
+                    commands.move_block(block_a, super::Direction::Up);
+                    commands.move_block(block_c, super::Direction::Left);
+                }
+            }
+            .before(SokobanLabels::LogicalMovement),
+        );
+
+        app.update();
+
+        assert_eq!(
+            *app.world.entity(block_a).get::<GridCoords>().unwrap(),
+            GridCoords::new(0, 2)
+        );
+        assert_eq!(
+            *app.world.entity(block_b).get::<GridCoords>().unwrap(),
+            GridCoords::new(1, 3)
+        );
+        assert_eq!(
+            *app.world.entity(block_c).get::<GridCoords>().unwrap(),
+            GridCoords::new(1, 2)
+        );
+    }
 }
