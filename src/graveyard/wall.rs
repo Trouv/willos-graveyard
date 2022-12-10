@@ -4,11 +4,13 @@ use bevy_ecs_ldtk::prelude::*;
 
 pub struct WallPlugin;
 
+const WALL_INT_GRID_VALUES: &[i32] = &[1, 3, 4];
+
 impl Plugin for WallPlugin {
     fn build(&self, app: &mut App) {
-        app.register_ldtk_int_cell::<WallBundle>(1)
-            .register_ldtk_int_cell::<WallBundle>(3)
-            .register_ldtk_int_cell::<WallBundle>(4);
+        WALL_INT_GRID_VALUES.iter().for_each(|value| {
+            app.register_ldtk_int_cell::<WallBundle>(*value);
+        });
     }
 }
 
@@ -25,7 +27,11 @@ impl From<EntityInstance> for SokobanBlock {
 }
 
 impl From<IntGridCell> for SokobanBlock {
-    fn from(_: IntGridCell) -> SokobanBlock {
-        SokobanBlock::Static
+    fn from(cell: IntGridCell) -> SokobanBlock {
+        if WALL_INT_GRID_VALUES.contains(&cell.value) {
+            SokobanBlock::Static
+        } else {
+            panic!("tried to give non-wall cell a SokobanBlock")
+        }
     }
 }
