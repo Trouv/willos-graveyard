@@ -1,10 +1,11 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
+    from_component::FromComponentLabel,
     graveyard::{
         exorcism::ExorcismEvent,
         gravestone::GraveId,
-        sokoban::{Direction, PushTracker, SokobanBlock, SokobanLabels},
+        sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanLabels},
     },
     history::{History, HistoryCommands, HistoryPlugin},
     AssetHolder, GameState, UNIT_LENGTH,
@@ -33,6 +34,12 @@ impl Plugin for WilloPlugin {
             ))
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
+            .add_system(
+                push_sugar
+                    .run_not_in_state(GameState::AssetLoading)
+                    .run_on_event::<PushEvent>()
+                    .before(FromComponentLabel),
+            )
             .add_system_to_stage(
                 CoreStage::PostUpdate,
                 reset_willo_easing
@@ -162,6 +169,23 @@ struct WilloBundle {
     #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
     willo_animation_state: WilloAnimationState,
+}
+
+fn push_sugar(
+    mut push_events: EventReader<PushEvent>,
+    mut willo_query: Query<(Entity, &mut WilloAnimationState)>,
+    audio: Res<Audio>,
+    sfx: Res<AssetHolder>,
+) {
+    println!("AHH");
+    let (willo_entity, mut animation_state) = willo_query.single_mut();
+    for PushEvent { direction, .. } in push_events
+        .iter()
+        .filter(|PushEvent { pusher, .. }| *pusher == willo_entity)
+    {
+        audio.play(sfx.push_sound.clone());
+        *animation_state = WilloAnimationState::Push(*direction);
+    }
 }
 
 fn reset_willo_easing(
