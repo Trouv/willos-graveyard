@@ -224,7 +224,7 @@ type CollisionMap = Vec<Vec<Option<(Entity, SokobanBlock)>>>;
 ///
 /// If the optional list is empty, no entities were pushed due to the provided coordinates pointing
 /// to an empty entry. This distinction is important for the recursive algorithm.
-fn push_grid_coords_recursively(
+fn push_collision_map_entry(
     collision_map: CollisionMap,
     pusher_coords: IVec2,
     direction: Direction,
@@ -245,7 +245,7 @@ fn push_grid_coords_recursively(
             // pusher is dynamic, so we try to push
             let destination = IVec2::from(pusher_coords) + IVec2::from(direction);
 
-            match push_grid_coords_recursively(collision_map, destination, direction) {
+            match push_collision_map_entry(collision_map, destination, direction) {
                 (mut collision_map, Some(mut pushed_entities)) => {
                     // destination is either empty or has been pushed, so we can push the pusher
                     collision_map[destination.y as usize][destination.x as usize] =
@@ -290,11 +290,8 @@ fn flush_sokoban_commands(
             if let Ok((_, grid_coords, ..)) = grid_coords_query.get(*entity) {
                 // Determine if move can happen, who moves, how the collision_map should be
                 // updated...
-                let (new_collision_map, pushed_entities) = push_grid_coords_recursively(
-                    collision_map,
-                    IVec2::from(*grid_coords),
-                    *direction,
-                );
+                let (new_collision_map, pushed_entities) =
+                    push_collision_map_entry(collision_map, IVec2::from(*grid_coords), *direction);
 
                 collision_map = new_collision_map;
 
