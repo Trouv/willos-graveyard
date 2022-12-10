@@ -99,18 +99,12 @@ impl From<EntityInstance> for GraveId {
     }
 }
 
-impl From<EntityInstance> for SokobanBlock {
-    fn from(_: EntityInstance) -> SokobanBlock {
-        SokobanBlock::Dynamic
-    }
-}
-
 #[derive(Clone, Bundle, LdtkEntity)]
 struct GravestoneBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     history: History<GridCoords>,
-    #[from_entity_instance]
+    #[with(SokobanBlock::new_dynamic)]
     sokoban_block: SokobanBlock,
     #[from_entity_instance]
     gravestone: GraveId,

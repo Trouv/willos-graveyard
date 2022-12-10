@@ -153,7 +153,7 @@ struct WilloBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     history: History<GridCoords>,
-    #[from_entity_instance]
+    #[with(SokobanBlock::new_dynamic)]
     sokoban_block: SokobanBlock,
     willo_state: WilloState,
     movement_timer: MovementTimer,
