@@ -313,7 +313,7 @@ fn flush_sokoban_commands(
                     for (i, pusher) in pushed_entities.iter().enumerate() {
                         let pushed = &pushed_entities[i + 1..];
 
-                        if pushed.len() > 1 {
+                        if !pushed.is_empty() {
                             if let Ok((.., Some(_))) = grid_coords_query.get(*pusher) {
                                 push_events.send(PushEvent {
                                     pusher: *pusher,
