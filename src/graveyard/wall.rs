@@ -20,12 +20,6 @@ struct WallBundle {
     sokoban_block: SokobanBlock,
 }
 
-impl From<EntityInstance> for SokobanBlock {
-    fn from(_: EntityInstance) -> SokobanBlock {
-        SokobanBlock::Dynamic
-    }
-}
-
 impl From<IntGridCell> for SokobanBlock {
     fn from(cell: IntGridCell) -> SokobanBlock {
         if WALL_INT_GRID_VALUES.contains(&cell.value) {
