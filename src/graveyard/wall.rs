@@ -1,7 +1,9 @@
+//! Plugin providing spawning logic for static walls such as bushes and fences.
 use crate::graveyard::sokoban::SokobanBlock;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+/// Plugin providing spawning logic for static walls such as bushes and fences.
 pub struct WallPlugin;
 
 const WALL_INT_GRID_VALUES: &[i32] = &[1, 3, 4];
