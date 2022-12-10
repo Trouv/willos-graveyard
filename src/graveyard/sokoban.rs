@@ -1,4 +1,9 @@
-//! Plugin and components providing functionality for sokoban-style movement and collision.
+//! Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
+//!
+//! You should use `bevy_ecs_ldtk` to load the levels.
+//! Spawn entities with `GridCoords` (from `bevy_ecs_ldtk`) and [SokobanBlock]s to give them
+//! sokoban-style collision.
+//! Then, move entities around with the [SokobanCommands] system parameter.
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
@@ -14,7 +19,7 @@ pub enum SokobanLabels {
     LogicalMovement,
 }
 
-/// Plugin providing functionality for sokoban-style movement and collision.
+/// Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
 pub struct SokobanPlugin<S> {
     state: S,
     layer_identifier: SokobanLayerIdentifier,
