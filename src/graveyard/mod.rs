@@ -45,6 +45,7 @@ impl Plugin for GraveyardPlugin {
             .add_plugin(sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"))
             .add_plugin(movement_table::MovementTablePlugin)
             .add_plugin(gravestone::GravestonePlugin)
+            .add_plugin(wall::WallPlugin)
             .add_plugin(goal::GoalPlugin)
             .add_plugin(exorcism::ExorcismPlugin)
             .add_plugin(wind::WindPlugin)
