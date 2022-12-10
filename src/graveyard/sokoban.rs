@@ -131,6 +131,44 @@ pub enum SokobanBlock {
     Dynamic,
 }
 
+impl SokobanBlock {
+    /// Constructor returning [SokobanBlock::Static].
+    ///
+    /// Compatible with the `with` attribute for `#[derive(LdtkEntity)]`:
+    /// ```
+    /// use bevy_ecs_ldtk::*;
+    ///
+    /// #[derive(Bundle, LdtkEntity)]
+    /// struct MyLdtkEntity {
+    ///     #[grid_coords]
+    ///     grid_coords: GridCoords,
+    ///     #[with(SokobanBlock::new_static)]
+    ///     sokoban_block: SokobanBlock,
+    /// }
+    /// ```
+    pub fn new_static(_: EntityInstance) -> SokobanBlock {
+        SokobanBlock::Static
+    }
+
+    /// Constructor returning [SokobanBlock::Dynamic].
+    ///
+    /// Compatible with the `with` attribute for `#[derive(LdtkEntity)]`:
+    /// ```
+    /// use bevy_ecs_ldtk::*;
+    ///
+    /// #[derive(Bundle, LdtkEntity)]
+    /// struct MyLdtkEntity {
+    ///     #[grid_coords]
+    ///     grid_coords: GridCoords,
+    ///     #[with(SokobanBlock::new_dynamic)]
+    ///     sokoban_block: SokobanBlock,
+    /// }
+    /// ```
+    pub fn new_dynamic(_: EntityInstance) -> SokobanBlock {
+        SokobanBlock::Dynamic
+    }
+}
+
 /// Component that marks [SokobanBlock]s that should fire [PushEvent]s when they push other blocks.
 #[derive(Debug, Component)]
 pub struct PushTracker;
