@@ -4,7 +4,7 @@ use crate::{
     graveyard::{
         exorcism::ExorcismEvent,
         gravestone::GraveId,
-        sokoban::{Direction, SokobanBlock, SokobanLabels},
+        sokoban::{Direction, PushTracker, SokobanBlock, SokobanLabels},
     },
     history::{History, HistoryCommands, HistoryPlugin},
     AssetHolder, GameState, UNIT_LENGTH,
@@ -155,6 +155,7 @@ struct WilloBundle {
     history: History<GridCoords>,
     #[with(SokobanBlock::new_dynamic)]
     sokoban_block: SokobanBlock,
+    push_tracker: PushTracker,
     willo_state: WilloState,
     movement_timer: MovementTimer,
     #[sprite_sheet_bundle]
