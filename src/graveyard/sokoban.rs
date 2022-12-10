@@ -335,3 +335,119 @@ fn flush_sokoban_commands(
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn push_dynamic_into_empty() {
+        let pusher = Entity::from_raw(0);
+
+        let mut collision_map = vec![vec![None; 3]; 3];
+        collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
+
+        let mut expected_collision_map = vec![vec![None; 3]; 3];
+        expected_collision_map[2][1] = Some((pusher, SokobanBlock::Dynamic));
+
+        assert_eq!(
+            push_collision_map_entry(collision_map, IVec2::new(1, 1), super::Direction::Up),
+            (expected_collision_map, Some(vec![pusher]))
+        );
+    }
+
+    #[test]
+    fn push_dynamic_into_static() {
+        let pusher = Entity::from_raw(0);
+        let wall = Entity::from_raw(1);
+
+        let mut collision_map = vec![vec![None; 3]; 3];
+        collision_map[2][1] = Some((pusher, SokobanBlock::Dynamic));
+        collision_map[1][1] = Some((wall, SokobanBlock::Static));
+
+        assert_eq!(
+            push_collision_map_entry(
+                collision_map.clone(),
+                IVec2::new(1, 2),
+                super::Direction::Down
+            ),
+            (collision_map, None)
+        );
+    }
+
+    #[test]
+    fn push_dynamic_into_boundary() {
+        let pusher = Entity::from_raw(0);
+
+        let mut collision_map = vec![vec![None; 3]; 3];
+        collision_map[0][0] = Some((pusher, SokobanBlock::Dynamic));
+
+        assert_eq!(
+            push_collision_map_entry(
+                collision_map.clone(),
+                IVec2::new(0, 0),
+                super::Direction::Left
+            ),
+            (collision_map, None)
+        );
+    }
+
+    #[test]
+    fn push_dynamic_into_dynamic_into_empty() {
+        let pusher = Entity::from_raw(0);
+        let pushed = Entity::from_raw(1);
+
+        let mut collision_map = vec![vec![None; 3]; 3];
+        collision_map[1][0] = Some((pusher, SokobanBlock::Dynamic));
+        collision_map[1][1] = Some((pushed, SokobanBlock::Dynamic));
+
+        let mut expected_collision_map = vec![vec![None; 3]; 3];
+        expected_collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
+        expected_collision_map[1][2] = Some((pushed, SokobanBlock::Dynamic));
+
+        assert_eq!(
+            push_collision_map_entry(collision_map, IVec2::new(0, 1), super::Direction::Right),
+            (expected_collision_map, Some(vec![pushed, pusher]))
+        );
+    }
+
+    #[test]
+    fn push_dynamic_into_dynamic_into_static() {
+        let pusher = Entity::from_raw(0);
+        let pushed = Entity::from_raw(1);
+        let wall = Entity::from_raw(2);
+
+        let mut collision_map = vec![vec![None; 3]; 3];
+        collision_map[2][0] = Some((pusher, SokobanBlock::Dynamic));
+        collision_map[2][1] = Some((pushed, SokobanBlock::Dynamic));
+        collision_map[2][2] = Some((wall, SokobanBlock::Static));
+
+        assert_eq!(
+            push_collision_map_entry(
+                collision_map.clone(),
+                IVec2::new(0, 2),
+                super::Direction::Right
+            ),
+            (collision_map, None)
+        );
+    }
+
+    #[test]
+    fn push_dynamic_into_dynamic_into_boundary() {
+        let pusher = Entity::from_raw(0);
+        let pushed = Entity::from_raw(1);
+
+        let mut collision_map = vec![vec![None; 3]; 3];
+        collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
+        collision_map[2][1] = Some((pushed, SokobanBlock::Dynamic));
+
+        assert_eq!(
+            push_collision_map_entry(
+                collision_map.clone(),
+                IVec2::new(1, 1),
+                super::Direction::Up,
+            ),
+            (collision_map, None)
+        );
+    }
+}
