@@ -170,7 +170,7 @@ impl SokobanBlock {
 }
 
 /// Component that marks [SokobanBlock]s that should fire [PushEvent]s when they push other blocks.
-#[derive(Debug, Component)]
+#[derive(Clone, Default, Debug, Component)]
 pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
