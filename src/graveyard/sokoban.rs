@@ -63,10 +63,7 @@ where
                 ease_movement
                     .run_in_state(self.state.clone())
                     .label(SokobanLabels::EaseMovement),
-            )
-            .register_ldtk_int_cell::<WallBundle>(1)
-            .register_ldtk_int_cell::<WallBundle>(3)
-            .register_ldtk_int_cell::<WallBundle>(4);
+            );
     }
 }
 
@@ -147,24 +144,6 @@ pub struct PushEvent {
     pub direction: Direction,
     /// The list of [SokobanBlock] entities that were pushed.
     pub pushed: Vec<Entity>,
-}
-
-#[derive(Clone, Bundle, LdtkIntCell)]
-struct WallBundle {
-    #[from_int_grid_cell]
-    sokoban_block: SokobanBlock,
-}
-
-impl From<EntityInstance> for SokobanBlock {
-    fn from(_: EntityInstance) -> SokobanBlock {
-        SokobanBlock::Dynamic
-    }
-}
-
-impl From<IntGridCell> for SokobanBlock {
-    fn from(_: IntGridCell) -> SokobanBlock {
-        SokobanBlock::Static
-    }
 }
 
 fn ease_movement(
