@@ -177,7 +177,6 @@ fn push_sugar(
     audio: Res<Audio>,
     sfx: Res<AssetHolder>,
 ) {
-    println!("AHH");
     let (willo_entity, mut animation_state) = willo_query.single_mut();
     for PushEvent { direction, .. } in push_events
         .iter()
