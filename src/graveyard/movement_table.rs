@@ -1,6 +1,7 @@
 //! Plugin and components providing functionality for the movement table, which alters Willo's
 //! abilities based off the placement of gravestones.
 use crate::{
+    from_component::FromComponentLabel,
     graveyard::{
         gravestone::GraveId,
         sokoban::{Direction, SokobanCommands, SokobanLabels},
@@ -28,7 +29,8 @@ impl Plugin for MovementTablePlugin {
             move_willo_by_table
                 .run_in_state(GameState::Graveyard)
                 .after(SokobanLabels::LogicalMovement)
-                .after(FlushHistoryCommands),
+                .after(FlushHistoryCommands)
+                .before(FromComponentLabel),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");
     }
