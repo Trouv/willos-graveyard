@@ -452,8 +452,7 @@ mod tests {
         );
     }
 
-    #[test]
-    fn push_with_sokoban_commands() {
+    fn app_setup() -> App {
         #[derive(Clone, PartialEq, Eq, Debug, Hash)]
         struct State;
 
@@ -469,6 +468,13 @@ mod tests {
             identifier: "MyLayerIdentifier".to_string(),
             ..default()
         });
+
+        app
+    }
+
+    #[test]
+    fn push_with_sokoban_commands() {
+        let mut app = app_setup();
 
         let block_a = app
             .world
@@ -509,21 +515,7 @@ mod tests {
 
     #[test]
     fn push_tracker_sends_events() {
-        #[derive(Clone, PartialEq, Eq, Debug, Hash)]
-        struct State;
-
-        let mut app = App::new();
-
-        app.add_loopless_state(State)
-            .add_plugin(SokobanPlugin::new(State, "MyLayerIdentifier"));
-
-        app.world.spawn(LayerMetadata {
-            c_wid: 3,
-            c_hei: 4,
-            grid_size: 32,
-            identifier: "MyLayerIdentifier".to_string(),
-            ..default()
-        });
+        let mut app = app_setup();
 
         let block_a = app
             .world
