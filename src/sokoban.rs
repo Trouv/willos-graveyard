@@ -243,7 +243,7 @@ fn push_collision_map_entry(
     match collision_map[pusher_coords.y as usize][pusher_coords.x as usize] {
         Some((pusher, SokobanBlock::Dynamic)) => {
             // pusher is dynamic, so we try to push
-            let destination = IVec2::from(pusher_coords) + IVec2::from(direction);
+            let destination = pusher_coords + IVec2::from(direction);
 
             match push_collision_map_entry(collision_map, destination, direction) {
                 (mut collision_map, Some(mut pushed_entities)) => {
