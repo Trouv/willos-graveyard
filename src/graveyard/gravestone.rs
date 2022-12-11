@@ -4,11 +4,9 @@
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
-    graveyard::{
-        sokoban::SokobanBlock,
-        willo::{WilloLabels, WilloState},
-    },
+    graveyard::willo::{WilloLabels, WilloState},
     history::{FlushHistoryCommands, History, HistoryCommands},
+    sokoban::SokobanBlock,
     GameState,
 };
 use bevy::prelude::*;

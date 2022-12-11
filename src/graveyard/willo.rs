@@ -2,12 +2,9 @@
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     from_component::FromComponentLabel,
-    graveyard::{
-        exorcism::ExorcismEvent,
-        gravestone::GraveId,
-        sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanLabels},
-    },
+    graveyard::{exorcism::ExorcismEvent, gravestone::GraveId},
     history::{History, HistoryCommands, HistoryPlugin},
+    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanLabels},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;

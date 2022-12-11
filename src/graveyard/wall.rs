@@ -1,5 +1,5 @@
 //! Plugin providing spawning logic for static walls such as bushes and fences.
-use crate::graveyard::sokoban::SokobanBlock;
+use crate::sokoban::SokobanBlock;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 

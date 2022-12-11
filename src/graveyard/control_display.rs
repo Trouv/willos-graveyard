@@ -4,8 +4,8 @@ use crate::{
     graveyard::{
         gravestone::GraveId,
         movement_table::{MovementTable, DIRECTION_ORDER},
-        sokoban::Direction,
     },
+    sokoban::Direction,
     ui::font_scale::{FontScale, FontSize},
     GameState,
 };

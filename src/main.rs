@@ -13,6 +13,7 @@ pub mod level_select;
 pub mod level_transition;
 pub mod nine_slice;
 pub mod previous_component;
+pub mod sokoban;
 pub mod ui;
 
 use animation::SpriteSheetAnimationPlugin;

@@ -7,14 +7,13 @@ pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
 pub mod movement_table;
-pub mod sokoban;
 pub mod wall;
 pub mod willo;
 pub mod wind;
 
 use crate::{
     history::{FlushHistoryCommands, HistoryCommands},
-    GameState,
+    sokoban, GameState,
 };
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;

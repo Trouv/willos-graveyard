@@ -4,10 +4,10 @@ use crate::{
     from_component::FromComponentLabel,
     graveyard::{
         gravestone::GraveId,
-        sokoban::{Direction, SokobanCommands, SokobanLabels},
         willo::{MovementTimer, WilloAnimationState, WilloLabels, WilloState},
     },
     history::FlushHistoryCommands,
+    sokoban::{Direction, SokobanCommands, SokobanLabels},
     GameState,
 };
 use bevy::prelude::*;
