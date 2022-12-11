@@ -339,6 +339,7 @@ fn flush_sokoban_commands(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use bevy::ecs::system::SystemState;
 
     #[test]
     fn push_dynamic_into_empty() {
@@ -482,15 +483,13 @@ mod tests {
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
-        app.add_system(
-            {
-                move |mut commands: SokobanCommands| {
-                    commands.move_block(block_a, super::Direction::Up);
-                    commands.move_block(block_c, super::Direction::Left);
-                }
-            }
-            .before(SokobanLabels::LogicalMovement),
-        );
+        let mut system_state: SystemState<SokobanCommands> = SystemState::new(&mut app.world);
+        let mut sokoban_commands: SokobanCommands = system_state.get_mut(&mut app.world);
+
+        sokoban_commands.move_block(block_a, super::Direction::Up);
+        sokoban_commands.move_block(block_c, super::Direction::Left);
+
+        system_state.apply(&mut app.world);
 
         app.update();
 
