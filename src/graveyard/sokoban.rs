@@ -174,7 +174,7 @@ impl SokobanBlock {
 pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PushEvent {
     /// The [PushTracker] entity that pushed other [SokobanBlock]s.
     pub pusher: Entity,
@@ -504,6 +504,61 @@ mod tests {
         assert_eq!(
             *app.world.entity(block_c).get::<GridCoords>().unwrap(),
             GridCoords::new(1, 2)
+        );
+    }
+
+    #[test]
+    fn push_tracker_sends_events() {
+        #[derive(Clone, PartialEq, Eq, Debug, Hash)]
+        struct State;
+
+        let mut app = App::new();
+
+        app.add_loopless_state(State)
+            .add_plugin(SokobanPlugin::new(State, "MyLayerIdentifier"));
+
+        app.world.spawn(LayerMetadata {
+            c_wid: 3,
+            c_hei: 4,
+            grid_size: 32,
+            identifier: "MyLayerIdentifier".to_string(),
+            ..default()
+        });
+
+        let block_a = app
+            .world
+            .spawn((GridCoords::new(1, 1), SokobanBlock::Dynamic, PushTracker))
+            .id();
+        let block_b = app
+            .world
+            .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic))
+            .id();
+        let block_c = app
+            .world
+            .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
+            .id();
+
+        let mut system_state: SystemState<SokobanCommands> = SystemState::new(&mut app.world);
+        let mut sokoban_commands: SokobanCommands = system_state.get_mut(&mut app.world);
+
+        sokoban_commands.move_block(block_a, super::Direction::Up);
+        sokoban_commands.move_block(block_c, super::Direction::Left);
+
+        system_state.apply(&mut app.world);
+
+        app.update();
+
+        let events = app.world.resource::<Events<PushEvent>>();
+        let mut reader = events.get_reader();
+
+        assert_eq!(events.len(), 1);
+        assert_eq!(
+            *reader.iter(events).next().unwrap(),
+            PushEvent {
+                pusher: block_a,
+                direction: super::Direction::Up,
+                pushed: vec![block_b],
+            }
         );
     }
 }
