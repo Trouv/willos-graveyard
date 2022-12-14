@@ -7,13 +7,13 @@ pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
 pub mod movement_table;
-pub mod sokoban;
+pub mod wall;
 pub mod willo;
 pub mod wind;
 
 use crate::{
     history::{FlushHistoryCommands, HistoryCommands},
-    GameState,
+    sokoban, GameState,
 };
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
@@ -41,9 +41,10 @@ impl Plugin for GraveyardPlugin {
             )
             .add_plugin(control_display::ControlDisplayPlugin)
             .add_plugin(willo::WilloPlugin)
-            .add_plugin(sokoban::SokobanPlugin)
+            .add_plugin(sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"))
             .add_plugin(movement_table::MovementTablePlugin)
             .add_plugin(gravestone::GravestonePlugin)
+            .add_plugin(wall::WallPlugin)
             .add_plugin(goal::GoalPlugin)
             .add_plugin(exorcism::ExorcismPlugin)
             .add_plugin(wind::WindPlugin)

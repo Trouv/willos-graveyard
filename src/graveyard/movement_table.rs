@@ -1,12 +1,13 @@
 //! Plugin and components providing functionality for the movement table, which alters Willo's
 //! abilities based off the placement of gravestones.
 use crate::{
+    from_component::FromComponentLabel,
     graveyard::{
         gravestone::GraveId,
-        sokoban::SokobanLabels,
-        willo::{MovementTimer, WilloLabels, WilloMovementEvent, WilloState},
+        willo::{MovementTimer, WilloAnimationState, WilloLabels, WilloState},
     },
     history::FlushHistoryCommands,
+    sokoban::{Direction, SokobanCommands, SokobanLabels},
     GameState,
 };
 use bevy::prelude::*;
@@ -27,24 +28,12 @@ impl Plugin for MovementTablePlugin {
         .add_system(
             move_willo_by_table
                 .run_in_state(GameState::Graveyard)
-                .after(SokobanLabels::GridCoordsMovement)
-                .after(FlushHistoryCommands),
+                .after(SokobanLabels::LogicalMovement)
+                .after(FlushHistoryCommands)
+                .before(FromComponentLabel),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");
     }
-}
-
-/// Enumerates the four directions that are exposed on the movement table.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum Direction {
-    /// North direction.
-    Up,
-    /// West direction.
-    Left,
-    /// South direction.
-    Down,
-    /// East direction.
-    Right,
 }
 
 /// Defines the order that the four [Direction]s go in on the table's rank and file.
@@ -54,17 +43,6 @@ pub const DIRECTION_ORDER: [Direction; 4] = [
     Direction::Down,
     Direction::Right,
 ];
-
-impl From<Direction> for IVec2 {
-    fn from(direction: Direction) -> IVec2 {
-        match direction {
-            Direction::Up => IVec2::Y,
-            Direction::Left => IVec2::new(-1, 0),
-            Direction::Down => IVec2::new(0, -1),
-            Direction::Right => IVec2::X,
-        }
-    }
-}
 
 /// Component that marks the movement table and stores the current placement of gravestones.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
@@ -104,12 +82,19 @@ fn movement_table_update(
 
 fn move_willo_by_table(
     table_query: Query<&MovementTable>,
-    mut willo_query: Query<(&mut MovementTimer, &mut WilloState)>,
-    mut movement_writer: EventWriter<WilloMovementEvent>,
+    mut willo_query: Query<(
+        Entity,
+        &mut MovementTimer,
+        &mut WilloState,
+        &mut WilloAnimationState,
+    )>,
+    mut sokoban_commands: SokobanCommands,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {
-        if let Ok((mut timer, mut willo)) = willo_query.get_single_mut() {
+        if let Ok((entity, mut timer, mut willo, mut willo_animation_state)) =
+            willo_query.get_single_mut()
+        {
             timer.0.tick(time.delta());
 
             if timer.0.finished() {
@@ -117,9 +102,9 @@ fn move_willo_by_table(
                     WilloState::RankMove(key) => {
                         for (i, rank) in table.table.iter().enumerate() {
                             if rank.contains(&Some(key)) {
-                                movement_writer.send(WilloMovementEvent {
-                                    direction: DIRECTION_ORDER[i],
-                                });
+                                let direction = DIRECTION_ORDER[i];
+                                sokoban_commands.move_block(entity, direction);
+                                *willo_animation_state = WilloAnimationState::Idle(direction);
                             }
                         }
                         *willo = WilloState::FileMove(key);
@@ -129,9 +114,9 @@ fn move_willo_by_table(
                         for rank in table.table.iter() {
                             for (i, cell) in rank.iter().enumerate() {
                                 if *cell == Some(key) {
-                                    movement_writer.send(WilloMovementEvent {
-                                        direction: DIRECTION_ORDER[i],
-                                    });
+                                    let direction = DIRECTION_ORDER[i];
+                                    sokoban_commands.move_block(entity, direction);
+                                    *willo_animation_state = WilloAnimationState::Idle(direction);
                                 }
                             }
                         }

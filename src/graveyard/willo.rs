@@ -1,13 +1,10 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    graveyard::{
-        exorcism::ExorcismEvent,
-        gravestone::GraveId,
-        movement_table::Direction,
-        sokoban::{RigidBody, SokobanLabels},
-    },
+    from_component::FromComponentLabel,
+    graveyard::{exorcism::ExorcismEvent, gravestone::GraveId},
     history::{History, HistoryCommands, HistoryPlugin},
+    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanLabels},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
@@ -32,12 +29,17 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Graveyard,
             ))
-            .add_event::<WilloMovementEvent>()
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
+            .add_system(
+                push_sugar
+                    .run_not_in_state(GameState::AssetLoading)
+                    .run_on_event::<PushEvent>()
+                    .before(FromComponentLabel),
+            )
             .add_system_to_stage(
                 CoreStage::PostUpdate,
-                reset_willo_easing
+                push_translation
                     .run_not_in_state(GameState::AssetLoading)
                     .before(SokobanLabels::EaseMovement),
             )
@@ -53,15 +55,6 @@ impl Plugin for WilloPlugin {
             )
             .register_ldtk_entity::<WilloBundle>("Willo");
     }
-}
-
-/// Event that fires whenever Willo moves.
-///
-/// Only fires once per direction - so it fires twice during most grave actions.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-pub struct WilloMovementEvent {
-    /// The direction that willo just performed as part of their grave action.
-    pub direction: Direction,
 }
 
 /// Component that marks Willo and keeps track of their state.
@@ -164,8 +157,9 @@ struct WilloBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     history: History<GridCoords>,
-    #[from_entity_instance]
-    rigid_body: RigidBody,
+    #[with(SokobanBlock::new_dynamic)]
+    sokoban_block: SokobanBlock,
+    push_tracker: PushTracker,
     willo_state: WilloState,
     movement_timer: MovementTimer,
     #[sprite_sheet_bundle]
@@ -174,7 +168,23 @@ struct WilloBundle {
     willo_animation_state: WilloAnimationState,
 }
 
-fn reset_willo_easing(
+fn push_sugar(
+    mut push_events: EventReader<PushEvent>,
+    mut willo_query: Query<(Entity, &mut WilloAnimationState)>,
+    audio: Res<Audio>,
+    sfx: Res<AssetHolder>,
+) {
+    let (willo_entity, mut animation_state) = willo_query.single_mut();
+    for PushEvent { direction, .. } in push_events
+        .iter()
+        .filter(|PushEvent { pusher, .. }| *pusher == willo_entity)
+    {
+        audio.play(sfx.push_sound.clone());
+        *animation_state = WilloAnimationState::Push(*direction);
+    }
+}
+
+fn push_translation(
     mut commands: Commands,
     willo_query: Query<
         (Entity, &GridCoords, &Transform, &WilloAnimationState),
@@ -182,19 +192,19 @@ fn reset_willo_easing(
     >,
 ) {
     if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.get_single() {
-        match animation_state {
-            WilloAnimationState::Push(_) => (),
-            _ => {
-                let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH));
-                commands.entity(entity).insert(transform.ease_to(
-                    Transform::from_xyz(xy.x, xy.y, transform.translation.z),
-                    EaseFunction::CubicOut,
-                    EasingType::Once {
-                        duration: std::time::Duration::from_millis(110),
-                    },
-                ));
-            }
-        }
+        let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
+            + match animation_state {
+                WilloAnimationState::Push(direction) => IVec2::from(*direction).as_vec2() * 5.,
+                _ => Vec2::splat(0.),
+            };
+
+        commands.entity(entity).insert(transform.ease_to(
+            Transform::from_xyz(xy.x, xy.y, transform.translation.z),
+            EaseFunction::CubicOut,
+            EasingType::Once {
+                duration: std::time::Duration::from_millis(100),
+            },
+        ));
     }
 }
 

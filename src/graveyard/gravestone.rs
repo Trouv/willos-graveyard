@@ -4,11 +4,9 @@
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
-    graveyard::{
-        sokoban::RigidBody,
-        willo::{WilloLabels, WilloState},
-    },
+    graveyard::willo::{WilloLabels, WilloState},
     history::{FlushHistoryCommands, History, HistoryCommands},
+    sokoban::SokobanBlock,
     GameState,
 };
 use bevy::prelude::*;
@@ -104,8 +102,8 @@ struct GravestoneBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     history: History<GridCoords>,
-    #[from_entity_instance]
-    rigid_body: RigidBody,
+    #[with(SokobanBlock::new_dynamic)]
+    sokoban_block: SokobanBlock,
     #[from_entity_instance]
     gravestone: GraveId,
     #[sprite_sheet_bundle]
