@@ -5,7 +5,7 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.1.3",
+		"appVersion": "1.2.3",
 		"url": "https://ldtk.io"
 	},
 	"identifier": "Don_t_worry_I_ll_put_it_back",
@@ -34,7 +34,7 @@
 		{ "__identifier": "Notes", "__value": "Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\nWould help them grasp No Stone Unturned", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\nWould help them grasp No Stone Unturned"
+				"Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\\nWould help them grasp No Stone Unturned"
 			]
 		}] }
 	],
