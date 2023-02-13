@@ -98,19 +98,21 @@ enum HandDirection {
 }
 
 /// Component defining the current abstract state of the goal ghost animation.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Default)]
 enum GoalAnimationState {
+    #[default]
     Idle,
-    Turn { hand: HandDirection, frames: usize },
-    Blinking { frames: usize },
-    Happy { frame: usize },
+    Turn {
+        hand: HandDirection,
+        frames: usize,
+    },
+    Blinking {
+        frames: usize,
+    },
+    Happy {
+        frame: usize,
+    },
     None,
-}
-
-impl Default for GoalAnimationState {
-    fn default() -> Self {
-        GoalAnimationState::Idle
-    }
 }
 
 /// Component tracking the goal ghost animation in detail.

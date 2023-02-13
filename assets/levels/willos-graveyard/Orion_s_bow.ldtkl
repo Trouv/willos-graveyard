@@ -5,7 +5,7 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.1.3",
+		"appVersion": "1.2.5",
 		"url": "https://ldtk.io"
 	},
 	"identifier": "Orion_s_bow",
@@ -34,7 +34,7 @@
 		{ "__identifier": "Notes", "__value": "The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality"
+				"The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\\n\\nIt will be helpful to enumerate those disadvantages:\\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\\n2. Removing ANY stone from the table to finish the level results in a table without cardinality"
 			]
 		}] }
 	],

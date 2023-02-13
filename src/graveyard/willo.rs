@@ -58,9 +58,10 @@ impl Plugin for WilloPlugin {
 }
 
 /// Component that marks Willo and keeps track of their state.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component, Default)]
 pub enum WilloState {
     /// Willo is idle, waiting for input.
+    #[default]
     Waiting,
     /// Willo is dead and cannot accept input.
     Dead,
@@ -72,12 +73,6 @@ pub enum WilloState {
     ///
     /// This move is defined by the file of the gravestone on the movement table.
     FileMove(GraveId),
-}
-
-impl Default for WilloState {
-    fn default() -> WilloState {
-        WilloState::Waiting
-    }
 }
 
 /// Component enumerating the possible states of Willo's animation.
