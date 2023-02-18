@@ -31,25 +31,24 @@ fn populate_ui_atlas_image(
             .or_insert_with(|| {
                 let atlas = atlases.get(&ui_atlas_image.texture_atlas).unwrap();
 
-                let image = images
-                    .get(&atlas.texture)
-                    .unwrap()
-                    .clone()
-                    .try_into_dynamic()
-                    .unwrap(); // TODO: can we handle these errors better?
+                let image = images.get(&atlas.texture).unwrap();
+
+                let is_srgb = image.texture_descriptor.format.describe().srgb;
+
+                let dynamic_image = image.clone().try_into_dynamic().unwrap(); // TODO: can we handle these errors better?
 
                 atlas
                     .textures
                     .iter()
                     .map(|rect| {
                         let crop = Image::from_dynamic(
-                            image.crop_imm(
+                            dynamic_image.crop_imm(
                                 rect.min.x as u32,
                                 rect.min.y as u32,
                                 rect.width() as u32,
                                 rect.height() as u32,
                             ),
-                            false, // TODO: what should this be?
+                            is_srgb,
                         );
 
                         images.add(crop)
