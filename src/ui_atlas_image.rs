@@ -29,13 +29,17 @@ fn populate_ui_atlas_image(
         let images = map
             .entry(ui_atlas_image.texture_atlas.clone())
             .or_insert_with(|| {
-                let atlas = atlases.get(&ui_atlas_image.texture_atlas).unwrap();
+                let atlas = atlases
+                    .get(&ui_atlas_image.texture_atlas)
+                    .expect("Handle used in UiAtlasImage should be in Assets<TextureAtlas>");
 
-                let image = images.get(&atlas.texture).unwrap();
+                let image = images
+                    .get(&atlas.texture)
+                    .expect("source image for UiAtlasImage should be in Assets<Image>");
 
                 let is_srgb = image.texture_descriptor.format.describe().srgb;
 
-                let dynamic_image = image.clone().try_into_dynamic().unwrap(); // TODO: can we handle these errors better?
+                let dynamic_image = image.clone().try_into_dynamic().expect("source image for UiAtlasImage should support dynamic conversion: https://docs.rs/bevy/latest/bevy/render/texture/struct.Image.html#method.try_into_dynamic");
 
                 atlas
                     .textures
