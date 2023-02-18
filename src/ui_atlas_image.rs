@@ -9,10 +9,10 @@ impl Plugin for UiAtlasImagePlugin {
     }
 }
 
-#[derive(Deref, DerefMut, Resource)]
+#[derive(Debug, Default, Deref, DerefMut, Resource)]
 struct UiAtlasImageMap(HashMap<Handle<TextureAtlas>, Vec<Handle<Image>>>);
 
-#[derive(Component)]
+#[derive(Clone, Debug, Default, Component)]
 pub struct UiAtlasImage {
     pub texture_atlas: Handle<TextureAtlas>,
     pub index: usize,
