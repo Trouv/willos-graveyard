@@ -24,7 +24,7 @@ bevy_asset_loader = { version = "0.14", features = ["stageless"] }
 iyes_loopless = "0.9"
 bevy-inspector-egui = { version = "0.13", optional = true }
 thiserror = "1"
-leafwing-input-manager = "0.7"
+leafwing-input-manager = "=0.7.1"
 
 [target.wasm32-unknown-unknown.dependencies]
 bevy_ecs_ldtk = { version = "0.5", features = ["atlas"] }
