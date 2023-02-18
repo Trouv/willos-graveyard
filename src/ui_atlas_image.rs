@@ -5,7 +5,8 @@ pub struct UiAtlasImagePlugin;
 
 impl Plugin for UiAtlasImagePlugin {
     fn build(&self, app: &mut App) {
-        todo!();
+        app.init_resource::<UiAtlasImageMap>()
+            .add_system(resolve_ui_atlas_image);
     }
 }
 
@@ -18,7 +19,7 @@ pub struct UiAtlasImage {
     pub index: usize,
 }
 
-fn populate_ui_atlas_image(
+fn resolve_ui_atlas_image(
     mut commands: Commands,
     mut map: ResMut<UiAtlasImageMap>,
     ui_atlas_images: Query<(Entity, &UiAtlasImage), Changed<UiAtlasImage>>,
