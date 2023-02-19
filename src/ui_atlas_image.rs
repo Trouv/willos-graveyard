@@ -169,7 +169,7 @@ mod tests {
         assert_eq!(images[2].data, [200, 200, 200, 255].repeat(4));
         assert_eq!(images[3].data, [255, 255, 255, 255].repeat(4));
 
-        // Test that the entity refers to the correct handle (whose data has already been verified)
+        // Test that the entity's UiImage resolved appropriately (whose data has already been verified)
         assert_eq!(
             app.world
                 .entity(ui_atlas_image_entity)
@@ -178,5 +178,67 @@ mod tests {
                 .0,
             image_handles[1]
         );
+    }
+
+    #[test]
+    fn index_changes_dont_generate_more_images() {
+        let mut app = app_setup();
+        let texture_atlas = generate_texture_atlas(&mut app);
+
+        let ui_atlas_image_entity = app
+            .world
+            .spawn(UiAtlasImage {
+                texture_atlas: texture_atlas.clone(),
+                index: 1,
+            })
+            .id();
+
+        app.update();
+
+        let image_handles = app
+            .world
+            .get_resource::<UiAtlasImageMap>()
+            .unwrap()
+            .get(&texture_atlas)
+            .unwrap()
+            .clone();
+
+        // Test that the entity's UiImage resolved appropriately
+        assert_eq!(
+            app.world
+                .entity(ui_atlas_image_entity)
+                .get::<UiImage>()
+                .unwrap()
+                .0,
+            image_handles[1]
+        );
+
+        app.world
+            .entity_mut(ui_atlas_image_entity)
+            .get_mut::<UiAtlasImage>()
+            .unwrap()
+            .index += 1;
+
+        app.update();
+
+        let new_image_handles = app
+            .world
+            .get_resource::<UiAtlasImageMap>()
+            .unwrap()
+            .get(&texture_atlas)
+            .unwrap();
+
+        // Test the entity's UiImage *changed* appropriately
+        assert_eq!(
+            app.world
+                .entity(ui_atlas_image_entity)
+                .get::<UiImage>()
+                .unwrap()
+                .0,
+            image_handles[2]
+        );
+
+        // Test that the image handles have not changed
+        assert_eq!(image_handles, *new_image_handles);
     }
 }
