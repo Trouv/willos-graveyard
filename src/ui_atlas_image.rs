@@ -14,6 +14,7 @@ impl Plugin for UiAtlasImagePlugin {
     }
 }
 
+/// Resource that caches TextureAtlases and their corresponding images.
 #[derive(Debug, Default, Deref, DerefMut, Resource)]
 struct UiAtlasImageMap(HashMap<Handle<TextureAtlas>, Vec<Handle<Image>>>);
 
