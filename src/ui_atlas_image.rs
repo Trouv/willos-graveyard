@@ -32,6 +32,12 @@ pub struct UiAtlasImage {
     pub index: usize,
 }
 
+#[derive(Debug, Default, Bundle)]
+pub struct AtlasImageBundle {
+    pub image_bundle: ImageBundle,
+    pub atlas_image: UiAtlasImage,
+}
+
 fn resolve_ui_atlas_image(
     mut commands: Commands,
     mut map: ResMut<UiAtlasImageMap>,
