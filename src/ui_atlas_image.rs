@@ -32,10 +32,14 @@ pub struct UiAtlasImage {
     pub index: usize,
 }
 
+/// Bundle for [UiAtlasImage] and the components it needs to render.
 #[derive(Debug, Default, Bundle)]
 pub struct AtlasImageBundle {
-    pub image_bundle: ImageBundle,
+    /// The [UiAtlasImage] for this entity.
     pub atlas_image: UiAtlasImage,
+    /// The plugin just generates a UiImage on the entity.
+    /// So, an ImageBundle will always contain everything it needs to render properly.
+    pub image_bundle: ImageBundle,
 }
 
 fn resolve_ui_atlas_image(
