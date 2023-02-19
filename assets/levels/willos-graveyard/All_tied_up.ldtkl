@@ -5,7 +5,7 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.1.3",
+		"appVersion": "1.2.5",
 		"url": "https://ldtk.io"
 	},
 	"identifier": "All_tied_up",
@@ -34,7 +34,7 @@
 		{ "__identifier": "Notes", "__value": "# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?", "__type": "String", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?"
+				"# 2022-07-22\\nThis level kinda sucks.\\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\\nThis is good, but it isn't explored past the first couple moves.\\nTime for a redesign.\\n\\nRedesign goals:\\n- Start with a cancel pattern, requiring push-off moves to break free.\\n- Require a more-creative push-off technique later in the level.\\n- Make the solution less tedious, maybe by making it more open ended?"
 			]
 		}] }
 	],
