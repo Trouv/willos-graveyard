@@ -1,6 +1,10 @@
+//! Plugin for displaying images in the UI from a TextureAtlas.
 use bevy::prelude::*;
 use std::collections::HashMap;
 
+/// Plugin for displaying images in the UI from a TextureAtlas.
+///
+/// Use the [UiAtlasImage] component to employ this plugin.
 pub struct UiAtlasImagePlugin;
 
 impl Plugin for UiAtlasImagePlugin {
@@ -13,9 +17,16 @@ impl Plugin for UiAtlasImagePlugin {
 #[derive(Debug, Default, Deref, DerefMut, Resource)]
 struct UiAtlasImageMap(HashMap<Handle<TextureAtlas>, Vec<Handle<Image>>>);
 
+/// Component that defines a UiAtlasImage.
+///
+/// The plugin will respond to changes in this component.
+/// First, it generates plain [Image](bevy::render::Image)s based off the textures in the texture atlas.
+/// Using these images, it will insert the appropriate [UiImage](bevy::render::UiImage) on your entity.
 #[derive(Clone, Debug, Default, Component)]
 pub struct UiAtlasImage {
+    /// Atlas that defines the texture and its partitions.
     pub texture_atlas: Handle<TextureAtlas>,
+    /// Index of the texture partition to display on this entity.
     pub index: usize,
 }
 
