@@ -85,3 +85,94 @@ fn resolve_ui_atlas_image(
             .insert(UiImage(images[ui_atlas_image.index].clone()));
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use bevy::render::render_resource::{Extent3d, TextureDimension, TextureFormat};
+
+    use super::*;
+    fn app_setup() -> App {
+        let mut app = App::new();
+
+        app.add_plugin(UiAtlasImagePlugin)
+            .add_plugin(AssetPlugin::default())
+            .add_asset::<Image>()
+            .add_asset::<TextureAtlas>();
+        app
+    }
+
+    fn generate_texture_atlas(app: &mut App) -> Handle<TextureAtlas> {
+        let image = Image::new(
+            Extent3d {
+                width: 4,
+                height: 4,
+                depth_or_array_layers: 1,
+            },
+            TextureDimension::D2,
+            vec![
+                0, 0, 100, 100, 0, 0, 100, 100, 200, 200, 255, 255, 200, 200, 255, 255,
+            ],
+            TextureFormat::R8Unorm,
+        );
+
+        let image_handle = app
+            .world
+            .get_resource_mut::<Assets<Image>>()
+            .unwrap()
+            .add(image);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(image_handle, Vec2::new(2., 2.), 2, 2, None, None);
+
+        app.world
+            .get_resource_mut::<Assets<TextureAtlas>>()
+            .unwrap()
+            .add(texture_atlas)
+    }
+
+    #[test]
+    fn map_and_image_resolve() {
+        let mut app = app_setup();
+        let texture_atlas = generate_texture_atlas(&mut app);
+
+        let ui_atlas_image_entity = app
+            .world
+            .spawn(UiAtlasImage {
+                texture_atlas: texture_atlas.clone(),
+                index: 1,
+            })
+            .id();
+
+        app.update();
+
+        let image_handles = app
+            .world
+            .get_resource::<UiAtlasImageMap>()
+            .unwrap()
+            .get(&texture_atlas)
+            .unwrap();
+
+        let image_assets = app.world.get_resource::<Assets<Image>>().unwrap();
+
+        let images: Vec<&Image> = image_handles
+            .iter()
+            .map(|h| image_assets.get(h).unwrap())
+            .collect();
+
+        // Test that each image contains the right data
+        assert_eq!(images[0].data, [0, 0, 0, 255].repeat(4));
+        assert_eq!(images[1].data, [100, 100, 100, 255].repeat(4));
+        assert_eq!(images[2].data, [200, 200, 200, 255].repeat(4));
+        assert_eq!(images[3].data, [255, 255, 255, 255].repeat(4));
+
+        // Test that the entity refers to the correct handle (whose data has already been verified)
+        assert_eq!(
+            app.world
+                .entity(ui_atlas_image_entity)
+                .get::<UiImage>()
+                .unwrap()
+                .0,
+            image_handles[1]
+        );
+    }
+}
