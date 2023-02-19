@@ -134,18 +134,20 @@ mod tests {
             .add(texture_atlas)
     }
 
-    #[test]
-    fn map_and_image_resolve() {
-        let mut app = app_setup();
-        let texture_atlas = generate_texture_atlas(&mut app);
-
-        let ui_atlas_image_entity = app
-            .world
+    fn spawn_ui_atlas_image_entity(app: &mut App, texture_atlas: Handle<TextureAtlas>) -> Entity {
+        app.world
             .spawn(UiAtlasImage {
                 texture_atlas: texture_atlas.clone(),
                 index: 1,
             })
-            .id();
+            .id()
+    }
+
+    #[test]
+    fn map_and_image_resolve() {
+        let mut app = app_setup();
+        let texture_atlas = generate_texture_atlas(&mut app);
+        let ui_atlas_image_entity = spawn_ui_atlas_image_entity(&mut app, texture_atlas.clone());
 
         app.update();
 
@@ -184,14 +186,7 @@ mod tests {
     fn index_changes_dont_generate_more_images() {
         let mut app = app_setup();
         let texture_atlas = generate_texture_atlas(&mut app);
-
-        let ui_atlas_image_entity = app
-            .world
-            .spawn(UiAtlasImage {
-                texture_atlas: texture_atlas.clone(),
-                index: 1,
-            })
-            .id();
+        let ui_atlas_image_entity = spawn_ui_atlas_image_entity(&mut app, texture_atlas.clone());
 
         app.update();
 
