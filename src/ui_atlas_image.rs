@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //! Plugin for displaying images in the UI from a TextureAtlas.
 use bevy::prelude::*;
 use std::collections::HashMap;
