@@ -37,24 +37,24 @@ jobs:
               CODE_VERSION_MINOR=${BASH_REMATCH[2]}
               CODE_VERSION_PATCH=${BASH_REMATCH[3]}
 
-              UPDATE_CARGO=0
+              UPDATE_CARGO=false
               MAJOR_COMMITS=$(git log ${{ env.LAST_VERSION }}..HEAD --grep '^\w+!:')
               MINOR_COMMITS=$(git log ${{ env.LAST_VERSION }}..HEAD --grep '^feat:')
               if [[ $MAJOR_COMMITS || $MINOR_COMMITS ]]; then
                 echo "incrementing code version (minor)"
                 CODE_VERSION_MINOR=$(( $CODE_VERSION_MINOR + 1 ))
                 CODE_VERSION_PATCH=0
-                UPDATE_CARGO=1
+                UPDATE_CARGO=true
               elif [[ $CHANGED_CODE ]]; then
                 echo "incrementing code version (patch)"
                 CODE_VERSION_PATCH=$(( $CODE_VERSION_PATCH + 1 ))
-                UPDATE_CARGO=1
+                UPDATE_CARGO=true
               fi
               CODE_VERSION="$CODE_VERSION_MAJOR.$CODE_VERSION_MINOR.$CODE_VERSION_PATCH"
 
               git config user.name 'github-actions[bot]'
               git config user.email 'github-actions[bot]@users.noreply.github.com'
-              if [[ $UPDATE_CARGO ]]; then
+              if $UPDATE_CARGO; then
                 echo "updating cargo"
                 sed "s/^version = \".*\"$/version = \"$CODE_VERSION\"/" Cargo.toml -i
                 git add Cargo.toml
