@@ -10,6 +10,7 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
+use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
@@ -48,6 +49,16 @@ impl Plugin for GravestonePlugin {
             .register_ldtk_entity::<GravestoneBundle>("S")
             .register_ldtk_entity::<GravestoneBundle>("D");
     }
+}
+
+#[derive(Debug, Default, AssetCollection, Resource)]
+pub struct GravestoneAssets {
+    #[asset(texture_atlas(tile_size_x = 32., tile_size_y = 32., columns = 10, rows = 2))]
+    #[asset(path = "textures/graves-Sheet.png")]
+    grave_bodies: Handle<TextureAtlas>,
+    #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
+    #[asset(path = "textures/key-code-icons.png")]
+    key_code_icons: Handle<TextureAtlas>,
 }
 
 /// Component that marks gravestones and associates them with an action.
@@ -106,9 +117,6 @@ struct GravestoneBundle {
     sokoban_block: SokobanBlock,
     #[from_entity_instance]
     gravestone: GraveId,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    sprite_sheet_bundle: SpriteSheetBundle,
 }
 
 fn spawn_gravestone_body(
