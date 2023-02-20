@@ -169,11 +169,10 @@ fn spawn_gravestone_body(
             });
 
             // icon entity
-            if let Some(UserInput::Single(InputKind::Keyboard(key_code))) =
-                input_map.get(*grave_id).iter().find(|i| match i {
-                    UserInput::Single(InputKind::Keyboard(_)) => true,
-                    _ => false,
-                })
+            if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
+                .get(*grave_id)
+                .iter()
+                .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
             {
                 parent.spawn(SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
