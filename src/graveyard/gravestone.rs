@@ -52,6 +52,7 @@ impl Plugin for GravestonePlugin {
     }
 }
 
+/// Asset collection for loading assets relevant to gravestones and gravestone controls.
 #[derive(Debug, Default, AssetCollection, Resource)]
 pub struct GravestoneAssets {
     #[asset(texture_atlas(tile_size_x = 32., tile_size_y = 32., columns = 10, rows = 2))]
@@ -167,6 +168,7 @@ fn spawn_gravestone_body(
                 ..default()
             });
 
+            // icon entity
             if let Some(UserInput::Single(InputKind::Keyboard(key_code))) =
                 input_map.get(*grave_id).iter().find(|i| match i {
                     UserInput::Single(InputKind::Keyboard(_)) => true,
