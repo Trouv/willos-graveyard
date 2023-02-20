@@ -9,14 +9,14 @@ use crate::{
     sokoban::SokobanBlock,
     GameState,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
-use leafwing_input_manager::prelude::*;
+use leafwing_input_manager::{prelude::*, user_input::InputKind};
 use rand::{distributions::WeightedIndex, prelude::*};
 use serde::{Deserialize, Serialize};
-use std::{fs::File, io::BufReader};
+use std::{fs::File, io::BufReader, ops::Range};
 
 /// Plugin providing functionality for gravestones.
 ///
@@ -33,6 +33,7 @@ impl Plugin for GravestonePlugin {
 
         app.add_plugin(InputManagerPlugin::<GraveId>::default())
             .init_resource::<ActionState<GraveId>>()
+            .init_resource::<GravestoneSettings>()
             .insert_resource(
                 load_gravestone_control_settings(asset_folder)
                     .expect("unable to load gravestone control settings"),
@@ -59,6 +60,23 @@ pub struct GravestoneAssets {
     #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
     #[asset(path = "textures/key-code-icons.png")]
     key_code_icons: Handle<TextureAtlas>,
+}
+
+#[derive(Debug, Resource)]
+struct GravestoneSettings {
+    gravestone_indices: Range<usize>,
+    gravestone_translation: Vec3,
+    icon_translation: Vec3,
+}
+
+impl Default for GravestoneSettings {
+    fn default() -> Self {
+        GravestoneSettings {
+            gravestone_indices: 0..11,
+            gravestone_translation: Vec3::ZERO,
+            icon_translation: Vec3::new(0., 5., 0.1),
+        }
+    }
 }
 
 /// Component that marks gravestones and associates them with an action.
