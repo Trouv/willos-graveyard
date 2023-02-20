@@ -139,30 +139,51 @@ struct GravestoneBundle {
 
 fn spawn_gravestone_body(
     mut commands: Commands,
-    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<GraveId>>,
+    gravestones: Query<(Entity, &GraveId), Added<GraveId>>,
+    assets: Res<GravestoneAssets>,
+    settings: Res<GravestoneSettings>,
+    input_map: Res<InputMap<GraveId>>,
 ) {
-    for (entity, texture_handle) in gravestones.iter() {
-        let index_range = 11..22_usize;
+    for (entity, grave_id) in gravestones.iter() {
+        commands.entity(entity).with_children(|parent| {
+            let dist: Vec<usize> = (1..(settings.gravestone_indices.len() + 1))
+                .map(|x| x * x)
+                .rev()
+                .collect();
 
-        let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
+            let dist = WeightedIndex::new(dist).unwrap();
 
-        let dist = WeightedIndex::new(dist).unwrap();
+            let mut rng = rand::thread_rng();
 
-        let mut rng = rand::thread_rng();
-
-        let body_entity = commands
-            .spawn(SpriteSheetBundle {
+            // body entity
+            parent.spawn(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
-                    index: (11..22_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
+                    index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
+                        [dist.sample(&mut rng)],
                     ..default()
                 },
-                texture_atlas: texture_handle.clone(),
-                transform: Transform::from_xyz(0., 0., -0.5),
+                texture_atlas: assets.grave_bodies.clone(),
+                transform: Transform::from_translation(settings.gravestone_translation),
                 ..default()
-            })
-            .id();
+            });
 
-        commands.entity(entity).add_child(body_entity);
+            if let Some(UserInput::Single(InputKind::Keyboard(key_code))) =
+                input_map.get(*grave_id).iter().find(|i| match i {
+                    UserInput::Single(InputKind::Keyboard(_)) => true,
+                    _ => false,
+                })
+            {
+                parent.spawn(SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index: key_code.variant_index(),
+                        ..default()
+                    },
+                    texture_atlas: assets.key_code_icons.clone(),
+                    transform: Transform::from_translation(settings.icon_translation),
+                    ..default()
+                });
+            }
+        });
     }
 }
 
