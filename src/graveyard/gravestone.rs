@@ -9,13 +9,14 @@ use crate::{
     sokoban::SokobanBlock,
     GameState,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::Enum};
+use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use iyes_loopless::prelude::*;
-use leafwing_input_manager::prelude::*;
+use leafwing_input_manager::{prelude::*, user_input::InputKind};
 use rand::{distributions::WeightedIndex, prelude::*};
 use serde::{Deserialize, Serialize};
-use std::{fs::File, io::BufReader};
+use std::{fs::File, io::BufReader, ops::Range};
 
 /// Plugin providing functionality for gravestones.
 ///
@@ -32,6 +33,7 @@ impl Plugin for GravestonePlugin {
 
         app.add_plugin(InputManagerPlugin::<GraveId>::default())
             .init_resource::<ActionState<GraveId>>()
+            .init_resource::<GravestoneSettings>()
             .insert_resource(
                 load_gravestone_control_settings(asset_folder)
                     .expect("unable to load gravestone control settings"),
@@ -47,6 +49,34 @@ impl Plugin for GravestonePlugin {
             .register_ldtk_entity::<GravestoneBundle>("A")
             .register_ldtk_entity::<GravestoneBundle>("S")
             .register_ldtk_entity::<GravestoneBundle>("D");
+    }
+}
+
+/// Asset collection for loading assets relevant to gravestones and gravestone controls.
+#[derive(Debug, Default, AssetCollection, Resource)]
+pub struct GravestoneAssets {
+    #[asset(texture_atlas(tile_size_x = 32., tile_size_y = 32., columns = 10, rows = 2))]
+    #[asset(path = "textures/graves-Sheet.png")]
+    grave_bodies: Handle<TextureAtlas>,
+    #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
+    #[asset(path = "textures/key-code-icons.png")]
+    key_code_icons: Handle<TextureAtlas>,
+}
+
+#[derive(Debug, Resource)]
+struct GravestoneSettings {
+    gravestone_indices: Range<usize>,
+    gravestone_translation: Vec3,
+    icon_translation: Vec3,
+}
+
+impl Default for GravestoneSettings {
+    fn default() -> Self {
+        GravestoneSettings {
+            gravestone_indices: 0..11,
+            gravestone_translation: Vec3::ZERO,
+            icon_translation: Vec3::new(0., 5., 0.1),
+        }
     }
 }
 
@@ -106,37 +136,55 @@ struct GravestoneBundle {
     sokoban_block: SokobanBlock,
     #[from_entity_instance]
     gravestone: GraveId,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    sprite_sheet_bundle: SpriteSheetBundle,
 }
 
 fn spawn_gravestone_body(
     mut commands: Commands,
-    gravestones: Query<(Entity, &Handle<TextureAtlas>), Added<GraveId>>,
+    gravestones: Query<(Entity, &GraveId), Added<GraveId>>,
+    assets: Res<GravestoneAssets>,
+    settings: Res<GravestoneSettings>,
+    input_map: Res<InputMap<GraveId>>,
 ) {
-    for (entity, texture_handle) in gravestones.iter() {
-        let index_range = 11..22_usize;
+    for (entity, grave_id) in gravestones.iter() {
+        commands.entity(entity).with_children(|parent| {
+            let dist: Vec<usize> = (1..(settings.gravestone_indices.len() + 1))
+                .map(|x| x * x)
+                .rev()
+                .collect();
 
-        let dist: Vec<usize> = (1..(index_range.len() + 1)).map(|x| x * x).rev().collect();
+            let dist = WeightedIndex::new(dist).unwrap();
 
-        let dist = WeightedIndex::new(dist).unwrap();
+            let mut rng = rand::thread_rng();
 
-        let mut rng = rand::thread_rng();
-
-        let body_entity = commands
-            .spawn(SpriteSheetBundle {
+            // body entity
+            parent.spawn(SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
-                    index: (11..22_usize).collect::<Vec<usize>>()[dist.sample(&mut rng)],
+                    index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
+                        [dist.sample(&mut rng)],
                     ..default()
                 },
-                texture_atlas: texture_handle.clone(),
-                transform: Transform::from_xyz(0., 0., -0.5),
+                texture_atlas: assets.grave_bodies.clone(),
+                transform: Transform::from_translation(settings.gravestone_translation),
                 ..default()
-            })
-            .id();
+            });
 
-        commands.entity(entity).add_child(body_entity);
+            // icon entity
+            if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
+                .get(*grave_id)
+                .iter()
+                .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
+            {
+                parent.spawn(SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index: key_code.variant_index(),
+                        ..default()
+                    },
+                    texture_atlas: assets.key_code_icons.clone(),
+                    transform: Transform::from_translation(settings.icon_translation),
+                    ..default()
+                });
+            }
+        });
     }
 }
 
