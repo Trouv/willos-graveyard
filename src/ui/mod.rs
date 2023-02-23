@@ -2,6 +2,7 @@
 
 pub mod actions;
 pub mod font_scale;
+pub mod icon_button;
 pub mod text_button;
 
 use crate::{
