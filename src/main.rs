@@ -29,7 +29,7 @@ use iyes_loopless::prelude::*;
 pub const UNIT_LENGTH: i32 = 32;
 
 #[cfg(feature = "inspector")]
-use bevy_inspector_egui::prelude::*;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 /// All possible bevy states that the game can be in.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
@@ -90,7 +90,7 @@ fn main() {
 
     #[cfg(feature = "inspector")]
     {
-        app.add_plugin(WorldInspectorPlugin::new());
+        app.add_plugin(WorldInspectorPlugin);
     }
 
     app.run()
