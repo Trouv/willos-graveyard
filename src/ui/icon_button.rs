@@ -47,6 +47,7 @@ fn spawn_icon_button_elements(
                 image: UiImage(assets.radial.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
+                    position: UiRect::all(Val::Percent(12.5)),
                     ..default()
                 },
                 focus_policy: FocusPolicy::Pass,
@@ -58,6 +59,7 @@ fn spawn_icon_button_elements(
                 image: UiImage(assets.outline.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
+                    position: UiRect::all(Val::Percent(0.)),
                     ..default()
                 },
                 focus_policy: FocusPolicy::Pass,
@@ -70,6 +72,7 @@ fn spawn_icon_button_elements(
                 image_bundle: ImageBundle {
                     style: Style {
                         position_type: PositionType::Absolute,
+                        position: UiRect::all(Val::Percent(0.)),
                         ..default()
                     },
                     focus_policy: FocusPolicy::Pass,
