@@ -1,6 +1,10 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, ui::FocusPolicy};
+use bevy_asset_loader::prelude::AssetCollection;
 
-use crate::ui_atlas_image::UiAtlasImage;
+use crate::{
+    ui::text_button::ButtonRadial,
+    ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
+};
 
 struct IconButtonPlugin;
 
@@ -29,9 +33,43 @@ fn spawn_icon_button_elements(
     assets: Res<IconButtonAssets>,
 ) {
     for (entity, icon_button) in &icon_buttons {
+        commands.entity(entity).despawn_descendants();
+
         commands.entity(entity).add_children(|parent| {
             // Radial
-            todo!()
+            parent.spawn(ButtonRadial).insert(ImageBundle {
+                image: UiImage(assets.radial.clone()),
+                style: Style {
+                    position_type: PositionType::Absolute,
+                    ..default()
+                },
+                focus_policy: FocusPolicy::Pass,
+                ..default()
+            });
+
+            // Outline
+            parent.spawn(ImageBundle {
+                image: UiImage(assets.outline.clone()),
+                style: Style {
+                    position_type: PositionType::Absolute,
+                    ..default()
+                },
+                focus_policy: FocusPolicy::Pass,
+                ..default()
+            });
+
+            // Icon
+            parent.spawn(AtlasImageBundle {
+                atlas_image: icon_button.icon.clone(),
+                image_bundle: ImageBundle {
+                    style: Style {
+                        position_type: PositionType::Absolute,
+                        ..default()
+                    },
+                    focus_policy: FocusPolicy::Pass,
+                    ..default()
+                },
+            });
         });
     }
 }
