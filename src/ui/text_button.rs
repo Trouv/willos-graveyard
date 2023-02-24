@@ -110,24 +110,24 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
 
 /// System that alters the visuals of a text button to show interaction
 pub(super) fn text_button_visuals(
-    text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
+    text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>)>,
     mut button_radials: Query<(&mut BackgroundColor, &Parent), With<ButtonRadial>>,
 ) {
     for (button_entity, interaction) in text_buttons.iter() {
-        let (mut radial_color, _) = button_radials
+        if let Some((mut radial_color, _)) = button_radials
             .iter_mut()
             .find(|(_, parent)| parent.get() == button_entity)
-            .expect("button should have radial child");
-
-        match interaction {
-            Interaction::None => {
-                *radial_color = BackgroundColor(Color::NONE);
-            }
-            Interaction::Hovered => {
-                *radial_color = BackgroundColor(Color::WHITE);
-            }
-            Interaction::Clicked => {
-                *radial_color = BackgroundColor(Color::GRAY);
+        {
+            match interaction {
+                Interaction::None => {
+                    *radial_color = BackgroundColor(Color::NONE);
+                }
+                Interaction::Hovered => {
+                    *radial_color = BackgroundColor(Color::WHITE);
+                }
+                Interaction::Clicked => {
+                    *radial_color = BackgroundColor(Color::GRAY);
+                }
             }
         }
     }
