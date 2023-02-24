@@ -78,7 +78,8 @@ fn main() {
             LoadingState::new(GameState::AssetLoading)
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>()
-                .with_collection::<graveyard::gravestone::GravestoneAssets>(),
+                .with_collection::<graveyard::gravestone::GravestoneAssets>()
+                .with_collection::<ui::icon_button::IconButtonAssets>(),
         )
         .add_plugin(graveyard::GraveyardPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
