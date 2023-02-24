@@ -10,7 +10,7 @@ struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
-        todo!()
+        app.add_system(spawn_icon_button_elements);
     }
 }
 
