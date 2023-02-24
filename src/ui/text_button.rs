@@ -13,7 +13,7 @@ pub struct TextButton;
 
 /// Marker component for the background highlight radial on "text button"s
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct TextButtonRadial;
+pub struct ButtonRadial;
 
 /// Spawns a text button with the provided `button_text`.
 ///
@@ -71,7 +71,7 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             })
-            .insert(TextButtonRadial);
+            .insert(ButtonRadial);
 
         // spawn the text
         button
@@ -111,7 +111,7 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
 /// System that alters the visuals of a text button to show interaction
 pub(super) fn text_button_visuals(
     text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
-    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<TextButtonRadial>>,
+    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<ButtonRadial>>,
 ) {
     for (button_entity, interaction) in text_buttons.iter() {
         let (mut radial_color, _) = button_radials
