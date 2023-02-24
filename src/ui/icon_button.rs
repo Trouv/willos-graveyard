@@ -19,6 +19,12 @@ pub struct IconButton {
     pub icon: UiAtlasImage,
 }
 
+#[derive(Default, Debug, Bundle)]
+pub struct IconButtonBundle {
+    pub icon_button: IconButton,
+    pub button_bundle: ButtonBundle,
+}
+
 #[derive(Default, Debug, AssetCollection, Resource)]
 pub struct IconButtonAssets {
     #[asset(path = "textures/icon-button-outline.png")]
