@@ -6,7 +6,7 @@ use crate::{
     ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
 };
 
-struct IconButtonPlugin;
+pub struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
