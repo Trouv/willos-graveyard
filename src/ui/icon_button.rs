@@ -21,8 +21,30 @@ pub struct IconButton {
 
 #[derive(Default, Debug, Bundle)]
 pub struct IconButtonBundle {
-    pub icon_button: IconButton,
-    pub button_bundle: ButtonBundle,
+    icon_button: IconButton,
+    button_bundle: ButtonBundle,
+    previous_interaction: PreviousComponent<Interaction>,
+}
+
+impl IconButtonBundle {
+    fn new(icon: UiAtlasImage, diameter: Val) -> IconButtonBundle {
+        IconButtonBundle {
+            icon_button: IconButton { icon },
+            button_bundle: ButtonBundle {
+                style: Style {
+                    size: Size {
+                        width: diameter,
+                        height: diameter,
+                    },
+                    ..default()
+                },
+                //interaction: Interaction::None,
+                background_color: BackgroundColor(Color::NONE),
+                ..default()
+            },
+            previous_interaction: PreviousComponent::<Interaction>::default(),
+        }
+    }
 }
 
 #[derive(Default, Debug, AssetCollection, Resource)]
