@@ -73,6 +73,7 @@ fn spawn_icon_button_elements(
                     ..default()
                 },
                 focus_policy: FocusPolicy::Pass,
+                background_color: BackgroundColor(Color::NONE),
                 ..default()
             });
 
