@@ -1,25 +1,42 @@
 use bevy::{prelude::*, ui::FocusPolicy};
 use bevy_asset_loader::prelude::AssetCollection;
+use iyes_loopless::prelude::*;
 
 use crate::{
+    previous_component::PreviousComponent,
     ui::text_button::ButtonRadial,
-    ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
+    ui_atlas_image::{AtlasImageBundle, UiAtlasImage, UiAtlasImagePlugin},
+    GameState,
 };
 
 pub struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_icon_button_elements);
+        app.add_system(spawn_icon_button_elements.run_not_in_state(GameState::AssetLoading))
+            .add_plugin(UiAtlasImagePlugin)
+            .add_enter_system(
+                crate::GameState::LevelTransition,
+                |mut commands: Commands, assets: Res<IconButtonAssets>| {
+                    commands.spawn(IconButtonBundle::new(
+                        IconButton::AtlasImageIcon(UiAtlasImage {
+                            texture_atlas: assets.ui_moves.clone(),
+                            index: 5,
+                        }),
+                        Val::Px(128.),
+                    ));
+                },
+            );
     }
 }
 
-#[derive(Default, Debug, Component)]
-pub struct IconButton {
-    pub icon: UiAtlasImage,
+#[derive(Debug, Component)]
+pub enum IconButton {
+    ImageIcon(UiImage),
+    AtlasImageIcon(UiAtlasImage),
 }
 
-#[derive(Default, Debug, Bundle)]
+#[derive(Debug, Bundle)]
 pub struct IconButtonBundle {
     icon_button: IconButton,
     button_bundle: ButtonBundle,
@@ -27,9 +44,9 @@ pub struct IconButtonBundle {
 }
 
 impl IconButtonBundle {
-    fn new(icon: UiAtlasImage, diameter: Val) -> IconButtonBundle {
+    pub fn new(icon_button: IconButton, diameter: Val) -> IconButtonBundle {
         IconButtonBundle {
-            icon_button: IconButton { icon },
+            icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
                     size: Size {
@@ -90,18 +107,20 @@ fn spawn_icon_button_elements(
             });
 
             // Icon
-            parent.spawn(AtlasImageBundle {
-                atlas_image: icon_button.icon.clone(),
-                image_bundle: ImageBundle {
-                    style: Style {
-                        position_type: PositionType::Absolute,
-                        position: UiRect::all(Val::Percent(0.)),
-                        ..default()
-                    },
-                    focus_policy: FocusPolicy::Pass,
+            let mut icon_entity = parent.spawn(ImageBundle {
+                style: Style {
+                    position_type: PositionType::Absolute,
+                    position: UiRect::all(Val::Percent(0.)),
                     ..default()
                 },
+                focus_policy: FocusPolicy::Pass,
+                ..default()
             });
+
+            match icon_button {
+                IconButton::AtlasImageIcon(i) => icon_entity.insert(i.clone()),
+                IconButton::ImageIcon(i) => icon_entity.insert(i.clone()),
+            };
         });
     }
 }
