@@ -110,7 +110,7 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
 
 /// System that alters the visuals of a text button to show interaction
 pub(super) fn text_button_visuals(
-    text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>)>,
+    text_buttons: Query<(Entity, &Interaction), Changed<Interaction>>,
     mut button_radials: Query<(&mut BackgroundColor, &Parent), With<ButtonRadial>>,
 ) {
     for (button_entity, interaction) in text_buttons.iter() {
