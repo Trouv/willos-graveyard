@@ -170,28 +170,20 @@ mod tests {
 
         app.update();
 
-        let mut children = app.world.query::<(Entity, &Parent)>();
+        let mut children = app.world.query::<(&UiImage, &Parent)>();
 
         let children: Vec<_> = children
             .iter(&app.world)
             .filter(|(_, p)| p.get() == icon_button_entity)
+            .map(|(i, _)| i)
             .collect();
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(
-            app.world.entity(children[0].0).get::<UiImage>().unwrap().0,
-            asset_collection.radial
-        );
+        assert_eq!(children[0].0, asset_collection.radial);
 
-        assert_eq!(
-            app.world.entity(children[1].0).get::<UiImage>().unwrap().0,
-            asset_collection.outline
-        );
+        assert_eq!(children[1].0, asset_collection.outline);
 
-        assert_eq!(
-            app.world.entity(children[2].0).get::<UiImage>().unwrap().0,
-            icon
-        );
+        assert_eq!(children[2].0, icon);
     }
 }
