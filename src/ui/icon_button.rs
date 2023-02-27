@@ -126,3 +126,72 @@ fn spawn_icon_button_elements(
         });
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use bevy::asset::HandleId;
+
+    use super::*;
+
+    fn app_setup() -> App {
+        let mut app = App::new();
+
+        app.add_plugin(IconButtonPlugin)
+            .add_plugin(HierarchyPlugin)
+            .add_loopless_state(GameState::LevelTransition);
+
+        app
+    }
+
+    fn asset_collection_setup(app: &mut App) -> IconButtonAssets {
+        let assets = IconButtonAssets {
+            outline: Handle::weak(HandleId::random::<Image>()),
+            radial: Handle::weak(HandleId::random::<Image>()),
+        };
+
+        app.insert_resource(assets.clone());
+
+        assets
+    }
+
+    #[test]
+    fn elements_spawned_with_ui_image() {
+        let mut app = app_setup();
+        let asset_collection = asset_collection_setup(&mut app);
+
+        let icon = Handle::weak(HandleId::random::<Image>());
+        let icon_button_entity = app
+            .world
+            .spawn(IconButtonBundle::new(
+                IconButton::ImageIcon(UiImage(icon.clone())),
+                Val::Px(50.),
+            ))
+            .id();
+
+        app.update();
+
+        let mut children = app.world.query::<(Entity, &Parent)>();
+
+        let children: Vec<_> = children
+            .iter(&app.world)
+            .filter(|(_, p)| p.get() == icon_button_entity)
+            .collect();
+
+        assert_eq!(children.len(), 3);
+
+        assert_eq!(
+            app.world.entity(children[0].0).get::<UiImage>().unwrap().0,
+            asset_collection.radial
+        );
+
+        assert_eq!(
+            app.world.entity(children[1].0).get::<UiImage>().unwrap().0,
+            asset_collection.outline
+        );
+
+        assert_eq!(
+            app.world.entity(children[2].0).get::<UiImage>().unwrap().0,
+            icon
+        );
+    }
+}
