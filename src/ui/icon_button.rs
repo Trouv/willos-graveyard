@@ -14,7 +14,6 @@ pub struct IconButtonPlugin;
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(spawn_icon_button_elements.run_not_in_state(GameState::AssetLoading))
-            .add_plugin(UiAtlasImagePlugin)
             .add_enter_system(
                 crate::GameState::LevelTransition,
                 |mut commands: Commands, assets: Res<IconButtonAssets>| {

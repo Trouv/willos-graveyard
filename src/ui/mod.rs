@@ -8,6 +8,7 @@ pub mod text_button;
 
 use crate::{
     previous_component::{PreviousComponentPlugin, TrackPreviousComponent},
+    ui_atlas_image::UiAtlasImagePlugin,
     GameState,
 };
 use bevy::prelude::*;
@@ -28,6 +29,7 @@ impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PreviousComponentPlugin::<Interaction>::default())
             .add_plugin(button_radial::ButtonRadialPlugin)
+            .add_plugin(UiAtlasImagePlugin)
             .add_event::<actions::UiAction>()
             .add_plugin(font_scale::FontScalePlugin)
             .add_plugin(icon_button::IconButtonPlugin)
