@@ -1,14 +1,16 @@
+//! Plugin for building "icon buttons" in the style of this game.
 use bevy::{prelude::*, ui::FocusPolicy};
 use bevy_asset_loader::prelude::AssetCollection;
 use iyes_loopless::prelude::*;
 
 use crate::{
-    previous_component::PreviousComponent,
-    ui::button_radial::ButtonRadial,
-    ui_atlas_image::{AtlasImageBundle, UiAtlasImage, UiAtlasImagePlugin},
-    GameState,
+    previous_component::PreviousComponent, ui::button_radial::ButtonRadial,
+    ui_atlas_image::UiAtlasImage, GameState,
 };
 
+/// Plugin for building "icon buttons" in the style of this game.
+///
+/// Use [IconButtonBundle::new] to get started.
 pub struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
@@ -29,12 +31,23 @@ impl Plugin for IconButtonPlugin {
     }
 }
 
+/// Component acting as a "blueprint" for building icon buttons.
+///
+/// Stores all the metadata needed for building an icon button.
+/// The plugin will flesh out the entity/its children in a system later.
+///
+/// Currently, the only metadata needed is the image to use as an icon.
 #[derive(Debug, Component)]
 pub enum IconButton {
+    /// Use a simple Image for the button's icon.
     ImageIcon(UiImage),
+    /// Use a texture atlas + index for the button's icon.
     AtlasImageIcon(UiAtlasImage),
 }
 
+/// Bundle containing all components necessary for a functional IconButton.
+///
+/// You will need to insert a [crate::ui::actions::UiAction] separately.
 #[derive(Debug, Bundle)]
 pub struct IconButtonBundle {
     icon_button: IconButton,
@@ -43,6 +56,7 @@ pub struct IconButtonBundle {
 }
 
 impl IconButtonBundle {
+    /// Constructor for the bundle that applies the appropriate styling for you.
     pub fn new(icon_button: IconButton, diameter: Val) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
@@ -63,6 +77,7 @@ impl IconButtonBundle {
     }
 }
 
+/// Asset collection for loading assets relevant to icon buttons.
 #[derive(Default, Debug, AssetCollection, Resource)]
 pub struct IconButtonAssets {
     #[asset(path = "textures/icon-button-outline.png")]
