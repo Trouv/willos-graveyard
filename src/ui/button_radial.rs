@@ -1,8 +1,12 @@
+//! Simple plugin providing functionality for displaying the state of a button's interaction.
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
 use crate::GameState;
 
+/// Simple plugin providing functionality for displaying the state of a button's interaction.
+///
+/// To use, buttons should have a child with a UiImage marked as [ButtonRadial].
 pub struct ButtonRadialPlugin;
 
 impl Plugin for ButtonRadialPlugin {
@@ -11,12 +15,12 @@ impl Plugin for ButtonRadialPlugin {
     }
 }
 
-/// Marker component for the background highlight radial on "text button"s
+/// Marker component for the background highlight radial on a button.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct ButtonRadial;
 
-/// System that alters the visuals of a button radial to show interaction
-pub fn highlight_button_radial(
+/// System that alters the visuals of a button radial to show interaction.
+fn highlight_button_radial(
     text_buttons: Query<(Entity, &Interaction), Changed<Interaction>>,
     mut button_radials: Query<(&mut BackgroundColor, &Parent), With<ButtonRadial>>,
 ) {
