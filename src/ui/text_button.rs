@@ -106,28 +106,3 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
 
     e
 }
-
-/// System that alters the visuals of a text button to show interaction
-pub(super) fn text_button_visuals(
-    text_buttons: Query<(Entity, &Interaction), Changed<Interaction>>,
-    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<ButtonRadial>>,
-) {
-    for (button_entity, interaction) in text_buttons.iter() {
-        if let Some((mut radial_color, _)) = button_radials
-            .iter_mut()
-            .find(|(_, parent)| parent.get() == button_entity)
-        {
-            match interaction {
-                Interaction::None => {
-                    *radial_color = BackgroundColor(Color::NONE);
-                }
-                Interaction::Hovered => {
-                    *radial_color = BackgroundColor(Color::WHITE);
-                }
-                Interaction::Clicked => {
-                    *radial_color = BackgroundColor(Color::GRAY);
-                }
-            }
-        }
-    }
-}
