@@ -224,4 +224,54 @@ mod tests {
 
         assert_eq!(children[2].0.unwrap().texture_atlas, icon);
     }
+
+    #[test]
+    fn elements_can_change() {
+        let mut app = app_setup();
+        asset_collection_setup(&mut app);
+
+        let first_icon = Handle::weak(HandleId::random::<Image>());
+        let icon_button_entity = app
+            .world
+            .spawn(IconButtonBundle::new(
+                IconButton::ImageIcon(UiImage(first_icon.clone())),
+                Val::Px(50.),
+            ))
+            .id();
+
+        app.update();
+
+        let mut children = app.world.query::<(&UiImage, &Parent)>();
+
+        let children: Vec<_> = children
+            .iter(&app.world)
+            .filter(|(_, p)| p.get() == icon_button_entity)
+            .map(|(i, _)| i)
+            .collect();
+
+        assert_eq!(children.len(), 3);
+
+        assert_eq!(children[2].0, first_icon);
+
+        // Change the component
+        let second_icon = Handle::weak(HandleId::random::<Image>());
+        *app.world
+            .entity_mut(icon_button_entity)
+            .get_mut::<IconButton>()
+            .unwrap() = IconButton::ImageIcon(UiImage(second_icon.clone()));
+
+        app.update();
+
+        let mut children = app.world.query::<(&UiImage, &Parent)>();
+
+        let children: Vec<_> = children
+            .iter(&app.world)
+            .filter(|(_, p)| p.get() == icon_button_entity)
+            .map(|(i, _)| i)
+            .collect();
+
+        assert_eq!(children.len(), 3);
+
+        assert_eq!(children[2].0, second_icon);
+    }
 }
