@@ -66,7 +66,7 @@ impl IconButtonBundle {
 }
 
 /// Asset collection for loading assets relevant to icon buttons.
-#[derive(Default, Debug, AssetCollection, Resource)]
+#[derive(Clone, Default, Debug, AssetCollection, Resource)]
 pub struct IconButtonAssets {
     #[asset(path = "textures/icon-button-outline.png")]
     outline: Handle<Image>,
