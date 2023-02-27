@@ -186,4 +186,42 @@ mod tests {
 
         assert_eq!(children[2].0, icon);
     }
+
+    #[test]
+    fn elements_spawned_with_ui_atlas_image() {
+        let mut app = app_setup();
+        let asset_collection = asset_collection_setup(&mut app);
+
+        let icon = Handle::weak(HandleId::random::<TextureAtlas>());
+        let icon_button_entity = app
+            .world
+            .spawn(IconButtonBundle::new(
+                IconButton::AtlasImageIcon(UiAtlasImage {
+                    texture_atlas: icon.clone(),
+                    index: 2,
+                }),
+                Val::Px(50.),
+            ))
+            .id();
+
+        app.update();
+
+        let mut children = app
+            .world
+            .query::<(Option<&UiAtlasImage>, &UiImage, &Parent)>();
+
+        let children: Vec<_> = children
+            .iter(&app.world)
+            .filter(|(.., p)| p.get() == icon_button_entity)
+            .map(|(a, i, _)| (a, i))
+            .collect();
+
+        assert_eq!(children.len(), 3);
+
+        assert_eq!(children[0].1 .0, asset_collection.radial);
+
+        assert_eq!(children[1].1 .0, asset_collection.outline);
+
+        assert_eq!(children[2].0.unwrap().texture_atlas, icon);
+    }
 }
