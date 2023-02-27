@@ -4,7 +4,7 @@ use iyes_loopless::prelude::*;
 
 use crate::{
     previous_component::PreviousComponent,
-    ui::text_button::ButtonRadial,
+    ui::button_radial::ButtonRadial,
     ui_atlas_image::{AtlasImageBundle, UiAtlasImage, UiAtlasImagePlugin},
     GameState,
 };

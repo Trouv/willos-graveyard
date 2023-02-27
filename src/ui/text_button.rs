@@ -2,7 +2,10 @@
 
 use crate::{
     previous_component::PreviousComponent,
-    ui::font_scale::{FontScale, FontSize},
+    ui::{
+        button_radial::ButtonRadial,
+        font_scale::{FontScale, FontSize},
+    },
     AssetHolder,
 };
 use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
@@ -10,10 +13,6 @@ use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 /// Marker component for the main "text button" ui node.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct TextButton;
-
-/// Marker component for the background highlight radial on "text button"s
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct ButtonRadial;
 
 /// Spawns a text button with the provided `button_text`.
 ///

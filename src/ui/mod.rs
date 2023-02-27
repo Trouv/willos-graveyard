@@ -1,6 +1,7 @@
 //! Plugin, components, systems, and events related to common UI patterns.
 
 pub mod actions;
+pub mod button_radial;
 pub mod font_scale;
 pub mod icon_button;
 pub mod text_button;
