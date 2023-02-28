@@ -1,8 +1,23 @@
 //! Contains [UiAction] and related systems.
 
+use std::marker::PhantomData;
+
 use crate::previous_component::PreviousComponent;
 use bevy::prelude::*;
-use bevy_ecs_ldtk::prelude::*;
+
+pub struct UiActionPlugin<T>
+where
+    T: Send + Sync + Clone + 'static,
+{
+    phantom_data: PhantomData<T>,
+}
+
+impl<T> Plugin for UiActionPlugin<T>
+where
+    T: Send + Sync + Clone + 'static,
+{
+    fn build(&self, app: &mut App) {}
+}
 
 /// All possible actions that can be triggered by the UI.
 ///
