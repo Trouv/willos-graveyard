@@ -10,20 +10,19 @@ use bevy_ecs_ldtk::prelude::*;
 /// Insert it on a button to define what action that button performs.
 /// Then, when that button is pressed, an event of the same value will be fired.
 #[allow(dead_code)]
-#[derive(Clone, Eq, PartialEq, Debug, Component)]
-pub enum UiAction {
-    /// Action used by the level select menu to kick off a level transition.
-    GoToLevel(LevelSelection),
-}
+#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component)]
+pub struct UiAction<T: Send + Sync + Clone + 'static>(pub T);
 
 /// System that detects button presses and fires [UiAction]s.
-pub(super) fn ui_action(
+pub(super) fn ui_action<T>(
     actions: Query<
-        (&UiAction, &Interaction, &PreviousComponent<Interaction>),
+        (&UiAction<T>, &Interaction, &PreviousComponent<Interaction>),
         Changed<Interaction>,
     >,
-    mut event_writer: EventWriter<UiAction>,
-) {
+    mut event_writer: EventWriter<UiAction<T>>,
+) where
+    T: Send + Sync + Clone + 'static,
+{
     for (action, interaction, previous) in actions.iter() {
         if (Interaction::Hovered, Interaction::Clicked) == (*interaction, *previous.get()) {
             event_writer.send(action.clone())
