@@ -8,11 +8,23 @@ use bevy::prelude::*;
 #[derive(SystemLabel)]
 pub struct UiActionLabel;
 
+#[derive(Default)]
 pub struct UiActionPlugin<T>
 where
     T: Send + Sync + Clone + 'static,
 {
     phantom_data: PhantomData<T>,
+}
+
+impl<T> UiActionPlugin<T>
+where
+    T: Send + Sync + Clone + 'static,
+{
+    pub fn new() -> UiActionPlugin<T> {
+        UiActionPlugin {
+            phantom_data: PhantomData,
+        }
+    }
 }
 
 impl<T> Plugin for UiActionPlugin<T>
