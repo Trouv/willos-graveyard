@@ -6,7 +6,9 @@
 
 use std::marker::PhantomData;
 
-use crate::previous_component::{PreviousComponent, TrackPreviousComponent};
+use crate::previous_component::{
+    PreviousComponent, PreviousComponentPlugin, TrackPreviousComponent,
+};
 use bevy::prelude::*;
 
 /// Label used for detecting UI interactions and firing UiAction events.
@@ -41,6 +43,10 @@ where
     T: Send + Sync + Clone + 'static,
 {
     fn build(&self, app: &mut App) {
+        if !app.is_plugin_added::<PreviousComponentPlugin<Interaction>>() {
+            app.add_plugin(PreviousComponentPlugin::<Interaction>::default());
+        }
+
         app.add_event::<UiAction<T>>().add_system(
             ui_action::<T>
                 .label(UiActionLabel)
