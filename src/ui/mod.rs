@@ -8,14 +8,6 @@ use crate::{previous_component::PreviousComponentPlugin, GameState};
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-/// System labels used by ui systems.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, SystemLabel)]
-pub enum UiLabels {
-    /// Used for processing [actions::UiAction].
-    /// Consider placing your system after this if you are listening for `UiAction` events.
-    Action,
-}
-
 /// Plugin providing functionality for common UI patterns.
 pub struct UiPlugin;
 
