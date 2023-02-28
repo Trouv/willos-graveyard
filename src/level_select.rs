@@ -7,7 +7,7 @@ use crate::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
     },
     ui::{
-        actions::UiAction,
+        actions::{UiAction, UiActionPlugin},
         font_scale::{FontScale, FontSize},
         text_button,
     },
@@ -27,6 +27,7 @@ impl Plugin for LevelSelectPlugin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(GameState::LevelSelect, spawn_level_select_card)
             .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
+            .add_plugin(UiActionPlugin::<LevelSelectAction>::new())
             .add_system(pause.run_in_state(GameState::Graveyard))
             .add_system(unpause.run_in_state(GameState::LevelSelect))
             .add_system(
