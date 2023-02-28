@@ -172,5 +172,30 @@ mod tests {
     }
 
     #[test]
-    fn action_doesnt_fire_on_drag() {}
+    fn action_doesnt_fire_on_drag() {
+        let mut app = app_setup();
+        let (first_entity, _) = spawn_two_buttons(&mut app);
+
+        // Simulate the button being clicked, and the mouse dragging off before unclicking
+        *app.world
+            .entity_mut(first_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::Clicked;
+
+        app.update();
+
+        *app.world
+            .entity_mut(first_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::None;
+
+        app.update();
+
+        // Test that the button drag did not fire an event
+        let mut system_state: SystemState<EventReader<UiAction<TestAction>>> =
+            SystemState::new(&mut app.world);
+        let events: EventReader<UiAction<TestAction>> = system_state.get(&app.world);
+
+        assert_eq!(events.len(), 0);
+    }
 }
