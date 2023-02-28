@@ -2,8 +2,11 @@
 
 use std::marker::PhantomData;
 
-use crate::previous_component::PreviousComponent;
+use crate::previous_component::{PreviousComponent, TrackPreviousComponent};
 use bevy::prelude::*;
+
+#[derive(SystemLabel)]
+pub struct UiActionLabel;
 
 pub struct UiActionPlugin<T>
 where
@@ -16,7 +19,13 @@ impl<T> Plugin for UiActionPlugin<T>
 where
     T: Send + Sync + Clone + 'static,
 {
-    fn build(&self, app: &mut App) {}
+    fn build(&self, app: &mut App) {
+        app.add_event::<UiAction<T>>().add_system(
+            ui_action::<T>
+                .label(UiActionLabel)
+                .after(TrackPreviousComponent),
+        );
+    }
 }
 
 /// All possible actions that can be triggered by the UI.
