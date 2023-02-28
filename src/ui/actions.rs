@@ -1,13 +1,21 @@
-//! Contains [UiAction] and related systems.
+//! Plugin for associating UI buttons with logical actions.
+//!
+//! When a button with a [`UiAction<T>`](UiAction) component is clicked, the plugin will fire an
+//! equivalent `UiAction<T>` event.
+//! `T` can be any type that you want to use to distinguish between different buttons/actions.
 
 use std::marker::PhantomData;
 
 use crate::previous_component::{PreviousComponent, TrackPreviousComponent};
 use bevy::prelude::*;
 
+/// Label used for detecting UI interactions and firing UiAction events.
 #[derive(SystemLabel)]
 pub struct UiActionLabel;
 
+/// Plugin for associating UI buttons with logical actions.
+///
+/// See [module-level docs](self) for more info.
 #[derive(Default)]
 pub struct UiActionPlugin<T>
 where
@@ -20,6 +28,7 @@ impl<T> UiActionPlugin<T>
 where
     T: Send + Sync + Clone + 'static,
 {
+    /// Basic constructor for [UiActionPlugin]
     pub fn new() -> UiActionPlugin<T> {
         UiActionPlugin {
             phantom_data: PhantomData,
@@ -40,9 +49,8 @@ where
     }
 }
 
-/// All possible actions that can be triggered by the UI.
+/// Component and event for associating a UI button with an action.
 ///
-/// This acts as both a component and an event.
 /// Insert it on a button to define what action that button performs.
 /// Then, when that button is pressed, an event of the same value will be fired.
 #[allow(dead_code)]
