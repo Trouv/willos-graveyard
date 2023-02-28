@@ -79,3 +79,98 @@ pub(super) fn ui_action<T>(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use bevy::ecs::system::SystemState;
+
+    use super::*;
+
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    enum TestAction {
+        First,
+        Second,
+    }
+
+    fn app_setup() -> App {
+        let mut app = App::new();
+
+        app.add_plugin(UiActionPlugin::<TestAction>::new());
+        app
+    }
+
+    fn spawn_two_buttons(app: &mut App) -> (Entity, Entity) {
+        (
+            app.world
+                .spawn(ButtonBundle::default())
+                .insert(PreviousComponent::<Interaction>::default())
+                .insert(UiAction(TestAction::First))
+                .id(),
+            app.world
+                .spawn(ButtonBundle::default())
+                .insert(PreviousComponent::<Interaction>::default())
+                .insert(UiAction(TestAction::Second))
+                .id(),
+        )
+    }
+
+    #[test]
+    fn action_fires_on_click() {
+        let mut app = app_setup();
+        let (first_entity, second_entity) = spawn_two_buttons(&mut app);
+
+        // Simulate the first button click
+        *app.world
+            .entity_mut(first_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::Clicked;
+
+        app.update();
+
+        *app.world
+            .entity_mut(first_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::Hovered;
+
+        app.update();
+
+        // Test that the first button click fired an event
+        let mut system_state: SystemState<EventReader<UiAction<TestAction>>> =
+            SystemState::new(&mut app.world);
+        let mut events: EventReader<UiAction<TestAction>> = system_state.get(&app.world);
+
+        assert_eq!(events.len(), 1);
+        assert_eq!(*events.iter().next().unwrap(), UiAction(TestAction::First));
+
+        // Simulate the second button click, reset the first button
+        *app.world
+            .entity_mut(first_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::None;
+
+        *app.world
+            .entity_mut(second_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::Clicked;
+
+        app.update();
+
+        *app.world
+            .entity_mut(second_entity)
+            .get_mut::<Interaction>()
+            .unwrap() = Interaction::Hovered;
+
+        app.update();
+
+        // Test that the second button click fired an event
+        let mut system_state: SystemState<EventReader<UiAction<TestAction>>> =
+            SystemState::new(&mut app.world);
+        let mut events: EventReader<UiAction<TestAction>> = system_state.get(&app.world);
+
+        assert_eq!(events.len(), 1);
+        assert_eq!(*events.iter().next().unwrap(), UiAction(TestAction::Second));
+    }
+
+    #[test]
+    fn action_doesnt_fire_on_drag() {}
+}
