@@ -32,7 +32,7 @@ impl Plugin for LevelSelectPlugin {
             .add_system(
                 select_level
                     .run_in_state(GameState::LevelSelect)
-                    .run_on_event::<UiAction>(),
+                    .run_on_event::<UiAction<LevelSelectAction>>(),
             )
             .add_exit_system(GameState::LevelSelect, drop_level_select_card)
             .add_system(despawn_level_select_card.run_on_event::<LevelSelectCardEvent>());
@@ -51,6 +51,11 @@ pub enum LevelSelectCardEvent {
     Falling(Entity),
     /// Fires when the level select card entity has fallen offscreen and should be despawned.
     Offscreen(Entity),
+}
+
+#[derive(Clone, Eq, PartialEq, Debug)]
+enum LevelSelectAction {
+    GoToLevel(LevelSelection),
 }
 
 fn level_select_card_style(position: UiRect) -> Style {
@@ -180,7 +185,9 @@ fn spawn_level_select_card(
                                 Val::Percent(2.),
                                 FontSize::Medium,
                             )
-                            .insert(UiAction::GoToLevel(LevelSelection::Index(i)));
+                            .insert(UiAction(
+                                LevelSelectAction::GoToLevel(LevelSelection::Index(i)),
+                            ));
                         }
                     }
                 });
@@ -202,9 +209,9 @@ fn unpause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
     }
 }
 
-fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction>) {
+fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction<LevelSelectAction>>) {
     for action in ui_actions.iter() {
-        let UiAction::GoToLevel(level_selection) = action;
+        let UiAction(LevelSelectAction::GoToLevel(level_selection)) = action;
         commands.insert_resource(NextState(GameState::Graveyard));
         commands.insert_resource(TransitionTo(level_selection.clone()));
         commands.insert_resource(NextState(GameState::LevelTransition));
