@@ -80,6 +80,7 @@ fn main() {
                 .with_collection::<AssetHolder>()
                 .with_collection::<graveyard::gravestone::GravestoneAssets>()
                 .with_collection::<ui::icon_button::IconButtonAssets>(),
+                .with_collection::<ui::button_prompt::ButtonPromptAssets>(),
         )
         .add_plugin(graveyard::GraveyardPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
