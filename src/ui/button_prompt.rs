@@ -28,6 +28,15 @@ where
     }
 }
 
+impl<T> Plugin for ButtonPromptPlugin<T>
+where
+    T: Actionlike + Send + Sync + Clone + 'static,
+{
+    fn build(&self, app: &mut App) {
+        app.add_system(spawn_button_prompt::<T>);
+    }
+}
+
 #[derive(Debug, AssetCollection, Resource)]
 pub struct ButtonPromptAssets {
     #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
