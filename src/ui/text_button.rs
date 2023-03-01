@@ -2,7 +2,10 @@
 
 use crate::{
     previous_component::PreviousComponent,
-    ui::font_scale::{FontScale, FontSize},
+    ui::{
+        button_radial::ButtonRadial,
+        font_scale::{FontScale, FontSize},
+    },
     AssetHolder,
 };
 use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
@@ -10,10 +13,6 @@ use bevy::{ecs::system::EntityCommands, prelude::*, ui::FocusPolicy};
 /// Marker component for the main "text button" ui node.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 pub struct TextButton;
-
-/// Marker component for the background highlight radial on "text button"s
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-pub struct TextButtonRadial;
 
 /// Spawns a text button with the provided `button_text`.
 ///
@@ -71,7 +70,7 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             })
-            .insert(TextButtonRadial);
+            .insert(ButtonRadial);
 
         // spawn the text
         button
@@ -106,29 +105,4 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
     });
 
     e
-}
-
-/// System that alters the visuals of a text button to show interaction
-pub(super) fn text_button_visuals(
-    text_buttons: Query<(Entity, &Interaction), (Changed<Interaction>, With<TextButton>)>,
-    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<TextButtonRadial>>,
-) {
-    for (button_entity, interaction) in text_buttons.iter() {
-        let (mut radial_color, _) = button_radials
-            .iter_mut()
-            .find(|(_, parent)| parent.get() == button_entity)
-            .expect("button should have radial child");
-
-        match interaction {
-            Interaction::None => {
-                *radial_color = BackgroundColor(Color::NONE);
-            }
-            Interaction::Hovered => {
-                *radial_color = BackgroundColor(Color::WHITE);
-            }
-            Interaction::Clicked => {
-                *radial_color = BackgroundColor(Color::GRAY);
-            }
-        }
-    }
 }

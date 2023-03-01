@@ -1,11 +1,14 @@
 //! Plugin, components, systems, and events related to common UI patterns.
 
 pub mod actions;
+pub mod button_radial;
 pub mod font_scale;
+pub mod icon_button;
 pub mod text_button;
 
 use crate::{
     previous_component::{PreviousComponentPlugin, TrackPreviousComponent},
+    ui_atlas_image::UiAtlasImagePlugin,
     GameState,
 };
 use bevy::prelude::*;
@@ -25,9 +28,11 @@ pub struct UiPlugin;
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PreviousComponentPlugin::<Interaction>::default())
+            .add_plugin(button_radial::ButtonRadialPlugin)
+            .add_plugin(UiAtlasImagePlugin)
             .add_event::<actions::UiAction>()
             .add_plugin(font_scale::FontScalePlugin)
-            .add_system(text_button::text_button_visuals.run_not_in_state(GameState::AssetLoading))
+            .add_plugin(icon_button::IconButtonPlugin)
             .add_system(
                 actions::ui_action
                     .run_not_in_state(GameState::AssetLoading)
