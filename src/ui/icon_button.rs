@@ -33,6 +33,9 @@ pub enum IconButton {
     AtlasImageIcon(UiAtlasImage),
 }
 
+#[derive(Debug, Component)]
+struct IconButtonElement;
+
 /// Bundle containing all components necessary for a functional IconButton.
 ///
 /// You will need to insert a [crate::ui::actions::UiAction] separately.
@@ -77,36 +80,45 @@ pub struct IconButtonAssets {
 fn spawn_icon_button_elements(
     mut commands: Commands,
     icon_buttons: Query<(Entity, &IconButton), Changed<IconButton>>,
+    icon_button_elements: Query<(Entity, &Parent), With<IconButtonElement>>,
     assets: Res<IconButtonAssets>,
 ) {
     for (entity, icon_button) in &icon_buttons {
-        commands.entity(entity).despawn_descendants();
+        icon_button_elements
+            .iter()
+            .filter(|(_, p)| p.get() == entity)
+            .for_each(|(e, _)| commands.entity(e).despawn_recursive());
 
         commands.entity(entity).add_children(|parent| {
             // Radial
-            parent.spawn(ButtonRadial).insert(ImageBundle {
-                image: UiImage(assets.radial.clone()),
-                style: Style {
-                    position_type: PositionType::Absolute,
-                    position: UiRect::all(Val::Percent(12.5)),
+            parent
+                .spawn(ButtonRadial)
+                .insert(ImageBundle {
+                    image: UiImage(assets.radial.clone()),
+                    style: Style {
+                        position_type: PositionType::Absolute,
+                        position: UiRect::all(Val::Percent(12.5)),
+                        ..default()
+                    },
+                    focus_policy: FocusPolicy::Pass,
+                    background_color: BackgroundColor(Color::NONE),
                     ..default()
-                },
-                focus_policy: FocusPolicy::Pass,
-                background_color: BackgroundColor(Color::NONE),
-                ..default()
-            });
+                })
+                .insert(IconButtonElement);
 
             // Outline
-            parent.spawn(ImageBundle {
-                image: UiImage(assets.outline.clone()),
-                style: Style {
-                    position_type: PositionType::Absolute,
-                    position: UiRect::all(Val::Percent(0.)),
+            parent
+                .spawn(ImageBundle {
+                    image: UiImage(assets.outline.clone()),
+                    style: Style {
+                        position_type: PositionType::Absolute,
+                        position: UiRect::all(Val::Percent(0.)),
+                        ..default()
+                    },
+                    focus_policy: FocusPolicy::Pass,
                     ..default()
-                },
-                focus_policy: FocusPolicy::Pass,
-                ..default()
-            });
+                })
+                .insert(IconButtonElement);
 
             // Icon
             let mut icon_entity = parent.spawn(ImageBundle {
@@ -118,6 +130,8 @@ fn spawn_icon_button_elements(
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             });
+
+            icon_entity.insert(IconButtonElement);
 
             match icon_button {
                 IconButton::AtlasImageIcon(i) => icon_entity.insert(i.clone()),
