@@ -2,9 +2,13 @@ use std::marker::PhantomData;
 
 use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
+use iyes_loopless::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
 
-use crate::ui_atlas_image::{AtlasImageBundle, UiAtlasImage};
+use crate::{
+    ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
+    GameState,
+};
 
 use super::action::UiAction;
 
@@ -33,7 +37,7 @@ where
     T: Actionlike + Send + Sync + Clone + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_button_prompt::<T>);
+        app.add_system(spawn_button_prompt::<T>.run_not_in_state(GameState::AssetLoading));
     }
 }
 
