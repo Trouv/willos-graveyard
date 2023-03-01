@@ -7,7 +7,7 @@ use crate::{
         generate_nineslice_image, texture_atlas_from_nine_slice, NineSliceIndex, NineSliceSize,
     },
     ui::{
-        actions::{UiAction, UiActionPlugin},
+        action::{UiAction, UiActionPlugin},
         font_scale::{FontScale, FontSize},
         text_button,
     },
