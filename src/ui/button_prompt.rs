@@ -88,10 +88,11 @@ fn spawn_button_prompt<T>(
                                     left: Val::Px(0.),
                                     ..default()
                                 },
-                                size: Size::new(Val::Undefined, Val::Percent(50.)),
+                                size: Size::new(Val::Undefined, Val::Percent(25.)),
                                 aspect_ratio: Some(1.),
                                 ..default()
                             },
+                            z_index: ZIndex::Local(10),
                             ..default()
                         },
                     })
