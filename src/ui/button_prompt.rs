@@ -67,7 +67,20 @@ fn spawn_button_prompt<T>(
                             texture_atlas: assets.key_code_icons.clone(),
                             index: key_code.variant_index(),
                         },
-                        image_bundle: todo!(),
+                        image_bundle: ImageBundle {
+                            style: Style {
+                                position_type: PositionType::Absolute,
+                                position: UiRect {
+                                    top: Val::Px(0.),
+                                    left: Val::Px(0.),
+                                    ..default()
+                                },
+                                size: Size::new(Val::Undefined, Val::Percent(50.)),
+                                aspect_ratio: Some(1.),
+                                ..default()
+                            },
+                            ..default()
+                        },
                     })
                     .insert(ButtonPrompt);
             });
