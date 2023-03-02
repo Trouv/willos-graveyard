@@ -1,3 +1,9 @@
+//! Plugin for displaying button prompts on UI buttons that can be triggered by a physical button.
+//!
+//! This functionality is supported by [UiAction]s and `leafwing_input_manager`'s `Actionlike`s.
+//! The button needs to have a `UiAction<T>` where `T` is an `Actionlike`.
+//! Furthermore, `InputMap<T>` needs to also exist as a resource.
+//! Finally, [`ButtonPromptPlugin<T>`](ButtonPromptPlugin) needs to be added to the app.
 use std::marker::PhantomData;
 
 use bevy::{prelude::*, reflect::Enum};
@@ -6,12 +12,14 @@ use iyes_loopless::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
 
 use crate::{
+    ui::action::UiAction,
     ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
     GameState,
 };
 
-use super::action::UiAction;
-
+/// Plugin for displaying button prompts on UI buttons that can be triggered by a physical button.
+///
+/// See [module-level docs](self) for more info.
 #[derive(Default)]
 pub struct ButtonPromptPlugin<T>
 where
@@ -41,6 +49,7 @@ where
     }
 }
 
+/// Asset collection for assets relevant to button prompts.
 #[derive(Debug, AssetCollection, Resource)]
 pub struct ButtonPromptAssets {
     #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
