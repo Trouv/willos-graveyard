@@ -15,7 +15,6 @@ use crate::{
     ui::action::UiAction,
     ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
     utils::resource_changed,
-    GameState,
 };
 
 /// Plugin for displaying button prompts on UI buttons that can be triggered by a physical button.
