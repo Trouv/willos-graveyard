@@ -6,7 +6,7 @@
 //! Finally, [`ButtonPromptPlugin<T>`](ButtonPromptPlugin) needs to be added to the app.
 use std::marker::PhantomData;
 
-use bevy::{prelude::*, reflect::Enum};
+use bevy::{ecs::query::ReadOnlyWorldQuery, prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use iyes_loopless::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
@@ -14,6 +14,7 @@ use leafwing_input_manager::{prelude::*, user_input::InputKind};
 use crate::{
     ui::action::UiAction,
     ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
+    utils::resource_changed,
     GameState,
 };
 
@@ -45,7 +46,15 @@ where
     T: Actionlike + Send + Sync + Clone + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_button_prompt::<T>.run_not_in_state(GameState::AssetLoading));
+        app.add_system(
+            spawn_button_prompt::<T, Changed<UiAction<T>>>
+                .run_if_resource_exists::<ButtonPromptAssets>(),
+        )
+        .add_system(
+            spawn_button_prompt::<T, ()>
+                .run_if_resource_exists::<ButtonPromptAssets>()
+                .run_if(resource_changed::<InputMap<T>>),
+        );
     }
 }
 
@@ -60,14 +69,15 @@ pub struct ButtonPromptAssets {
 #[derive(Copy, Clone, Debug, Default, Component)]
 struct ButtonPrompt;
 
-fn spawn_button_prompt<T>(
+fn spawn_button_prompt<T, F>(
     mut commands: Commands,
-    actions: Query<(Entity, &UiAction<T>), Changed<UiAction<T>>>,
+    actions: Query<(Entity, &UiAction<T>), F>,
     existing_prompts: Query<(Entity, &Parent), With<ButtonPrompt>>,
     input_map: Res<InputMap<T>>,
     assets: Res<ButtonPromptAssets>,
 ) where
     T: Actionlike + Send + Sync + Clone + 'static,
+    F: ReadOnlyWorldQuery,
 {
     for (entity, action) in &actions {
         // despawn any existing prompts
