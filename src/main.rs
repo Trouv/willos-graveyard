@@ -16,6 +16,7 @@ pub mod previous_component;
 pub mod sokoban;
 pub mod ui;
 pub mod ui_atlas_image;
+pub mod utils;
 
 use animation::SpriteSheetAnimationPlugin;
 use bevy::prelude::*;
