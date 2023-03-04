@@ -67,15 +67,19 @@ fn movement_table_update(
     input_block_query: Query<(&GridCoords, &GraveId)>,
 ) {
     for (table_grid_coords, mut table) in table_query.iter_mut() {
-        table.table = [[None; 4]; 4];
+        let mut new_table = [[None; 4]; 4];
         for (input_grid_coords, input_block) in input_block_query.iter() {
             let diff = *input_grid_coords - *table_grid_coords;
             let x_index = diff.x - 1;
             let y_index = -1 - diff.y;
             if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
                 // key block is in table
-                table.table[y_index as usize][x_index as usize] = Some(*input_block);
+                new_table[y_index as usize][x_index as usize] = Some(*input_block);
             }
+        }
+
+        if table.table != new_table {
+            table.table = new_table;
         }
     }
 }
