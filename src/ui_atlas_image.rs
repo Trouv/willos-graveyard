@@ -24,7 +24,7 @@ struct UiAtlasImageMap(HashMap<Handle<TextureAtlas>, Vec<Handle<Image>>>);
 /// The plugin will respond to changes in this component.
 /// First, it generates plain [Image](bevy::render::Image)s based off the textures in the texture atlas.
 /// Using these images, it will insert the appropriate [UiImage](bevy::render::UiImage) on your entity.
-#[derive(Clone, Debug, Default, Component)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Component)]
 pub struct UiAtlasImage {
     /// Atlas that defines the texture and its partitions.
     pub texture_atlas: Handle<TextureAtlas>,
