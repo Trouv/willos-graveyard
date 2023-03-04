@@ -169,6 +169,16 @@ mod tests {
             .id()
     }
 
+    fn get_child_component<'a, C: Component>(app: &'a mut App, entity: Entity) -> &'a C {
+        let mut children = app.world.query::<(&C, &Parent)>();
+
+        children
+            .iter(&app.world)
+            .find(|(_, p)| p.get() == entity)
+            .map(|(c, _)| c)
+            .unwrap()
+    }
+
     #[test]
     fn button_prompt_displays_correct_key() {
         let mut app = app_setup();
@@ -180,12 +190,7 @@ mod tests {
 
         app.update();
 
-        let mut children = app.world.query::<(&UiAtlasImage, &Parent)>();
-
-        let (jump_button_prompt, _) = children
-            .iter(&app.world)
-            .find(|(_, p)| p.get() == jump_entity)
-            .unwrap();
+        let jump_button_prompt = get_child_component::<UiAtlasImage>(&mut app, jump_entity);
 
         assert_eq!(
             *jump_button_prompt,
@@ -195,10 +200,7 @@ mod tests {
             }
         );
 
-        let (shoot_button_prompt, _) = children
-            .iter(&app.world)
-            .find(|(_, p)| p.get() == shoot_entity)
-            .unwrap();
+        let shoot_button_prompt = get_child_component::<UiAtlasImage>(&mut app, shoot_entity);
 
         assert_eq!(
             *shoot_button_prompt,
@@ -220,12 +222,7 @@ mod tests {
 
         app.update();
 
-        let mut children = app.world.query::<(&UiAtlasImage, &Parent)>();
-
-        let (button_prompt, _) = children
-            .iter(&app.world)
-            .find(|(_, p)| p.get() == button_entity)
-            .unwrap();
+        let button_prompt = get_child_component::<UiAtlasImage>(&mut app, button_entity);
 
         assert_eq!(
             *button_prompt,
@@ -244,12 +241,7 @@ mod tests {
 
         app.update();
 
-        let mut children = app.world.query::<(&UiAtlasImage, &Parent)>();
-
-        let (button_prompt, _) = children
-            .iter(&app.world)
-            .find(|(_, p)| p.get() == button_entity)
-            .unwrap();
+        let button_prompt = get_child_component::<UiAtlasImage>(&mut app, button_entity);
 
         assert_eq!(
             *button_prompt,
