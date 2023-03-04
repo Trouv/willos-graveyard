@@ -119,3 +119,39 @@ fn spawn_button_prompt<T, F>(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use bevy::asset::HandleId;
+
+    use crate::ui::action::UiActionPlugin;
+
+    use super::*;
+
+    #[derive(Copy, Clone, Debug, Actionlike)]
+    enum MyAction {
+        Jump,
+        Shoot,
+    }
+
+    fn app_setup() -> App {
+        let mut app = App::new();
+
+        app.add_plugin(InputManagerPlugin::<MyAction>::default())
+            .add_plugin(UiActionPlugin::<MyAction>::new())
+            .add_plugin(ButtonPromptPlugin::<MyAction>::new())
+            .add_asset::<TextureAtlas>();
+
+        app
+    }
+
+    fn asset_setup(app: &mut App) -> ButtonPromptAssets {
+        let button_prompt_assets = ButtonPromptAssets {
+            key_code_icons: Handle::weak(HandleId::random::<TextureAtlas>()),
+        };
+
+        app.insert_resource(button_prompt_assets.clone());
+
+        button_prompt_assets
+    }
+}
