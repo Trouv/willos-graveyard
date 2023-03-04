@@ -58,7 +58,7 @@ where
 }
 
 /// Asset collection for assets relevant to button prompts.
-#[derive(Debug, AssetCollection, Resource)]
+#[derive(Clone, Debug, AssetCollection, Resource)]
 pub struct ButtonPromptAssets {
     #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
     #[asset(path = "textures/key-code-icons.png")]
