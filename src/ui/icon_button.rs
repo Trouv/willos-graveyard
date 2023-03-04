@@ -168,19 +168,20 @@ mod tests {
         assets
     }
 
+    fn spawn_icon_button(app: &mut App, icon_button: IconButton) -> Entity {
+        app.world
+            .spawn(IconButtonBundle::new(icon_button, Val::Px(50.)))
+            .id()
+    }
+
     #[test]
     fn elements_spawned_with_ui_image() {
         let mut app = app_setup();
         let asset_collection = asset_collection_setup(&mut app);
 
         let icon = Handle::weak(HandleId::random::<Image>());
-        let icon_button_entity = app
-            .world
-            .spawn(IconButtonBundle::new(
-                IconButton::ImageIcon(UiImage(icon.clone())),
-                Val::Px(50.),
-            ))
-            .id();
+        let icon_button_entity =
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(icon.clone())));
 
         app.update();
 
@@ -207,16 +208,13 @@ mod tests {
         let asset_collection = asset_collection_setup(&mut app);
 
         let icon = Handle::weak(HandleId::random::<TextureAtlas>());
-        let icon_button_entity = app
-            .world
-            .spawn(IconButtonBundle::new(
-                IconButton::AtlasImageIcon(UiAtlasImage {
-                    texture_atlas: icon.clone(),
-                    index: 2,
-                }),
-                Val::Px(50.),
-            ))
-            .id();
+        let icon_button_entity = spawn_icon_button(
+            &mut app,
+            IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: icon.clone(),
+                index: 2,
+            }),
+        );
 
         app.update();
 
@@ -245,13 +243,8 @@ mod tests {
         asset_collection_setup(&mut app);
 
         let first_icon = Handle::weak(HandleId::random::<Image>());
-        let icon_button_entity = app
-            .world
-            .spawn(IconButtonBundle::new(
-                IconButton::ImageIcon(UiImage(first_icon.clone())),
-                Val::Px(50.),
-            ))
-            .id();
+        let icon_button_entity =
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(first_icon.clone())));
 
         app.update();
 
