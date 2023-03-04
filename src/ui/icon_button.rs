@@ -281,4 +281,34 @@ mod tests {
 
         assert_eq!(children[2].0, second_icon);
     }
+
+    #[test]
+    fn update_does_not_despawn_greedily() {
+        let mut app = app_setup();
+        asset_collection_setup(&mut app);
+
+        let first_icon = Handle::weak(HandleId::random::<Image>());
+
+        let icon_button_entity =
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(first_icon.clone())));
+
+        let additional_child_entity = app.world.spawn_empty().id();
+
+        app.world
+            .entity_mut(icon_button_entity)
+            .push_children(&[additional_child_entity]);
+
+        app.update();
+
+        let mut children = app.world.query::<(Entity, &Parent)>();
+
+        let children: Vec<_> = children
+            .iter(&app.world)
+            .filter(|(_, p)| p.get() == icon_button_entity)
+            .map(|(e, _)| e)
+            .collect();
+
+        assert_eq!(children.len(), 4);
+        assert!(children.contains(&additional_child_entity));
+    }
 }
