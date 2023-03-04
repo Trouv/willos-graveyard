@@ -208,4 +208,55 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn button_prompt_changes_with_action() {
+        let mut app = app_setup();
+        let assets = asset_setup(&mut app);
+        input_map_setup(&mut app);
+
+        // check its original value image selection
+        let button_entity = spawn_button(&mut app, MyAction::Jump);
+
+        app.update();
+
+        let mut children = app.world.query::<(&UiAtlasImage, &Parent)>();
+
+        let (button_prompt, _) = children
+            .iter(&app.world)
+            .find(|(_, p)| p.get() == button_entity)
+            .unwrap();
+
+        assert_eq!(
+            *button_prompt,
+            UiAtlasImage {
+                texture_atlas: assets.key_code_icons.clone(),
+                index: 76
+            }
+        );
+
+        // change its action and check its image again
+
+        *app.world
+            .entity_mut(button_entity)
+            .get_mut::<UiAction<MyAction>>()
+            .unwrap() = UiAction(MyAction::Shoot);
+
+        app.update();
+
+        let mut children = app.world.query::<(&UiAtlasImage, &Parent)>();
+
+        let (button_prompt, _) = children
+            .iter(&app.world)
+            .find(|(_, p)| p.get() == button_entity)
+            .unwrap();
+
+        assert_eq!(
+            *button_prompt,
+            UiAtlasImage {
+                texture_atlas: assets.key_code_icons.clone(),
+                index: 15
+            }
+        );
+    }
 }
