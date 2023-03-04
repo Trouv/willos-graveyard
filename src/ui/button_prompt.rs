@@ -137,10 +137,8 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(InputManagerPlugin::<MyAction>::default())
-            .add_plugin(UiActionPlugin::<MyAction>::new())
-            .add_plugin(ButtonPromptPlugin::<MyAction>::new())
-            .add_asset::<TextureAtlas>();
+        app.add_plugin(UiActionPlugin::<MyAction>::new())
+            .add_plugin(ButtonPromptPlugin::<MyAction>::new());
 
         app
     }
@@ -153,5 +151,61 @@ mod tests {
         app.insert_resource(button_prompt_assets.clone());
 
         button_prompt_assets
+    }
+
+    fn input_map_setup(app: &mut App) {
+        let input_map = InputMap::<MyAction>::new([
+            (KeyCode::Space, MyAction::Jump),
+            (KeyCode::F, MyAction::Shoot),
+        ]);
+
+        app.insert_resource(input_map);
+    }
+
+    fn spawn_button(app: &mut App, action: MyAction) -> Entity {
+        app.world
+            .spawn(UiAction(action))
+            .insert(ButtonBundle::default())
+            .id()
+    }
+
+    #[test]
+    fn button_prompt_displays_correct_key() {
+        let mut app = app_setup();
+        let assets = asset_setup(&mut app);
+        input_map_setup(&mut app);
+
+        let jump_entity = spawn_button(&mut app, MyAction::Jump);
+        let shoot_entity = spawn_button(&mut app, MyAction::Shoot);
+
+        app.update();
+
+        let mut children = app.world.query::<(&UiAtlasImage, &Parent)>();
+
+        let (jump_button_prompt, _) = children
+            .iter(&app.world)
+            .find(|(_, p)| p.get() == jump_entity)
+            .unwrap();
+
+        assert_eq!(
+            *jump_button_prompt,
+            UiAtlasImage {
+                texture_atlas: assets.key_code_icons.clone(),
+                index: 76
+            }
+        );
+
+        let (shoot_button_prompt, _) = children
+            .iter(&app.world)
+            .find(|(_, p)| p.get() == shoot_entity)
+            .unwrap();
+
+        assert_eq!(
+            *shoot_button_prompt,
+            UiAtlasImage {
+                texture_atlas: assets.key_code_icons,
+                index: 15
+            }
+        );
     }
 }
