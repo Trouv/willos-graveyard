@@ -251,4 +251,47 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn button_prompt_changes_with_input_map() {
+        let mut app = app_setup();
+        let assets = asset_setup(&mut app);
+        input_map_setup(&mut app);
+
+        // check its original value image selection
+        let button_entity = spawn_button(&mut app, MyAction::Jump);
+
+        app.update();
+
+        let button_prompt = get_child_component::<UiAtlasImage>(&mut app, button_entity);
+
+        assert_eq!(
+            *button_prompt,
+            UiAtlasImage {
+                texture_atlas: assets.key_code_icons.clone(),
+                index: 76
+            }
+        );
+
+        // change the input map and check its image again
+
+        let mut input_map = app.world.get_resource_mut::<InputMap<MyAction>>().unwrap();
+        input_map.clear_action(MyAction::Jump);
+        input_map.insert(
+            UserInput::Single(InputKind::Keyboard(KeyCode::W)),
+            MyAction::Jump,
+        );
+
+        app.update();
+
+        let button_prompt = get_child_component::<UiAtlasImage>(&mut app, button_entity);
+
+        assert_eq!(
+            *button_prompt,
+            UiAtlasImage {
+                texture_atlas: assets.key_code_icons.clone(),
+                index: 32
+            }
+        );
+    }
 }
