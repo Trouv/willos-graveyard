@@ -49,15 +49,33 @@ pub struct IconButtonBundle {
 
 impl IconButtonBundle {
     /// Constructor for the bundle that applies the appropriate styling for you.
-    pub fn new(icon_button: IconButton, diameter: Val) -> IconButtonBundle {
+    pub fn new(icon_button: IconButton, width: Val) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
-                    size: Size {
-                        width: diameter,
-                        height: diameter,
-                    },
+                    size: Size { width, ..default() },
+                    aspect_ratio: Some(1.),
+                    ..default()
+                },
+                //interaction: Interaction::None,
+                background_color: BackgroundColor(Color::NONE),
+                ..default()
+            },
+            previous_interaction: PreviousComponent::<Interaction>::default(),
+        }
+    }
+
+    pub fn new_with_absolute_position(
+        icon_button: IconButton,
+        position: UiRect,
+    ) -> IconButtonBundle {
+        IconButtonBundle {
+            icon_button,
+            button_bundle: ButtonBundle {
+                style: Style {
+                    position_type: PositionType::Absolute,
+                    position,
                     ..default()
                 },
                 //interaction: Interaction::None,
