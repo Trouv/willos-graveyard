@@ -1,14 +1,9 @@
 //! Plugin providing functionality for the graveyard UI element showing the current controls.
 use crate::{
     camera::PlayZonePortion,
-    graveyard::{
-        gravestone::GraveId,
-        movement_table::{MovementTable, DIRECTION_ORDER},
-    },
-    sokoban::Direction,
+    graveyard::{gravestone::GraveId, movement_table::MovementTable},
     ui::{
         action::UiAction,
-        font_scale::{FontScale, FontSize},
         icon_button::{IconButton, IconButtonBundle, IconButtonLabel},
     },
     ui_atlas_image::UiAtlasImage,
