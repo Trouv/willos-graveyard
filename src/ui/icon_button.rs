@@ -8,6 +8,7 @@ use crate::{
     ui_atlas_image::UiAtlasImage, GameState,
 };
 
+/// System label for systems that respond to `IconButton` changes.
 #[derive(SystemLabel)]
 pub struct IconButtonLabel;
 
@@ -34,6 +35,7 @@ impl Plugin for IconButtonPlugin {
 /// Currently, the only metadata needed is the image to use as an icon.
 #[derive(Debug, Component)]
 pub enum IconButton {
+    /// Button with all other elements, but no icon.
     NoIcon,
     /// Use a simple Image for the button's icon.
     ImageIcon(UiImage),
@@ -55,6 +57,7 @@ pub struct IconButtonBundle {
 }
 
 impl IconButtonBundle {
+    /// Constructor for the plugin with no additional styling.
     pub fn new(icon_button: IconButton) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
@@ -63,7 +66,6 @@ impl IconButtonBundle {
                     aspect_ratio: Some(1.),
                     ..default()
                 },
-                //interaction: Interaction::None,
                 background_color: BackgroundColor(Color::NONE),
                 ..default()
             },
@@ -71,7 +73,7 @@ impl IconButtonBundle {
         }
     }
 
-    /// Constructor for the bundle that applies the appropriate styling for you.
+    /// Constructor for the bundle that applies the given size to the styling.
     pub fn new_with_size(icon_button: IconButton, size: Size) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
@@ -81,7 +83,6 @@ impl IconButtonBundle {
                     aspect_ratio: Some(1.),
                     ..default()
                 },
-                //interaction: Interaction::None,
                 background_color: BackgroundColor(Color::NONE),
                 ..default()
             },
@@ -89,6 +90,7 @@ impl IconButtonBundle {
         }
     }
 
+    /// Constructor for the bundle that applies the given position to the styling.
     pub fn new_with_absolute_position(
         icon_button: IconButton,
         position: UiRect,
@@ -102,7 +104,6 @@ impl IconButtonBundle {
                     aspect_ratio: Some(1.),
                     ..default()
                 },
-                //interaction: Interaction::None,
                 background_color: BackgroundColor(Color::NONE),
                 ..default()
             },
