@@ -6,7 +6,12 @@ use crate::{
         movement_table::{MovementTable, DIRECTION_ORDER},
     },
     sokoban::Direction,
-    ui::font_scale::{FontScale, FontSize},
+    ui::{
+        action::UiAction,
+        font_scale::{FontScale, FontSize},
+        icon_button::{IconButton, IconButtonBundle},
+    },
+    ui_atlas_image::UiAtlasImage,
     GameState,
 };
 use bevy::prelude::*;
@@ -77,15 +82,34 @@ fn spawn_control_display(
     }
 }
 
+fn icon_button_from_grave_id(
+    movement_table: &MovementTable,
+    assets: &ControlDisplayAssets,
+    grave_id: GraveId,
+) -> IconButton {
+    match movement_table
+        .table
+        .iter()
+        .flat_map(|row| row.iter())
+        .enumerate()
+        .find(|(_, g)| **g == Some(grave_id))
+    {
+        Some((index, _)) => IconButton::AtlasImageIcon(UiAtlasImage {
+            texture_atlas: assets.movement_table_actions.clone(),
+            index,
+        }),
+        None => IconButton::NoIcon,
+    }
+}
+
 fn update_control_display(
     mut commands: Commands,
-    move_table_query: Query<&MovementTable, Changed<MovementTable>>,
+    movement_tables: Query<&MovementTable, Changed<MovementTable>>,
     control_display_query: Query<Entity, With<ControlDisplay>>,
+    assets: Res<ControlDisplayAssets>,
 ) {
-    for move_table in move_table_query.iter() {
+    for movement_table in movement_tables.iter() {
         let control_display_entity = control_display_query.single();
-
-        println!("spawning..");
 
         commands
             .entity(control_display_entity)
@@ -98,7 +122,7 @@ fn update_control_display(
                 control_display
                     .spawn(NodeBundle {
                         style: Style {
-                            aspect_ratio: Some(0.66666),
+                            aspect_ratio: Some((0.8 * 2.) / 3.),
                             size: Size {
                                 width: Val::Percent(80.),
                                 ..default()
@@ -107,13 +131,65 @@ fn update_control_display(
                         },
                         ..default()
                     })
-                    .with_children(|grave_id_container| {});
+                    .with_children(|movement_table_action_container| {
+                        // spawn north
+                        movement_table_action_container
+                            .spawn(IconButtonBundle::new_with_absolute_position(
+                                icon_button_from_grave_id(&movement_table, &assets, GraveId::North),
+                                UiRect {
+                                    top: Val::Percent(0.),
+                                    left: Val::Percent(100. / 3.),
+                                    bottom: Val::Percent(50.),
+                                    right: Val::Percent(100. / 3.),
+                                },
+                            ))
+                            .insert(UiAction(GraveId::North));
+
+                        // spawn west
+                        movement_table_action_container
+                            .spawn(IconButtonBundle::new_with_absolute_position(
+                                icon_button_from_grave_id(&movement_table, &assets, GraveId::West),
+                                UiRect {
+                                    top: Val::Percent(50.),
+                                    left: Val::Percent(0.),
+                                    bottom: Val::Percent(0.),
+                                    right: Val::Percent(200. / 3.),
+                                },
+                            ))
+                            .insert(UiAction(GraveId::West));
+
+                        // spawn south
+                        movement_table_action_container
+                            .spawn(IconButtonBundle::new_with_absolute_position(
+                                icon_button_from_grave_id(&movement_table, &assets, GraveId::South),
+                                UiRect {
+                                    top: Val::Percent(50.),
+                                    left: Val::Percent(100. / 3.),
+                                    bottom: Val::Percent(0.),
+                                    right: Val::Percent(100. / 3.),
+                                },
+                            ))
+                            .insert(UiAction(GraveId::South));
+
+                        // spawn east
+                        movement_table_action_container
+                            .spawn(IconButtonBundle::new_with_absolute_position(
+                                icon_button_from_grave_id(&movement_table, &assets, GraveId::East),
+                                UiRect {
+                                    top: Val::Percent(50.),
+                                    left: Val::Percent(200. / 3.),
+                                    bottom: Val::Percent(0.),
+                                    right: Val::Percent(0.),
+                                },
+                            ))
+                            .insert(UiAction(GraveId::East));
+                    });
 
                 // spawn other grave actions
                 control_display
                     .spawn(NodeBundle {
                         style: Style {
-                            aspect_ratio: Some(0.33333),
+                            aspect_ratio: Some(1. / 3.),
                             size: Size {
                                 width: Val::Percent(80.),
                                 ..default()
