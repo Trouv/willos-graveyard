@@ -8,6 +8,9 @@ use crate::{
     ui_atlas_image::UiAtlasImage, GameState,
 };
 
+#[derive(SystemLabel)]
+pub struct IconButtonLabel;
+
 /// Plugin for building "icon buttons" in the style of this game.
 ///
 /// Use [IconButtonBundle::new] to get started.
@@ -15,7 +18,11 @@ pub struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_icon_button_elements.run_not_in_state(GameState::AssetLoading));
+        app.add_system(
+            spawn_icon_button_elements
+                .run_not_in_state(GameState::AssetLoading)
+                .label(IconButtonLabel),
+        );
     }
 }
 

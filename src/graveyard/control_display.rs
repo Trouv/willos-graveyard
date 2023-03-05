@@ -9,7 +9,7 @@ use crate::{
     ui::{
         action::UiAction,
         font_scale::{FontScale, FontSize},
-        icon_button::{IconButton, IconButtonBundle},
+        icon_button::{IconButton, IconButtonBundle, IconButtonLabel},
     },
     ui_atlas_image::UiAtlasImage,
     GameState,
@@ -18,15 +18,18 @@ use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use iyes_loopless::prelude::*;
 
+use super::GraveyardAction;
+
 /// Plugin providing functionality for the graveyard UI element showing the current controls.
 pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(GameState::LevelTransition, spawn_control_display)
-            .add_system_to_stage(
-                CoreStage::PreUpdate,
-                update_control_display.run_in_state(GameState::Graveyard),
+            .add_system(
+                update_grave_action_buttons
+                    .run_in_state(GameState::Graveyard)
+                    .before(IconButtonLabel),
             );
     }
 }
