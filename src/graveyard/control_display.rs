@@ -43,7 +43,7 @@ fn spawn_control_display(
                 style: Style {
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::FlexStart,
-                    justify_content: JustifyContent::Center,
+                    justify_content: JustifyContent::SpaceAround,
                     align_content: AlignContent::Center,
                     position_type: PositionType::Absolute,
                     size: Size {
@@ -70,167 +70,48 @@ fn update_control_display(
     mut commands: Commands,
     move_table_query: Query<&MovementTable, Changed<MovementTable>>,
     control_display_query: Query<Entity, With<ControlDisplay>>,
-    assets: Res<AssetServer>,
 ) {
-    enum ControlNode {
-        Text(String),
-        Image(Handle<Image>),
-    }
-
     for move_table in move_table_query.iter() {
         let control_display_entity = control_display_query.single();
+
+        println!("spawning..");
 
         commands
             .entity(control_display_entity)
             .despawn_descendants();
 
-        let font = assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf");
-
-        let style = TextStyle {
-            font,
-            color: Color::WHITE,
-            ..default()
-        };
         commands
             .entity(control_display_entity)
-            .with_children(|parent| {
-                let mut add_row = |nodes: Vec<ControlNode>| {
-                    parent
-                        .spawn(NodeBundle {
-                            style: Style {
-                                size: Size {
-                                    height: Val::Percent(100. / 18.),
-                                    ..Default::default()
-                                },
-                                margin: UiRect {
-                                    bottom: Val::Px(16.),
-                                    ..Default::default()
-                                },
-                                ..Default::default()
+            .with_children(|control_display| {
+                // spawn grave ids
+                control_display
+                    .spawn(NodeBundle {
+                        style: Style {
+                            aspect_ratio: Some(0.66666),
+                            size: Size {
+                                width: Val::Percent(80.),
+                                ..default()
                             },
-                            background_color: BackgroundColor(Color::NONE),
-                            ..Default::default()
-                        })
-                        .with_children(|parent| {
-                            for node in nodes {
-                                match node {
-                                    ControlNode::Text(s) => {
-                                        parent
-                                            .spawn(TextBundle {
-                                                text: Text::from_section(s, style.clone())
-                                                    .with_alignment(TextAlignment {
-                                                        vertical: VerticalAlign::Center,
-                                                        horizontal: HorizontalAlign::Center,
-                                                    }),
-                                                style: Style {
-                                                    size: Size {
-                                                        height: Val::Percent(100.),
-                                                        ..Default::default()
-                                                    },
-                                                    margin: UiRect {
-                                                        right: Val::Px(16.),
-                                                        ..Default::default()
-                                                    },
-                                                    ..Default::default()
-                                                },
-                                                ..Default::default()
-                                            })
-                                            .insert(FontScale::from(FontSize::Medium));
-                                    }
-                                    ControlNode::Image(h) => {
-                                        parent.spawn(ImageBundle {
-                                            image: UiImage(h),
-                                            style: Style {
-                                                size: Size {
-                                                    height: Val::Percent(100.),
-                                                    ..Default::default()
-                                                },
-                                                margin: UiRect {
-                                                    right: Val::Px(16.),
-                                                    ..Default::default()
-                                                },
-                                                ..Default::default()
-                                            },
-                                            ..Default::default()
-                                        });
-                                    }
-                                }
-                            }
-                        });
-                };
+                            ..default()
+                        },
+                        ..default()
+                    })
+                    .with_children(|grave_id_container| {});
 
-                let mut keys_to_controls: Vec<(GraveId, Vec<ControlNode>)> = vec![
-                    (
-                        GraveId::North,
-                        vec![
-                            ControlNode::Image(assets.load("textures/w.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                    (
-                        GraveId::West,
-                        vec![
-                            ControlNode::Image(assets.load("textures/a.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                    (
-                        GraveId::South,
-                        vec![
-                            ControlNode::Image(assets.load("textures/s.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                    (
-                        GraveId::East,
-                        vec![
-                            ControlNode::Image(assets.load("textures/d.png")),
-                            ControlNode::Text("=".to_string()),
-                        ],
-                    ),
-                ];
-
-                for (i, rank) in move_table.table.iter().enumerate() {
-                    for (j, key) in rank.iter().enumerate() {
-                        if let Some(key) = key {
-                            let first_dir = DIRECTION_ORDER[i];
-                            let second_dir = DIRECTION_ORDER[j];
-
-                            let direction_handle = |d: Direction| -> Handle<Image> {
-                                match d {
-                                    Direction::Up => assets.load("textures/up.png"),
-                                    Direction::Left => assets.load("textures/left.png"),
-                                    Direction::Down => assets.load("textures/down.png"),
-                                    Direction::Right => assets.load("textures/right.png"),
-                                }
-                            };
-
-                            if let Some((_, controls)) =
-                                keys_to_controls.iter_mut().find(|(k, _)| k == key)
-                            {
-                                controls.extend(vec![
-                                    ControlNode::Image(direction_handle(first_dir)),
-                                    ControlNode::Image(direction_handle(second_dir)),
-                                ]);
-                            }
-                        }
-                    }
-                }
-
-                keys_to_controls
-                    .into_iter()
-                    .for_each(|(_, row)| add_row(row));
-
-                add_row(vec![
-                    ControlNode::Text("R".to_string()),
-                    ControlNode::Text("=".to_string()),
-                    ControlNode::Text("restart".to_string()),
-                ]);
-                add_row(vec![
-                    ControlNode::Text("Z".to_string()),
-                    ControlNode::Text("=".to_string()),
-                    ControlNode::Text("undo".to_string()),
-                ]);
+                // spawn other grave actions
+                control_display
+                    .spawn(NodeBundle {
+                        style: Style {
+                            aspect_ratio: Some(0.33333),
+                            size: Size {
+                                width: Val::Percent(80.),
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        ..default()
+                    })
+                    .with_children(|graveyard_action_container| {});
             });
     }
 }
