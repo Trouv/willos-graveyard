@@ -10,6 +10,7 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
+use bevy_asset_loader::prelude::*;
 use iyes_loopless::prelude::*;
 
 /// Plugin providing functionality for the graveyard UI element showing the current controls.
@@ -28,6 +29,16 @@ impl Plugin for ControlDisplayPlugin {
 /// Component that marks the main ControlDisplay UI Node.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 struct ControlDisplay;
+
+#[derive(Clone, Debug, AssetCollection, Resource)]
+pub struct ControlDisplayAssets {
+    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 4, rows = 4))]
+    #[asset(path = "textures/movement-table-actions.png")]
+    movement_table_actions: Handle<TextureAtlas>,
+    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 3, rows = 1))]
+    #[asset(path = "textures/graveyard-actions.png")]
+    graveyard_actions: Handle<TextureAtlas>,
+}
 
 fn spawn_control_display(
     mut commands: Commands,
