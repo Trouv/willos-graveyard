@@ -27,6 +27,7 @@ impl Plugin for IconButtonPlugin {
 /// Currently, the only metadata needed is the image to use as an icon.
 #[derive(Debug, Component)]
 pub enum IconButton {
+    NoIcon,
     /// Use a simple Image for the button's icon.
     ImageIcon(UiImage),
     /// Use a texture atlas + index for the button's icon.
@@ -136,6 +137,7 @@ fn spawn_icon_button_elements(
             match icon_button {
                 IconButton::AtlasImageIcon(i) => icon_entity.insert(i.clone()),
                 IconButton::ImageIcon(i) => icon_entity.insert(i.clone()),
+                _ => icon_entity.insert(BackgroundColor(Color::NONE)),
             };
         });
     }
