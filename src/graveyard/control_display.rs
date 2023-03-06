@@ -296,7 +296,7 @@ mod tests {
         let movement_table_entity = spawn_movement_table(&mut app);
         initial_state_changes(&mut app);
 
-        let grave_id_buttons: Vec<(&IconButton, &UiAction<GraveId>)> = app
+        let grave_id_buttons: Vec<_> = app
             .world
             .query::<(&IconButton, &UiAction<GraveId>)>()
             .iter(&app.world)
@@ -334,6 +334,38 @@ mod tests {
                 index: 15
             }),
             &UiAction(GraveId::East)
+        )));
+
+        let graveyard_action_buttons: Vec<_> = app
+            .world
+            .query::<(&IconButton, &UiAction<GraveyardAction>)>()
+            .iter(&app.world)
+            .collect();
+
+        assert_eq!(graveyard_action_buttons.len(), 3);
+
+        assert!(graveyard_action_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.graveyard_actions.clone(),
+                index: 0
+            }),
+            &UiAction(GraveyardAction::Undo)
+        )));
+
+        assert!(graveyard_action_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.graveyard_actions.clone(),
+                index: 1
+            }),
+            &UiAction(GraveyardAction::Restart)
+        )));
+
+        assert!(graveyard_action_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.graveyard_actions.clone(),
+                index: 2
+            }),
+            &UiAction(GraveyardAction::Pause)
         )));
     }
 }
