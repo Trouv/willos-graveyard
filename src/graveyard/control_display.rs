@@ -272,100 +272,128 @@ mod tests {
         app.update();
     }
 
-    fn get_control_display(app: &mut App) -> Entity {
-        let mut query = app.world.query_filtered::<Entity, With<ControlDisplay>>();
-        query.single(&app.world)
-    }
-
-    fn get_descendant_components<'a, C: Component>(
-        app: &'a mut App,
-        entity: Entity,
-    ) -> impl Iterator<Item = &'a C> {
+    fn get_icon_button_for_action<A: Clone + Send + Sync + PartialEq + 'static>(
+        app: &mut App,
+        action: A,
+    ) -> &IconButton {
         app.world
-            .entity(entity)
-            .get::<Children>()
+            .query::<(&IconButton, &UiAction<A>)>()
+            .iter(&app.world)
+            .find(|(_, a)| ***a == action)
+            .map(|(i, _)| i)
             .unwrap()
-            .iter()
-            .filter_map(|e| app.world.entity(*e).get::<C>())
     }
 
     #[test]
     fn plugin_spawns_all_buttons() {
         let mut app = app_setup();
         let assets = asset_setup(&mut app);
-        let movement_table_entity = spawn_movement_table(&mut app);
+        spawn_movement_table(&mut app);
         initial_state_changes(&mut app);
 
-        let grave_id_buttons: Vec<_> = app
-            .world
-            .query::<(&IconButton, &UiAction<GraveId>)>()
-            .iter(&app.world)
-            .collect();
-
-        assert_eq!(grave_id_buttons.len(), 4);
-
-        assert!(grave_id_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
                 index: 0
-            }),
-            &UiAction(GraveId::North)
-        )));
+            })
+        );
 
-        assert!(grave_id_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::West),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
                 index: 5
             }),
-            &UiAction(GraveId::West)
-        )));
+        );
 
-        assert!(grave_id_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::South),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
                 index: 10
             }),
-            &UiAction(GraveId::South)
-        )));
+        );
 
-        assert!(grave_id_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::East),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
                 index: 15
             }),
-            &UiAction(GraveId::East)
-        )));
+        );
 
-        let graveyard_action_buttons: Vec<_> = app
-            .world
-            .query::<(&IconButton, &UiAction<GraveyardAction>)>()
-            .iter(&app.world)
-            .collect();
-
-        assert_eq!(graveyard_action_buttons.len(), 3);
-
-        assert!(graveyard_action_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveyardAction::Undo),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.graveyard_actions.clone(),
                 index: 0
             }),
-            &UiAction(GraveyardAction::Undo)
-        )));
+        );
 
-        assert!(graveyard_action_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveyardAction::Restart),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.graveyard_actions.clone(),
                 index: 1
             }),
-            &UiAction(GraveyardAction::Restart)
-        )));
+        );
 
-        assert!(graveyard_action_buttons.contains(&(
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveyardAction::Pause),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.graveyard_actions.clone(),
                 index: 2
             }),
-            &UiAction(GraveyardAction::Pause)
-        )));
+        );
+    }
+
+    #[test]
+    fn grave_id_buttons_change_according_to_movement_table() {
+        let mut app = app_setup();
+        let assets = asset_setup(&mut app);
+        let movement_table_entity = spawn_movement_table(&mut app);
+        initial_state_changes(&mut app);
+
+        // check initial values of a couple buttons
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::North),
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 0
+            })
+        );
+
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::West),
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 5
+            }),
+        );
+
+        // change the movement table and check those buttons again
+        let mut movement_table_mut = app.world.entity_mut(movement_table_entity);
+
+        let mut movement_table = movement_table_mut.get_mut::<MovementTable>().unwrap();
+
+        movement_table.table[0][0] = None;
+        movement_table.table[0][1] = Some(GraveId::North);
+        movement_table.table[1][1] = None;
+
+        app.update();
+
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::North),
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 1
+            })
+        );
+
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::West),
+            &IconButton::NoIcon,
+        );
     }
 }
