@@ -43,6 +43,21 @@ pub enum IconButton {
     AtlasImageIcon(UiAtlasImage),
 }
 
+// PartialEq is useful for testing, but UiImage does not implement it.
+// So, this trivial manual implementation is provided.
+impl PartialEq for IconButton {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (IconButton::NoIcon, IconButton::NoIcon) => true,
+            (IconButton::ImageIcon(UiImage(s)), IconButton::ImageIcon(UiImage(o))) => s == o,
+            (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
+            _ => false,
+        }
+    }
+}
+
+impl Eq for IconButton {}
+
 #[derive(Debug, Component)]
 struct IconButtonElement;
 
