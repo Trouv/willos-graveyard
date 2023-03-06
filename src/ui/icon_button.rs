@@ -229,9 +229,7 @@ mod tests {
     }
 
     fn spawn_icon_button(app: &mut App, icon_button: IconButton) -> Entity {
-        app.world
-            .spawn(IconButtonBundle::new(icon_button, Val::Px(50.)))
-            .id()
+        app.world.spawn(IconButtonBundle::new(icon_button)).id()
     }
 
     #[test]
