@@ -16,6 +16,7 @@ pub mod previous_component;
 pub mod sokoban;
 pub mod ui;
 pub mod ui_atlas_image;
+pub mod utils;
 
 use animation::SpriteSheetAnimationPlugin;
 use bevy::prelude::*;
@@ -79,7 +80,8 @@ fn main() {
                 .continue_to_state(GameState::LevelTransition)
                 .with_collection::<AssetHolder>()
                 .with_collection::<graveyard::gravestone::GravestoneAssets>()
-                .with_collection::<ui::icon_button::IconButtonAssets>(),
+                .with_collection::<ui::icon_button::IconButtonAssets>()
+                .with_collection::<ui::button_prompt::ButtonPromptAssets>(),
         )
         .add_plugin(graveyard::GraveyardPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
