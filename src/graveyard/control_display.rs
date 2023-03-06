@@ -218,3 +218,122 @@ fn update_grave_action_buttons(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use bevy::asset::HandleId;
+
+    use super::*;
+
+    fn app_setup() -> App {
+        let mut app = App::new();
+
+        app.add_loopless_state(GameState::AssetLoading)
+            .add_plugin(ControlDisplayPlugin)
+            .insert_resource(PlayZonePortion(0.5));
+
+        app
+    }
+
+    fn asset_setup(app: &mut App) -> ControlDisplayAssets {
+        let control_display_assets = ControlDisplayAssets {
+            movement_table_actions: Handle::weak(HandleId::random::<TextureAtlas>()),
+            graveyard_actions: Handle::weak(HandleId::random::<TextureAtlas>()),
+        };
+
+        app.insert_resource(control_display_assets.clone());
+
+        control_display_assets
+    }
+
+    fn spawn_movement_table(app: &mut App) -> Entity {
+        app.world
+            .spawn(MovementTable {
+                table: [
+                    [Some(GraveId::North), None, None, None],
+                    [None, Some(GraveId::West), None, None],
+                    [None, None, Some(GraveId::South), None],
+                    [None, None, None, Some(GraveId::East)],
+                ],
+            })
+            .id()
+    }
+
+    fn initial_state_changes(app: &mut App) {
+        app.update();
+
+        app.world
+            .insert_resource(NextState(GameState::LevelTransition));
+
+        app.update();
+
+        app.world.insert_resource(NextState(GameState::Graveyard));
+
+        app.update();
+    }
+
+    fn get_control_display(app: &mut App) -> Entity {
+        let mut query = app.world.query_filtered::<Entity, With<ControlDisplay>>();
+        query.single(&app.world)
+    }
+
+    fn get_descendant_components<'a, C: Component>(
+        app: &'a mut App,
+        entity: Entity,
+    ) -> impl Iterator<Item = &'a C> {
+        app.world
+            .entity(entity)
+            .get::<Children>()
+            .unwrap()
+            .iter()
+            .filter_map(|e| app.world.entity(*e).get::<C>())
+    }
+
+    #[test]
+    fn plugin_spawns_all_buttons() {
+        let mut app = app_setup();
+        let assets = asset_setup(&mut app);
+        let movement_table_entity = spawn_movement_table(&mut app);
+        initial_state_changes(&mut app);
+
+        let grave_id_buttons: Vec<(&IconButton, &UiAction<GraveId>)> = app
+            .world
+            .query::<(&IconButton, &UiAction<GraveId>)>()
+            .iter(&app.world)
+            .collect();
+
+        assert_eq!(grave_id_buttons.len(), 4);
+
+        assert!(grave_id_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 0
+            }),
+            &UiAction(GraveId::North)
+        )));
+
+        assert!(grave_id_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 5
+            }),
+            &UiAction(GraveId::West)
+        )));
+
+        assert!(grave_id_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 10
+            }),
+            &UiAction(GraveId::South)
+        )));
+
+        assert!(grave_id_buttons.contains(&(
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 15
+            }),
+            &UiAction(GraveId::East)
+        )));
+    }
+}
