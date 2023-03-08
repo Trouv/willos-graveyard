@@ -8,6 +8,10 @@ use crate::{
     ui_atlas_image::UiAtlasImage, GameState,
 };
 
+/// System label for systems that respond to `IconButton` changes.
+#[derive(SystemLabel)]
+pub struct IconButtonLabel;
+
 /// Plugin for building "icon buttons" in the style of this game.
 ///
 /// Use [IconButtonBundle::new] to get started.
@@ -15,7 +19,11 @@ pub struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_icon_button_elements.run_not_in_state(GameState::AssetLoading));
+        app.add_system(
+            spawn_icon_button_elements
+                .run_not_in_state(GameState::AssetLoading)
+                .label(IconButtonLabel),
+        );
     }
 }
 
@@ -27,11 +35,28 @@ impl Plugin for IconButtonPlugin {
 /// Currently, the only metadata needed is the image to use as an icon.
 #[derive(Debug, Component)]
 pub enum IconButton {
+    /// Button with all other elements, but no icon.
+    NoIcon,
     /// Use a simple Image for the button's icon.
     ImageIcon(UiImage),
     /// Use a texture atlas + index for the button's icon.
     AtlasImageIcon(UiAtlasImage),
 }
+
+// PartialEq is useful for testing, but UiImage does not implement it.
+// So, this trivial manual implementation is provided.
+impl PartialEq for IconButton {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (IconButton::NoIcon, IconButton::NoIcon) => true,
+            (IconButton::ImageIcon(UiImage(s)), IconButton::ImageIcon(UiImage(o))) => s == o,
+            (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
+            _ => false,
+        }
+    }
+}
+
+impl Eq for IconButton {}
 
 #[derive(Debug, Component)]
 struct IconButtonElement;
@@ -47,19 +72,53 @@ pub struct IconButtonBundle {
 }
 
 impl IconButtonBundle {
-    /// Constructor for the bundle that applies the appropriate styling for you.
-    pub fn new(icon_button: IconButton, diameter: Val) -> IconButtonBundle {
+    /// Constructor for the plugin with no additional styling.
+    pub fn new(icon_button: IconButton) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
-                    size: Size {
-                        width: diameter,
-                        height: diameter,
-                    },
+                    aspect_ratio: Some(1.),
                     ..default()
                 },
-                //interaction: Interaction::None,
+                background_color: BackgroundColor(Color::NONE),
+                ..default()
+            },
+            previous_interaction: PreviousComponent::<Interaction>::default(),
+        }
+    }
+
+    /// Constructor for the bundle that applies the given size to the styling.
+    pub fn new_with_size(icon_button: IconButton, size: Size) -> IconButtonBundle {
+        IconButtonBundle {
+            icon_button,
+            button_bundle: ButtonBundle {
+                style: Style {
+                    size,
+                    aspect_ratio: Some(1.),
+                    ..default()
+                },
+                background_color: BackgroundColor(Color::NONE),
+                ..default()
+            },
+            previous_interaction: PreviousComponent::<Interaction>::default(),
+        }
+    }
+
+    /// Constructor for the bundle that applies the given position to the styling.
+    pub fn new_with_absolute_position(
+        icon_button: IconButton,
+        position: UiRect,
+    ) -> IconButtonBundle {
+        IconButtonBundle {
+            icon_button,
+            button_bundle: ButtonBundle {
+                style: Style {
+                    position_type: PositionType::Absolute,
+                    position,
+                    aspect_ratio: Some(1.),
+                    ..default()
+                },
                 background_color: BackgroundColor(Color::NONE),
                 ..default()
             },
@@ -136,6 +195,7 @@ fn spawn_icon_button_elements(
             match icon_button {
                 IconButton::AtlasImageIcon(i) => icon_entity.insert(i.clone()),
                 IconButton::ImageIcon(i) => icon_entity.insert(i.clone()),
+                _ => icon_entity.insert(BackgroundColor(Color::NONE)),
             };
         });
     }
@@ -169,9 +229,7 @@ mod tests {
     }
 
     fn spawn_icon_button(app: &mut App, icon_button: IconButton) -> Entity {
-        app.world
-            .spawn(IconButtonBundle::new(icon_button, Val::Px(50.)))
-            .id()
+        app.world.spawn(IconButtonBundle::new(icon_button)).id()
     }
 
     #[test]

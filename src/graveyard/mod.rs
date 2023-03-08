@@ -13,7 +13,9 @@ pub mod wind;
 
 use crate::{
     history::{FlushHistoryCommands, HistoryCommands},
-    sokoban, GameState,
+    sokoban,
+    ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
+    GameState,
 };
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
@@ -35,6 +37,8 @@ impl Plugin for GraveyardPlugin {
         app.init_resource::<RewindSettings>()
             .add_plugin(InputManagerPlugin::<GraveyardAction>::default())
             .init_resource::<ActionState<GraveyardAction>>()
+            .add_plugin(UiActionPlugin::<GraveyardAction>::new())
+            .add_plugin(ButtonPromptPlugin::<GraveyardAction>::new())
             .insert_resource(
                 load_graveyard_control_settings(asset_folder)
                     .expect("unable to load gameplay control settings"),

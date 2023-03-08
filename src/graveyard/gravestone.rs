@@ -7,6 +7,7 @@ use crate::{
     graveyard::willo::{WilloLabels, WilloState},
     history::{FlushHistoryCommands, History, HistoryCommands},
     sokoban::SokobanBlock,
+    ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
 use bevy::{prelude::*, reflect::Enum};
@@ -33,6 +34,8 @@ impl Plugin for GravestonePlugin {
 
         app.add_plugin(InputManagerPlugin::<GraveId>::default())
             .init_resource::<ActionState<GraveId>>()
+            .add_plugin(UiActionPlugin::<GraveId>::new())
+            .add_plugin(ButtonPromptPlugin::<GraveId>::new())
             .init_resource::<GravestoneSettings>()
             .insert_resource(
                 load_gravestone_control_settings(asset_folder)
