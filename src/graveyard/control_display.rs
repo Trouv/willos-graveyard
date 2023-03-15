@@ -11,7 +11,6 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
-use iyes_loopless::prelude::*;
 
 use super::GraveyardAction;
 

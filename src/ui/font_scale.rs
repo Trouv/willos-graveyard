@@ -1,6 +1,5 @@
 //! Plugin, systems, components, and resources for scaling fonts with window size.
 use bevy::{prelude::*, window::WindowResized};
-use iyes_loopless::prelude::*;
 
 /// Label used by all systems in [FontScalePlugin].
 #[derive(SystemLabel)]

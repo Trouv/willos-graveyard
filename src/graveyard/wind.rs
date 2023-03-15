@@ -2,7 +2,6 @@
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use rand::Rng;
 use std::cmp;
 

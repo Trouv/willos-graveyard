@@ -16,7 +16,6 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use std::time::Duration;
 

@@ -1,6 +1,5 @@
 //! Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
 use bevy::prelude::*;
-use iyes_loopless::prelude::*;
 use std::any::Any;
 use std::marker::PhantomData;
 

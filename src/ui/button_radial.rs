@@ -1,6 +1,5 @@
 //! Simple plugin providing functionality for displaying the state of a button's interaction.
 use bevy::prelude::*;
-use iyes_loopless::prelude::*;
 
 use crate::GameState;
 

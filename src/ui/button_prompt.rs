@@ -8,7 +8,6 @@ use std::marker::PhantomData;
 
 use bevy::{ecs::query::ReadOnlyWorldQuery, prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
 
 use crate::{

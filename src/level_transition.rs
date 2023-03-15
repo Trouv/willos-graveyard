@@ -10,7 +10,6 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
-use iyes_loopless::prelude::*;
 use std::time::Duration;
 
 /// Plugin providing functionality for level transitions.

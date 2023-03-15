@@ -24,7 +24,6 @@ use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 
 /// Length of the sides of tiles on the game-grid in bevy's coordinate space.
 pub const UNIT_LENGTH: i32 = 32;

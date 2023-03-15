@@ -1,7 +1,6 @@
 //! Plugin for building "icon buttons" in the style of this game.
 use bevy::{prelude::*, ui::FocusPolicy};
 use bevy_asset_loader::prelude::AssetCollection;
-use iyes_loopless::prelude::*;
 
 use crate::{
     previous_component::PreviousComponent, ui::button_radial::ButtonRadial,

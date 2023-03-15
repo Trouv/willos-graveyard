@@ -8,7 +8,6 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use std::time::Duration;
 
 /// Labels used by exorcism systems.

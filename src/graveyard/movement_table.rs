@@ -12,7 +12,6 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 
 /// Plugin providing functionality for the movement table, which alters Willo's abilities based off
 /// the placement of gravestones.

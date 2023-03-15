@@ -18,7 +18,6 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range, time::Duration};
