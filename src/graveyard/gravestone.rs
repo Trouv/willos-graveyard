@@ -4,7 +4,7 @@
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
-    graveyard::willo::{WilloLabels, WilloState},
+    graveyard::willo::{WilloSets, WilloState},
     history::{FlushHistoryCommands, History, HistoryCommands},
     sokoban::SokobanBlock,
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
@@ -44,7 +44,7 @@ impl Plugin for GravestonePlugin {
             .add_system(
                 gravestone_input
                     .run_in_state(GameState::Graveyard)
-                    .label(WilloLabels::Input)
+                    .label(WilloSets::Input)
                     .before(FlushHistoryCommands),
             )
             .register_ldtk_entity::<GravestoneBundle>("W")

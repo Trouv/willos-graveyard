@@ -1,10 +1,10 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    from_component::FromComponentLabel,
+    from_component::FromComponentSet,
     graveyard::{exorcism::ExorcismEvent, gravestone::GraveId},
     history::{History, HistoryCommands, HistoryPlugin},
-    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanLabels},
+    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanSets},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
@@ -12,9 +12,9 @@ use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
 
-/// Labels used by Willo systems.
-#[derive(SystemLabel)]
-pub enum WilloLabels {
+/// Sets used by Willo systems.
+#[derive(SystemSet)]
+pub enum WilloSets {
     /// TODO: replace this with graveyard-level label since this is no longer used in this module.
     Input,
 }
@@ -34,13 +34,13 @@ impl Plugin for WilloPlugin {
                 push_sugar
                     .run_not_in_state(GameState::AssetLoading)
                     .run_on_event::<PushEvent>()
-                    .before(FromComponentLabel),
+                    .before(FromComponentSet),
             )
             .add_system_to_stage(
                 CoreStage::PostUpdate,
                 push_translation
                     .run_not_in_state(GameState::AssetLoading)
-                    .before(SokobanLabels::EaseMovement),
+                    .before(SokobanSets::EaseMovement),
             )
             .add_system(
                 play_exorcism_animaton

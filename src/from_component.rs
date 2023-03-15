@@ -2,9 +2,9 @@
 use bevy::prelude::*;
 use std::marker::PhantomData;
 
-/// Label used by systems in the [FromComponentPlugin].
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
-pub struct FromComponentLabel;
+/// Set used by systems in the [FromComponentPlugin].
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemSet)]
+pub struct FromComponentSet;
 
 /// Plugin that maintains `Into` components from entities' corresponding `From` component.
 ///
@@ -53,8 +53,8 @@ where
     I: Component + 'static + Send + Sync,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(from_changed_component::<F, I>.label(FromComponentLabel))
-            .add_system(from_added_component::<F, I>.label(FromComponentLabel));
+        app.add_system(from_changed_component::<F, I>.label(FromComponentSet))
+            .add_system(from_added_component::<F, I>.label(FromComponentSet));
     }
 }
 

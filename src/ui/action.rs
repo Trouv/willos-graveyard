@@ -11,9 +11,9 @@ use crate::previous_component::{
 };
 use bevy::prelude::*;
 
-/// Label used for detecting UI interactions and firing UiAction events.
-#[derive(SystemLabel)]
-pub struct UiActionLabel;
+/// Set used for detecting UI interactions and firing UiAction events.
+#[derive(SystemSet)]
+pub struct UiActionSet;
 
 /// Plugin for associating UI buttons with logical actions.
 ///
@@ -49,7 +49,7 @@ where
 
         app.add_event::<UiAction<T>>().add_system(
             ui_action::<T>
-                .label(UiActionLabel)
+                .label(UiActionSet)
                 .after(TrackPreviousComponent),
         );
     }

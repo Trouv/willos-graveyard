@@ -4,7 +4,7 @@ use crate::{
     graveyard::{gravestone::GraveId, movement_table::MovementTable},
     ui::{
         action::UiAction,
-        icon_button::{IconButton, IconButtonBundle, IconButtonLabel},
+        icon_button::{IconButton, IconButtonBundle, IconButtonSet},
     },
     ui_atlas_image::UiAtlasImage,
     GameState,
@@ -23,7 +23,7 @@ impl Plugin for ControlDisplayPlugin {
             .add_system(
                 update_grave_action_buttons
                     .run_in_state(GameState::Graveyard)
-                    .before(IconButtonLabel),
+                    .before(IconButtonSet),
             );
     }
 }

@@ -1,9 +1,9 @@
 //! Plugin, systems, components, and resources for scaling fonts with window size.
 use bevy::{prelude::*, window::WindowResized};
 
-/// Label used by all systems in [FontScalePlugin].
-#[derive(SystemLabel)]
-pub struct FontScaleLabel;
+/// Set used by all systems in [FontScalePlugin].
+#[derive(SystemSet)]
+pub struct FontScaleSet;
 
 /// Plugin with systems and resources that implement [FontScale] functionality.
 pub struct FontScalePlugin;
@@ -14,9 +14,9 @@ impl Plugin for FontScalePlugin {
             .add_system(
                 font_scale
                     .run_on_event::<WindowResized>()
-                    .label(FontScaleLabel),
+                    .label(FontScaleSet),
             )
-            .add_system(font_scale.run_if(font_scale_changed).label(FontScaleLabel));
+            .add_system(font_scale.run_if(font_scale_changed).label(FontScaleSet));
     }
 }
 

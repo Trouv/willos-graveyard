@@ -10,10 +10,10 @@ use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
 
-/// Labels used by exorcism systems.
-#[derive(SystemLabel)]
-pub enum ExorcismLabels {
-    /// Label used by the system that checks Willo's position kills Willo if appropriate.
+/// Sets used by exorcism systems.
+#[derive(SystemSet)]
+pub enum ExorcismSets {
+    /// Set used by the system that checks Willo's position kills Willo if appropriate.
     CheckDeath,
 }
 
@@ -26,7 +26,7 @@ impl Plugin for ExorcismPlugin {
             .add_system(
                 check_death
                     .run_in_state(GameState::Graveyard)
-                    .label(ExorcismLabels::CheckDeath)
+                    .label(ExorcismSets::CheckDeath)
                     .after(FlushHistoryCommands),
             )
             .add_system_to_stage(CoreStage::PreUpdate, make_exorcism_card_visible)

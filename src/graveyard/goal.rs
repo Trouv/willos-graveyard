@@ -1,6 +1,6 @@
 //! Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 use crate::{
-    graveyard::{exorcism::ExorcismLabels, gravestone::GraveId},
+    graveyard::{exorcism::ExorcismSets, gravestone::GraveId},
     level_transition::TransitionTo,
     AssetHolder, GameState,
 };
@@ -20,7 +20,7 @@ impl Plugin for GoalPlugin {
             .add_system(
                 check_goal
                     .run_in_state(GameState::Graveyard)
-                    .after(ExorcismLabels::CheckDeath),
+                    .after(ExorcismSets::CheckDeath),
             )
             .add_system(goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
             .add_system(goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))

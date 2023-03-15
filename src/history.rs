@@ -50,7 +50,7 @@ pub enum HistoryCommands {
 }
 
 /// System label for the system that handles history commands.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemSet)]
 pub struct FlushHistoryCommands;
 
 /// Component that stores the history of another component generically.

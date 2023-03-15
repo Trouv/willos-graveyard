@@ -8,8 +8,8 @@ use crate::{
 };
 
 /// System label for systems that respond to `IconButton` changes.
-#[derive(SystemLabel)]
-pub struct IconButtonLabel;
+#[derive(SystemSet)]
+pub struct IconButtonSet;
 
 /// Plugin for building "icon buttons" in the style of this game.
 ///
@@ -21,7 +21,7 @@ impl Plugin for IconButtonPlugin {
         app.add_system(
             spawn_icon_button_elements
                 .run_not_in_state(GameState::AssetLoading)
-                .label(IconButtonLabel),
+                .label(IconButtonSet),
         );
     }
 }

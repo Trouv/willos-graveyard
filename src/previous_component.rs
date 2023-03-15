@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 
 /// System label used for updating the [PreviousComponent] value.
 /// Consider placing your system after this if you are depending on an accurate [PreviousComponent].
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemSet)]
 pub struct TrackPreviousComponent;
 
 /// Plugin for tracking the previous value of a component via an additional generic component.

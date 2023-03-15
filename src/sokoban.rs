@@ -9,12 +9,12 @@ use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::any::Any;
 
-/// Labels used by sokoban systems
-#[derive(SystemLabel)]
-pub enum SokobanLabels {
-    /// Label for the system that updates the visual position of sokoban entities via bevy_easings.
+/// Sets used by sokoban systems
+#[derive(SystemSet)]
+pub enum SokobanSets {
+    /// Set for the system that updates the visual position of sokoban entities via bevy_easings.
     EaseMovement,
-    /// Label for the system that updates the logical position of sokoban entities.
+    /// Set for the system that updates the logical position of sokoban entities.
     LogicalMovement,
 }
 
@@ -53,7 +53,7 @@ where
                 flush_sokoban_commands
                     .run_in_state(self.state.clone())
                     .run_on_event::<SokobanCommand>()
-                    .label(SokobanLabels::LogicalMovement),
+                    .label(SokobanSets::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
             // see https://github.com/vleue/bevy_easings/issues/23
@@ -61,7 +61,7 @@ where
                 CoreStage::PostUpdate,
                 ease_movement
                     .run_in_state(self.state.clone())
-                    .label(SokobanLabels::EaseMovement),
+                    .label(SokobanSets::EaseMovement),
             );
     }
 }

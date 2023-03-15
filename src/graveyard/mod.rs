@@ -54,7 +54,7 @@ impl Plugin for GraveyardPlugin {
             .add_system(
                 graveyard_input
                     .run_in_state(GameState::Graveyard)
-                    .label(willo::WilloLabels::Input)
+                    .label(willo::WilloSets::Input)
                     .before(FlushHistoryCommands),
             );
     }
