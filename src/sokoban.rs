@@ -55,10 +55,10 @@ where
                     .run_on_event::<SokobanCommand>()
                     .label(SokobanSets::LogicalMovement),
             )
-            // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system_to_stage(
-                CoreStage::PostUpdate,
+                CoreSet::PostUpdate,
                 ease_movement
                     .run_in_state(self.state.clone())
                     .label(SokobanSets::EaseMovement),

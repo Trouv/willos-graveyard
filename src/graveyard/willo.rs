@@ -28,7 +28,7 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Graveyard,
             ))
-            // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system(
                 push_sugar
@@ -37,7 +37,7 @@ impl Plugin for WilloPlugin {
                     .before(FromComponentSet),
             )
             .add_system_to_stage(
-                CoreStage::PostUpdate,
+                CoreSet::PostUpdate,
                 push_translation
                     .run_not_in_state(GameState::AssetLoading)
                     .before(SokobanSets::EaseMovement),
