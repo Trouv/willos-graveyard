@@ -58,7 +58,7 @@ fn main() {
 
     let mut app = App::new();
 
-    app.insert_resource(Msaa { samples: 1 })
+    app.insert_resource(Msaa::Off)
         .add_plugins(
             DefaultPlugins
                 .set(ImagePlugin::default_nearest())
