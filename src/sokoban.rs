@@ -108,11 +108,11 @@ pub enum SokobanCommand {
 
 /// System parameter providing an interface for commanding the SokobanPlugin.
 #[derive(SystemParam)]
-pub struct SokobanCommands<'w, 's> {
-    writer: EventWriter<'w, 's, SokobanCommand>,
+pub struct SokobanCommands<'w> {
+    writer: EventWriter<'w, SokobanCommand>,
 }
 
-impl<'w, 's> SokobanCommands<'w, 's> {
+impl<'w> SokobanCommands<'w> {
     /// Move a [SokobanBlock] entity in the given direction.
     ///
     /// Will perform the necessary collision checks and block pushes.
