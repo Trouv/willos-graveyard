@@ -188,10 +188,7 @@ fn spawn_level_card(
                                 ..default()
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            vertical: VerticalAlign::Center,
-                            horizontal: HorizontalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
                         ..Default::default()
                     })
                     .insert(FontScale::from(FontSize::Huge));

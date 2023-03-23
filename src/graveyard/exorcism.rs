@@ -135,10 +135,7 @@ fn spawn_death_card(
                                     ..default()
                                 },
                             )
-                            .with_alignment(TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            }),
+                            .with_alignment(TextAlignment::Center),
                             ..Default::default()
                         })
                         .insert(FontScale::from(FontSize::Medium));

@@ -136,10 +136,7 @@ fn spawn_level_select_card(
                             ..default()
                         },
                     )
-                    .with_alignment(TextAlignment {
-                        vertical: VerticalAlign::Center,
-                        horizontal: HorizontalAlign::Center,
-                    }),
+                    .with_alignment(TextAlignment::Center),
                     style: Style {
                         margin: UiRect {
                             top: Val::Px(10.),
