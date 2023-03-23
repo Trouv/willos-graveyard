@@ -10,7 +10,9 @@ impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(PlayZonePortion(0.75))
             .add_startup_system(spawn_camera)
-            .add_enter_system(GameState::Graveyard, fit_camera_around_play_zone_padded)
+            .add_system(
+                fit_camera_around_play_zone_padded.in_schedule(OnEnter(GameState::Graveyard)),
+            )
             .add_system(
                 fit_camera_around_play_zone_padded
                     .run_not_in_state(GameState::AssetLoading)

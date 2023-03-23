@@ -24,7 +24,7 @@ pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
     fn build(&self, app: &mut App) {
-        app.add_enter_system(GameState::LevelSelect, spawn_level_select_card)
+        app.add_system(spawn_level_select_card.in_schedule(OnEnter(GameState::LevelSelect)))
             .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
             .add_plugin(UiActionPlugin::<LevelSelectAction>::new())
             .add_system(pause.run_in_state(GameState::Graveyard))
@@ -34,7 +34,7 @@ impl Plugin for LevelSelectPlugin {
                     .run_in_state(GameState::LevelSelect)
                     .run_on_event::<UiAction<LevelSelectAction>>(),
             )
-            .add_exit_system(GameState::LevelSelect, drop_level_select_card)
+            .add_system(drop_level_select_card.in_schedule(OnExit(GameState::LevelSelect)))
             .add_system(despawn_level_select_card.run_on_event::<LevelSelectCardEvent>());
     }
 }

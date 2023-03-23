@@ -25,8 +25,10 @@ impl Plugin for LevelTransitionPlugin {
                     .run_not_in_state(GameState::LevelTransition)
                     .run_if_resource_added::<TransitionTo>(),
             )
-            .add_exit_system(GameState::LevelTransition, clean_up_transition_to_resource)
-            .add_enter_system(GameState::LevelTransition, spawn_level_card)
+            .add_system(
+                clean_up_transition_to_resource.in_schedule(OnExit(GameState::LevelTransition)),
+            )
+            .add_system(spawn_level_card.in_schedule(OnEnter(GameState::LevelTransition)))
             .add_systems(
                 (level_card_update, load_next_level)
                     .run_in_state(GameState::LevelTransition)
