@@ -10,7 +10,7 @@ use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::any::Any;
 
 /// Sets used by sokoban systems
-#[derive(SystemSet)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub enum SokobanSets {
     /// Set for the system that updates the visual position of sokoban entities via bevy_easings.
     EaseMovement,

@@ -5,7 +5,7 @@ use bevy::{
 };
 
 /// Set used by all systems in [FontScalePlugin].
-#[derive(SystemSet)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub struct FontScaleSet;
 
 /// Plugin with systems and resources that implement [FontScale] functionality.

@@ -11,7 +11,7 @@ use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
 
 /// Sets used by exorcism systems.
-#[derive(SystemSet)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub enum ExorcismSets {
     /// Set used by the system that checks Willo's position kills Willo if appropriate.
     CheckDeath,

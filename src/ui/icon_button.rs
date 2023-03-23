@@ -8,7 +8,7 @@ use crate::{
 };
 
 /// System label for systems that respond to `IconButton` changes.
-#[derive(SystemSet)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub struct IconButtonSet;
 
 /// Plugin for building "icon buttons" in the style of this game.

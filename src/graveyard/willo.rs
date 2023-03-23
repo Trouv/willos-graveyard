@@ -13,7 +13,7 @@ use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
 
 /// Sets used by Willo systems.
-#[derive(SystemSet)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub enum WilloSets {
     /// TODO: replace this with graveyard-level label since this is no longer used in this module.
     Input,

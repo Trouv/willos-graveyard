@@ -12,7 +12,7 @@ use crate::previous_component::{
 use bevy::prelude::*;
 
 /// Set used for detecting UI interactions and firing UiAction events.
-#[derive(SystemSet)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub struct UiActionSet;
 
 /// Plugin for associating UI buttons with logical actions.
