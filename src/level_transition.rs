@@ -130,7 +130,7 @@ fn spawn_level_card(
 
     commands
         .spawn(ImageBundle {
-            image: UiImage(level_card_texture),
+            image: UiImage::new(level_card_texture),
             ..Default::default()
         })
         .insert(

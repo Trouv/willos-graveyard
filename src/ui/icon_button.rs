@@ -48,7 +48,7 @@ impl PartialEq for IconButton {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (IconButton::NoIcon, IconButton::NoIcon) => true,
-            (IconButton::ImageIcon(UiImage(s)), IconButton::ImageIcon(UiImage(o))) => s == o,
+            (IconButton::ImageIcon(UiImage::new(s)), IconButton::ImageIcon(UiImage::new(o))) => s == o,
             (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
             _ => false,
         }
@@ -152,7 +152,7 @@ fn spawn_icon_button_elements(
             parent
                 .spawn(ButtonRadial)
                 .insert(ImageBundle {
-                    image: UiImage(assets.radial.clone()),
+                    image: UiImage::new(assets.radial.clone()),
                     style: Style {
                         position_type: PositionType::Absolute,
                         position: UiRect::all(Val::Percent(12.5)),
@@ -167,7 +167,7 @@ fn spawn_icon_button_elements(
             // Outline
             parent
                 .spawn(ImageBundle {
-                    image: UiImage(assets.outline.clone()),
+                    image: UiImage::new(assets.outline.clone()),
                     style: Style {
                         position_type: PositionType::Absolute,
                         position: UiRect::all(Val::Percent(0.)),
@@ -238,7 +238,7 @@ mod tests {
 
         let icon = Handle::weak(HandleId::random::<Image>());
         let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(icon.clone())));
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(icon.clone())));
 
         app.update();
 
@@ -301,7 +301,7 @@ mod tests {
 
         let first_icon = Handle::weak(HandleId::random::<Image>());
         let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(first_icon.clone())));
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(first_icon.clone())));
 
         app.update();
 
@@ -322,7 +322,7 @@ mod tests {
         *app.world
             .entity_mut(icon_button_entity)
             .get_mut::<IconButton>()
-            .unwrap() = IconButton::ImageIcon(UiImage(second_icon.clone()));
+            .unwrap() = IconButton::ImageIcon(UiImage::new(second_icon.clone()));
 
         app.update();
 
@@ -347,7 +347,7 @@ mod tests {
         let first_icon = Handle::weak(HandleId::random::<Image>());
 
         let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(first_icon.clone())));
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(first_icon.clone())));
 
         let additional_child_entity = app.world.spawn_empty().id();
 

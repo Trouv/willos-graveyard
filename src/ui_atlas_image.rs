@@ -86,7 +86,7 @@ fn resolve_ui_atlas_image(
 
         commands
             .entity(entity)
-            .insert(UiImage(images[ui_atlas_image.index].clone()));
+            .insert(UiImage::new(images[ui_atlas_image.index].clone()));
     }
 }
 

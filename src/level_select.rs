@@ -102,7 +102,7 @@ fn spawn_level_select_card(
 
     let level_select_entity = commands
         .spawn(ImageBundle {
-            image: UiImage(level_card_texture),
+            image: UiImage::new(level_card_texture),
             ..default()
         })
         .insert(
