@@ -26,7 +26,7 @@ impl Plugin for ExorcismPlugin {
             .add_system(
                 check_death
                     .run_in_state(GameState::Graveyard)
-                    .label(ExorcismSets::CheckDeath)
+                    .in_set(ExorcismSets::CheckDeath)
                     .after(FlushHistoryCommands),
             )
             .add_system_to_stage(CoreSet::PreUpdate, make_exorcism_card_visible)

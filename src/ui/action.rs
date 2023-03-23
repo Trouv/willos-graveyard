@@ -49,7 +49,7 @@ where
 
         app.add_event::<UiAction<T>>().add_system(
             ui_action::<T>
-                .label(UiActionSet)
+                .in_set(UiActionSet)
                 .after(TrackPreviousComponent),
         );
     }

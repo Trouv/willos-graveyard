@@ -44,7 +44,7 @@ impl Plugin for GravestonePlugin {
             .add_system(
                 gravestone_input
                     .run_in_state(GameState::Graveyard)
-                    .label(WilloSets::Input)
+                    .in_set(WilloSets::Input)
                     .before(FlushHistoryCommands),
             )
             .register_ldtk_entity::<GravestoneBundle>("W")

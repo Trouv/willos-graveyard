@@ -15,12 +15,12 @@ impl Plugin for SpriteSheetAnimationPlugin {
         app.add_event::<AnimationEvent>()
             .add_system(
                 sprite_sheet_animation
-                    .label(AnimationSet)
+                    .in_set(AnimationSet)
                     .after(FromComponentSet),
             )
             .add_system(
                 set_initial_sprite_index
-                    .label(AnimationSet)
+                    .in_set(AnimationSet)
                     .after(FromComponentSet),
             );
     }

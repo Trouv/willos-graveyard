@@ -29,7 +29,7 @@ where
         app.add_event::<HistoryCommands>().add_system(
             flush_history_commands::<C>
                 .run_in_state(self.state.clone())
-                .label(FlushHistoryCommands),
+                .in_set(FlushHistoryCommands),
         );
     }
 }

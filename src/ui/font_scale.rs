@@ -17,9 +17,9 @@ impl Plugin for FontScalePlugin {
             .add_system(
                 font_scale
                     .run_on_event::<WindowResized>()
-                    .label(FontScaleSet),
+                    .in_set(FontScaleSet),
             )
-            .add_system(font_scale.run_if(font_scale_changed).label(FontScaleSet));
+            .add_system(font_scale.run_if(font_scale_changed).in_set(FontScaleSet));
     }
 }
 

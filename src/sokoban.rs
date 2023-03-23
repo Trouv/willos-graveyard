@@ -53,7 +53,7 @@ where
                 flush_sokoban_commands
                     .run_in_state(self.state.clone())
                     .run_on_event::<SokobanCommand>()
-                    .label(SokobanSets::LogicalMovement),
+                    .in_set(SokobanSets::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
@@ -61,7 +61,7 @@ where
                 CoreSet::PostUpdate,
                 ease_movement
                     .run_in_state(self.state.clone())
-                    .label(SokobanSets::EaseMovement),
+                    .in_set(SokobanSets::EaseMovement),
             );
     }
 }

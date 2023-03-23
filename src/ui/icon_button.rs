@@ -21,7 +21,7 @@ impl Plugin for IconButtonPlugin {
         app.add_system(
             spawn_icon_button_elements
                 .run_not_in_state(GameState::AssetLoading)
-                .label(IconButtonSet),
+                .in_set(IconButtonSet),
         );
     }
 }
