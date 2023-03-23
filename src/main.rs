@@ -32,8 +32,9 @@ pub const UNIT_LENGTH: i32 = 32;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 /// All possible bevy states that the game can be in.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, States)]
 pub enum GameState {
+    #[default]
     /// Initial state of the game that perpares assets with `bevy_asset_loader`.
     AssetLoading,
     /// State that facilitates level transitions, see [level_transition].
