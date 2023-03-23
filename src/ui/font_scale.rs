@@ -16,7 +16,7 @@ impl Plugin for FontScalePlugin {
         app.init_resource::<FontSizeRatios>()
             .add_system(
                 font_scale
-                    .run_on_event::<WindowResized>()
+                    .run_if(on_event::<WindowResized>())
                     .in_set(FontScaleSet),
             )
             .add_system(font_scale.run_if(font_scale_changed).in_set(FontScaleSet));

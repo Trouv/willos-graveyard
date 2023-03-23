@@ -32,10 +32,10 @@ impl Plugin for LevelSelectPlugin {
             .add_system(
                 select_level
                     .run_if(in_state(GameState::LevelSelect))
-                    .run_on_event::<UiAction<LevelSelectAction>>(),
+                    .run_if(on_event::<UiAction<LevelSelectAction>>()),
             )
             .add_system(drop_level_select_card.in_schedule(OnExit(GameState::LevelSelect)))
-            .add_system(despawn_level_select_card.run_on_event::<LevelSelectCardEvent>());
+            .add_system(despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()));
     }
 }
 

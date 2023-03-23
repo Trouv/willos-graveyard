@@ -52,7 +52,7 @@ where
             .add_system(
                 flush_sokoban_commands
                     .run_if(in_state(self.state.clone()))
-                    .run_on_event::<SokobanCommand>()
+                    .run_if(on_event::<SokobanCommand>())
                     .in_set(SokobanSets::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update

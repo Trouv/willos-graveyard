@@ -33,7 +33,7 @@ impl Plugin for WilloPlugin {
             .add_system(
                 push_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_on_event::<PushEvent>()
+                    .run_if(on_event::<PushEvent>())
                     .before(FromComponentSet),
             )
             .add_system_to_stage(
@@ -45,12 +45,12 @@ impl Plugin for WilloPlugin {
             .add_system(
                 play_exorcism_animaton
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_on_event::<ExorcismEvent>(),
+                    .run_if(on_event::<ExorcismEvent>()),
             )
             .add_system(
                 history_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_on_event::<HistoryCommands>(),
+                    .run_if(on_event::<HistoryCommands>()),
             )
             .register_ldtk_entity::<WilloBundle>("Willo");
     }
