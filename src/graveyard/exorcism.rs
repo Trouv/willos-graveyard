@@ -80,7 +80,7 @@ fn spawn_death_card(
                     background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
-                    visibility: Visibility { is_visible: false },
+                    visibility: Visibility::Hidden,
                     ..Default::default()
                 })
                 .insert(
@@ -153,6 +153,6 @@ fn spawn_death_card(
 
 fn make_exorcism_card_visible(mut ui_query: Query<&mut Visibility, Added<ExorcismCard>>) {
     for mut visibility in ui_query.iter_mut() {
-        visibility.is_visible = true;
+        *visibility - Visibility::Hidden;
     }
 }
