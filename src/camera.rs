@@ -1,6 +1,6 @@
 //! Plugin for providing the game's camera logic, fitting around the play zone and control-display.
 use crate::GameState;
-use bevy::prelude::*;
+use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_ecs_ldtk::prelude::*;
 
 /// Plugin for providing the game's camera logic, fitting around the play zone and control-display.
@@ -32,7 +32,7 @@ fn fit_camera_around_play_zone_padded(
     mut camera_query: Query<(&mut Transform, &mut OrthographicProjection), With<Camera>>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
-    windows: Res<Windows>,
+    windows: Query<(&Window, With<PrimaryWindow>)>,
     play_zone_portion: Res<PlayZonePortion>,
 ) {
     if let Ok(level_handle) = level_query.get_single() {
@@ -40,7 +40,7 @@ fn fit_camera_around_play_zone_padded(
             let level_size = IVec2::new(level.level.px_wid, level.level.px_hei);
             let padded_level_size = level_size + IVec2::splat(32 * 2);
 
-            let window = windows.primary();
+            let window = windows.single();
 
             let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
             let aspect_ratio = window.width() / window.height();

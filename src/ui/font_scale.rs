@@ -1,5 +1,8 @@
 //! Plugin, systems, components, and resources for scaling fonts with window size.
-use bevy::{prelude::*, window::WindowResized};
+use bevy::{
+    prelude::*,
+    window::{PrimaryWindow, WindowResized},
+};
 
 /// Set used by all systems in [FontScalePlugin].
 #[derive(SystemSet)]
@@ -107,11 +110,11 @@ impl Default for FontSizeRatios {
 
 fn font_scale(
     mut query: Query<(&FontScale, &mut Text)>,
-    windows: Res<Windows>,
+    windows: Query<(&Window, With<PrimaryWindow>)>,
     ratios: Res<FontSizeRatios>,
 ) {
     for (font_scale, mut text) in query.iter_mut() {
-        if let Some(primary) = windows.get_primary() {
+        if let Ok(primary) = windows.get_single() {
             // To best support ultra-wide and vertical windows, we base the fonts off the smaller
             // of the two dimensions
             let min_length = primary.width().min(primary.height());
