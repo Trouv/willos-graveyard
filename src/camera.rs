@@ -1,6 +1,6 @@
 //! Plugin for providing the game's camera logic, fitting around the play zone and control-display.
 use crate::GameState;
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{prelude::*, render::camera::ScalingMode, window::PrimaryWindow};
 use bevy_ecs_ldtk::prelude::*;
 
 /// Plugin for providing the game's camera logic, fitting around the play zone and control-display.
@@ -34,7 +34,7 @@ fn fit_camera_around_play_zone_padded(
     mut camera_query: Query<(&mut Transform, &mut OrthographicProjection), With<Camera>>,
     level_query: Query<&Handle<LdtkLevel>>,
     levels: Res<Assets<LdtkLevel>>,
-    windows: Query<(&Window, With<PrimaryWindow>)>,
+    windows: Query<&Window, With<PrimaryWindow>>,
     play_zone_portion: Res<PlayZonePortion>,
 ) {
     if let Ok(level_handle) = level_query.get_single() {
@@ -49,9 +49,7 @@ fn fit_camera_around_play_zone_padded(
             let play_zone_ratio = aspect_ratio * **play_zone_portion;
 
             let (mut transform, mut projection) = camera_query.single_mut();
-            projection.scaling_mode = bevy::render::camera::ScalingMode::None;
-            projection.bottom = 0.;
-            projection.left = 0.;
+            projection.viewport_origin = Vec2::ZERO;
 
             let play_zone_size = if padded_level_ratio > play_zone_ratio {
                 // Level is "wide"
@@ -67,21 +65,25 @@ fn fit_camera_around_play_zone_padded(
                 )
             };
 
-            if play_zone_ratio > aspect_ratio {
+            projection.scaling_mode = if play_zone_ratio > aspect_ratio {
                 // Play zone is "wide"
                 let pixel_perfect_width =
                     ((play_zone_size.x / aspect_ratio).round() * aspect_ratio).round();
 
-                projection.right = pixel_perfect_width;
-                projection.top = (pixel_perfect_width / aspect_ratio).round();
+                ScalingMode::Fixed {
+                    width: pixel_perfect_width,
+                    height: (pixel_perfect_width / aspect_ratio).round(),
+                }
             } else {
                 // Play zone is "tall"
 
                 let pixel_perfect_height =
                     ((play_zone_size.y / aspect_ratio).round() * aspect_ratio).round();
 
-                projection.right = (pixel_perfect_height * aspect_ratio).round();
-                projection.top = pixel_perfect_height;
+                ScalingMode::Fixed {
+                    width: (pixel_perfect_height * aspect_ratio).round(),
+                    height: pixel_perfect_height,
+                }
             };
 
             transform.translation.x =

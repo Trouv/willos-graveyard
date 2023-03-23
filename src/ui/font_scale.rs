@@ -110,7 +110,7 @@ impl Default for FontSizeRatios {
 
 fn font_scale(
     mut query: Query<(&FontScale, &mut Text)>,
-    windows: Query<(&Window, With<PrimaryWindow>)>,
+    windows: Query<&Window, With<PrimaryWindow>>,
     ratios: Res<FontSizeRatios>,
 ) {
     for (font_scale, mut text) in query.iter_mut() {
