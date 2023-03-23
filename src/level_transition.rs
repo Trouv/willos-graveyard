@@ -23,7 +23,7 @@ impl Plugin for LevelTransitionPlugin {
                 trigger_level_transition_state
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(not(in_state(GameState::LevelTransition)))
-                    .run_if_resource_added::<TransitionTo>(),
+                    .run_if(resource_added::<TransitionTo>()),
             )
             .add_system(
                 clean_up_transition_to_resource.in_schedule(OnExit(GameState::LevelTransition)),
