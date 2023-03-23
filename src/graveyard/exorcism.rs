@@ -25,12 +25,12 @@ impl Plugin for ExorcismPlugin {
         app.add_event::<ExorcismEvent>()
             .add_system(
                 check_death
-                    .run_in_state(GameState::Graveyard)
+                    .run_if(in_state(GameState::Graveyard))
                     .in_set(ExorcismSets::CheckDeath)
                     .after(FlushHistoryCommands),
             )
             .add_system_to_stage(CoreSet::PreUpdate, make_exorcism_card_visible)
-            .add_system(spawn_death_card.run_in_state(GameState::Graveyard))
+            .add_system(spawn_death_card.run_if(in_state(GameState::Graveyard)))
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }

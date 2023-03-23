@@ -28,7 +28,7 @@ where
     fn build(&self, app: &mut App) {
         app.add_event::<HistoryCommands>().add_system(
             flush_history_commands::<C>
-                .run_in_state(self.state.clone())
+                .run_if(in_state(self.state.clone()))
                 .in_set(FlushHistoryCommands),
         );
     }

@@ -32,24 +32,24 @@ impl Plugin for WilloPlugin {
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system(
                 push_sugar
-                    .run_not_in_state(GameState::AssetLoading)
+                    .run_if(not(in_state(GameState::AssetLoading)))
                     .run_on_event::<PushEvent>()
                     .before(FromComponentSet),
             )
             .add_system_to_stage(
                 CoreSet::PostUpdate,
                 push_translation
-                    .run_not_in_state(GameState::AssetLoading)
+                    .run_if(not(in_state(GameState::AssetLoading)))
                     .before(SokobanSets::EaseMovement),
             )
             .add_system(
                 play_exorcism_animaton
-                    .run_not_in_state(GameState::AssetLoading)
+                    .run_if(not(in_state(GameState::AssetLoading)))
                     .run_on_event::<ExorcismEvent>(),
             )
             .add_system(
                 history_sugar
-                    .run_not_in_state(GameState::AssetLoading)
+                    .run_if(not(in_state(GameState::AssetLoading)))
                     .run_on_event::<HistoryCommands>(),
             )
             .register_ldtk_entity::<WilloBundle>("Willo");

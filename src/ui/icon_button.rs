@@ -20,7 +20,7 @@ impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             spawn_icon_button_elements
-                .run_not_in_state(GameState::AssetLoading)
+                .run_if(not(in_state(GameState::AssetLoading)))
                 .in_set(IconButtonSet),
         );
     }

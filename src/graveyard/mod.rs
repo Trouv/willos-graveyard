@@ -53,7 +53,7 @@ impl Plugin for GraveyardPlugin {
             .add_plugin(wind::WindPlugin)
             .add_system(
                 graveyard_input
-                    .run_in_state(GameState::Graveyard)
+                    .run_if(in_state(GameState::Graveyard))
                     .in_set(willo::WilloSets::Input)
                     .before(FlushHistoryCommands),
             );

@@ -21,8 +21,8 @@ impl Plugin for LevelTransitionPlugin {
             .add_plugin(EventSchedulerPlugin::<LevelCardEvent>::new())
             .add_system(
                 trigger_level_transition_state
-                    .run_not_in_state(GameState::AssetLoading)
-                    .run_not_in_state(GameState::LevelTransition)
+                    .run_if(not(in_state(GameState::AssetLoading)))
+                    .run_if(not(in_state(GameState::LevelTransition)))
                     .run_if_resource_added::<TransitionTo>(),
             )
             .add_system(
@@ -31,7 +31,7 @@ impl Plugin for LevelTransitionPlugin {
             .add_system(spawn_level_card.in_schedule(OnEnter(GameState::LevelTransition)))
             .add_systems(
                 (level_card_update, load_next_level)
-                    .run_in_state(GameState::LevelTransition)
+                    .run_if(in_state(GameState::LevelTransition))
                     .run_on_event::<LevelCardEvent>(),
             )
             // level_card_update should be performed during both graveyard and level transition
@@ -39,7 +39,7 @@ impl Plugin for LevelTransitionPlugin {
             // state
             .add_system(
                 level_card_update
-                    .run_in_state(GameState::Graveyard)
+                    .run_if(in_state(GameState::Graveyard))
                     .run_on_event::<LevelCardEvent>(),
             );
     }

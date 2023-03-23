@@ -40,10 +40,10 @@ impl Plugin for GravestonePlugin {
                 load_gravestone_control_settings(asset_folder)
                     .expect("unable to load gravestone control settings"),
             )
-            .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
+            .add_system(spawn_gravestone_body.run_if(in_state(GameState::LevelTransition)))
             .add_system(
                 gravestone_input
-                    .run_in_state(GameState::Graveyard)
+                    .run_if(in_state(GameState::Graveyard))
                     .in_set(WilloSets::Input)
                     .before(FlushHistoryCommands),
             )

@@ -51,7 +51,7 @@ where
             .insert_resource(self.layer_identifier.clone())
             .add_system(
                 flush_sokoban_commands
-                    .run_in_state(self.state.clone())
+                    .run_if(in_state(self.state.clone()))
                     .run_on_event::<SokobanCommand>()
                     .in_set(SokobanSets::LogicalMovement),
             )
@@ -60,7 +60,7 @@ where
             .add_system_to_stage(
                 CoreSet::PostUpdate,
                 ease_movement
-                    .run_in_state(self.state.clone())
+                    .run_if(in_state(self.state.clone()))
                     .in_set(SokobanSets::EaseMovement),
             );
     }

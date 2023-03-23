@@ -27,11 +27,11 @@ impl Plugin for LevelSelectPlugin {
         app.add_system(spawn_level_select_card.in_schedule(OnEnter(GameState::LevelSelect)))
             .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
             .add_plugin(UiActionPlugin::<LevelSelectAction>::new())
-            .add_system(pause.run_in_state(GameState::Graveyard))
-            .add_system(unpause.run_in_state(GameState::LevelSelect))
+            .add_system(pause.run_if(in_state(GameState::Graveyard)))
+            .add_system(unpause.run_if(in_state(GameState::LevelSelect)))
             .add_system(
                 select_level
-                    .run_in_state(GameState::LevelSelect)
+                    .run_if(in_state(GameState::LevelSelect))
                     .run_on_event::<UiAction<LevelSelectAction>>(),
             )
             .add_system(drop_level_select_card.in_schedule(OnExit(GameState::LevelSelect)))

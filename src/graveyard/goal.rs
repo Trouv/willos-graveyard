@@ -16,14 +16,14 @@ impl Plugin for GoalPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GoalEvent>()
             .init_resource::<GoalGhostSettings>()
-            .add_system(spawn_goal_ghosts.run_in_state(GameState::LevelTransition))
+            .add_system(spawn_goal_ghosts.run_if(in_state(GameState::LevelTransition)))
             .add_system(
                 check_goal
-                    .run_in_state(GameState::Graveyard)
+                    .run_if(in_state(GameState::Graveyard))
                     .after(ExorcismSets::CheckDeath),
             )
-            .add_system(goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
-            .add_system(goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
+            .add_system(goal_ghost_animation.run_if(not(in_state(GameState::AssetLoading))))
+            .add_system(goal_ghost_event_sugar.run_if(not(in_state(GameState::AssetLoading))))
             .register_ldtk_entity::<GoalBundle>("Goal");
     }
 }

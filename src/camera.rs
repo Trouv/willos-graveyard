@@ -15,7 +15,7 @@ impl Plugin for CameraPlugin {
             )
             .add_system(
                 fit_camera_around_play_zone_padded
-                    .run_not_in_state(GameState::AssetLoading)
+                    .run_if(not(in_state(GameState::AssetLoading)))
                     .run_on_event::<bevy::window::WindowResized>(),
             );
     }

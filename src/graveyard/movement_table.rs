@@ -21,12 +21,12 @@ impl Plugin for MovementTablePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             movement_table_update
-                .run_in_state(GameState::Graveyard)
+                .run_if(in_state(GameState::Graveyard))
                 .before(WilloSets::Input),
         )
         .add_system(
             move_willo_by_table
-                .run_in_state(GameState::Graveyard)
+                .run_if(in_state(GameState::Graveyard))
                 .after(SokobanSets::LogicalMovement)
                 .after(FlushHistoryCommands)
                 .before(FromComponentSet),
