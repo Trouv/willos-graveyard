@@ -27,13 +27,10 @@ impl Plugin for LevelTransitionPlugin {
             )
             .add_exit_system(GameState::LevelTransition, clean_up_transition_to_resource)
             .add_enter_system(GameState::LevelTransition, spawn_level_card)
-            .add_system_set(
-                ConditionSet::new()
+            .add_systems(
+                (level_card_update, load_next_level)
                     .run_in_state(GameState::LevelTransition)
-                    .run_on_event::<LevelCardEvent>()
-                    .with_system(level_card_update)
-                    .with_system(load_next_level)
-                    .into(),
+                    .run_on_event::<LevelCardEvent>(),
             )
             // level_card_update should be performed during both graveyard and level transition
             // states since it cleans up the level card after it's done falling during the graveyard
