@@ -36,11 +36,11 @@ impl Plugin for WilloPlugin {
                     .run_if(on_event::<PushEvent>())
                     .before(FromComponentSet),
             )
-            .add_system_to_stage(
-                CoreSet::PostUpdate,
+            .add_system(
                 push_translation
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .before(SokobanSets::EaseMovement),
+                    .before(SokobanSets::EaseMovement)
+                    .in_base_set(CoreSet::PostUpdate),
             )
             .add_system(
                 play_exorcism_animaton

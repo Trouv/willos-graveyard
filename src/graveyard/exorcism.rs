@@ -29,7 +29,7 @@ impl Plugin for ExorcismPlugin {
                     .in_set(ExorcismSets::CheckDeath)
                     .after(FlushHistoryCommands),
             )
-            .add_system_to_stage(CoreSet::PreUpdate, make_exorcism_card_visible)
+            .add_system(make_exorcism_card_visible.in_base_set(CoreSet::PreUpdate))
             .add_system(spawn_death_card.run_if(in_state(GameState::Graveyard)))
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }

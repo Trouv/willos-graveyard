@@ -57,11 +57,11 @@ where
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
-            .add_system_to_stage(
-                CoreSet::PostUpdate,
+            .add_system(
                 ease_movement
                     .run_if(in_state(self.state.clone()))
-                    .in_set(SokobanSets::EaseMovement),
+                    .in_set(SokobanSets::EaseMovement)
+                    .in_base_set(CoreSet::PostUpdate),
             );
     }
 }
