@@ -7,7 +7,6 @@
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
-use std::any::Any;
 
 /// Sets used by sokoban systems
 #[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
@@ -19,12 +18,18 @@ pub enum SokobanSets {
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
-pub struct SokobanPlugin<S> {
+pub struct SokobanPlugin<S>
+where
+    S: States,
+{
     state: S,
     layer_identifier: SokobanLayerIdentifier,
 }
 
-impl<S> SokobanPlugin<S> {
+impl<S> SokobanPlugin<S>
+where
+    S: States,
+{
     /// Constructor for the plugin.
     ///
     /// Allows the user to specify a particular iyes_loopless state to run the plugin in.
@@ -43,7 +48,7 @@ impl<S> SokobanPlugin<S> {
 
 impl<S> Plugin for SokobanPlugin<S>
 where
-    S: Any + Send + Sync + Clone + std::fmt::Debug + std::hash::Hash + Eq,
+    S: States,
 {
     fn build(&self, app: &mut App) {
         app.add_event::<SokobanCommand>()
