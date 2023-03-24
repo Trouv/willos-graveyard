@@ -145,7 +145,7 @@ impl SokobanBlock {
     ///     sokoban_block: SokobanBlock,
     /// }
     /// ```
-    pub fn new_static(_: EntityInstance) -> SokobanBlock {
+    pub fn new_static(_: &EntityInstance) -> SokobanBlock {
         SokobanBlock::Static
     }
 
@@ -163,7 +163,7 @@ impl SokobanBlock {
     ///     sokoban_block: SokobanBlock,
     /// }
     /// ```
-    pub fn new_dynamic(_: EntityInstance) -> SokobanBlock {
+    pub fn new_dynamic(_: &EntityInstance) -> SokobanBlock {
         SokobanBlock::Dynamic
     }
 }
