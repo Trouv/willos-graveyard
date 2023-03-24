@@ -46,11 +46,11 @@ where
     fn build(&self, app: &mut App) {
         app.add_system(
             spawn_button_prompt::<T, Changed<UiAction<T>>>
-                .run_if_resource_exists::<ButtonPromptAssets>(),
+                .run_if(resource_exists::<ButtonPromptAssets>()),
         )
         .add_system(
             spawn_button_prompt::<T, ()>
-                .run_if_resource_exists::<ButtonPromptAssets>()
+                .run_if(resource_exists::<ButtonPromptAssets>())
                 .run_if(resource_changed::<InputMap<T>>),
         );
     }
