@@ -48,7 +48,10 @@ impl PartialEq for IconButton {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (IconButton::NoIcon, IconButton::NoIcon) => true,
-            (IconButton::ImageIcon(UiImage::new(s)), IconButton::ImageIcon(UiImage::new(o))) => s == o,
+            (
+                IconButton::ImageIcon(UiImage { texture: s, .. }),
+                IconButton::ImageIcon(UiImage { texture: o, .. }),
+            ) => s == o,
             (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
             _ => false,
         }
@@ -147,7 +150,7 @@ fn spawn_icon_button_elements(
             .filter(|(_, p)| p.get() == entity)
             .for_each(|(e, _)| commands.entity(e).despawn_recursive());
 
-        commands.entity(entity).add_children(|parent| {
+        commands.entity(entity).with_children(|parent| {
             // Radial
             parent
                 .spawn(ButtonRadial)
@@ -300,8 +303,10 @@ mod tests {
         asset_collection_setup(&mut app);
 
         let first_icon = Handle::weak(HandleId::random::<Image>());
-        let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(first_icon.clone())));
+        let icon_button_entity = spawn_icon_button(
+            &mut app,
+            IconButton::ImageIcon(UiImage::new(first_icon.clone())),
+        );
 
         app.update();
 
@@ -346,8 +351,10 @@ mod tests {
 
         let first_icon = Handle::weak(HandleId::random::<Image>());
 
-        let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(first_icon.clone())));
+        let icon_button_entity = spawn_icon_button(
+            &mut app,
+            IconButton::ImageIcon(UiImage::new(first_icon.clone())),
+        );
 
         let additional_child_entity = app.world.spawn_empty().id();
 
