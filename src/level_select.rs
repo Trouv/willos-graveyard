@@ -194,24 +194,27 @@ fn spawn_level_select_card(
     event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
 }
 
-fn pause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
+fn pause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
     if input.just_pressed(GraveyardAction::Pause) {
-        commands.insert_resource(NextState(GameState::LevelSelect));
+        next_state.set(GameState::LevelSelect);
     }
 }
 
-fn unpause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
+fn unpause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
     if input.just_pressed(GraveyardAction::Pause) {
-        commands.insert_resource(NextState(GameState::Graveyard));
+        next_state.set(GameState::Graveyard);
     }
 }
 
-fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction<LevelSelectAction>>) {
+fn select_level(
+    mut commands: Commands,
+    mut next_state: ResMut<NextState<GameState>>,
+    mut ui_actions: EventReader<UiAction<LevelSelectAction>>,
+) {
     for action in ui_actions.iter() {
         let UiAction(LevelSelectAction::GoToLevel(level_selection)) = action;
-        commands.insert_resource(NextState(GameState::Graveyard));
         commands.insert_resource(TransitionTo(level_selection.clone()));
-        commands.insert_resource(NextState(GameState::LevelTransition));
+        next_state.set(GameState::LevelTransition);
     }
 }
 

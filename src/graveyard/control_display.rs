@@ -262,11 +262,12 @@ mod tests {
         app.update();
 
         app.world
-            .insert_resource(NextState(GameState::LevelTransition));
+            .insert_resource(NextState(Some(GameState::LevelTransition)));
 
         app.update();
 
-        app.world.insert_resource(NextState(GameState::Graveyard));
+        app.world
+            .insert_resource(NextState(Some(GameState::Graveyard)));
 
         app.update();
     }

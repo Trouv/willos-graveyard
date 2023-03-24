@@ -153,6 +153,7 @@ fn check_goal(
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
     block_query: Query<(Entity, &GridCoords), With<GraveId>>,
     mut goal_events: EventWriter<GoalEvent>,
+    mut next_state: ResMut<NextState<GameState>>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     audio: Res<Audio>,
@@ -196,7 +197,7 @@ fn check_goal(
     }
 
     if level_goal_met {
-        commands.insert_resource(NextState(GameState::LevelTransition));
+        next_state.set(GameState::LevelTransition);
 
         if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
             if let Some((level_index, _)) = ldtk_asset

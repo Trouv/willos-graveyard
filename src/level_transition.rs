@@ -68,8 +68,8 @@ fn schedule_level_card(level_card_events: &mut EventScheduler<LevelCardEvent>) {
     level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(4500));
 }
 
-fn trigger_level_transition_state(mut commands: Commands) {
-    commands.insert_resource(NextState(GameState::LevelTransition));
+fn trigger_level_transition_state(mut next_state: ResMut<NextState<GameState>>) {
+    next_state.set(GameState::LevelTransition);
 }
 
 fn clean_up_transition_to_resource(mut commands: Commands) {
@@ -240,6 +240,7 @@ fn load_next_level(
 
 fn level_card_update(
     mut commands: Commands,
+    mut next_state: ResMut<NextState<GameState>>,
     mut card_query: Query<(Entity, &mut Style), With<LevelCard>>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
@@ -262,7 +263,7 @@ fn level_card_update(
                         },
                     ));
 
-                    commands.insert_resource(NextState(GameState::Graveyard));
+                    next_state.set(GameState::Graveyard);
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT
