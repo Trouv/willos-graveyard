@@ -74,7 +74,7 @@ fn main() {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
         })
-        .add_loopless_state(GameState::AssetLoading)
+        .add_state::<GameState>()
         .add_loading_state(
             LoadingState::new(GameState::AssetLoading)
                 .continue_to_state(GameState::LevelTransition)
