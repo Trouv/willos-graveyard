@@ -12,6 +12,11 @@ use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
 use std::time::Duration;
 
+#[derive(Clone, Debug, Eq, PartialEq, Hash, SystemSet)]
+enum LevelTransitionSystemSet {
+    OnLevelCardEvent,
+}
+
 /// Plugin providing functionality for level transitions.
 pub struct LevelTransitionPlugin;
 
@@ -31,6 +36,10 @@ impl Plugin for LevelTransitionPlugin {
             .add_system(spawn_level_card.in_schedule(OnEnter(GameState::LevelTransition)))
             .add_systems(
                 (level_card_update, load_next_level)
+                    .in_set(LevelTransitionSystemSet::OnLevelCardEvent),
+            )
+            .configure_set(
+                LevelTransitionSystemSet::OnLevelCardEvent
                     .run_if(in_state(GameState::LevelTransition))
                     .run_if(on_event::<LevelCardEvent>()),
             )
