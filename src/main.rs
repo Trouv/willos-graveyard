@@ -103,7 +103,7 @@ fn main() {
 
     #[cfg(feature = "inspector")]
     {
-        app.add_plugin(WorldInspectorPlugin);
+        app.add_plugin(WorldInspectorPlugin::new());
     }
 
     app.run()
