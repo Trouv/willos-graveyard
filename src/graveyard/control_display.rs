@@ -81,7 +81,7 @@ fn spawn_control_display(
                 control_display
                     .spawn(NodeBundle {
                         style: Style {
-                            aspect_ratio: Some((0.8 * 2.) / 3.),
+                            aspect_ratio: Some(3. / 2.),
                             size: Size {
                                 width: Val::Percent(80.),
                                 ..default()
@@ -148,7 +148,7 @@ fn spawn_control_display(
                 control_display
                     .spawn(NodeBundle {
                         style: Style {
-                            aspect_ratio: Some((1. * 0.8) / 3.),
+                            aspect_ratio: Some(3.),
                             size: Size {
                                 width: Val::Percent(80.),
                                 ..default()
