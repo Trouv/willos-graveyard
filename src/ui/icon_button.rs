@@ -80,6 +80,7 @@ impl IconButtonBundle {
             icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
+                    flex_grow: 1.,
                     aspect_ratio: Some(1.),
                     ..default()
                 },
