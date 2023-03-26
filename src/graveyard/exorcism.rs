@@ -153,6 +153,6 @@ fn spawn_death_card(
 
 fn make_exorcism_card_visible(mut ui_query: Query<&mut Visibility, Added<ExorcismCard>>) {
     for mut visibility in ui_query.iter_mut() {
-        *visibility = Visibility::Hidden;
+        *visibility = Visibility::Inherited;
     }
 }
