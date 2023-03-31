@@ -1,5 +1,5 @@
 //! Plugin providing functionality for basic sprite sheet animations.
-use crate::from_component::{FromComponentSet, FromComponentPlugin};
+use crate::from_component::{FromComponentPlugin, FromComponentSet};
 use bevy::prelude::*;
 use std::{marker::PhantomData, ops::Range};
 
