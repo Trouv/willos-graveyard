@@ -457,13 +457,16 @@ mod tests {
     }
 
     fn app_setup() -> App {
-        #[derive(Clone, PartialEq, Eq, Debug, Hash)]
-        struct State;
+        #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, States)]
+        enum State {
+            #[default]
+            Only,
+        }
 
         let mut app = App::new();
 
-        app.add_loopless_state(State)
-            .add_plugin(SokobanPlugin::new(State, "MyLayerIdentifier"));
+        app.add_state::<State>()
+            .add_plugin(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
 
         app.world.spawn(LayerMetadata {
             c_wid: 3,

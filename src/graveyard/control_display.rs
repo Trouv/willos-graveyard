@@ -227,7 +227,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_loopless_state(GameState::AssetLoading)
+        app.add_state::<GameState>()
             .add_plugin(ControlDisplayPlugin)
             .insert_resource(PlayZonePortion(0.5));
 

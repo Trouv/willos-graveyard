@@ -215,7 +215,8 @@ mod tests {
 
         app.add_plugin(IconButtonPlugin)
             .add_plugin(HierarchyPlugin)
-            .add_loopless_state(GameState::LevelTransition);
+            .add_state::<GameState>()
+            .insert_resource(NextState(Some(GameState::LevelTransition)));
 
         app
     }
@@ -256,11 +257,11 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[0].0, asset_collection.radial);
+        assert_eq!(children[0].texture, asset_collection.radial);
 
-        assert_eq!(children[1].0, asset_collection.outline);
+        assert_eq!(children[1].texture, asset_collection.outline);
 
-        assert_eq!(children[2].0, icon);
+        assert_eq!(children[2].texture, icon);
     }
 
     #[test]
@@ -291,9 +292,9 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[0].1 .0, asset_collection.radial);
+        assert_eq!(children[0].1.texture, asset_collection.radial);
 
-        assert_eq!(children[1].1 .0, asset_collection.outline);
+        assert_eq!(children[1].1.texture, asset_collection.outline);
 
         assert_eq!(children[2].0.unwrap().texture_atlas, icon);
     }
@@ -321,7 +322,7 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[2].0, first_icon);
+        assert_eq!(children[2].texture, first_icon);
 
         // Change the component
         let second_icon = Handle::weak(HandleId::random::<Image>());
@@ -342,7 +343,7 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[2].0, second_icon);
+        assert_eq!(children[2].texture, second_icon);
     }
 
     #[test]

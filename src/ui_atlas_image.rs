@@ -177,7 +177,7 @@ mod tests {
                 .entity(ui_atlas_image_entity)
                 .get::<UiImage>()
                 .unwrap()
-                .0,
+                .texture,
             image_handles[1]
         );
     }
@@ -204,7 +204,7 @@ mod tests {
                 .entity(ui_atlas_image_entity)
                 .get::<UiImage>()
                 .unwrap()
-                .0,
+                .texture,
             image_handles[1]
         );
 
@@ -229,7 +229,7 @@ mod tests {
                 .entity(ui_atlas_image_entity)
                 .get::<UiImage>()
                 .unwrap()
-                .0,
+                .texture,
             image_handles[2]
         );
 
