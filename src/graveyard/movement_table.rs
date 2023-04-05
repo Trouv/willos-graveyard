@@ -1,18 +1,17 @@
 //! Plugin and components providing functionality for the movement table, which alters Willo's
 //! abilities based off the placement of gravestones.
 use crate::{
-    from_component::FromComponentLabel,
+    from_component::FromComponentSet,
     graveyard::{
         gravestone::GraveId,
-        willo::{MovementTimer, WilloAnimationState, WilloLabels, WilloState},
+        willo::{MovementTimer, WilloAnimationState, WilloSets, WilloState},
     },
     history::FlushHistoryCommands,
-    sokoban::{Direction, SokobanCommands, SokobanLabels},
+    sokoban::{Direction, SokobanCommands, SokobanSets},
     GameState,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 
 /// Plugin providing functionality for the movement table, which alters Willo's abilities based off
 /// the placement of gravestones.
@@ -22,15 +21,15 @@ impl Plugin for MovementTablePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             movement_table_update
-                .run_in_state(GameState::Graveyard)
-                .before(WilloLabels::Input),
+                .run_if(in_state(GameState::Graveyard))
+                .before(WilloSets::Input),
         )
         .add_system(
             move_willo_by_table
-                .run_in_state(GameState::Graveyard)
-                .after(SokobanLabels::LogicalMovement)
+                .run_if(in_state(GameState::Graveyard))
+                .after(SokobanSets::LogicalMovement)
                 .after(FlushHistoryCommands)
-                .before(FromComponentLabel),
+                .before(FromComponentSet),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");
     }

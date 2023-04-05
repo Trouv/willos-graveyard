@@ -11,7 +11,7 @@ pub struct UiAtlasImagePlugin;
 impl Plugin for UiAtlasImagePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UiAtlasImageMap>()
-            .add_system_to_stage(CoreStage::PostUpdate, resolve_ui_atlas_image);
+            .add_system(resolve_ui_atlas_image.in_base_set(CoreSet::PostUpdate));
     }
 }
 
@@ -86,7 +86,7 @@ fn resolve_ui_atlas_image(
 
         commands
             .entity(entity)
-            .insert(UiImage(images[ui_atlas_image.index].clone()));
+            .insert(UiImage::new(images[ui_atlas_image.index].clone()));
     }
 }
 
@@ -177,7 +177,7 @@ mod tests {
                 .entity(ui_atlas_image_entity)
                 .get::<UiImage>()
                 .unwrap()
-                .0,
+                .texture,
             image_handles[1]
         );
     }
@@ -204,7 +204,7 @@ mod tests {
                 .entity(ui_atlas_image_entity)
                 .get::<UiImage>()
                 .unwrap()
-                .0,
+                .texture,
             image_handles[1]
         );
 
@@ -229,7 +229,7 @@ mod tests {
                 .entity(ui_atlas_image_entity)
                 .get::<UiImage>()
                 .unwrap()
-                .0,
+                .texture,
             image_handles[2]
         );
 

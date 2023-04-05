@@ -1,12 +1,11 @@
 //! Plugin providing functionality for goal tiles with victory logic and goal ghost visuals.
 use crate::{
-    graveyard::{exorcism::ExorcismLabels, gravestone::GraveId},
+    graveyard::{exorcism::ExorcismSets, gravestone::GraveId},
     level_transition::TransitionTo,
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use rand::Rng;
 use std::{ops::Range, time::Duration};
 
@@ -17,14 +16,14 @@ impl Plugin for GoalPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GoalEvent>()
             .init_resource::<GoalGhostSettings>()
-            .add_system(spawn_goal_ghosts.run_in_state(GameState::LevelTransition))
+            .add_system(spawn_goal_ghosts.run_if(in_state(GameState::LevelTransition)))
             .add_system(
                 check_goal
-                    .run_in_state(GameState::Graveyard)
-                    .after(ExorcismLabels::CheckDeath),
+                    .run_if(in_state(GameState::Graveyard))
+                    .after(ExorcismSets::CheckDeath),
             )
-            .add_system(goal_ghost_animation.run_not_in_state(GameState::AssetLoading))
-            .add_system(goal_ghost_event_sugar.run_not_in_state(GameState::AssetLoading))
+            .add_system(goal_ghost_animation.run_if(not(in_state(GameState::AssetLoading))))
+            .add_system(goal_ghost_event_sugar.run_if(not(in_state(GameState::AssetLoading))))
             .register_ldtk_entity::<GoalBundle>("Goal");
     }
 }
@@ -154,6 +153,7 @@ fn check_goal(
     mut goal_query: Query<(Entity, &mut Goal, &GridCoords), With<Goal>>,
     block_query: Query<(Entity, &GridCoords), With<GraveId>>,
     mut goal_events: EventWriter<GoalEvent>,
+    mut next_state: ResMut<NextState<GameState>>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     audio: Res<Audio>,
@@ -197,7 +197,7 @@ fn check_goal(
     }
 
     if level_goal_met {
-        commands.insert_resource(NextState(GameState::LevelTransition));
+        next_state.set(GameState::LevelTransition);
 
         if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
             if let Some((level_index, _)) = ldtk_asset

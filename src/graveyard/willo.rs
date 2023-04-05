@@ -1,21 +1,20 @@
 //! Plugin, components and events providing functionality for Willo, the player character.
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
-    from_component::FromComponentLabel,
+    from_component::FromComponentSet,
     graveyard::{exorcism::ExorcismEvent, gravestone::GraveId},
     history::{History, HistoryCommands, HistoryPlugin},
-    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanLabels},
+    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanSets},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
-use iyes_loopless::prelude::*;
 use std::time::Duration;
 
-/// Labels used by Willo systems.
-#[derive(SystemLabel)]
-pub enum WilloLabels {
+/// Sets used by Willo systems.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
+pub enum WilloSets {
     /// TODO: replace this with graveyard-level label since this is no longer used in this module.
     Input,
 }
@@ -29,29 +28,29 @@ impl Plugin for WilloPlugin {
             .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
                 GameState::Graveyard,
             ))
-            // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
             .add_system(
                 push_sugar
-                    .run_not_in_state(GameState::AssetLoading)
-                    .run_on_event::<PushEvent>()
-                    .before(FromComponentLabel),
+                    .run_if(not(in_state(GameState::AssetLoading)))
+                    .run_if(on_event::<PushEvent>())
+                    .before(FromComponentSet),
             )
-            .add_system_to_stage(
-                CoreStage::PostUpdate,
+            .add_system(
                 push_translation
-                    .run_not_in_state(GameState::AssetLoading)
-                    .before(SokobanLabels::EaseMovement),
+                    .run_if(not(in_state(GameState::AssetLoading)))
+                    .before(SokobanSets::EaseMovement)
+                    .in_base_set(CoreSet::PostUpdate),
             )
             .add_system(
                 play_exorcism_animaton
-                    .run_not_in_state(GameState::AssetLoading)
-                    .run_on_event::<ExorcismEvent>(),
+                    .run_if(not(in_state(GameState::AssetLoading)))
+                    .run_if(on_event::<ExorcismEvent>()),
             )
             .add_system(
                 history_sugar
-                    .run_not_in_state(GameState::AssetLoading)
-                    .run_on_event::<HistoryCommands>(),
+                    .run_if(not(in_state(GameState::AssetLoading)))
+                    .run_if(on_event::<HistoryCommands>()),
             )
             .register_ldtk_entity::<WilloBundle>("Willo");
     }

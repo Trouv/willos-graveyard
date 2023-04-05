@@ -24,7 +24,6 @@ use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 
 /// Length of the sides of tiles on the game-grid in bevy's coordinate space.
 pub const UNIT_LENGTH: i32 = 32;
@@ -33,8 +32,9 @@ pub const UNIT_LENGTH: i32 = 32;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 /// All possible bevy states that the game can be in.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, States)]
 pub enum GameState {
+    #[default]
     /// Initial state of the game that perpares assets with `bevy_asset_loader`.
     AssetLoading,
     /// State that facilitates level transitions, see [level_transition].
@@ -59,7 +59,7 @@ fn main() {
 
     let mut app = App::new();
 
-    app.insert_resource(Msaa { samples: 1 })
+    app.insert_resource(Msaa::Off)
         .add_plugins(
             DefaultPlugins
                 .set(ImagePlugin::default_nearest())
@@ -74,15 +74,23 @@ fn main() {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
         })
-        .add_loopless_state(GameState::AssetLoading)
+        .add_state::<GameState>()
         .add_loading_state(
             LoadingState::new(GameState::AssetLoading)
-                .continue_to_state(GameState::LevelTransition)
-                .with_collection::<AssetHolder>()
-                .with_collection::<graveyard::gravestone::GravestoneAssets>()
-                .with_collection::<graveyard::control_display::ControlDisplayAssets>()
-                .with_collection::<ui::icon_button::IconButtonAssets>()
-                .with_collection::<ui::button_prompt::ButtonPromptAssets>(),
+                .continue_to_state(GameState::LevelTransition),
+        )
+        .add_collection_to_loading_state::<_, AssetHolder>(GameState::AssetLoading)
+        .add_collection_to_loading_state::<_, graveyard::gravestone::GravestoneAssets>(
+            GameState::AssetLoading,
+        )
+        .add_collection_to_loading_state::<_, graveyard::control_display::ControlDisplayAssets>(
+            GameState::AssetLoading,
+        )
+        .add_collection_to_loading_state::<_, ui::icon_button::IconButtonAssets>(
+            GameState::AssetLoading,
+        )
+        .add_collection_to_loading_state::<_, ui::button_prompt::ButtonPromptAssets>(
+            GameState::AssetLoading,
         )
         .add_plugin(graveyard::GraveyardPlugin)
         .add_plugin(SpriteSheetAnimationPlugin)
@@ -95,7 +103,7 @@ fn main() {
 
     #[cfg(feature = "inspector")]
     {
-        app.add_plugin(WorldInspectorPlugin);
+        app.add_plugin(WorldInspectorPlugin::new());
     }
 
     app.run()

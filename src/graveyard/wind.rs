@@ -2,7 +2,6 @@
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use rand::Rng;
 use std::cmp;
 
@@ -11,7 +10,7 @@ pub struct WindPlugin;
 
 impl Plugin for WindPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(animate_grass_system.run_not_in_state(GameState::AssetLoading))
+        app.add_system(animate_grass_system.run_if(not(in_state(GameState::AssetLoading))))
             .register_ldtk_entity::<GrassBundle>("Grass");
     }
 }

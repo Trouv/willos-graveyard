@@ -18,7 +18,6 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range, time::Duration};
@@ -54,8 +53,8 @@ impl Plugin for GraveyardPlugin {
             .add_plugin(wind::WindPlugin)
             .add_system(
                 graveyard_input
-                    .run_in_state(GameState::Graveyard)
-                    .label(willo::WilloLabels::Input)
+                    .run_if(in_state(GameState::Graveyard))
+                    .in_set(willo::WilloSets::Input)
                     .before(FlushHistoryCommands),
             );
     }

@@ -8,13 +8,12 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use std::time::Duration;
 
-/// Labels used by exorcism systems.
-#[derive(SystemLabel)]
-pub enum ExorcismLabels {
-    /// Label used by the system that checks Willo's position kills Willo if appropriate.
+/// Sets used by exorcism systems.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
+pub enum ExorcismSets {
+    /// Set used by the system that checks Willo's position kills Willo if appropriate.
     CheckDeath,
 }
 
@@ -26,12 +25,12 @@ impl Plugin for ExorcismPlugin {
         app.add_event::<ExorcismEvent>()
             .add_system(
                 check_death
-                    .run_in_state(GameState::Graveyard)
-                    .label(ExorcismLabels::CheckDeath)
+                    .run_if(in_state(GameState::Graveyard))
+                    .in_set(ExorcismSets::CheckDeath)
                     .after(FlushHistoryCommands),
             )
-            .add_system_to_stage(CoreStage::PreUpdate, make_exorcism_card_visible)
-            .add_system(spawn_death_card.run_in_state(GameState::Graveyard))
+            .add_system(make_exorcism_card_visible.in_base_set(CoreSet::PreUpdate))
+            .add_system(spawn_death_card.run_if(in_state(GameState::Graveyard)))
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }
@@ -81,7 +80,7 @@ fn spawn_death_card(
                     background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
-                    visibility: Visibility { is_visible: false },
+                    visibility: Visibility::Hidden,
                     ..Default::default()
                 })
                 .insert(
@@ -136,10 +135,7 @@ fn spawn_death_card(
                                     ..default()
                                 },
                             )
-                            .with_alignment(TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            }),
+                            .with_alignment(TextAlignment::Center),
                             ..Default::default()
                         })
                         .insert(FontScale::from(FontSize::Medium));
@@ -157,6 +153,6 @@ fn spawn_death_card(
 
 fn make_exorcism_card_visible(mut ui_query: Query<&mut Visibility, Added<ExorcismCard>>) {
     for mut visibility in ui_query.iter_mut() {
-        visibility.is_visible = true;
+        *visibility = Visibility::Inherited;
     }
 }

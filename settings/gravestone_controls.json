@@ -1,6 +1,6 @@
 {
-  "map": [
-    [
+  "map": {
+    "North": [
       {
         "Single": {
           "Keyboard": "W"
@@ -12,7 +12,7 @@
         }
       }
     ],
-    [
+    "West": [
       {
         "Single": {
           "Keyboard": "A"
@@ -24,7 +24,7 @@
         }
       }
     ],
-    [
+    "South": [
       {
         "Single": {
           "Keyboard": "S"
@@ -36,7 +36,7 @@
         }
       }
     ],
-    [
+    "East": [
       {
         "Single": {
           "Keyboard": "D"
@@ -48,5 +48,5 @@
         }
       }
     ]
-  ]
+  }
 }

@@ -4,14 +4,13 @@ use crate::{
     graveyard::{gravestone::GraveId, movement_table::MovementTable},
     ui::{
         action::UiAction,
-        icon_button::{IconButton, IconButtonBundle, IconButtonLabel},
+        icon_button::{IconButton, IconButtonBundle, IconButtonSet},
     },
     ui_atlas_image::UiAtlasImage,
     GameState,
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
-use iyes_loopless::prelude::*;
 
 use super::GraveyardAction;
 
@@ -20,11 +19,11 @@ pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_enter_system(GameState::LevelTransition, spawn_control_display)
+        app.add_system(spawn_control_display.in_schedule(OnEnter(GameState::LevelTransition)))
             .add_system(
                 update_grave_action_buttons
-                    .run_in_state(GameState::Graveyard)
-                    .before(IconButtonLabel),
+                    .run_if(in_state(GameState::Graveyard))
+                    .before(IconButtonSet),
             );
     }
 }
@@ -82,7 +81,7 @@ fn spawn_control_display(
                 control_display
                     .spawn(NodeBundle {
                         style: Style {
-                            aspect_ratio: Some((0.8 * 2.) / 3.),
+                            aspect_ratio: Some(3. / 2.),
                             size: Size {
                                 width: Val::Percent(80.),
                                 ..default()
@@ -149,7 +148,7 @@ fn spawn_control_display(
                 control_display
                     .spawn(NodeBundle {
                         style: Style {
-                            aspect_ratio: Some((1. * 0.8) / 3.),
+                            aspect_ratio: Some(3.),
                             size: Size {
                                 width: Val::Percent(80.),
                                 ..default()
@@ -228,7 +227,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_loopless_state(GameState::AssetLoading)
+        app.add_state::<GameState>()
             .add_plugin(ControlDisplayPlugin)
             .insert_resource(PlayZonePortion(0.5));
 
@@ -263,11 +262,12 @@ mod tests {
         app.update();
 
         app.world
-            .insert_resource(NextState(GameState::LevelTransition));
+            .insert_resource(NextState(Some(GameState::LevelTransition)));
 
         app.update();
 
-        app.world.insert_resource(NextState(GameState::Graveyard));
+        app.world
+            .insert_resource(NextState(Some(GameState::Graveyard)));
 
         app.update();
     }

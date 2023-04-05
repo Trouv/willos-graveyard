@@ -1,16 +1,14 @@
 //! Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
 use bevy::prelude::*;
-use iyes_loopless::prelude::*;
-use std::any::Any;
 use std::marker::PhantomData;
 
 /// Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
-pub struct HistoryPlugin<C: Component + Clone, S> {
+pub struct HistoryPlugin<C: Component + Clone, S: States> {
     state: S,
     phantom: PhantomData<C>,
 }
 
-impl<C: Component + Clone, S> HistoryPlugin<C, S> {
+impl<C: Component + Clone, S: States> HistoryPlugin<C, S> {
     /// Constructor for the plugin.
     ///
     /// Allows the user to specify a particular iyes_loopless state to run the plugin in.
@@ -22,15 +20,12 @@ impl<C: Component + Clone, S> HistoryPlugin<C, S> {
     }
 }
 
-impl<C: Component + Clone, S> Plugin for HistoryPlugin<C, S>
-where
-    S: Any + Send + Sync + Clone + std::fmt::Debug + std::hash::Hash + Eq,
-{
+impl<C: Component + Clone, S: States> Plugin for HistoryPlugin<C, S> {
     fn build(&self, app: &mut App) {
         app.add_event::<HistoryCommands>().add_system(
             flush_history_commands::<C>
-                .run_in_state(self.state.clone())
-                .label(FlushHistoryCommands),
+                .run_if(in_state(self.state.clone()))
+                .in_set(FlushHistoryCommands),
         );
     }
 }
@@ -51,7 +46,7 @@ pub enum HistoryCommands {
 }
 
 /// System label for the system that handles history commands.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemSet)]
 pub struct FlushHistoryCommands;
 
 /// Component that stores the history of another component generically.

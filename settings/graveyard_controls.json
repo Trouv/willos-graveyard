@@ -1,6 +1,6 @@
 {
-  "map": [
-    [
+  "map": {
+    "Undo": [
       {
         "Single": {
           "Keyboard": "Z"
@@ -12,7 +12,7 @@
         }
       }
     ],
-    [
+    "Restart": [
       {
         "Single": {
           "Keyboard": "R"
@@ -24,7 +24,7 @@
         }
       }
     ],
-    [
+    "Pause": [
       {
         "Single": {
           "Keyboard": "Escape"
@@ -36,5 +36,5 @@
         }
       }
     ]
-  ]
+  }
 }

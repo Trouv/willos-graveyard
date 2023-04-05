@@ -16,7 +16,6 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::prelude::*;
 use std::time::Duration;
 
@@ -25,18 +24,18 @@ pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
     fn build(&self, app: &mut App) {
-        app.add_enter_system(GameState::LevelSelect, spawn_level_select_card)
+        app.add_system(spawn_level_select_card.in_schedule(OnEnter(GameState::LevelSelect)))
             .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
             .add_plugin(UiActionPlugin::<LevelSelectAction>::new())
-            .add_system(pause.run_in_state(GameState::Graveyard))
-            .add_system(unpause.run_in_state(GameState::LevelSelect))
+            .add_system(pause.run_if(in_state(GameState::Graveyard)))
+            .add_system(unpause.run_if(in_state(GameState::LevelSelect)))
             .add_system(
                 select_level
-                    .run_in_state(GameState::LevelSelect)
-                    .run_on_event::<UiAction<LevelSelectAction>>(),
+                    .run_if(in_state(GameState::LevelSelect))
+                    .run_if(on_event::<UiAction<LevelSelectAction>>()),
             )
-            .add_exit_system(GameState::LevelSelect, drop_level_select_card)
-            .add_system(despawn_level_select_card.run_on_event::<LevelSelectCardEvent>());
+            .add_system(drop_level_select_card.in_schedule(OnExit(GameState::LevelSelect)))
+            .add_system(despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()));
     }
 }
 
@@ -103,7 +102,7 @@ fn spawn_level_select_card(
 
     let level_select_entity = commands
         .spawn(ImageBundle {
-            image: UiImage(level_card_texture),
+            image: UiImage::new(level_card_texture),
             ..default()
         })
         .insert(
@@ -137,10 +136,7 @@ fn spawn_level_select_card(
                             ..default()
                         },
                     )
-                    .with_alignment(TextAlignment {
-                        vertical: VerticalAlign::Center,
-                        horizontal: HorizontalAlign::Center,
-                    }),
+                    .with_alignment(TextAlignment::Center),
                     style: Style {
                         margin: UiRect {
                             top: Val::Px(10.),
@@ -198,24 +194,27 @@ fn spawn_level_select_card(
     event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
 }
 
-fn pause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
+fn pause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
     if input.just_pressed(GraveyardAction::Pause) {
-        commands.insert_resource(NextState(GameState::LevelSelect));
+        next_state.set(GameState::LevelSelect);
     }
 }
 
-fn unpause(mut commands: Commands, input: Res<ActionState<GraveyardAction>>) {
+fn unpause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
     if input.just_pressed(GraveyardAction::Pause) {
-        commands.insert_resource(NextState(GameState::Graveyard));
+        next_state.set(GameState::Graveyard);
     }
 }
 
-fn select_level(mut commands: Commands, mut ui_actions: EventReader<UiAction<LevelSelectAction>>) {
+fn select_level(
+    mut commands: Commands,
+    mut next_state: ResMut<NextState<GameState>>,
+    mut ui_actions: EventReader<UiAction<LevelSelectAction>>,
+) {
     for action in ui_actions.iter() {
         let UiAction(LevelSelectAction::GoToLevel(level_selection)) = action;
-        commands.insert_resource(NextState(GameState::Graveyard));
         commands.insert_resource(TransitionTo(level_selection.clone()));
-        commands.insert_resource(NextState(GameState::LevelTransition));
+        next_state.set(GameState::LevelTransition);
     }
 }
 

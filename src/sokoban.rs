@@ -7,25 +7,29 @@
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
-use iyes_loopless::prelude::*;
-use std::any::Any;
 
-/// Labels used by sokoban systems
-#[derive(SystemLabel)]
-pub enum SokobanLabels {
-    /// Label for the system that updates the visual position of sokoban entities via bevy_easings.
+/// Sets used by sokoban systems
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
+pub enum SokobanSets {
+    /// Set for the system that updates the visual position of sokoban entities via bevy_easings.
     EaseMovement,
-    /// Label for the system that updates the logical position of sokoban entities.
+    /// Set for the system that updates the logical position of sokoban entities.
     LogicalMovement,
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
-pub struct SokobanPlugin<S> {
+pub struct SokobanPlugin<S>
+where
+    S: States,
+{
     state: S,
     layer_identifier: SokobanLayerIdentifier,
 }
 
-impl<S> SokobanPlugin<S> {
+impl<S> SokobanPlugin<S>
+where
+    S: States,
+{
     /// Constructor for the plugin.
     ///
     /// Allows the user to specify a particular iyes_loopless state to run the plugin in.
@@ -44,7 +48,7 @@ impl<S> SokobanPlugin<S> {
 
 impl<S> Plugin for SokobanPlugin<S>
 where
-    S: Any + Send + Sync + Clone + std::fmt::Debug + std::hash::Hash + Eq,
+    S: States,
 {
     fn build(&self, app: &mut App) {
         app.add_event::<SokobanCommand>()
@@ -52,17 +56,17 @@ where
             .insert_resource(self.layer_identifier.clone())
             .add_system(
                 flush_sokoban_commands
-                    .run_in_state(self.state.clone())
-                    .run_on_event::<SokobanCommand>()
-                    .label(SokobanLabels::LogicalMovement),
+                    .run_if(in_state(self.state.clone()))
+                    .run_if(on_event::<SokobanCommand>())
+                    .in_set(SokobanSets::LogicalMovement),
             )
-            // Systems with potential easing end/beginning collisions cannot be in CoreStage::Update
+            // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
-            .add_system_to_stage(
-                CoreStage::PostUpdate,
+            .add_system(
                 ease_movement
-                    .run_in_state(self.state.clone())
-                    .label(SokobanLabels::EaseMovement),
+                    .run_if(in_state(self.state.clone()))
+                    .in_set(SokobanSets::EaseMovement)
+                    .in_base_set(CoreSet::PostUpdate),
             );
     }
 }
@@ -109,11 +113,11 @@ pub enum SokobanCommand {
 
 /// System parameter providing an interface for commanding the SokobanPlugin.
 #[derive(SystemParam)]
-pub struct SokobanCommands<'w, 's> {
-    writer: EventWriter<'w, 's, SokobanCommand>,
+pub struct SokobanCommands<'w> {
+    writer: EventWriter<'w, SokobanCommand>,
 }
 
-impl<'w, 's> SokobanCommands<'w, 's> {
+impl<'w> SokobanCommands<'w> {
     /// Move a [SokobanBlock] entity in the given direction.
     ///
     /// Will perform the necessary collision checks and block pushes.
@@ -146,7 +150,7 @@ impl SokobanBlock {
     ///     sokoban_block: SokobanBlock,
     /// }
     /// ```
-    pub fn new_static(_: EntityInstance) -> SokobanBlock {
+    pub fn new_static(_: &EntityInstance) -> SokobanBlock {
         SokobanBlock::Static
     }
 
@@ -164,7 +168,7 @@ impl SokobanBlock {
     ///     sokoban_block: SokobanBlock,
     /// }
     /// ```
-    pub fn new_dynamic(_: EntityInstance) -> SokobanBlock {
+    pub fn new_dynamic(_: &EntityInstance) -> SokobanBlock {
         SokobanBlock::Dynamic
     }
 }
@@ -453,13 +457,16 @@ mod tests {
     }
 
     fn app_setup() -> App {
-        #[derive(Clone, PartialEq, Eq, Debug, Hash)]
-        struct State;
+        #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, States)]
+        enum State {
+            #[default]
+            Only,
+        }
 
         let mut app = App::new();
 
-        app.add_loopless_state(State)
-            .add_plugin(SokobanPlugin::new(State, "MyLayerIdentifier"));
+        app.add_state::<State>()
+            .add_plugin(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
 
         app.world.spawn(LayerMetadata {
             c_wid: 3,

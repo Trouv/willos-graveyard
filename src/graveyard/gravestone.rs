@@ -4,7 +4,7 @@
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
-    graveyard::willo::{WilloLabels, WilloState},
+    graveyard::willo::{WilloSets, WilloState},
     history::{FlushHistoryCommands, History, HistoryCommands},
     sokoban::SokobanBlock,
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
@@ -13,7 +13,6 @@ use crate::{
 use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
 use rand::{distributions::WeightedIndex, prelude::*};
 use serde::{Deserialize, Serialize};
@@ -41,11 +40,11 @@ impl Plugin for GravestonePlugin {
                 load_gravestone_control_settings(asset_folder)
                     .expect("unable to load gravestone control settings"),
             )
-            .add_system(spawn_gravestone_body.run_in_state(GameState::LevelTransition))
+            .add_system(spawn_gravestone_body.run_if(in_state(GameState::LevelTransition)))
             .add_system(
                 gravestone_input
-                    .run_in_state(GameState::Graveyard)
-                    .label(WilloLabels::Input)
+                    .run_if(in_state(GameState::Graveyard))
+                    .in_set(WilloSets::Input)
                     .before(FlushHistoryCommands),
             )
             .register_ldtk_entity::<GravestoneBundle>("W")
@@ -118,8 +117,8 @@ fn load_gravestone_control_settings(asset_folder: String) -> std::io::Result<Inp
     }
 }
 
-impl From<EntityInstance> for GraveId {
-    fn from(entity_instance: EntityInstance) -> Self {
+impl From<&EntityInstance> for GraveId {
+    fn from(entity_instance: &EntityInstance) -> Self {
         match entity_instance.identifier.as_ref() {
             "W" => GraveId::North,
             "A" => GraveId::West,

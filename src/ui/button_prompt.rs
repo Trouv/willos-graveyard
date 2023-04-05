@@ -8,7 +8,6 @@ use std::marker::PhantomData;
 
 use bevy::{ecs::query::ReadOnlyWorldQuery, prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
-use iyes_loopless::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
 
 use crate::{
@@ -47,11 +46,11 @@ where
     fn build(&self, app: &mut App) {
         app.add_system(
             spawn_button_prompt::<T, Changed<UiAction<T>>>
-                .run_if_resource_exists::<ButtonPromptAssets>(),
+                .run_if(resource_exists::<ButtonPromptAssets>()),
         )
         .add_system(
             spawn_button_prompt::<T, ()>
-                .run_if_resource_exists::<ButtonPromptAssets>()
+                .run_if(resource_exists::<ButtonPromptAssets>())
                 .run_if(resource_changed::<InputMap<T>>),
         );
     }

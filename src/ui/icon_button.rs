@@ -1,7 +1,6 @@
 //! Plugin for building "icon buttons" in the style of this game.
 use bevy::{prelude::*, ui::FocusPolicy};
 use bevy_asset_loader::prelude::AssetCollection;
-use iyes_loopless::prelude::*;
 
 use crate::{
     previous_component::PreviousComponent, ui::button_radial::ButtonRadial,
@@ -9,8 +8,8 @@ use crate::{
 };
 
 /// System label for systems that respond to `IconButton` changes.
-#[derive(SystemLabel)]
-pub struct IconButtonLabel;
+#[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
+pub struct IconButtonSet;
 
 /// Plugin for building "icon buttons" in the style of this game.
 ///
@@ -21,8 +20,8 @@ impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
             spawn_icon_button_elements
-                .run_not_in_state(GameState::AssetLoading)
-                .label(IconButtonLabel),
+                .run_if(not(in_state(GameState::AssetLoading)))
+                .in_set(IconButtonSet),
         );
     }
 }
@@ -49,7 +48,10 @@ impl PartialEq for IconButton {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (IconButton::NoIcon, IconButton::NoIcon) => true,
-            (IconButton::ImageIcon(UiImage(s)), IconButton::ImageIcon(UiImage(o))) => s == o,
+            (
+                IconButton::ImageIcon(UiImage { texture: s, .. }),
+                IconButton::ImageIcon(UiImage { texture: o, .. }),
+            ) => s == o,
             (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
             _ => false,
         }
@@ -78,6 +80,7 @@ impl IconButtonBundle {
             icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
+                    flex_grow: 1.,
                     aspect_ratio: Some(1.),
                     ..default()
                 },
@@ -148,12 +151,12 @@ fn spawn_icon_button_elements(
             .filter(|(_, p)| p.get() == entity)
             .for_each(|(e, _)| commands.entity(e).despawn_recursive());
 
-        commands.entity(entity).add_children(|parent| {
+        commands.entity(entity).with_children(|parent| {
             // Radial
             parent
                 .spawn(ButtonRadial)
                 .insert(ImageBundle {
-                    image: UiImage(assets.radial.clone()),
+                    image: UiImage::new(assets.radial.clone()),
                     style: Style {
                         position_type: PositionType::Absolute,
                         position: UiRect::all(Val::Percent(12.5)),
@@ -168,7 +171,7 @@ fn spawn_icon_button_elements(
             // Outline
             parent
                 .spawn(ImageBundle {
-                    image: UiImage(assets.outline.clone()),
+                    image: UiImage::new(assets.outline.clone()),
                     style: Style {
                         position_type: PositionType::Absolute,
                         position: UiRect::all(Val::Percent(0.)),
@@ -212,7 +215,8 @@ mod tests {
 
         app.add_plugin(IconButtonPlugin)
             .add_plugin(HierarchyPlugin)
-            .add_loopless_state(GameState::LevelTransition);
+            .add_state::<GameState>()
+            .insert_resource(NextState(Some(GameState::LevelTransition)));
 
         app
     }
@@ -239,7 +243,7 @@ mod tests {
 
         let icon = Handle::weak(HandleId::random::<Image>());
         let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(icon.clone())));
+            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(icon.clone())));
 
         app.update();
 
@@ -253,11 +257,11 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[0].0, asset_collection.radial);
+        assert_eq!(children[0].texture, asset_collection.radial);
 
-        assert_eq!(children[1].0, asset_collection.outline);
+        assert_eq!(children[1].texture, asset_collection.outline);
 
-        assert_eq!(children[2].0, icon);
+        assert_eq!(children[2].texture, icon);
     }
 
     #[test]
@@ -288,9 +292,9 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[0].1 .0, asset_collection.radial);
+        assert_eq!(children[0].1.texture, asset_collection.radial);
 
-        assert_eq!(children[1].1 .0, asset_collection.outline);
+        assert_eq!(children[1].1.texture, asset_collection.outline);
 
         assert_eq!(children[2].0.unwrap().texture_atlas, icon);
     }
@@ -301,8 +305,10 @@ mod tests {
         asset_collection_setup(&mut app);
 
         let first_icon = Handle::weak(HandleId::random::<Image>());
-        let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(first_icon.clone())));
+        let icon_button_entity = spawn_icon_button(
+            &mut app,
+            IconButton::ImageIcon(UiImage::new(first_icon.clone())),
+        );
 
         app.update();
 
@@ -316,14 +322,14 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[2].0, first_icon);
+        assert_eq!(children[2].texture, first_icon);
 
         // Change the component
         let second_icon = Handle::weak(HandleId::random::<Image>());
         *app.world
             .entity_mut(icon_button_entity)
             .get_mut::<IconButton>()
-            .unwrap() = IconButton::ImageIcon(UiImage(second_icon.clone()));
+            .unwrap() = IconButton::ImageIcon(UiImage::new(second_icon.clone()));
 
         app.update();
 
@@ -337,7 +343,7 @@ mod tests {
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[2].0, second_icon);
+        assert_eq!(children[2].texture, second_icon);
     }
 
     #[test]
@@ -347,8 +353,10 @@ mod tests {
 
         let first_icon = Handle::weak(HandleId::random::<Image>());
 
-        let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage(first_icon.clone())));
+        let icon_button_entity = spawn_icon_button(
+            &mut app,
+            IconButton::ImageIcon(UiImage::new(first_icon.clone())),
+        );
 
         let additional_child_entity = app.world.spawn_empty().id();
 

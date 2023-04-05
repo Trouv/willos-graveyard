@@ -10,8 +10,12 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
-use iyes_loopless::prelude::*;
 use std::time::Duration;
+
+#[derive(Clone, Debug, Eq, PartialEq, Hash, SystemSet)]
+enum LevelTransitionSystemSet {
+    OnLevelCardEvent,
+}
 
 /// Plugin providing functionality for level transitions.
 pub struct LevelTransitionPlugin;
@@ -22,27 +26,30 @@ impl Plugin for LevelTransitionPlugin {
             .add_plugin(EventSchedulerPlugin::<LevelCardEvent>::new())
             .add_system(
                 trigger_level_transition_state
-                    .run_not_in_state(GameState::AssetLoading)
-                    .run_not_in_state(GameState::LevelTransition)
-                    .run_if_resource_added::<TransitionTo>(),
+                    .run_if(not(in_state(GameState::AssetLoading)))
+                    .run_if(not(in_state(GameState::LevelTransition)))
+                    .run_if(resource_added::<TransitionTo>()),
             )
-            .add_exit_system(GameState::LevelTransition, clean_up_transition_to_resource)
-            .add_enter_system(GameState::LevelTransition, spawn_level_card)
-            .add_system_set(
-                ConditionSet::new()
-                    .run_in_state(GameState::LevelTransition)
-                    .run_on_event::<LevelCardEvent>()
-                    .with_system(level_card_update)
-                    .with_system(load_next_level)
-                    .into(),
+            .add_system(
+                clean_up_transition_to_resource.in_schedule(OnExit(GameState::LevelTransition)),
+            )
+            .add_system(spawn_level_card.in_schedule(OnEnter(GameState::LevelTransition)))
+            .add_systems(
+                (level_card_update, load_next_level)
+                    .in_set(LevelTransitionSystemSet::OnLevelCardEvent),
+            )
+            .configure_set(
+                LevelTransitionSystemSet::OnLevelCardEvent
+                    .run_if(in_state(GameState::LevelTransition))
+                    .run_if(on_event::<LevelCardEvent>()),
             )
             // level_card_update should be performed during both graveyard and level transition
             // states since it cleans up the level card after it's done falling during the graveyard
             // state
             .add_system(
                 level_card_update
-                    .run_in_state(GameState::Graveyard)
-                    .run_on_event::<LevelCardEvent>(),
+                    .run_if(in_state(GameState::Graveyard))
+                    .run_if(on_event::<LevelCardEvent>()),
             );
     }
 }
@@ -70,8 +77,8 @@ fn schedule_level_card(level_card_events: &mut EventScheduler<LevelCardEvent>) {
     level_card_events.schedule(LevelCardEvent::Despawn, Duration::from_millis(4500));
 }
 
-fn trigger_level_transition_state(mut commands: Commands) {
-    commands.insert_resource(NextState(GameState::LevelTransition));
+fn trigger_level_transition_state(mut next_state: ResMut<NextState<GameState>>) {
+    next_state.set(GameState::LevelTransition);
 }
 
 fn clean_up_transition_to_resource(mut commands: Commands) {
@@ -134,7 +141,7 @@ fn spawn_level_card(
 
     commands
         .spawn(ImageBundle {
-            image: UiImage(level_card_texture),
+            image: UiImage::new(level_card_texture),
             ..Default::default()
         })
         .insert(
@@ -189,10 +196,7 @@ fn spawn_level_card(
                                 ..default()
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            vertical: VerticalAlign::Center,
-                            horizontal: HorizontalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
                         ..Default::default()
                     })
                     .insert(FontScale::from(FontSize::Huge));
@@ -245,6 +249,7 @@ fn load_next_level(
 
 fn level_card_update(
     mut commands: Commands,
+    mut next_state: ResMut<NextState<GameState>>,
     mut card_query: Query<(Entity, &mut Style), With<LevelCard>>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
@@ -267,7 +272,7 @@ fn level_card_update(
                         },
                     ));
 
-                    commands.insert_resource(NextState(GameState::Graveyard));
+                    next_state.set(GameState::Graveyard);
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT

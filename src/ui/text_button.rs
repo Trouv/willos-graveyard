@@ -56,7 +56,7 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
         // spawn the background/highlight radial
         button
             .spawn(ImageBundle {
-                image: UiImage(asset_holder.button_radial.clone()),
+                image: UiImage::new(asset_holder.button_radial.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
                     position: UiRect {
@@ -94,9 +94,10 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
 
         // spawn the underline decoration
         button.spawn(ImageBundle {
-            image: UiImage(asset_holder.button_underline.clone()),
+            image: UiImage::new(asset_holder.button_underline.clone()),
             style: Style {
-                min_size: Size::new(Val::Percent(50.), Val::Px(16.)),
+                size: Size::height(Val::Percent(100. / 3.)),
+                aspect_ratio: Some(4.),
                 ..default()
             },
             focus_policy: FocusPolicy::Pass,

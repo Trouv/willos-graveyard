@@ -1,11 +1,11 @@
 //! Plugin providing functionality for basic sprite sheet animations.
-use crate::from_component::{FromComponentLabel, FromComponentPlugin};
+use crate::from_component::{FromComponentPlugin, FromComponentSet};
 use bevy::prelude::*;
 use std::{marker::PhantomData, ops::Range};
 
-/// Label used by animation systems.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemLabel)]
-pub struct AnimationLabel;
+/// Set used by animation systems.
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, SystemSet)]
+pub struct AnimationSet;
 
 /// Plugin providing functionality for basic sprite sheet animations.
 pub struct SpriteSheetAnimationPlugin;
@@ -15,13 +15,13 @@ impl Plugin for SpriteSheetAnimationPlugin {
         app.add_event::<AnimationEvent>()
             .add_system(
                 sprite_sheet_animation
-                    .label(AnimationLabel)
-                    .after(FromComponentLabel),
+                    .in_set(AnimationSet)
+                    .after(FromComponentSet),
             )
             .add_system(
                 set_initial_sprite_index
-                    .label(AnimationLabel)
-                    .after(FromComponentLabel),
+                    .in_set(AnimationSet)
+                    .after(FromComponentSet),
             );
     }
 }
@@ -134,7 +134,7 @@ where
 {
     fn build(&self, app: &mut App) {
         app.add_plugin(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
-            .add_system(animation_finisher::<F>.before(AnimationLabel));
+            .add_system(animation_finisher::<F>.before(AnimationSet));
     }
 }
 
