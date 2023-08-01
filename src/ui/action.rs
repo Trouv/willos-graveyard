@@ -44,10 +44,11 @@ where
 {
     fn build(&self, app: &mut App) {
         if !app.is_plugin_added::<PreviousComponentPlugin<Interaction>>() {
-            app.add_plugin(PreviousComponentPlugin::<Interaction>::default());
+            app.add_plugins(PreviousComponentPlugin::<Interaction>::default());
         }
 
-        app.add_event::<UiAction<T>>().add_system(
+        app.add_event::<UiAction<T>>().add_systems(
+            Update,
             ui_action::<T>
                 .in_set(UiActionSet)
                 .after(TrackPreviousComponent),

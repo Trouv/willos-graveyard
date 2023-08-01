@@ -60,16 +60,16 @@ fn main() {
     let mut app = App::new();
 
     app.insert_resource(Msaa::Off)
-        .add_plugins(
+        .add_plugins((
             DefaultPlugins
                 .set(ImagePlugin::default_nearest())
                 .set(AssetPlugin {
                     watch_for_changes: cfg!(feature = "hot"),
                     ..default()
                 }),
-        )
-        .add_plugin(EasingsPlugin)
-        .add_plugin(LdtkPlugin)
+            EasingsPlugin,
+            LdtkPlugin,
+        ))
         .insert_resource(LdtkSettings {
             set_clear_color: SetClearColor::FromEditorBackground,
             ..default()
@@ -92,18 +92,20 @@ fn main() {
         .add_collection_to_loading_state::<_, ui::button_prompt::ButtonPromptAssets>(
             GameState::AssetLoading,
         )
-        .add_plugin(graveyard::GraveyardPlugin)
-        .add_plugin(SpriteSheetAnimationPlugin)
-        .add_plugin(ui::UiPlugin)
-        .add_plugin(level_select::LevelSelectPlugin)
-        .add_plugin(camera::CameraPlugin)
-        .add_plugin(level_transition::LevelTransitionPlugin)
+        .add_plugins((
+            graveyard::GraveyardPlugin,
+            SpriteSheetAnimationPlugin,
+            ui::UiPlugin,
+            level_select::LevelSelectPlugin,
+            camera::CameraPlugin,
+            level_transition::LevelTransitionPlugin,
+        ))
         .insert_resource(level_selection.clone())
         .insert_resource(level_transition::TransitionTo(level_selection));
 
     #[cfg(feature = "inspector")]
     {
-        app.add_plugin(WorldInspectorPlugin::new());
+        app.add_plugins(WorldInspectorPlugin::new());
     }
 
     app.run()

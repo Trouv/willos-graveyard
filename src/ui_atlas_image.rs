@@ -11,7 +11,7 @@ pub struct UiAtlasImagePlugin;
 impl Plugin for UiAtlasImagePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UiAtlasImageMap>()
-            .add_system(resolve_ui_atlas_image.in_base_set(CoreSet::PostUpdate));
+            .add_systems(PostUpdate, resolve_ui_atlas_image);
     }
 }
 

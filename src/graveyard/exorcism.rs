@@ -23,14 +23,17 @@ pub struct ExorcismPlugin;
 impl Plugin for ExorcismPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ExorcismEvent>()
-            .add_system(
-                check_death
-                    .run_if(in_state(GameState::Graveyard))
-                    .in_set(ExorcismSets::CheckDeath)
-                    .after(FlushHistoryCommands),
+            .add_systems(
+                Update,
+                (
+                    check_death
+                        .run_if(in_state(GameState::Graveyard))
+                        .in_set(ExorcismSets::CheckDeath)
+                        .after(FlushHistoryCommands),
+                    spawn_death_card.run_if(in_state(GameState::Graveyard)),
+                ),
             )
-            .add_system(make_exorcism_card_visible.in_base_set(CoreSet::PreUpdate))
-            .add_system(spawn_death_card.run_if(in_state(GameState::Graveyard)))
+            .add_systems(PreUpdate, make_exorcism_card_visible)
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }

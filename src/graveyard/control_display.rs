@@ -19,8 +19,9 @@ pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_control_display.in_schedule(OnEnter(GameState::LevelTransition)))
-            .add_system(
+        app.add_systems(OnEnter(GameState::LevelTransition), spawn_control_display)
+            .add_systems(
+                Update,
                 update_grave_action_buttons
                     .run_if(in_state(GameState::Graveyard))
                     .before(IconButtonSet),

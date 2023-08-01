@@ -24,35 +24,34 @@ pub struct WilloPlugin;
 
 impl Plugin for WilloPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(FromComponentAnimator::<WilloAnimationState>::new())
-            .add_plugin(HistoryPlugin::<GridCoords, _>::run_in_state(
-                GameState::Graveyard,
-            ))
-            // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
-            // see https://github.com/vleue/bevy_easings/issues/23
-            .add_system(
+        app.add_plugins((
+            FromComponentAnimator::<WilloAnimationState>::new(),
+            HistoryPlugin::<GridCoords, _>::run_in_state(GameState::Graveyard),
+        ))
+        // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
+        // see https://github.com/vleue/bevy_easings/issues/23
+        .add_systems(
+            Update,
+            (
                 push_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(on_event::<PushEvent>())
                     .before(FromComponentSet),
-            )
-            .add_system(
-                push_translation
-                    .run_if(not(in_state(GameState::AssetLoading)))
-                    .before(SokobanSets::EaseMovement)
-                    .in_base_set(CoreSet::PostUpdate),
-            )
-            .add_system(
                 play_exorcism_animaton
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(on_event::<ExorcismEvent>()),
-            )
-            .add_system(
                 history_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(on_event::<HistoryCommands>()),
-            )
-            .register_ldtk_entity::<WilloBundle>("Willo");
+            ),
+        )
+        .add_systems(
+            PostUpdate,
+            push_translation
+                .run_if(not(in_state(GameState::AssetLoading)))
+                .before(SokobanSets::EaseMovement),
+        )
+        .register_ldtk_entity::<WilloBundle>("Willo");
     }
 }
 

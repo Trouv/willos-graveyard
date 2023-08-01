@@ -24,18 +24,23 @@ pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_level_select_card.in_schedule(OnEnter(GameState::LevelSelect)))
-            .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
-            .add_plugin(UiActionPlugin::<LevelSelectAction>::new())
-            .add_system(pause.run_if(in_state(GameState::Graveyard)))
-            .add_system(unpause.run_if(in_state(GameState::LevelSelect)))
-            .add_system(
-                select_level
-                    .run_if(in_state(GameState::LevelSelect))
-                    .run_if(on_event::<UiAction<LevelSelectAction>>()),
+        app.add_systems(OnEnter(GameState::LevelSelect), spawn_level_select_card)
+            .add_plugins((
+                EventSchedulerPlugin::<LevelSelectCardEvent>::new(),
+                UiActionPlugin::<LevelSelectAction>::new(),
+            ))
+            .add_systems(
+                Update,
+                (
+                    pause.run_if(in_state(GameState::Graveyard)),
+                    unpause.run_if(in_state(GameState::LevelSelect)),
+                    select_level
+                        .run_if(in_state(GameState::LevelSelect))
+                        .run_if(on_event::<UiAction<LevelSelectAction>>()),
+                    despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()),
+                ),
             )
-            .add_system(drop_level_select_card.in_schedule(OnExit(GameState::LevelSelect)))
-            .add_system(despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()));
+            .add_systems(OnExit(GameState::LevelSelect), drop_level_select_card);
     }
 }
 

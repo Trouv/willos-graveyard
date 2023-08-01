@@ -10,8 +10,11 @@ pub struct WindPlugin;
 
 impl Plugin for WindPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(animate_grass_system.run_if(not(in_state(GameState::AssetLoading))))
-            .register_ldtk_entity::<GrassBundle>("Grass");
+        app.add_systems(
+            Update,
+            animate_grass_system.run_if(not(in_state(GameState::AssetLoading))),
+        )
+        .register_ldtk_entity::<GrassBundle>("Grass");
     }
 }
 

@@ -23,22 +23,26 @@ pub struct LevelTransitionPlugin;
 impl Plugin for LevelTransitionPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<TransitionTo>()
-            .add_plugin(EventSchedulerPlugin::<LevelCardEvent>::new())
-            .add_system(
+            .add_plugins(EventSchedulerPlugin::<LevelCardEvent>::new())
+            .add_systems(
+                Update,
                 trigger_level_transition_state
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(not(in_state(GameState::LevelTransition)))
                     .run_if(resource_added::<TransitionTo>()),
             )
-            .add_system(
-                clean_up_transition_to_resource.in_schedule(OnExit(GameState::LevelTransition)),
-            )
-            .add_system(spawn_level_card.in_schedule(OnEnter(GameState::LevelTransition)))
             .add_systems(
+                OnExit(GameState::LevelTransition),
+                clean_up_transition_to_resource,
+            )
+            .add_systems(OnEnter(GameState::LevelTransition), spawn_level_card)
+            .add_systems(
+                Update,
                 (level_card_update, load_next_level)
                     .in_set(LevelTransitionSystemSet::OnLevelCardEvent),
             )
             .configure_set(
+                Update,
                 LevelTransitionSystemSet::OnLevelCardEvent
                     .run_if(in_state(GameState::LevelTransition))
                     .run_if(on_event::<LevelCardEvent>()),
@@ -46,7 +50,8 @@ impl Plugin for LevelTransitionPlugin {
             // level_card_update should be performed during both graveyard and level transition
             // states since it cleans up the level card after it's done falling during the graveyard
             // state
-            .add_system(
+            .add_systems(
+                Update,
                 level_card_update
                     .run_if(in_state(GameState::Graveyard))
                     .run_if(on_event::<LevelCardEvent>()),

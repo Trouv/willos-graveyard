@@ -54,7 +54,8 @@ where
         app.add_event::<SokobanCommand>()
             .add_event::<PushEvent>()
             .insert_resource(self.layer_identifier.clone())
-            .add_system(
+            .add_systems(
+                Update,
                 flush_sokoban_commands
                     .run_if(in_state(self.state.clone()))
                     .run_if(on_event::<SokobanCommand>())
@@ -62,11 +63,11 @@ where
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
-            .add_system(
+            .add_systems(
+                PostUpdate,
                 ease_movement
                     .run_if(in_state(self.state.clone()))
-                    .in_set(SokobanSets::EaseMovement)
-                    .in_base_set(CoreSet::PostUpdate),
+                    .in_set(SokobanSets::EaseMovement),
             );
     }
 }

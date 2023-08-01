@@ -19,17 +19,18 @@ pub struct MovementTablePlugin;
 
 impl Plugin for MovementTablePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            movement_table_update
-                .run_if(in_state(GameState::Graveyard))
-                .before(WilloSets::Input),
-        )
-        .add_system(
-            move_willo_by_table
-                .run_if(in_state(GameState::Graveyard))
-                .after(SokobanSets::LogicalMovement)
-                .after(FlushHistoryCommands)
-                .before(FromComponentSet),
+        app.add_systems(
+            Update,
+            (
+                movement_table_update
+                    .run_if(in_state(GameState::Graveyard))
+                    .before(WilloSets::Input),
+                move_willo_by_table
+                    .run_if(in_state(GameState::Graveyard))
+                    .after(SokobanSets::LogicalMovement)
+                    .after(FlushHistoryCommands)
+                    .before(FromComponentSet),
+            ),
         )
         .register_ldtk_entity::<MovementTableBundle>("Table");
     }

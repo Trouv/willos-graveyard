@@ -18,7 +18,8 @@ pub struct IconButtonPlugin;
 
 impl Plugin for IconButtonPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
+        app.add_systems(
+            Update,
             spawn_icon_button_elements
                 .run_if(not(in_state(GameState::AssetLoading)))
                 .in_set(IconButtonSet),

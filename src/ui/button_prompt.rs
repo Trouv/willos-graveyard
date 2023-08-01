@@ -44,14 +44,15 @@ where
     T: Actionlike + Send + Sync + Clone + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            spawn_button_prompt::<T, Changed<UiAction<T>>>
-                .run_if(resource_exists::<ButtonPromptAssets>()),
-        )
-        .add_system(
-            spawn_button_prompt::<T, ()>
-                .run_if(resource_exists::<ButtonPromptAssets>())
-                .run_if(resource_changed::<InputMap<T>>),
+        app.add_systems(
+            Update,
+            (
+                spawn_button_prompt::<T, Changed<UiAction<T>>>
+                    .run_if(resource_exists::<ButtonPromptAssets>()),
+                spawn_button_prompt::<T, ()>
+                    .run_if(resource_exists::<ButtonPromptAssets>())
+                    .run_if(resource_changed::<InputMap<T>>),
+            ),
         );
     }
 }
