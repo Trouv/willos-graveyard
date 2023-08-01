@@ -101,12 +101,8 @@ fn spawn_button_prompt<T, F>(
                         image_bundle: ImageBundle {
                             style: Style {
                                 position_type: PositionType::Absolute,
-                                position: UiRect {
-                                    top: Val::Px(0.),
-                                    left: Val::Px(0.),
-                                    ..default()
-                                },
-                                width: Val::Undefined,
+                                top: Val::Px(0.),
+                                left: Val::Px(0.),
                                 height: Val::Percent(25.),
                                 aspect_ratio: Some(1.),
                                 ..default()

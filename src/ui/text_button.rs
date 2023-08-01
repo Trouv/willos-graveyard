@@ -60,11 +60,8 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
                 image: UiImage::new(asset_holder.button_radial.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
-                    position: UiRect {
-                        left: Val::Percent(15.),
-                        top: Val::Percent(15.),
-                        ..default()
-                    },
+                    left: Val::Percent(15.),
+                    top: Val::Percent(15.),
                     width: Val::Percent(70.),
                     height: Val::Percent(70.),
                     ..default()

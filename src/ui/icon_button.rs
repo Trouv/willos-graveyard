@@ -115,12 +115,21 @@ impl IconButtonBundle {
         icon_button: IconButton,
         position: UiRect,
     ) -> IconButtonBundle {
+        let UiRect {
+            left,
+            right,
+            top,
+            bottom,
+        } = position;
         IconButtonBundle {
             icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
                     position_type: PositionType::Absolute,
-                    position,
+                    left,
+                    right,
+                    top,
+                    bottom,
                     aspect_ratio: Some(1.),
                     ..default()
                 },
@@ -161,7 +170,10 @@ fn spawn_icon_button_elements(
                     image: UiImage::new(assets.radial.clone()),
                     style: Style {
                         position_type: PositionType::Absolute,
-                        position: UiRect::all(Val::Percent(12.5)),
+                        left: Val::Percent(12.5),
+                        right: Val::Percent(12.5),
+                        top: Val::Percent(12.5),
+                        bottom: Val::Percent(12.5),
                         ..default()
                     },
                     focus_policy: FocusPolicy::Pass,
@@ -176,7 +188,10 @@ fn spawn_icon_button_elements(
                     image: UiImage::new(assets.outline.clone()),
                     style: Style {
                         position_type: PositionType::Absolute,
-                        position: UiRect::all(Val::Percent(0.)),
+                        left: Val::Percent(0.),
+                        right: Val::Percent(0.),
+                        top: Val::Percent(0.),
+                        bottom: Val::Percent(0.),
                         ..default()
                     },
                     focus_policy: FocusPolicy::Pass,
@@ -188,7 +203,10 @@ fn spawn_icon_button_elements(
             let mut icon_entity = parent.spawn(ImageBundle {
                 style: Style {
                     position_type: PositionType::Absolute,
-                    position: UiRect::all(Val::Percent(0.)),
+                    left: Val::Percent(0.),
+                    right: Val::Percent(0.),
+                    top: Val::Percent(0.),
+                    bottom: Val::Percent(0.),
                     ..default()
                 },
                 focus_policy: FocusPolicy::Pass,

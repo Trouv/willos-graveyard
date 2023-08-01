@@ -64,11 +64,8 @@ fn spawn_control_display(
                     position_type: PositionType::Absolute,
                     width: Val::Percent(100. * control_zone_ratio),
                     height: Val::Percent(100.),
-                    position: UiRect {
-                        top: Val::Percent(0.),
-                        right: Val::Percent(0.),
-                        ..Default::default()
-                    },
+                    top: Val::Percent(0.),
+                    right: Val::Percent(0.),
                     ..Default::default()
                 },
                 z_index: ZIndex::Local(-1),

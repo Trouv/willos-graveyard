@@ -65,6 +65,12 @@ enum LevelSelectAction {
 }
 
 fn level_select_card_style(position: UiRect) -> Style {
+    let UiRect {
+        left,
+        right,
+        top,
+        bottom,
+    } = position;
     Style {
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
@@ -72,7 +78,10 @@ fn level_select_card_style(position: UiRect) -> Style {
         position_type: PositionType::Absolute,
         width: Val::Percent(100.),
         height: Val::Percent(100.),
-        position,
+        left,
+        right,
+        top,
+        bottom,
         ..default()
     }
 }
@@ -226,9 +235,14 @@ fn drop_level_select_card(
     mut level_select_card_events: ResMut<EventScheduler<LevelSelectCardEvent>>,
 ) {
     for (entity, style) in level_select_card_query.iter() {
-        commands
-            .entity(entity)
-            .insert(level_select_card_style(style.position).ease_to(
+        commands.entity(entity).insert(
+            level_select_card_style(UiRect {
+                left: style.left,
+                right: style.right,
+                top: style.top,
+                bottom: style.bottom,
+            })
+            .ease_to(
                 level_select_card_style(UiRect {
                     top: Val::Percent(100.),
                     left: Val::Percent(0.),
@@ -238,7 +252,8 @@ fn drop_level_select_card(
                 EasingType::Once {
                     duration: Duration::from_secs(1),
                 },
-            ));
+            ),
+        );
 
         // Demote level select card so it can't be doubly-despawned
         commands.entity(entity).remove::<LevelSelectCard>();

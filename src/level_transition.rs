@@ -157,11 +157,8 @@ fn spawn_level_card(
                 flex_direction: FlexDirection::Column,
                 width: Val::Percent(100.),
                 height: Val::Percent(100.),
-                position: UiRect {
-                    top: Val::Percent(100.),
-                    left: Val::Percent(0.),
-                    ..Default::default()
-                },
+                top: Val::Percent(100.),
+                left: Val::Percent(0.),
                 ..Default::default()
             }
             .ease_to(
@@ -172,11 +169,8 @@ fn spawn_level_card(
                     flex_direction: FlexDirection::Column,
                     width: Val::Percent(100.),
                     height: Val::Percent(100.),
-                    position: UiRect {
-                        top: Val::Percent(0.),
-                        left: Val::Percent(0.),
-                        ..Default::default()
-                    },
+                    top: Val::Percent(0.),
+                    left: Val::Percent(0.),
                     ..Default::default()
                 },
                 EaseFunction::QuadraticOut,
@@ -260,11 +254,8 @@ fn level_card_update(
                 LevelCardEvent::Fall => {
                     commands.entity(entity).insert(style.clone().ease_to(
                         Style {
-                            position: UiRect {
-                                top: Val::Percent(100.),
-                                left: Val::Percent(0.),
-                                ..Default::default()
-                            },
+                            top: Val::Percent(100.),
+                            left: Val::Percent(0.),
                             ..*style
                         },
                         EaseFunction::QuadraticIn,

@@ -94,11 +94,8 @@ fn spawn_death_card(
                         flex_direction: FlexDirection::Column,
                         width: Val::Percent(100.),
                         height: Val::Percent(100.),
-                        position: UiRect {
-                            top: Val::Percent(100.),
-                            left: Val::Percent(0.),
-                            ..Default::default()
-                        },
+                        top: Val::Percent(100.),
+                        left: Val::Percent(0.),
                         ..Default::default()
                     }
                     .ease_to(
@@ -109,11 +106,8 @@ fn spawn_death_card(
                             flex_direction: FlexDirection::Column,
                             width: Val::Percent(100.),
                             height: Val::Percent(100.),
-                            position: UiRect {
-                                top: Val::Percent(0.),
-                                left: Val::Percent(0.),
-                                ..Default::default()
-                            },
+                            top: Val::Percent(0.),
+                            left: Val::Percent(0.),
                             ..Default::default()
                         },
                         EaseFunction::QuadraticOut,
