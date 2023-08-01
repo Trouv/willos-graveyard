@@ -18,8 +18,10 @@ pub mod ui;
 pub mod ui_atlas_image;
 pub mod utils;
 
+use std::time::Duration;
+
 use animation::SpriteSheetAnimationPlugin;
-use bevy::prelude::*;
+use bevy::{asset::ChangeWatcher, prelude::*};
 
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -59,12 +61,18 @@ fn main() {
 
     let mut app = App::new();
 
+    let watch_for_changes = if cfg!(feature = "hot") {
+        ChangeWatcher::with_delay(Duration::from_secs(1))
+    } else {
+        None
+    };
+
     app.insert_resource(Msaa::Off)
         .add_plugins((
             DefaultPlugins
                 .set(ImagePlugin::default_nearest())
                 .set(AssetPlugin {
-                    watch_for_changes: cfg!(feature = "hot"),
+                    watch_for_changes,
                     ..default()
                 }),
             EasingsPlugin,
