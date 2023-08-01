@@ -158,7 +158,6 @@ fn check_goal(
     mut next_state: ResMut<NextState<GameState>>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
-    audio: Res<Audio>,
     asset_holder: Res<AssetHolder>,
 ) {
     // If the goal is not loaded for whatever reason (for example when hot-reloading levels),
@@ -213,7 +212,10 @@ fn check_goal(
             }
         }
 
-        audio.play(asset_holder.victory_sound.clone_weak());
+        commands.spawn(AudioBundle {
+            source: asset_holder.victory_sound.clone(),
+            settings: PlaybackSettings::DESPAWN,
+        });
     }
 }
 fn goal_ghost_event_sugar(

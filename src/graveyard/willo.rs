@@ -161,9 +161,9 @@ struct WilloBundle {
 }
 
 fn push_sugar(
+    mut commands: Commands,
     mut push_events: EventReader<PushEvent>,
     mut willo_query: Query<(Entity, &mut WilloAnimationState)>,
-    audio: Res<Audio>,
     sfx: Res<AssetHolder>,
 ) {
     let (willo_entity, mut animation_state) = willo_query.single_mut();
@@ -171,7 +171,10 @@ fn push_sugar(
         .iter()
         .filter(|PushEvent { pusher, .. }| *pusher == willo_entity)
     {
-        audio.play(sfx.push_sound.clone());
+        commands.spawn(AudioBundle {
+            source: sfx.push_sound.clone(),
+            settings: PlaybackSettings::DESPAWN,
+        });
         *animation_state = WilloAnimationState::Push(*direction);
     }
 }
@@ -201,16 +204,19 @@ fn push_translation(
 }
 
 fn history_sugar(
+    mut commands: Commands,
     mut history_commands: EventReader<HistoryCommands>,
     mut willo_query: Query<&mut WilloAnimationState>,
-    audio: Res<Audio>,
     sfx: Res<AssetHolder>,
 ) {
     for command in history_commands.iter() {
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
                 *willo_query.single_mut() = WilloAnimationState::Idle(Direction::Down);
-                audio.play(sfx.undo_sound.clone_weak());
+                commands.spawn(AudioBundle {
+                    source: sfx.undo_sound.clone(),
+                    settings: PlaybackSettings::DESPAWN,
+                });
             }
             _ => (),
         }
