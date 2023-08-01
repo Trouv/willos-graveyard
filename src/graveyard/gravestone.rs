@@ -10,7 +10,10 @@ use crate::{
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
-use bevy::{prelude::*, reflect::Enum};
+use bevy::{
+    prelude::*,
+    reflect::{Enum, TypePath},
+};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
@@ -91,7 +94,7 @@ impl Default for GravestoneSettings {
 ///
 /// Also acts as the grave-action itself by implementing Actionlike.
 #[derive(
-    Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize,
+    Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize, TypePath,
 )]
 pub enum GraveId {
     /// Gravestone/action that applies to "northy" buttons like W and Triangle.

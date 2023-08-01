@@ -17,7 +17,7 @@ use crate::{
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::TypePath};
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range, time::Duration};
@@ -66,7 +66,7 @@ impl Plugin for GraveyardPlugin {
 }
 
 /// Actions other than grave-actions that can be performed during the gameplay state.
-#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
+#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize, TypePath)]
 pub enum GraveyardAction {
     /// Undo the last grave-action or restart.
     Undo,
