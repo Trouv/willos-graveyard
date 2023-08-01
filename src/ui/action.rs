@@ -96,7 +96,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(UiActionPlugin::<TestAction>::new());
+        app.add_plugins(UiActionPlugin::<TestAction>::new());
         app
     }
 
@@ -124,7 +124,7 @@ mod tests {
         *app.world
             .entity_mut(first_entity)
             .get_mut::<Interaction>()
-            .unwrap() = Interaction::Clicked;
+            .unwrap() = Interaction::Pressed;
 
         app.update();
 
@@ -152,7 +152,7 @@ mod tests {
         *app.world
             .entity_mut(second_entity)
             .get_mut::<Interaction>()
-            .unwrap() = Interaction::Clicked;
+            .unwrap() = Interaction::Pressed;
 
         app.update();
 
@@ -181,7 +181,7 @@ mod tests {
         *app.world
             .entity_mut(first_entity)
             .get_mut::<Interaction>()
-            .unwrap() = Interaction::Clicked;
+            .unwrap() = Interaction::Pressed;
 
         app.update();
 

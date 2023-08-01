@@ -119,13 +119,13 @@ fn spawn_button_prompt<T, F>(
 
 #[cfg(test)]
 mod tests {
-    use bevy::asset::HandleId;
+    use bevy::{asset::HandleId, reflect::TypePath};
 
     use crate::ui::action::UiActionPlugin;
 
     use super::*;
 
-    #[derive(Copy, Clone, Debug, Actionlike)]
+    #[derive(Copy, Clone, Debug, Actionlike, TypePath)]
     enum MyAction {
         Jump,
         Shoot,
@@ -134,8 +134,10 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(UiActionPlugin::<MyAction>::new())
-            .add_plugin(ButtonPromptPlugin::<MyAction>::new());
+        app.add_plugins((
+            UiActionPlugin::<MyAction>::new(),
+            ButtonPromptPlugin::<MyAction>::new(),
+        ));
 
         app
     }

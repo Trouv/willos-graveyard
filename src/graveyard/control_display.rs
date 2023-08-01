@@ -218,7 +218,7 @@ mod tests {
         let mut app = App::new();
 
         app.add_state::<GameState>()
-            .add_plugin(ControlDisplayPlugin)
+            .add_plugins(ControlDisplayPlugin)
             .insert_resource(PlayZonePortion(0.5));
 
         app

@@ -467,7 +467,7 @@ mod tests {
         let mut app = App::new();
 
         app.add_state::<State>()
-            .add_plugin(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
+            .add_plugins(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
 
         app.world.spawn(LayerMetadata {
             c_wid: 3,

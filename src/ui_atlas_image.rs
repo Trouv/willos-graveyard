@@ -98,8 +98,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(UiAtlasImagePlugin)
-            .add_plugin(AssetPlugin::default())
+        app.add_plugins((UiAtlasImagePlugin, AssetPlugin::default()))
             .add_asset::<Image>()
             .add_asset::<TextureAtlas>();
         app

@@ -233,8 +233,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(IconButtonPlugin)
-            .add_plugin(HierarchyPlugin)
+        app.add_plugins((IconButtonPlugin, HierarchyPlugin))
             .add_state::<GameState>()
             .insert_resource(NextState(Some(GameState::LevelTransition)));
 
