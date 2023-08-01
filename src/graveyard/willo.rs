@@ -156,7 +156,6 @@ struct WilloBundle {
     willo_state: WilloState,
     movement_timer: MovementTimer,
     #[sprite_sheet_bundle]
-    #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
     willo_animation_state: WilloAnimationState,
 }

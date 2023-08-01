@@ -31,7 +31,6 @@ impl Default for WindTimer {
 #[derive(Clone, Bundle, LdtkEntity)]
 struct GrassBundle {
     #[sprite_sheet_bundle]
-    #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
     wind_timer: WindTimer,
 }

@@ -55,7 +55,6 @@ struct GoalBundle {
     grid_coords: GridCoords,
     goal: Goal,
     #[sprite_sheet_bundle]
-    #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
 }
 

@@ -58,7 +58,6 @@ struct MovementTableBundle {
     grid_coords: GridCoords,
     move_table: MovementTable,
     #[sprite_sheet_bundle]
-    #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
 }
 
