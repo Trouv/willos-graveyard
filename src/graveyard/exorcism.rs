@@ -92,10 +92,8 @@ fn spawn_death_card(
                         align_items: AlignItems::Center,
                         position_type: PositionType::Absolute,
                         flex_direction: FlexDirection::Column,
-                        size: Size {
-                            width: Val::Percent(100.),
-                            height: Val::Percent(100.),
-                        },
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
                         position: UiRect {
                             top: Val::Percent(100.),
                             left: Val::Percent(0.),
@@ -109,10 +107,8 @@ fn spawn_death_card(
                             align_items: AlignItems::Center,
                             position_type: PositionType::Absolute,
                             flex_direction: FlexDirection::Column,
-                            size: Size {
-                                width: Val::Percent(100.),
-                                height: Val::Percent(100.),
-                            },
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
                             position: UiRect {
                                 top: Val::Percent(0.),
                                 left: Val::Percent(0.),

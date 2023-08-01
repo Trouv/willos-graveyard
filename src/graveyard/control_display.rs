@@ -62,10 +62,8 @@ fn spawn_control_display(
                     justify_content: JustifyContent::SpaceAround,
                     align_content: AlignContent::Center,
                     position_type: PositionType::Absolute,
-                    size: Size {
-                        width: Val::Percent(100. * control_zone_ratio),
-                        height: Val::Percent(100.),
-                    },
+                    width: Val::Percent(100. * control_zone_ratio),
+                    height: Val::Percent(100.),
                     position: UiRect {
                         top: Val::Percent(0.),
                         right: Val::Percent(0.),
@@ -83,10 +81,7 @@ fn spawn_control_display(
                     .spawn(NodeBundle {
                         style: Style {
                             aspect_ratio: Some(3. / 2.),
-                            size: Size {
-                                width: Val::Percent(80.),
-                                ..default()
-                            },
+                            width: Val::Percent(80.),
                             ..default()
                         },
                         ..default()
@@ -150,10 +145,7 @@ fn spawn_control_display(
                     .spawn(NodeBundle {
                         style: Style {
                             aspect_ratio: Some(3.),
-                            size: Size {
-                                width: Val::Percent(80.),
-                                ..default()
-                            },
+                            width: Val::Percent(80.),
                             ..default()
                         },
                         ..default()

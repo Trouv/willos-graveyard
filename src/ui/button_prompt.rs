@@ -106,7 +106,8 @@ fn spawn_button_prompt<T, F>(
                                     left: Val::Px(0.),
                                     ..default()
                                 },
-                                size: Size::new(Val::Undefined, Val::Percent(25.)),
+                                width: Val::Undefined,
+                                height: Val::Percent(25.),
                                 aspect_ratio: Some(1.),
                                 ..default()
                             },
