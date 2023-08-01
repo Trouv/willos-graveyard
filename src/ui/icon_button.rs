@@ -93,12 +93,13 @@ impl IconButtonBundle {
     }
 
     /// Constructor for the bundle that applies the given size to the styling.
-    pub fn new_with_size(icon_button: IconButton, size: Size) -> IconButtonBundle {
+    pub fn new_with_size(icon_button: IconButton, width: Val, height: Val) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
             button_bundle: ButtonBundle {
                 style: Style {
-                    size,
+                    width,
+                    height,
                     aspect_ratio: Some(1.),
                     ..default()
                 },

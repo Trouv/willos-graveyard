@@ -70,10 +70,8 @@ fn level_select_card_style(position: UiRect) -> Style {
         align_items: AlignItems::Center,
         flex_direction: FlexDirection::Column,
         position_type: PositionType::Absolute,
-        size: Size {
-            width: Val::Percent(100.),
-            height: Val::Percent(100.),
-        },
+        width: Val::Percent(100.),
+        height: Val::Percent(100.),
         position,
         ..default()
     }
@@ -169,10 +167,8 @@ fn spawn_level_select_card(
                             left: Val::Percent(10.),
                             right: Val::Percent(10.),
                         },
-                        size: Size {
-                            height: Val::Percent(60.),
-                            width: Val::Percent(80.),
-                        },
+                        width: Val::Percent(80.),
+                        height: Val::Percent(60.),
                         ..default()
                     },
                     ..default()
