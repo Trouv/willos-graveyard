@@ -19,7 +19,10 @@ pub struct PreviousComponentPlugin<C: Component> {
 
 impl<C: Component + Clone> Plugin for PreviousComponentPlugin<C> {
     fn build(&self, app: &mut App) {
-        app.add_system(track_previous_component::<C>.in_set(TrackPreviousComponent));
+        app.add_systems(
+            Update,
+            track_previous_component::<C>.in_set(TrackPreviousComponent),
+        );
     }
 }
 

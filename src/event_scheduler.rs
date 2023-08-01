@@ -16,7 +16,7 @@ where
 {
     fn build(&self, app: &mut App) {
         app.add_event::<E>()
-            .add_system(fire_scheduled_events::<E>)
+            .add_systems(Update, fire_scheduled_events::<E>)
             .init_resource::<EventScheduler<E>>();
     }
 }
