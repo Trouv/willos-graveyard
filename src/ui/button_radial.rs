@@ -38,7 +38,7 @@ fn highlight_button_radial(
                 Interaction::Hovered => {
                     *radial_color = BackgroundColor(Color::WHITE);
                 }
-                Interaction::Clicked => {
+                Interaction::Pressed => {
                     *radial_color = BackgroundColor(Color::GRAY);
                 }
             }

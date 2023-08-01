@@ -75,7 +75,7 @@ pub(super) fn ui_action<T>(
     T: Send + Sync + Clone + 'static,
 {
     for (action, interaction, previous) in actions.iter() {
-        if (Interaction::Hovered, Interaction::Clicked) == (*interaction, *previous.get()) {
+        if (Interaction::Hovered, Interaction::Pressed) == (*interaction, *previous.get()) {
             event_writer.send(action.clone())
         }
     }
