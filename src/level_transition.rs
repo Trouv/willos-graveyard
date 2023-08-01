@@ -256,7 +256,7 @@ fn level_card_update(
                         Style {
                             top: Val::Percent(100.),
                             left: Val::Percent(0.),
-                            ..*style
+                            ..style.clone()
                         },
                         EaseFunction::QuadraticIn,
                         EasingType::Once {

@@ -125,7 +125,7 @@ fn font_scale(
                 .iter()
                 .cycle()
                 .zip(text.sections.iter_mut())
-                .for_each(|(font_size, mut section)| {
+                .for_each(|(font_size, section)| {
                     section.style.font_size = ratios.get(font_size) * min_length;
                 });
         }
