@@ -69,7 +69,7 @@ struct LevelCard;
 
 /// Event that fires during the level card rising/falling animation, describing the current stage
 /// of the animation.
-#[derive(Clone, Eq, PartialEq, Debug)]
+#[derive(Clone, Eq, PartialEq, Debug, Event)]
 enum LevelCardEvent {
     Block,
     Fall,

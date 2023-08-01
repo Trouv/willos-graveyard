@@ -27,7 +27,7 @@ impl Plugin for SpriteSheetAnimationPlugin {
 }
 
 /// Event that fires at certain points during an animation.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 pub enum AnimationEvent {
     /// Event that fires when an animation finishes, storing the animated entity.
     Finished(Entity),

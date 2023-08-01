@@ -101,7 +101,7 @@ impl From<Direction> for IVec2 {
 }
 
 /// Enumerates commands that can be performed via [SokobanCommands].
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Event)]
 pub enum SokobanCommand {
     /// Move a [SokobanBlock] entity in the given direction.
     Move {
@@ -179,7 +179,7 @@ impl SokobanBlock {
 pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Event)]
 pub struct PushEvent {
     /// The [PushTracker] entity that pushed other [SokobanBlock]s.
     pub pusher: Entity,

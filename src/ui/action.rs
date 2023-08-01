@@ -61,7 +61,7 @@ where
 /// Insert it on a button to define what action that button performs.
 /// Then, when that button is pressed, an event of the same value will be fired.
 #[allow(dead_code)]
-#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component)]
+#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component, Event)]
 pub struct UiAction<T: Send + Sync + Clone + 'static>(pub T);
 
 /// System that detects button presses and fires [UiAction]s.

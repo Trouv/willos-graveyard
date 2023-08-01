@@ -49,6 +49,7 @@ impl Plugin for LevelSelectPlugin {
 pub struct LevelSelectCard;
 
 /// Events regarding the visual state of the level select card.
+#[derive(Event)]
 pub enum LevelSelectCardEvent {
     /// Fires when the level select card entity is spawned.
     Spawned(Entity),

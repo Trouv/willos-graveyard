@@ -38,7 +38,7 @@ struct Goal {
 }
 
 /// Event that fires when a goal's state changes.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 enum GoalEvent {
     Met {
         goal_entity: Entity,

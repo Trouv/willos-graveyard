@@ -43,7 +43,7 @@ impl Plugin for ExorcismPlugin {
 struct ExorcismTile;
 
 /// Event that fires when willo steps on an exorcism tile.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 pub struct ExorcismEvent;
 
 /// Component that marks the "Exorcized" card UI element.

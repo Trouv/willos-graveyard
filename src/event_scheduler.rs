@@ -6,13 +6,13 @@ use std::{collections::VecDeque, marker::PhantomData, time::Duration};
 ///
 /// Supply the event type with the generic parameter.
 /// This plugin needs to be added once per event you plan to do scheduling for.
-pub struct EventSchedulerPlugin<E> {
+pub struct EventSchedulerPlugin<E: Event> {
     data: PhantomData<E>,
 }
 
 impl<E> Plugin for EventSchedulerPlugin<E>
 where
-    E: 'static + Send + Sync,
+    E: 'static + Send + Sync + Event,
 {
     fn build(&self, app: &mut App) {
         app.add_event::<E>()
@@ -23,7 +23,7 @@ where
 
 impl<E> EventSchedulerPlugin<E>
 where
-    E: 'static + Send + Sync,
+    E: 'static + Send + Sync + Event,
 {
     /// Construct a new [EventSchedulerPlugin].
     pub fn new() -> Self {
@@ -33,7 +33,7 @@ where
 
 impl<E> Default for EventSchedulerPlugin<E>
 where
-    E: 'static + Send + Sync,
+    E: 'static + Send + Sync + Event,
 {
     fn default() -> Self {
         EventSchedulerPlugin::<E> { data: PhantomData }
@@ -44,7 +44,7 @@ where
 #[derive(Clone, Debug, Resource)]
 pub struct EventScheduler<E>
 where
-    E: 'static + Send + Sync,
+    E: 'static + Send + Sync + Event,
 {
     events: VecDeque<(E, Timer)>,
 }
@@ -52,7 +52,7 @@ where
 /// Custom default impl because deriving Default makes it only default when E is default.
 impl<E> Default for EventScheduler<E>
 where
-    E: 'static + Send + Sync,
+    E: 'static + Send + Sync + Event,
 {
     fn default() -> Self {
         EventScheduler::<E> {
@@ -63,7 +63,7 @@ where
 
 impl<E> EventScheduler<E>
 where
-    E: 'static + Send + Sync,
+    E: 'static + Send + Sync + Event,
 {
     /// Schedule an event to fire in the future.
     pub fn schedule(&mut self, event: E, duration: Duration) {
@@ -72,7 +72,7 @@ where
     }
 }
 
-fn fire_scheduled_events<E>(
+fn fire_scheduled_events<E: Event>(
     time: Res<Time>,
     mut event_scheduler: ResMut<EventScheduler<E>>,
     mut writer: EventWriter<E>,
