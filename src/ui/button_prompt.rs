@@ -168,7 +168,7 @@ mod tests {
             .id()
     }
 
-    fn get_child_component<'a, C: Component>(app: &'a mut App, entity: Entity) -> &'a C {
+    fn get_child_component<C: Component>(app: &mut App, entity: Entity) -> &C {
         let mut children = app.world.query::<(&C, &Parent)>();
 
         children

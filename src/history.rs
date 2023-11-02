@@ -74,7 +74,7 @@ fn flush_history_commands<C: Component + Clone>(
             }
             HistoryCommands::Reset => {
                 for (mut history, mut component) in history_query.iter_mut() {
-                    if let Some(first) = history.get(0) {
+                    if let Some(first) = history.first() {
                         // Cloning is done before pushing to avoid borrow check issues
                         let first = first.clone();
 
