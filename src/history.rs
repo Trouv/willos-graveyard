@@ -22,7 +22,8 @@ impl<C: Component + Clone, S: States> HistoryPlugin<C, S> {
 
 impl<C: Component + Clone, S: States> Plugin for HistoryPlugin<C, S> {
     fn build(&self, app: &mut App) {
-        app.add_event::<HistoryCommands>().add_system(
+        app.add_event::<HistoryCommands>().add_systems(
+            Update,
             flush_history_commands::<C>
                 .run_if(in_state(self.state.clone()))
                 .in_set(FlushHistoryCommands),
@@ -31,7 +32,7 @@ impl<C: Component + Clone, S: States> Plugin for HistoryPlugin<C, S> {
 }
 
 /// Event that can be fired by the user to command the plugin to perform various history tasks.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 pub enum HistoryCommands {
     /// Record the current state of all tracked components to their histories.
     Record,

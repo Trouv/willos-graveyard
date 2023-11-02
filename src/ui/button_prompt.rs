@@ -44,14 +44,15 @@ where
     T: Actionlike + Send + Sync + Clone + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            spawn_button_prompt::<T, Changed<UiAction<T>>>
-                .run_if(resource_exists::<ButtonPromptAssets>()),
-        )
-        .add_system(
-            spawn_button_prompt::<T, ()>
-                .run_if(resource_exists::<ButtonPromptAssets>())
-                .run_if(resource_changed::<InputMap<T>>),
+        app.add_systems(
+            Update,
+            (
+                spawn_button_prompt::<T, Changed<UiAction<T>>>
+                    .run_if(resource_exists::<ButtonPromptAssets>()),
+                spawn_button_prompt::<T, ()>
+                    .run_if(resource_exists::<ButtonPromptAssets>())
+                    .run_if(resource_changed::<InputMap<T>>),
+            ),
         );
     }
 }
@@ -100,12 +101,9 @@ fn spawn_button_prompt<T, F>(
                         image_bundle: ImageBundle {
                             style: Style {
                                 position_type: PositionType::Absolute,
-                                position: UiRect {
-                                    top: Val::Px(0.),
-                                    left: Val::Px(0.),
-                                    ..default()
-                                },
-                                size: Size::new(Val::Undefined, Val::Percent(25.)),
+                                top: Val::Px(0.),
+                                left: Val::Px(0.),
+                                height: Val::Percent(25.),
                                 aspect_ratio: Some(1.),
                                 ..default()
                             },
@@ -121,13 +119,13 @@ fn spawn_button_prompt<T, F>(
 
 #[cfg(test)]
 mod tests {
-    use bevy::asset::HandleId;
+    use bevy::{asset::HandleId, reflect::TypePath};
 
     use crate::ui::action::UiActionPlugin;
 
     use super::*;
 
-    #[derive(Copy, Clone, Debug, Actionlike)]
+    #[derive(Copy, Clone, Debug, Actionlike, TypePath)]
     enum MyAction {
         Jump,
         Shoot,
@@ -136,8 +134,10 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(UiActionPlugin::<MyAction>::new())
-            .add_plugin(ButtonPromptPlugin::<MyAction>::new());
+        app.add_plugins((
+            UiActionPlugin::<MyAction>::new(),
+            ButtonPromptPlugin::<MyAction>::new(),
+        ));
 
         app
     }

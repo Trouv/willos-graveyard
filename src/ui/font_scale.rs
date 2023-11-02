@@ -13,13 +13,15 @@ pub struct FontScalePlugin;
 
 impl Plugin for FontScalePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<FontSizeRatios>()
-            .add_system(
+        app.init_resource::<FontSizeRatios>().add_systems(
+            Update,
+            (
                 font_scale
                     .run_if(on_event::<WindowResized>())
                     .in_set(FontScaleSet),
-            )
-            .add_system(font_scale.run_if(font_scale_changed).in_set(FontScaleSet));
+                font_scale.run_if(font_scale_changed).in_set(FontScaleSet),
+            ),
+        );
     }
 }
 
@@ -123,7 +125,7 @@ fn font_scale(
                 .iter()
                 .cycle()
                 .zip(text.sections.iter_mut())
-                .for_each(|(font_size, mut section)| {
+                .for_each(|(font_size, section)| {
                     section.style.font_size = ratios.get(font_size) * min_length;
                 });
         }

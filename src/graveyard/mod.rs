@@ -17,7 +17,7 @@ use crate::{
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::TypePath};
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range, time::Duration};
@@ -34,24 +34,29 @@ impl Plugin for GraveyardPlugin {
             .clone();
 
         app.init_resource::<RewindSettings>()
-            .add_plugin(InputManagerPlugin::<GraveyardAction>::default())
+            .add_plugins((
+                InputManagerPlugin::<GraveyardAction>::default(),
+                UiActionPlugin::<GraveyardAction>::new(),
+                ButtonPromptPlugin::<GraveyardAction>::new(),
+            ))
             .init_resource::<ActionState<GraveyardAction>>()
-            .add_plugin(UiActionPlugin::<GraveyardAction>::new())
-            .add_plugin(ButtonPromptPlugin::<GraveyardAction>::new())
             .insert_resource(
                 load_graveyard_control_settings(asset_folder)
                     .expect("unable to load gameplay control settings"),
             )
-            .add_plugin(control_display::ControlDisplayPlugin)
-            .add_plugin(willo::WilloPlugin)
-            .add_plugin(sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"))
-            .add_plugin(movement_table::MovementTablePlugin)
-            .add_plugin(gravestone::GravestonePlugin)
-            .add_plugin(wall::WallPlugin)
-            .add_plugin(goal::GoalPlugin)
-            .add_plugin(exorcism::ExorcismPlugin)
-            .add_plugin(wind::WindPlugin)
-            .add_system(
+            .add_plugins((
+                control_display::ControlDisplayPlugin,
+                willo::WilloPlugin,
+                sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"),
+                movement_table::MovementTablePlugin,
+                gravestone::GravestonePlugin,
+                wall::WallPlugin,
+                goal::GoalPlugin,
+                exorcism::ExorcismPlugin,
+                wind::WindPlugin,
+            ))
+            .add_systems(
+                Update,
                 graveyard_input
                     .run_if(in_state(GameState::Graveyard))
                     .in_set(willo::WilloSets::Input)
@@ -61,7 +66,7 @@ impl Plugin for GraveyardPlugin {
 }
 
 /// Actions other than grave-actions that can be performed during the gameplay state.
-#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize)]
+#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize, TypePath)]
 pub enum GraveyardAction {
     /// Undo the last grave-action or restart.
     Undo,

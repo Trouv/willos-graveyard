@@ -9,11 +9,13 @@ pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(PlayZonePortion(0.75))
-            .add_startup_system(spawn_camera)
-            .add_system(
-                fit_camera_around_play_zone_padded.in_schedule(OnEnter(GameState::Graveyard)),
+            .add_systems(Startup, spawn_camera)
+            .add_systems(
+                OnEnter(GameState::Graveyard),
+                fit_camera_around_play_zone_padded,
             )
-            .add_system(
+            .add_systems(
+                Update,
                 fit_camera_around_play_zone_padded
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(on_event::<bevy::window::WindowResized>()),

@@ -10,7 +10,10 @@ pub struct ButtonRadialPlugin;
 
 impl Plugin for ButtonRadialPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(highlight_button_radial.run_if(not(in_state(GameState::AssetLoading))));
+        app.add_systems(
+            Update,
+            highlight_button_radial.run_if(not(in_state(GameState::AssetLoading))),
+        );
     }
 }
 
@@ -35,7 +38,7 @@ fn highlight_button_radial(
                 Interaction::Hovered => {
                     *radial_color = BackgroundColor(Color::WHITE);
                 }
-                Interaction::Clicked => {
+                Interaction::Pressed => {
                     *radial_color = BackgroundColor(Color::GRAY);
                 }
             }

@@ -23,22 +23,26 @@ pub struct LevelTransitionPlugin;
 impl Plugin for LevelTransitionPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<TransitionTo>()
-            .add_plugin(EventSchedulerPlugin::<LevelCardEvent>::new())
-            .add_system(
+            .add_plugins(EventSchedulerPlugin::<LevelCardEvent>::new())
+            .add_systems(
+                Update,
                 trigger_level_transition_state
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(not(in_state(GameState::LevelTransition)))
                     .run_if(resource_added::<TransitionTo>()),
             )
-            .add_system(
-                clean_up_transition_to_resource.in_schedule(OnExit(GameState::LevelTransition)),
-            )
-            .add_system(spawn_level_card.in_schedule(OnEnter(GameState::LevelTransition)))
             .add_systems(
+                OnExit(GameState::LevelTransition),
+                clean_up_transition_to_resource,
+            )
+            .add_systems(OnEnter(GameState::LevelTransition), spawn_level_card)
+            .add_systems(
+                Update,
                 (level_card_update, load_next_level)
                     .in_set(LevelTransitionSystemSet::OnLevelCardEvent),
             )
             .configure_set(
+                Update,
                 LevelTransitionSystemSet::OnLevelCardEvent
                     .run_if(in_state(GameState::LevelTransition))
                     .run_if(on_event::<LevelCardEvent>()),
@@ -46,7 +50,8 @@ impl Plugin for LevelTransitionPlugin {
             // level_card_update should be performed during both graveyard and level transition
             // states since it cleans up the level card after it's done falling during the graveyard
             // state
-            .add_system(
+            .add_systems(
+                Update,
                 level_card_update
                     .run_if(in_state(GameState::Graveyard))
                     .run_if(on_event::<LevelCardEvent>()),
@@ -64,7 +69,7 @@ struct LevelCard;
 
 /// Event that fires during the level card rising/falling animation, describing the current stage
 /// of the animation.
-#[derive(Clone, Eq, PartialEq, Debug)]
+#[derive(Clone, Eq, PartialEq, Debug, Event)]
 enum LevelCardEvent {
     Block,
     Fall,
@@ -150,15 +155,10 @@ fn spawn_level_card(
                 align_items: AlignItems::Center,
                 position_type: PositionType::Absolute,
                 flex_direction: FlexDirection::Column,
-                size: Size {
-                    width: Val::Percent(100.),
-                    height: Val::Percent(100.),
-                },
-                position: UiRect {
-                    top: Val::Percent(100.),
-                    left: Val::Percent(0.),
-                    ..Default::default()
-                },
+                width: Val::Percent(100.),
+                height: Val::Percent(100.),
+                top: Val::Percent(100.),
+                left: Val::Percent(0.),
                 ..Default::default()
             }
             .ease_to(
@@ -167,15 +167,10 @@ fn spawn_level_card(
                     align_items: AlignItems::Center,
                     position_type: PositionType::Absolute,
                     flex_direction: FlexDirection::Column,
-                    size: Size {
-                        width: Val::Percent(100.),
-                        height: Val::Percent(100.),
-                    },
-                    position: UiRect {
-                        top: Val::Percent(0.),
-                        left: Val::Percent(0.),
-                        ..Default::default()
-                    },
+                    width: Val::Percent(100.),
+                    height: Val::Percent(100.),
+                    top: Val::Percent(0.),
+                    left: Val::Percent(0.),
                     ..Default::default()
                 },
                 EaseFunction::QuadraticOut,
@@ -259,12 +254,9 @@ fn level_card_update(
                 LevelCardEvent::Fall => {
                     commands.entity(entity).insert(style.clone().ease_to(
                         Style {
-                            position: UiRect {
-                                top: Val::Percent(100.),
-                                left: Val::Percent(0.),
-                                ..Default::default()
-                            },
-                            ..*style
+                            top: Val::Percent(100.),
+                            left: Val::Percent(0.),
+                            ..style.clone()
                         },
                         EaseFunction::QuadraticIn,
                         EasingType::Once {

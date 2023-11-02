@@ -35,7 +35,8 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
             flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            size: Size::new(Val::Auto, Val::Px(50.)),
+            width: Val::Auto,
+            height: Val::Px(50.),
             margin: UiRect {
                 top: margin,
                 bottom: margin,
@@ -59,12 +60,10 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
                 image: UiImage::new(asset_holder.button_radial.clone()),
                 style: Style {
                     position_type: PositionType::Absolute,
-                    position: UiRect {
-                        left: Val::Percent(15.),
-                        top: Val::Percent(15.),
-                        ..default()
-                    },
-                    size: Size::new(Val::Percent(70.), Val::Percent(70.)),
+                    left: Val::Percent(15.),
+                    top: Val::Percent(15.),
+                    width: Val::Percent(70.),
+                    height: Val::Percent(70.),
                     ..default()
                 },
                 focus_policy: FocusPolicy::Pass,
@@ -96,7 +95,7 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
         button.spawn(ImageBundle {
             image: UiImage::new(asset_holder.button_underline.clone()),
             style: Style {
-                size: Size::height(Val::Percent(100. / 3.)),
+                height: Val::Percent(100. / 3.),
                 aspect_ratio: Some(4.),
                 ..default()
             },

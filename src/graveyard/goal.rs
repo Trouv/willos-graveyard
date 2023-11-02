@@ -16,14 +16,17 @@ impl Plugin for GoalPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GoalEvent>()
             .init_resource::<GoalGhostSettings>()
-            .add_system(spawn_goal_ghosts.run_if(in_state(GameState::LevelTransition)))
-            .add_system(
-                check_goal
-                    .run_if(in_state(GameState::Graveyard))
-                    .after(ExorcismSets::CheckDeath),
+            .add_systems(
+                Update,
+                (
+                    spawn_goal_ghosts.run_if(in_state(GameState::LevelTransition)),
+                    check_goal
+                        .run_if(in_state(GameState::Graveyard))
+                        .after(ExorcismSets::CheckDeath),
+                    goal_ghost_animation.run_if(not(in_state(GameState::AssetLoading))),
+                    goal_ghost_event_sugar.run_if(not(in_state(GameState::AssetLoading))),
+                ),
             )
-            .add_system(goal_ghost_animation.run_if(not(in_state(GameState::AssetLoading))))
-            .add_system(goal_ghost_event_sugar.run_if(not(in_state(GameState::AssetLoading))))
             .register_ldtk_entity::<GoalBundle>("Goal");
     }
 }
@@ -35,7 +38,7 @@ struct Goal {
 }
 
 /// Event that fires when a goal's state changes.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 enum GoalEvent {
     Met {
         goal_entity: Entity,
@@ -52,7 +55,6 @@ struct GoalBundle {
     grid_coords: GridCoords,
     goal: Goal,
     #[sprite_sheet_bundle]
-    #[bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
 }
 
@@ -156,7 +158,6 @@ fn check_goal(
     mut next_state: ResMut<NextState<GameState>>,
     level_selection: Res<LevelSelection>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
-    audio: Res<Audio>,
     asset_holder: Res<AssetHolder>,
 ) {
     // If the goal is not loaded for whatever reason (for example when hot-reloading levels),
@@ -211,7 +212,10 @@ fn check_goal(
             }
         }
 
-        audio.play(asset_holder.victory_sound.clone_weak());
+        commands.spawn(AudioBundle {
+            source: asset_holder.victory_sound.clone(),
+            settings: PlaybackSettings::DESPAWN,
+        });
     }
 }
 fn goal_ghost_event_sugar(

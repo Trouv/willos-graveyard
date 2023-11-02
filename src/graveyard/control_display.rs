@@ -19,8 +19,9 @@ pub struct ControlDisplayPlugin;
 
 impl Plugin for ControlDisplayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_control_display.in_schedule(OnEnter(GameState::LevelTransition)))
-            .add_system(
+        app.add_systems(OnEnter(GameState::LevelTransition), spawn_control_display)
+            .add_systems(
+                Update,
                 update_grave_action_buttons
                     .run_if(in_state(GameState::Graveyard))
                     .before(IconButtonSet),
@@ -61,15 +62,10 @@ fn spawn_control_display(
                     justify_content: JustifyContent::SpaceAround,
                     align_content: AlignContent::Center,
                     position_type: PositionType::Absolute,
-                    size: Size {
-                        width: Val::Percent(100. * control_zone_ratio),
-                        height: Val::Percent(100.),
-                    },
-                    position: UiRect {
-                        top: Val::Percent(0.),
-                        right: Val::Percent(0.),
-                        ..Default::default()
-                    },
+                    width: Val::Percent(100. * control_zone_ratio),
+                    height: Val::Percent(100.),
+                    top: Val::Percent(0.),
+                    right: Val::Percent(0.),
                     ..Default::default()
                 },
                 z_index: ZIndex::Local(-1),
@@ -82,10 +78,7 @@ fn spawn_control_display(
                     .spawn(NodeBundle {
                         style: Style {
                             aspect_ratio: Some(3. / 2.),
-                            size: Size {
-                                width: Val::Percent(80.),
-                                ..default()
-                            },
+                            width: Val::Percent(80.),
                             ..default()
                         },
                         ..default()
@@ -149,10 +142,7 @@ fn spawn_control_display(
                     .spawn(NodeBundle {
                         style: Style {
                             aspect_ratio: Some(3.),
-                            size: Size {
-                                width: Val::Percent(80.),
-                                ..default()
-                            },
+                            width: Val::Percent(80.),
                             ..default()
                         },
                         ..default()
@@ -228,7 +218,7 @@ mod tests {
         let mut app = App::new();
 
         app.add_state::<GameState>()
-            .add_plugin(ControlDisplayPlugin)
+            .add_plugins(ControlDisplayPlugin)
             .insert_resource(PlayZonePortion(0.5));
 
         app

@@ -44,10 +44,11 @@ where
 {
     fn build(&self, app: &mut App) {
         if !app.is_plugin_added::<PreviousComponentPlugin<Interaction>>() {
-            app.add_plugin(PreviousComponentPlugin::<Interaction>::default());
+            app.add_plugins(PreviousComponentPlugin::<Interaction>::default());
         }
 
-        app.add_event::<UiAction<T>>().add_system(
+        app.add_event::<UiAction<T>>().add_systems(
+            Update,
             ui_action::<T>
                 .in_set(UiActionSet)
                 .after(TrackPreviousComponent),
@@ -60,7 +61,7 @@ where
 /// Insert it on a button to define what action that button performs.
 /// Then, when that button is pressed, an event of the same value will be fired.
 #[allow(dead_code)]
-#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component)]
+#[derive(Clone, Eq, PartialEq, Debug, Default, Deref, DerefMut, Component, Event)]
 pub struct UiAction<T: Send + Sync + Clone + 'static>(pub T);
 
 /// System that detects button presses and fires [UiAction]s.
@@ -74,7 +75,7 @@ pub(super) fn ui_action<T>(
     T: Send + Sync + Clone + 'static,
 {
     for (action, interaction, previous) in actions.iter() {
-        if (Interaction::Hovered, Interaction::Clicked) == (*interaction, *previous.get()) {
+        if (Interaction::Hovered, Interaction::Pressed) == (*interaction, *previous.get()) {
             event_writer.send(action.clone())
         }
     }
@@ -95,7 +96,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(UiActionPlugin::<TestAction>::new());
+        app.add_plugins(UiActionPlugin::<TestAction>::new());
         app
     }
 
@@ -123,7 +124,7 @@ mod tests {
         *app.world
             .entity_mut(first_entity)
             .get_mut::<Interaction>()
-            .unwrap() = Interaction::Clicked;
+            .unwrap() = Interaction::Pressed;
 
         app.update();
 
@@ -151,7 +152,7 @@ mod tests {
         *app.world
             .entity_mut(second_entity)
             .get_mut::<Interaction>()
-            .unwrap() = Interaction::Clicked;
+            .unwrap() = Interaction::Pressed;
 
         app.update();
 
@@ -180,7 +181,7 @@ mod tests {
         *app.world
             .entity_mut(first_entity)
             .get_mut::<Interaction>()
-            .unwrap() = Interaction::Clicked;
+            .unwrap() = Interaction::Pressed;
 
         app.update();
 

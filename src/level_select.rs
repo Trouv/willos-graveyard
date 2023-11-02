@@ -24,18 +24,23 @@ pub struct LevelSelectPlugin;
 
 impl Plugin for LevelSelectPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(spawn_level_select_card.in_schedule(OnEnter(GameState::LevelSelect)))
-            .add_plugin(EventSchedulerPlugin::<LevelSelectCardEvent>::new())
-            .add_plugin(UiActionPlugin::<LevelSelectAction>::new())
-            .add_system(pause.run_if(in_state(GameState::Graveyard)))
-            .add_system(unpause.run_if(in_state(GameState::LevelSelect)))
-            .add_system(
-                select_level
-                    .run_if(in_state(GameState::LevelSelect))
-                    .run_if(on_event::<UiAction<LevelSelectAction>>()),
+        app.add_systems(OnEnter(GameState::LevelSelect), spawn_level_select_card)
+            .add_plugins((
+                EventSchedulerPlugin::<LevelSelectCardEvent>::new(),
+                UiActionPlugin::<LevelSelectAction>::new(),
+            ))
+            .add_systems(
+                Update,
+                (
+                    pause.run_if(in_state(GameState::Graveyard)),
+                    unpause.run_if(in_state(GameState::LevelSelect)),
+                    select_level
+                        .run_if(in_state(GameState::LevelSelect))
+                        .run_if(on_event::<UiAction<LevelSelectAction>>()),
+                    despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()),
+                ),
             )
-            .add_system(drop_level_select_card.in_schedule(OnExit(GameState::LevelSelect)))
-            .add_system(despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()));
+            .add_systems(OnExit(GameState::LevelSelect), drop_level_select_card);
     }
 }
 
@@ -44,6 +49,7 @@ impl Plugin for LevelSelectPlugin {
 pub struct LevelSelectCard;
 
 /// Events regarding the visual state of the level select card.
+#[derive(Event)]
 pub enum LevelSelectCardEvent {
     /// Fires when the level select card entity is spawned.
     Spawned(Entity),
@@ -59,16 +65,23 @@ enum LevelSelectAction {
 }
 
 fn level_select_card_style(position: UiRect) -> Style {
+    let UiRect {
+        left,
+        right,
+        top,
+        bottom,
+    } = position;
     Style {
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
         flex_direction: FlexDirection::Column,
         position_type: PositionType::Absolute,
-        size: Size {
-            width: Val::Percent(100.),
-            height: Val::Percent(100.),
-        },
-        position,
+        width: Val::Percent(100.),
+        height: Val::Percent(100.),
+        left,
+        right,
+        top,
+        bottom,
         ..default()
     }
 }
@@ -163,10 +176,8 @@ fn spawn_level_select_card(
                             left: Val::Percent(10.),
                             right: Val::Percent(10.),
                         },
-                        size: Size {
-                            height: Val::Percent(60.),
-                            width: Val::Percent(80.),
-                        },
+                        width: Val::Percent(80.),
+                        height: Val::Percent(60.),
                         ..default()
                     },
                     ..default()
@@ -224,9 +235,14 @@ fn drop_level_select_card(
     mut level_select_card_events: ResMut<EventScheduler<LevelSelectCardEvent>>,
 ) {
     for (entity, style) in level_select_card_query.iter() {
-        commands
-            .entity(entity)
-            .insert(level_select_card_style(style.position).ease_to(
+        commands.entity(entity).insert(
+            level_select_card_style(UiRect {
+                left: style.left,
+                right: style.right,
+                top: style.top,
+                bottom: style.bottom,
+            })
+            .ease_to(
                 level_select_card_style(UiRect {
                     top: Val::Percent(100.),
                     left: Val::Percent(0.),
@@ -236,7 +252,8 @@ fn drop_level_select_card(
                 EasingType::Once {
                     duration: Duration::from_secs(1),
                 },
-            ));
+            ),
+        );
 
         // Demote level select card so it can't be doubly-despawned
         commands.entity(entity).remove::<LevelSelectCard>();

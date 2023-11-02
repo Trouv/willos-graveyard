@@ -10,7 +10,10 @@ use crate::{
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
-use bevy::{prelude::*, reflect::Enum};
+use bevy::{
+    prelude::*,
+    reflect::{Enum, TypePath},
+};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};
@@ -31,26 +34,31 @@ impl Plugin for GravestonePlugin {
             .asset_folder
             .clone();
 
-        app.add_plugin(InputManagerPlugin::<GraveId>::default())
-            .init_resource::<ActionState<GraveId>>()
-            .add_plugin(UiActionPlugin::<GraveId>::new())
-            .add_plugin(ButtonPromptPlugin::<GraveId>::new())
-            .init_resource::<GravestoneSettings>()
-            .insert_resource(
-                load_gravestone_control_settings(asset_folder)
-                    .expect("unable to load gravestone control settings"),
-            )
-            .add_system(spawn_gravestone_body.run_if(in_state(GameState::LevelTransition)))
-            .add_system(
+        app.add_plugins((
+            InputManagerPlugin::<GraveId>::default(),
+            UiActionPlugin::<GraveId>::new(),
+            ButtonPromptPlugin::<GraveId>::new(),
+        ))
+        .init_resource::<ActionState<GraveId>>()
+        .init_resource::<GravestoneSettings>()
+        .insert_resource(
+            load_gravestone_control_settings(asset_folder)
+                .expect("unable to load gravestone control settings"),
+        )
+        .add_systems(
+            Update,
+            (
+                spawn_gravestone_body.run_if(in_state(GameState::LevelTransition)),
                 gravestone_input
                     .run_if(in_state(GameState::Graveyard))
                     .in_set(WilloSets::Input)
                     .before(FlushHistoryCommands),
-            )
-            .register_ldtk_entity::<GravestoneBundle>("W")
-            .register_ldtk_entity::<GravestoneBundle>("A")
-            .register_ldtk_entity::<GravestoneBundle>("S")
-            .register_ldtk_entity::<GravestoneBundle>("D");
+            ),
+        )
+        .register_ldtk_entity::<GravestoneBundle>("W")
+        .register_ldtk_entity::<GravestoneBundle>("A")
+        .register_ldtk_entity::<GravestoneBundle>("S")
+        .register_ldtk_entity::<GravestoneBundle>("D");
     }
 }
 
@@ -86,7 +94,7 @@ impl Default for GravestoneSettings {
 ///
 /// Also acts as the grave-action itself by implementing Actionlike.
 #[derive(
-    Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize,
+    Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize, TypePath,
 )]
 pub enum GraveId {
     /// Gravestone/action that applies to "northy" buttons like W and Triangle.

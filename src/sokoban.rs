@@ -54,7 +54,8 @@ where
         app.add_event::<SokobanCommand>()
             .add_event::<PushEvent>()
             .insert_resource(self.layer_identifier.clone())
-            .add_system(
+            .add_systems(
+                Update,
                 flush_sokoban_commands
                     .run_if(in_state(self.state.clone()))
                     .run_if(on_event::<SokobanCommand>())
@@ -62,11 +63,11 @@ where
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
             // see https://github.com/vleue/bevy_easings/issues/23
-            .add_system(
+            .add_systems(
+                PostUpdate,
                 ease_movement
                     .run_if(in_state(self.state.clone()))
-                    .in_set(SokobanSets::EaseMovement)
-                    .in_base_set(CoreSet::PostUpdate),
+                    .in_set(SokobanSets::EaseMovement),
             );
     }
 }
@@ -100,7 +101,7 @@ impl From<Direction> for IVec2 {
 }
 
 /// Enumerates commands that can be performed via [SokobanCommands].
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Event)]
 pub enum SokobanCommand {
     /// Move a [SokobanBlock] entity in the given direction.
     Move {
@@ -178,7 +179,7 @@ impl SokobanBlock {
 pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Event)]
 pub struct PushEvent {
     /// The [PushTracker] entity that pushed other [SokobanBlock]s.
     pub pusher: Entity,
@@ -466,7 +467,7 @@ mod tests {
         let mut app = App::new();
 
         app.add_state::<State>()
-            .add_plugin(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
+            .add_plugins(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
 
         app.world.spawn(LayerMetadata {
             c_wid: 3,

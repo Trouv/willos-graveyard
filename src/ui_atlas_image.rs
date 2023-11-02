@@ -11,7 +11,7 @@ pub struct UiAtlasImagePlugin;
 impl Plugin for UiAtlasImagePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UiAtlasImageMap>()
-            .add_system(resolve_ui_atlas_image.in_base_set(CoreSet::PostUpdate));
+            .add_systems(PostUpdate, resolve_ui_atlas_image);
     }
 }
 
@@ -61,7 +61,7 @@ fn resolve_ui_atlas_image(
                     .get(&atlas.texture)
                     .expect("source image for UiAtlasImage should be in Assets<Image>");
 
-                let is_srgb = image.texture_descriptor.format.describe().srgb;
+                let is_srgb = image.texture_descriptor.format.is_srgb();
 
                 let dynamic_image = image.clone().try_into_dynamic().expect("source image for UiAtlasImage should support dynamic conversion: https://docs.rs/bevy/latest/bevy/render/texture/struct.Image.html#method.try_into_dynamic");
 
@@ -98,8 +98,7 @@ mod tests {
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugin(UiAtlasImagePlugin)
-            .add_plugin(AssetPlugin::default())
+        app.add_plugins((UiAtlasImagePlugin, AssetPlugin::default()))
             .add_asset::<Image>()
             .add_asset::<TextureAtlas>();
         app

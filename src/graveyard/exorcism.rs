@@ -23,14 +23,17 @@ pub struct ExorcismPlugin;
 impl Plugin for ExorcismPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ExorcismEvent>()
-            .add_system(
-                check_death
-                    .run_if(in_state(GameState::Graveyard))
-                    .in_set(ExorcismSets::CheckDeath)
-                    .after(FlushHistoryCommands),
+            .add_systems(
+                Update,
+                (
+                    check_death
+                        .run_if(in_state(GameState::Graveyard))
+                        .in_set(ExorcismSets::CheckDeath)
+                        .after(FlushHistoryCommands),
+                    spawn_death_card.run_if(in_state(GameState::Graveyard)),
+                ),
             )
-            .add_system(make_exorcism_card_visible.in_base_set(CoreSet::PreUpdate))
-            .add_system(spawn_death_card.run_if(in_state(GameState::Graveyard)))
+            .add_systems(PreUpdate, make_exorcism_card_visible)
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }
@@ -40,7 +43,7 @@ impl Plugin for ExorcismPlugin {
 struct ExorcismTile;
 
 /// Event that fires when willo steps on an exorcism tile.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 pub struct ExorcismEvent;
 
 /// Component that marks the "Exorcized" card UI element.
@@ -89,15 +92,10 @@ fn spawn_death_card(
                         align_items: AlignItems::Center,
                         position_type: PositionType::Absolute,
                         flex_direction: FlexDirection::Column,
-                        size: Size {
-                            width: Val::Percent(100.),
-                            height: Val::Percent(100.),
-                        },
-                        position: UiRect {
-                            top: Val::Percent(100.),
-                            left: Val::Percent(0.),
-                            ..Default::default()
-                        },
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                        top: Val::Percent(100.),
+                        left: Val::Percent(0.),
                         ..Default::default()
                     }
                     .ease_to(
@@ -106,15 +104,10 @@ fn spawn_death_card(
                             align_items: AlignItems::Center,
                             position_type: PositionType::Absolute,
                             flex_direction: FlexDirection::Column,
-                            size: Size {
-                                width: Val::Percent(100.),
-                                height: Val::Percent(100.),
-                            },
-                            position: UiRect {
-                                top: Val::Percent(0.),
-                                left: Val::Percent(0.),
-                                ..Default::default()
-                            },
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                            top: Val::Percent(0.),
+                            left: Val::Percent(0.),
                             ..Default::default()
                         },
                         EaseFunction::QuadraticOut,

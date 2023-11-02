@@ -12,22 +12,22 @@ pub struct SpriteSheetAnimationPlugin;
 
 impl Plugin for SpriteSheetAnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<AnimationEvent>()
-            .add_system(
+        app.add_event::<AnimationEvent>().add_systems(
+            Update,
+            (
                 sprite_sheet_animation
                     .in_set(AnimationSet)
                     .after(FromComponentSet),
-            )
-            .add_system(
                 set_initial_sprite_index
                     .in_set(AnimationSet)
                     .after(FromComponentSet),
-            );
+            ),
+        );
     }
 }
 
 /// Event that fires at certain points during an animation.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 pub enum AnimationEvent {
     /// Event that fires when an animation finishes, storing the animated entity.
     Finished(Entity),
@@ -133,8 +133,8 @@ where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
     fn build(&self, app: &mut App) {
-        app.add_plugin(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
-            .add_system(animation_finisher::<F>.before(AnimationSet));
+        app.add_plugins(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
+            .add_systems(Update, animation_finisher::<F>.before(AnimationSet));
     }
 }
 

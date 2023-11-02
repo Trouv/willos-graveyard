@@ -15,9 +15,11 @@ pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(font_scale::FontScalePlugin)
-            .add_plugin(button_radial::ButtonRadialPlugin)
-            .add_plugin(UiAtlasImagePlugin)
-            .add_plugin(icon_button::IconButtonPlugin);
+        app.add_plugins((
+            font_scale::FontScalePlugin,
+            button_radial::ButtonRadialPlugin,
+            UiAtlasImagePlugin,
+            icon_button::IconButtonPlugin,
+        ));
     }
 }
