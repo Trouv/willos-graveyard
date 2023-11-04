@@ -55,7 +55,9 @@ impl Plugin for GravestonePlugin {
                     .before(FlushHistoryCommands),
             ),
         )
+        .register_ldtk_entity::<GravestoneBundle>("Q")
         .register_ldtk_entity::<GravestoneBundle>("W")
+        .register_ldtk_entity::<GravestoneBundle>("E")
         .register_ldtk_entity::<GravestoneBundle>("A")
         .register_ldtk_entity::<GravestoneBundle>("S")
         .register_ldtk_entity::<GravestoneBundle>("D");
