@@ -265,7 +265,12 @@ mod tests {
         app.world
             .spawn(MovementTable {
                 table: [
-                    [Some(GraveId::North), None, None, None],
+                    [
+                        Some(GraveId::North),
+                        Some(GraveId::Northwest),
+                        None,
+                        Some(GraveId::Northeast),
+                    ],
                     [None, Some(GraveId::West), None, None],
                     [None, None, Some(GraveId::South), None],
                     [None, None, None, Some(GraveId::East)],
@@ -308,10 +313,26 @@ mod tests {
         initial_state_changes(&mut app);
 
         assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::Northwest),
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 1
+            })
+        );
+
+        assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
                 index: 0
+            })
+        );
+
+        assert_eq!(
+            get_icon_button_for_action(&mut app, GraveId::Northeast),
+            &IconButton::AtlasImageIcon(UiAtlasImage {
+                texture_atlas: assets.movement_table_actions.clone(),
+                index: 3
             })
         );
 
@@ -394,7 +415,7 @@ mod tests {
         let mut movement_table = movement_table_mut.get_mut::<MovementTable>().unwrap();
 
         movement_table.table[0][0] = None;
-        movement_table.table[0][1] = Some(GraveId::North);
+        movement_table.table[0][2] = Some(GraveId::North);
         movement_table.table[1][1] = None;
 
         app.update();
@@ -403,7 +424,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 1
+                index: 2
             })
         );
 
