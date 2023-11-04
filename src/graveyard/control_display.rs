@@ -84,6 +84,19 @@ fn spawn_control_display(
                         ..default()
                     })
                     .with_children(|movement_table_action_container| {
+                        // spawn northwest
+                        movement_table_action_container
+                            .spawn(IconButtonBundle::new_with_absolute_position(
+                                IconButton::NoIcon,
+                                UiRect {
+                                    top: Val::Percent(0.),
+                                    left: Val::Percent(0.),
+                                    bottom: Val::Percent(50.),
+                                    right: Val::Percent(200. / 3.),
+                                },
+                            ))
+                            .insert(UiAction(GraveId::Northwest));
+
                         // spawn north
                         movement_table_action_container
                             .spawn(IconButtonBundle::new_with_absolute_position(
@@ -96,6 +109,19 @@ fn spawn_control_display(
                                 },
                             ))
                             .insert(UiAction(GraveId::North));
+
+                        // spawn northeast
+                        movement_table_action_container
+                            .spawn(IconButtonBundle::new_with_absolute_position(
+                                IconButton::NoIcon,
+                                UiRect {
+                                    top: Val::Percent(0.),
+                                    left: Val::Percent(200. / 3.),
+                                    bottom: Val::Percent(50.),
+                                    right: Val::Percent(0.),
+                                },
+                            ))
+                            .insert(UiAction(GraveId::Northeast));
 
                         // spawn west
                         movement_table_action_container
