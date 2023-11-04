@@ -134,7 +134,9 @@ fn load_gravestone_control_settings(asset_folder: String) -> std::io::Result<Inp
 impl From<&EntityInstance> for GraveId {
     fn from(entity_instance: &EntityInstance) -> Self {
         match entity_instance.identifier.as_ref() {
+            "Q" => GraveId::Northwest,
             "W" => GraveId::North,
+            "E" => GraveId::Northeast,
             "A" => GraveId::West,
             "S" => GraveId::South,
             "D" => GraveId::East,
