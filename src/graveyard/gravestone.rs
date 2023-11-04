@@ -97,8 +97,12 @@ impl Default for GravestoneSettings {
     Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize, TypePath,
 )]
 pub enum GraveId {
+    /// Gravestone/action that applies to "northwesty" buttons like Q and Left Bumper.
+    Northwest,
     /// Gravestone/action that applies to "northy" buttons like W and Triangle.
     North,
+    /// Gravestone/action that applies to "northeasty" buttons like E and Right Bumper.
+    Northeast,
     /// Gravestone/action that applies to "westy" buttons like A and Square.
     West,
     /// Gravestone/action that applies to "southy" buttons like S and X/Cross.
