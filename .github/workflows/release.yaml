@@ -137,9 +137,9 @@ jobs:
         run: |
           export CFLAGS="-fno-stack-check"
           export MACOSX_DEPLOYMENT_TARGET="10.9"
-      - name: install zld
+      - name: install llvm
         run: |
-          brew install michaeleisel/zld/zld
+          brew install llvm
       - name: Build
         run: |
           cargo build --release --target x86_64-apple-darwin --no-default-features
