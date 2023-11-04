@@ -213,9 +213,15 @@ fn gravestone_input(
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == WilloState::Waiting {
-            if grave_input.just_pressed(GraveId::North) {
+            if grave_input.just_pressed(GraveId::Northwest) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::Northwest)
+            } else if grave_input.just_pressed(GraveId::North) {
                 history_commands.send(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::North)
+            } else if grave_input.just_pressed(GraveId::Northeast) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::Northeast)
             } else if grave_input.just_pressed(GraveId::West) {
                 history_commands.send(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::West)
