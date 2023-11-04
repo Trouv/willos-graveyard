@@ -7,6 +7,7 @@ pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
 pub mod movement_table;
+pub mod volatile;
 pub mod wall;
 pub mod willo;
 pub mod wind;
