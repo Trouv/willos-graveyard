@@ -34,7 +34,7 @@
 		{ "__identifier": "Notes", "__type": "String", "__value": "Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\nWould help them grasp No Stone Unturned", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\\nWould help them grasp No Stone Unturned"
+				"Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\nWould help them grasp No Stone Unturned"
 			]
 		}] }
 	],

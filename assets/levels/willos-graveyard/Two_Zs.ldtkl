@@ -34,7 +34,7 @@
 		{ "__identifier": "Notes", "__type": "String", "__value": "This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet.", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"This level has a new unintended solution.\\nI guess I wasn't good enough at the game to find it anymore.\\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet."
+				"This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet."
 			]
 		}] }
 	],
