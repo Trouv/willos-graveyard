@@ -1,6 +1,22 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+use crate::{history::FlushHistoryCommands, utils::any_match_filter, GameState};
+
+pub struct VolatilePlugin;
+
+impl Plugin for VolatilePlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            sublimation
+                .run_if(in_state(GameState::Graveyard))
+                .run_if(any_match_filter::<(With<Volatile>, Changed<GridCoords>)>)
+                .after(FlushHistoryCommands),
+        );
+    }
+}
+
 /// Component defining the volatility of an entity and its volatile state.
 ///
 /// If two volatile solids share the same [`GridCoords`] space, they both are sublimated.
