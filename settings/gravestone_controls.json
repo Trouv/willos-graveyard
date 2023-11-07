@@ -1,5 +1,17 @@
 {
   "map": {
+    "Northwest": [
+      {
+        "Single": {
+          "Keyboard": "Q"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "LeftTrigger"
+        }
+      }
+    ],
     "North": [
       {
         "Single": {
@@ -9,6 +21,18 @@
       {
         "Single": {
           "GamepadButton": "North"
+        }
+      }
+    ],
+    "Northeast": [
+      {
+        "Single": {
+          "Keyboard": "E"
+        }
+      },
+      {
+        "Single": {
+          "GamepadButton": "RightTrigger"
         }
       }
     ],
