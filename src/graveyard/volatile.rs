@@ -24,10 +24,6 @@ impl Volatile {
     }
 }
 
-fn any_volatiles_moved(query: Query<(), (With<Volatile>, Changed<GridCoords>)>) -> bool {
-    !query.is_empty()
-}
-
 fn sublimation(
     moved_volatile_entities: Query<(), (With<Volatile>, Changed<GridCoords>)>,
     mut all_volatiles: Query<(Entity, &GridCoords, &mut Volatile), Changed<GridCoords>>,
