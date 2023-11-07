@@ -32,16 +32,16 @@ fn sublimation(
         .iter_mut()
         .partition(|(entity, ..)| moved_volatile_entities.contains(*entity));
 
-    for index in 1..moved_volatiles.len() {
-        let (head_moved_volatiles, remaining_moved_volatiles) = moved_volatiles.split_at_mut(index);
-
-        let (_, grid_coords_a, volatile_a) = head_moved_volatiles.last_mut().expect("TODO");
-
-        if volatile_a.is_solid() {
-            for (_, grid_coords_b, volatile_b) in remaining_moved_volatiles.iter_mut() {
-                if volatile_b.is_solid() && grid_coords_a == grid_coords_b {
-                    volatile_a.sublimate();
-                    volatile_b.sublimate();
+    for index in 0..moved_volatiles.len() - 1 {
+        if let [(_, grid_coords_a, volatile_a), remaining_moved_volatiles @ ..] =
+            &mut moved_volatiles[index..]
+        {
+            if volatile_a.is_solid() {
+                for (_, grid_coords_b, volatile_b) in remaining_moved_volatiles.iter_mut() {
+                    if volatile_b.is_solid() && grid_coords_a == grid_coords_b {
+                        volatile_a.sublimate();
+                        volatile_b.sublimate();
+                    }
                 }
             }
         }
