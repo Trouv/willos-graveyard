@@ -12,6 +12,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_ecs_tilemap::tiles::TileVisible;
 use std::time::Duration;
 
 /// Sets used by exorcism systems.
@@ -34,6 +35,7 @@ impl Plugin for ExorcismPlugin {
                         .run_if(in_state(GameState::Graveyard))
                         .in_set(ExorcismSets::CheckDeath)
                         .after(Sublimation),
+                    visually_sublimate_volatile_tiles.run_if(in_state(GameState::Graveyard)),
                     spawn_death_card.run_if(in_state(GameState::Graveyard)),
                 ),
             )
@@ -65,6 +67,14 @@ fn check_death(
             *willo = WilloState::Dead;
             death_event_writer.send(ExorcismEvent);
         }
+    }
+}
+
+fn visually_sublimate_volatile_tiles(
+    mut volatile_tile_query: Query<(&mut TileVisible, &Volatile), Changed<Volatile>>,
+) {
+    for (mut visibility, volatile) in volatile_tile_query.iter_mut() {
+        visibility.0 = volatile.is_solid();
     }
 }
 
