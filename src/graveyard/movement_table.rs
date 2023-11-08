@@ -4,6 +4,7 @@ use crate::{
     from_component::FromComponentSet,
     graveyard::{
         gravestone::GraveId,
+        volatile::Volatile,
         willo::{MovementTimer, WilloAnimationState, WilloSets, WilloState},
     },
     history::FlushHistoryCommands,
@@ -63,17 +64,19 @@ struct MovementTableBundle {
 
 fn movement_table_update(
     mut table_query: Query<(&GridCoords, &mut MovementTable)>,
-    input_block_query: Query<(&GridCoords, &GraveId)>,
+    input_block_query: Query<(&GridCoords, &GraveId, &Volatile)>,
 ) {
     for (table_grid_coords, mut table) in table_query.iter_mut() {
         let mut new_table = [[None; 4]; 4];
-        for (input_grid_coords, input_block) in input_block_query.iter() {
-            let diff = *input_grid_coords - *table_grid_coords;
-            let x_index = diff.x - 1;
-            let y_index = -1 - diff.y;
-            if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
-                // key block is in table
-                new_table[y_index as usize][x_index as usize] = Some(*input_block);
+        for (input_grid_coords, input_block, volatile) in input_block_query.iter() {
+            if volatile.is_solid() {
+                let diff = *input_grid_coords - *table_grid_coords;
+                let x_index = diff.x - 1;
+                let y_index = -1 - diff.y;
+                if (0..4).contains(&x_index) && (0..4).contains(&y_index) {
+                    // key block is in table
+                    new_table[y_index as usize][x_index as usize] = Some(*input_block);
+                }
             }
         }
 
