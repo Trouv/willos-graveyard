@@ -14,7 +14,10 @@ pub struct Sublimation;
 
 impl Plugin for VolatilePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
+        app.add_plugins(HistoryPlugin::<Volatile, _>::run_in_state(
+            GameState::Graveyard,
+        ))
+        .add_systems(
             Update,
             sublimation
                 .run_if(in_state(GameState::Graveyard))
