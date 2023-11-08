@@ -55,7 +55,9 @@ impl Plugin for GravestonePlugin {
                     .before(FlushHistoryCommands),
             ),
         )
+        .register_ldtk_entity::<GravestoneBundle>("Q")
         .register_ldtk_entity::<GravestoneBundle>("W")
+        .register_ldtk_entity::<GravestoneBundle>("E")
         .register_ldtk_entity::<GravestoneBundle>("A")
         .register_ldtk_entity::<GravestoneBundle>("S")
         .register_ldtk_entity::<GravestoneBundle>("D");
@@ -97,8 +99,12 @@ impl Default for GravestoneSettings {
     Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize, TypePath,
 )]
 pub enum GraveId {
+    /// Gravestone/action that applies to "northwesty" buttons like Q and Left Bumper.
+    Northwest,
     /// Gravestone/action that applies to "northy" buttons like W and Triangle.
     North,
+    /// Gravestone/action that applies to "northeasty" buttons like E and Right Bumper.
+    Northeast,
     /// Gravestone/action that applies to "westy" buttons like A and Square.
     West,
     /// Gravestone/action that applies to "southy" buttons like S and X/Cross.
@@ -128,7 +134,9 @@ fn load_gravestone_control_settings(asset_folder: String) -> std::io::Result<Inp
 impl From<&EntityInstance> for GraveId {
     fn from(entity_instance: &EntityInstance) -> Self {
         match entity_instance.identifier.as_ref() {
+            "Q" => GraveId::Northwest,
             "W" => GraveId::North,
+            "E" => GraveId::Northeast,
             "A" => GraveId::West,
             "S" => GraveId::South,
             "D" => GraveId::East,
@@ -205,9 +213,15 @@ fn gravestone_input(
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == WilloState::Waiting {
-            if grave_input.just_pressed(GraveId::North) {
+            if grave_input.just_pressed(GraveId::Northwest) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::Northwest)
+            } else if grave_input.just_pressed(GraveId::North) {
                 history_commands.send(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::North)
+            } else if grave_input.just_pressed(GraveId::Northeast) {
+                history_commands.send(HistoryCommands::Record);
+                *willo = WilloState::RankMove(GraveId::Northeast)
             } else if grave_input.just_pressed(GraveId::West) {
                 history_commands.send(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::West)

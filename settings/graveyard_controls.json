@@ -8,7 +8,7 @@
       },
       {
         "Single": {
-          "GamepadButton": "LeftTrigger"
+          "GamepadButton": "LeftTrigger2"
         }
       }
     ],
@@ -20,7 +20,7 @@
       },
       {
         "Single": {
-          "GamepadButton": "RightTrigger"
+          "GamepadButton": "RightTrigger2"
         }
       }
     ],
