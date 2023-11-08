@@ -1,9 +1,16 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
-use crate::{history::FlushHistoryCommands, utils::any_match_filter, GameState};
+use crate::{
+    history::{FlushHistoryCommands, HistoryPlugin},
+    utils::any_match_filter,
+    GameState,
+};
 
 pub struct VolatilePlugin;
+
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, SystemSet)]
+pub struct Sublimation;
 
 impl Plugin for VolatilePlugin {
     fn build(&self, app: &mut App) {
@@ -12,7 +19,8 @@ impl Plugin for VolatilePlugin {
             sublimation
                 .run_if(in_state(GameState::Graveyard))
                 .run_if(any_match_filter::<(With<Volatile>, Changed<GridCoords>)>)
-                .after(FlushHistoryCommands),
+                .after(FlushHistoryCommands)
+                .in_set(Sublimation),
         );
     }
 }
