@@ -39,11 +39,11 @@ pub enum Volatile {
 }
 
 impl Volatile {
-    fn is_solid(&self) -> bool {
+    pub fn is_solid(&self) -> bool {
         matches!(self, Volatile::Solid)
     }
 
-    fn sublimate(&mut self) {
+    pub fn sublimate(&mut self) {
         *self = Volatile::Sublimated;
     }
 }
