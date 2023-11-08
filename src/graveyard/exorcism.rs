@@ -42,10 +42,6 @@ impl Plugin for ExorcismPlugin {
     }
 }
 
-/// Component that marks exorcism tiles.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ExorcismTile;
-
 /// Event that fires when willo steps on an exorcism tile.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
 pub struct ExorcismEvent;
