@@ -50,7 +50,7 @@ impl Volatile {
 
 fn sublimation(
     moved_volatile_entities: Query<(), (With<Volatile>, Changed<GridCoords>)>,
-    mut all_volatiles: Query<(Entity, &GridCoords, &mut Volatile), Changed<GridCoords>>,
+    mut all_volatiles: Query<(Entity, &GridCoords, &mut Volatile)>,
 ) {
     let (mut moved_volatiles, mut stationary_volatiles): (Vec<_>, Vec<_>) = all_volatiles
         .iter_mut()
