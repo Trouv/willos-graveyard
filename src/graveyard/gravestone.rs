@@ -4,7 +4,10 @@
 //! - interact with goals to complete levels
 //! - interact with the movement table to alter Willo's abilities
 use crate::{
-    graveyard::willo::{WilloSets, WilloState},
+    graveyard::{
+        volatile::{Sublimation, Volatile},
+        willo::{WilloSets, WilloState},
+    },
     history::{FlushHistoryCommands, History, HistoryCommands},
     sokoban::SokobanBlock,
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
@@ -49,6 +52,9 @@ impl Plugin for GravestonePlugin {
             Update,
             (
                 spawn_gravestone_body.run_if(in_state(GameState::LevelTransition)),
+                sublimate_gravestones
+                    .run_if(in_state(GameState::Graveyard))
+                    .after(Sublimation),
                 gravestone_input
                     .run_if(in_state(GameState::Graveyard))
                     .in_set(WilloSets::Input)
@@ -154,6 +160,8 @@ struct GravestoneBundle {
     sokoban_block: SokobanBlock,
     #[from_entity_instance]
     gravestone: GraveId,
+    volatile: Volatile,
+    volatile_history: History<Volatile>,
 }
 
 fn spawn_gravestone_body(
@@ -203,6 +211,29 @@ fn spawn_gravestone_body(
                 });
             }
         });
+    }
+}
+
+fn sublimate_gravestones(
+    mut commands: Commands,
+    mut gravestone_query: Query<
+        (Entity, &Volatile, &mut Visibility),
+        (With<GraveId>, Changed<Volatile>),
+    >,
+) {
+    for (gravestone_entity, volatile, mut visibility) in gravestone_query.iter_mut() {
+        match volatile {
+            Volatile::Solid => {
+                *visibility = Visibility::Inherited;
+                commands
+                    .entity(gravestone_entity)
+                    .insert(SokobanBlock::Dynamic);
+            }
+            Volatile::Sublimated => {
+                *visibility = Visibility::Hidden;
+                commands.entity(gravestone_entity).remove::<SokobanBlock>();
+            }
+        }
     }
 }
 
