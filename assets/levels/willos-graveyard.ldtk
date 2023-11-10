@@ -11,7 +11,7 @@
 	"iid": "ad496940-9f30-11ed-b774-e34072faa0ec",
 	"jsonVersion": "1.4.1",
 	"appBuildId": 471698,
-	"nextUid": 195,
+	"nextUid": 196,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -3031,6 +3031,35 @@
 			"__smartColor": "#93809A",
 			"__bgPos": null,
 			"externalRelPath": "willos-graveyard/Some_poor_soul_lost_their_gravestone.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__type": "String", "__value": "Some poor soul lost their gravestone", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Some poor soul lost their gravestone"]
+				}] },
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Some_poor_soul_lost_their_gravestone2",
+			"iid": "80acd760-6280-11ee-b34c-d3327b534cd2",
+			"uid": 195,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 576,
+			"pxHei": 352,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Some_poor_soul_lost_their_gravestone2.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__type": "String", "__value": "Some poor soul lost their gravestone", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
