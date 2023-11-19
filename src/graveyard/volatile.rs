@@ -51,10 +51,12 @@ pub enum Volatile {
 }
 
 impl Volatile {
+    /// Returns `true` if this instance is [`Volatile::Solid`].
     pub fn is_solid(&self) -> bool {
         matches!(self, Volatile::Solid)
     }
 
+    /// Sets this instance to [`Volatile::Sublimated`].
     pub fn sublimate(&mut self) {
         *self = Volatile::Sublimated;
     }
