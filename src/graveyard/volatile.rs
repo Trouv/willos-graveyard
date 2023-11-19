@@ -105,3 +105,265 @@ fn sublimation(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn app_setup() -> App {
+        let mut app = App::new();
+
+        app.add_state::<GameState>().add_plugins(VolatilePlugin);
+        app.world
+            .insert_resource(NextState(Some(GameState::Graveyard)));
+        app.update();
+
+        app
+    }
+
+    struct SpawnVolatilesParams<const N: usize> {
+        volatiles: [(GridCoords, Volatile); N],
+    }
+
+    impl<const N: usize> SpawnVolatilesParams<N> {
+        fn new() -> SpawnVolatilesParams<N> {
+            let mut volatiles: [(GridCoords, Volatile); N] = [Default::default(); N];
+            for i in 0..N {
+                volatiles[i].0.y = i as i32;
+            }
+
+            SpawnVolatilesParams { volatiles }
+        }
+
+        fn spawn(self, app: &mut App) -> [Entity; N] {
+            let entities = self
+                .volatiles
+                .map(|volatile_bundle| app.world.spawn(volatile_bundle).id());
+
+            app.update();
+
+            entities
+        }
+    }
+
+    #[test]
+    fn solid_moving_onto_solid_sublimates_both() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let [bottom, _] = SpawnVolatilesParams::<2>::new().spawn(&mut app);
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Solid));
+
+        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+
+        app.update();
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Sublimated));
+    }
+
+    #[test]
+    fn solid_moving_not_on_solid_doesnt_sublimate() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let [bottom, _] = SpawnVolatilesParams::<2>::new().spawn(&mut app);
+
+        app.world.get_mut::<GridCoords>(bottom).unwrap().y -= 1;
+
+        app.update();
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Solid));
+    }
+
+    #[test]
+    fn sublimated_moving_onto_solid_doesnt_sublimate() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let mut spawn_params = SpawnVolatilesParams::<2>::new();
+        spawn_params.volatiles[0].1 = Volatile::Sublimated;
+        let [bottom, top] = spawn_params.spawn(&mut app);
+
+        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+
+        app.update();
+
+        assert_eq!(
+            app.world.get::<Volatile>(bottom).unwrap(),
+            &Volatile::Sublimated
+        );
+        assert_eq!(app.world.get::<Volatile>(top).unwrap(), &Volatile::Solid);
+    }
+
+    #[test]
+    fn solid_moving_onto_sublimated_doesnt_sublimate() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let mut spawn_params = SpawnVolatilesParams::<2>::new();
+        spawn_params.volatiles[1].1 = Volatile::Sublimated;
+        let [bottom, top] = spawn_params.spawn(&mut app);
+
+        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+
+        app.update();
+
+        assert_eq!(app.world.get::<Volatile>(bottom).unwrap(), &Volatile::Solid);
+        assert_eq!(
+            app.world.get::<Volatile>(top).unwrap(),
+            &Volatile::Sublimated
+        );
+    }
+
+    #[test]
+    fn sublimated_moving_onto_sublimated_keeps_sublimated() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let mut spawn_params = SpawnVolatilesParams::<2>::new();
+        spawn_params.volatiles = spawn_params
+            .volatiles
+            .map(|(grid_coords, _)| (grid_coords, Volatile::Sublimated));
+        let [bottom, _] = spawn_params.spawn(&mut app);
+
+        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+
+        app.update();
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Sublimated));
+    }
+
+    #[test]
+    fn solids_moving_into_eachother_sublimates_both() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let [bottom, top] = SpawnVolatilesParams::<2>::new().spawn(&mut app);
+
+        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
+        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
+
+        app.update();
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Sublimated));
+    }
+
+    #[test]
+    fn solid_and_sublimated_moving_into_eachother_doesnt_sublimate() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let mut spawn_params = SpawnVolatilesParams::<2>::new();
+        spawn_params.volatiles[0].1 = Volatile::Sublimated;
+        let [bottom, top] = spawn_params.spawn(&mut app);
+
+        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
+        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
+
+        app.update();
+
+        assert_eq!(
+            app.world.get::<Volatile>(bottom).unwrap(),
+            &Volatile::Sublimated
+        );
+        assert_eq!(app.world.get::<Volatile>(top).unwrap(), &Volatile::Solid);
+    }
+
+    #[test]
+    fn sublimateds_moving_eachother_keeps_sublimated() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let mut spawn_params = SpawnVolatilesParams::<2>::new();
+        spawn_params.volatiles = spawn_params
+            .volatiles
+            .map(|(grid_coords, _)| (grid_coords, Volatile::Sublimated));
+        let [bottom, top] = spawn_params.spawn(&mut app);
+
+        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
+        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
+
+        app.update();
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Sublimated));
+    }
+
+    #[test]
+    fn solids_moving_onto_solid_sublimates_movers() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let [bottom, middle, top] = SpawnVolatilesParams::<3>::new().spawn(&mut app);
+
+        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(0, 1);
+        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(0, 1);
+
+        app.update();
+
+        assert_eq!(
+            app.world.get::<Volatile>(bottom).unwrap(),
+            &Volatile::Sublimated
+        );
+        assert_eq!(app.world.get::<Volatile>(middle).unwrap(), &Volatile::Solid);
+        assert_eq!(
+            app.world.get::<Volatile>(top).unwrap(),
+            &Volatile::Sublimated
+        );
+    }
+
+    #[test]
+    fn solid_and_sublimated_moving_onto_solid_sublimates_remaining() {
+        let mut app = app_setup();
+
+        app.update();
+
+        let mut spawn_params = SpawnVolatilesParams::<3>::new();
+        spawn_params.volatiles[0].1 = Volatile::Sublimated;
+        let [bottom, _, top] = spawn_params.spawn(&mut app);
+
+        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(0, 1);
+        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(0, 1);
+
+        app.update();
+
+        assert!(app
+            .world
+            .query::<&Volatile>()
+            .iter(&app.world)
+            .all(|volatile| volatile == &Volatile::Sublimated));
+    }
+}
