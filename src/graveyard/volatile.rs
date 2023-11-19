@@ -62,14 +62,22 @@ impl Volatile {
     }
 }
 
+/// System performing sublimation logic.
+///
+/// Obtains a separate query for moving volatiles from all volatiles.
+/// This is so it can split moving volatiles and stationary volatiles into separate collections.
+/// This allows us to limit our collision detection to checking moved-volatiles against all-volatiles,
+/// rather than all-volatiles against all-volatiles.
 fn sublimation(
     moved_volatile_entities: Query<(), (With<Volatile>, Changed<GridCoords>)>,
     mut all_volatiles: Query<(Entity, &GridCoords, &mut Volatile)>,
 ) {
+    // Split volatiles into moved and stationary collections.
     let (mut moved_volatiles, mut stationary_volatiles): (Vec<_>, Vec<_>) = all_volatiles
         .iter_mut()
         .partition(|(entity, ..)| moved_volatile_entities.contains(*entity));
 
+    // Check for collisions between moved volatiles.
     for index in 0..moved_volatiles.len() - 1 {
         if let [(_, grid_coords_a, volatile_a), remaining_moved_volatiles @ ..] =
             &mut moved_volatiles[index..]
@@ -85,6 +93,7 @@ fn sublimation(
         }
     }
 
+    // Check for collisions between moved volatiles and stationary volatiles.
     for (_, grid_coords_a, volatile_a) in moved_volatiles.iter_mut() {
         if volatile_a.is_solid() {
             for (_, grid_coords_b, volatile_b) in stationary_volatiles.iter_mut() {
