@@ -1,3 +1,7 @@
+//! Plugin providing the core logic for [`Volatile`] entities.
+//!
+//! Volatile entities are "Solid" initially.
+//! Once they come into contact with another Volatile entity - they are both "Sublimated".
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
@@ -7,8 +11,13 @@ use crate::{
     GameState,
 };
 
+/// Plugin providing the core logic for [`Volatile`] entities.
+///
+/// Volatile entities are "Solid" initially.
+/// Once they come into contact with another Volatile entity - they are both "Sublimated".
 pub struct VolatilePlugin;
 
+/// `SystemSet` performing sublimation [`Volatile`] entities.
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, SystemSet)]
 pub struct Sublimation;
 
