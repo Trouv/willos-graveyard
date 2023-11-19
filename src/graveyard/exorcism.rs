@@ -4,9 +4,8 @@ use crate::{
         volatile::{Sublimation, Volatile},
         willo::WilloState,
     },
-    history::{FlushHistoryCommands, History},
+    history::History,
     ui::font_scale::{FontScale, FontSize},
-    utils::any_match_filter,
     GameState,
 };
 use bevy::prelude::*;
