@@ -1,13 +1,17 @@
 //! Plugin providing functionality for exorcism tiles, including death logic.
 use crate::{
-    graveyard::willo::WilloState,
-    history::FlushHistoryCommands,
+    graveyard::{
+        volatile::{Sublimation, Volatile},
+        willo::WilloState,
+    },
+    history::History,
     ui::font_scale::{FontScale, FontSize},
     GameState,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_ecs_tilemap::tiles::TileVisible;
 use std::time::Duration;
 
 /// Sets used by exorcism systems.
@@ -29,7 +33,8 @@ impl Plugin for ExorcismPlugin {
                     check_death
                         .run_if(in_state(GameState::Graveyard))
                         .in_set(ExorcismSets::CheckDeath)
-                        .after(FlushHistoryCommands),
+                        .after(Sublimation),
+                    visually_sublimate_volatile_tiles.run_if(in_state(GameState::Graveyard)),
                     spawn_death_card.run_if(in_state(GameState::Graveyard)),
                 ),
             )
@@ -37,10 +42,6 @@ impl Plugin for ExorcismPlugin {
             .register_ldtk_int_cell::<ExorcismTileBundle>(2);
     }
 }
-
-/// Component that marks exorcism tiles.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
-struct ExorcismTile;
 
 /// Event that fires when willo steps on an exorcism tile.
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Event)]
@@ -52,19 +53,27 @@ struct ExorcismCard;
 
 #[derive(Clone, Bundle, LdtkIntCell)]
 struct ExorcismTileBundle {
-    exorcism_tile: ExorcismTile,
+    volatile: Volatile,
+    volatile_history: History<Volatile>,
 }
 
 fn check_death(
-    mut willo_query: Query<(&GridCoords, &mut WilloState)>,
-    exorcism_query: Query<(Entity, &GridCoords), With<ExorcismTile>>,
+    mut willo_query: Query<(&mut WilloState, &Volatile), Changed<Volatile>>,
     mut death_event_writer: EventWriter<ExorcismEvent>,
 ) {
-    if let Ok((coords, mut willo)) = willo_query.get_single_mut() {
-        if *willo != WilloState::Dead && exorcism_query.iter().any(|(_, g)| *g == *coords) {
+    if let Ok((mut willo, volatile)) = willo_query.get_single_mut() {
+        if !volatile.is_solid() && *willo != WilloState::Dead {
             *willo = WilloState::Dead;
             death_event_writer.send(ExorcismEvent);
         }
+    }
+}
+
+fn visually_sublimate_volatile_tiles(
+    mut volatile_tile_query: Query<(&mut TileVisible, &Volatile), Changed<Volatile>>,
+) {
+    for (mut visibility, volatile) in volatile_tile_query.iter_mut() {
+        visibility.0 = volatile.is_solid();
     }
 }
 

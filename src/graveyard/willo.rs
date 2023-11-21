@@ -2,7 +2,7 @@
 use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     from_component::FromComponentSet,
-    graveyard::{exorcism::ExorcismEvent, gravestone::GraveId},
+    graveyard::{exorcism::ExorcismEvent, gravestone::GraveId, volatile::Volatile},
     history::{History, HistoryCommands, HistoryPlugin},
     sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanSets},
     AssetHolder, GameState, UNIT_LENGTH,
@@ -158,6 +158,8 @@ struct WilloBundle {
     #[sprite_sheet_bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
     willo_animation_state: WilloAnimationState,
+    volatile: Volatile,
+    volatile_history: History<Volatile>,
 }
 
 fn push_sugar(

@@ -7,6 +7,7 @@ pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
 pub mod movement_table;
+pub mod volatile;
 pub mod wall;
 pub mod willo;
 pub mod wind;
@@ -50,6 +51,7 @@ impl Plugin for GraveyardPlugin {
                 sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"),
                 movement_table::MovementTablePlugin,
                 gravestone::GravestonePlugin,
+                volatile::VolatilePlugin,
                 wall::WallPlugin,
                 goal::GoalPlugin,
                 exorcism::ExorcismPlugin,
