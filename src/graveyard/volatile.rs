@@ -17,7 +17,7 @@ use crate::{
 /// Once they come into contact with another Volatile entity - they are both "Sublimated".
 pub struct VolatilePlugin;
 
-/// `SystemSet` performing sublimation [`Volatile`] entities.
+/// `SystemSet` performing sublimation of [`Volatile`] entities.
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, SystemSet)]
 pub struct Sublimation;
 
@@ -46,7 +46,7 @@ pub enum Volatile {
     /// The entity is still a volatile solid.
     #[default]
     Solid,
-    /// The entity has collided with another volatile solid, and has been subliminated.
+    /// The entity has collided with another volatile solid, and has been sublimated.
     Sublimated,
 }
 
@@ -64,7 +64,7 @@ impl Volatile {
 
 /// System performing sublimation logic.
 ///
-/// Obtains a separate query for moving volatiles from all volatiles.
+/// Obtains a separate query for *moving* volatiles and *all* volatiles.
 /// This is so it can split moving volatiles and stationary volatiles into separate collections.
 /// This allows us to limit our collision detection to checking moved-volatiles against all-volatiles,
 /// rather than all-volatiles against all-volatiles.
