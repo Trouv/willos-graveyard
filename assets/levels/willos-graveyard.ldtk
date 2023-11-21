@@ -3071,7 +3071,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Mortrician_s_Trocar",
+			"identifier": "Trocar",
 			"iid": "8a930940-6280-11ee-9d82-13b88abc29a6",
 			"uid": 199,
 			"worldX": -1,
@@ -3088,11 +3088,11 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Mortrician_s_Trocar.ldtkl",
+			"externalRelPath": "willos-graveyard/Trocar.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Mortrician's Trocar", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__type": "String", "__value": "Trocar", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Mortrician's Trocar"]
+					"params": ["Trocar"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
