@@ -3100,7 +3100,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Untitled",
+			"identifier": "Vertically_challenged",
 			"iid": "1b60d040-6280-11ee-947e-e5aa959318fe",
 			"uid": 196,
 			"worldX": -1,
@@ -3110,16 +3110,19 @@
 			"pxHei": 224,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Untitled.ldtkl",
+			"externalRelPath": "willos-graveyard/Vertically_challenged.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Level", "__tile": null, "defUid": 28, "realEditorValues": [] },
+				{ "__identifier": "Title", "__type": "String", "__value": "Vertically challenged", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Vertically challenged"]
+				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
