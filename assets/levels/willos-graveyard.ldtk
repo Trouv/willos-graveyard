@@ -3158,35 +3158,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "The_first_hourglass",
-			"iid": "a02f2cd0-8990-11ee-9d82-4734c5755bb2",
-			"uid": 200,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 416,
-			"pxHei": 800,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/The_first_hourglass.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "The first hourglass", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["The first hourglass"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "It_takes_some_getting_used_to",
 			"iid": "4e16f310-b4d0-11ec-885f-ffe785388b98",
 			"uid": 29,
@@ -3238,6 +3209,35 @@
 				{ "__identifier": "Title", "__type": "String", "__value": "The bishop changes colors", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["The bishop changes colors"]
+				}] },
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "The_first_hourglass",
+			"iid": "a02f2cd0-8990-11ee-9d82-4734c5755bb2",
+			"uid": 200,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 416,
+			"pxHei": 800,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/The_first_hourglass.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__type": "String", "__value": "The first hourglass", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["The first hourglass"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
