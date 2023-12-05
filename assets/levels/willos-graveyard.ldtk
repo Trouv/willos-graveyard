@@ -3210,7 +3210,7 @@
 			"worldY": -1,
 			"worldDepth": 0,
 			"pxWid": 416,
-			"pxHei": 384,
+			"pxHei": 416,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": false,
@@ -3232,7 +3232,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Untitled",
+			"identifier": "Narrow_ritual",
 			"iid": "867689a0-8990-11ee-9252-854f28f3830e",
 			"uid": 214,
 			"worldX": -1,
@@ -3242,16 +3242,19 @@
 			"pxHei": 512,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Untitled.ldtkl",
+			"externalRelPath": "willos-graveyard/Narrow_ritual.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Level", "__tile": null, "defUid": 28, "realEditorValues": [] },
+				{ "__identifier": "Title", "__type": "String", "__value": "Narrow ritual", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Narrow ritual"]
+				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
