@@ -678,6 +678,38 @@
 					"defUid": 52,
 					"px": [128,192],
 					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [2,9],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"__worldX": 592,
+					"__worldY": 288,
+					"iid": "b38e7a60-8990-11ee-9252-7310234cd021",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [64,288],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [11,12],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"__worldX": 880,
+					"__worldY": 384,
+					"iid": "b3c17140-8990-11ee-9252-a14aefbe942b",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [352,384],
+					"fieldInstances": []
 				}
 			]
 		},
