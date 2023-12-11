@@ -11,7 +11,7 @@
 	"iid": "ad496940-9f30-11ed-b774-e34072faa0ec",
 	"jsonVersion": "1.4.1",
 	"appBuildId": 471698,
-	"nextUid": 224,
+	"nextUid": 225,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -3457,6 +3457,35 @@
 				{ "__identifier": "Title", "__type": "String", "__value": "The first hourglass", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["The first hourglass"]
+				}] },
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Jaw",
+			"iid": "6cd29450-8990-11ee-8c53-99f34597fa75",
+			"uid": 224,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 352,
+			"pxHei": 352,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Jaw.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__type": "String", "__value": "Jaw", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Jaw"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
