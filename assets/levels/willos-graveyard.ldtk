@@ -11,7 +11,7 @@
 	"iid": "ad496940-9f30-11ed-b774-e34072faa0ec",
 	"jsonVersion": "1.4.1",
 	"appBuildId": 471698,
-	"nextUid": 226,
+	"nextUid": 227,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -3320,13 +3320,13 @@
 		},
 		{
 			"identifier": "Vertically_challenged",
-			"iid": "1b60d040-6280-11ee-947e-e5aa959318fe",
-			"uid": 196,
+			"iid": "2cecfe30-8990-11ee-bfd9-0daeeaed03a8",
+			"uid": 226,
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 224,
+			"pxWid": 352,
+			"pxHei": 352,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": false,
@@ -3370,35 +3370,6 @@
 				{ "__identifier": "Title", "__type": "String", "__value": "Felt presence", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["Felt presence"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "The_bishop_changes_colors",
-			"iid": "4e1a9c90-b4d0-11ec-885f-09be90c1b180",
-			"uid": 39,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 608,
-			"pxHei": 512,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/The_bishop_changes_colors.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "The bishop changes colors", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["The bishop changes colors"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
