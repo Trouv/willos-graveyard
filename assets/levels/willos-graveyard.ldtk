@@ -11,7 +11,7 @@
 	"iid": "ad496940-9f30-11ed-b774-e34072faa0ec",
 	"jsonVersion": "1.4.1",
 	"appBuildId": 471698,
-	"nextUid": 229,
+	"nextUid": 231,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -3486,6 +3486,35 @@
 				{ "__identifier": "Title", "__type": "String", "__value": "D row", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
 					"params": ["D row"]
+				}] },
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Danse_de_la_terre",
+			"iid": "2feb45c0-8990-11ee-99b5-31e6316b05e8",
+			"uid": 230,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 512,
+			"pxHei": 288,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Danse_de_la_terre.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__type": "String", "__value": "Danse de la terre", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Danse de la terre"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
