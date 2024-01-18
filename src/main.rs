@@ -18,10 +18,8 @@ pub mod ui;
 pub mod ui_atlas_image;
 pub mod utils;
 
-use std::time::Duration;
-
 use animation::SpriteSheetAnimationPlugin;
-use bevy::{asset::ChangeWatcher, prelude::*};
+use bevy::prelude::*;
 
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -52,29 +50,18 @@ fn main() {
         let level_arg = std::env::args().last().unwrap();
 
         match level_arg.parse::<usize>() {
-            Ok(num) => LevelSelection::Index(num - 1),
+            Ok(num) => LevelSelection::index(num - 1),
             _ => LevelSelection::Identifier(level_arg),
         }
     } else {
-        LevelSelection::Index(0)
+        LevelSelection::index(0)
     };
 
     let mut app = App::new();
 
-    let watch_for_changes = if cfg!(feature = "hot") {
-        ChangeWatcher::with_delay(Duration::from_secs(1))
-    } else {
-        None
-    };
-
     app.insert_resource(Msaa::Off)
         .add_plugins((
-            DefaultPlugins
-                .set(ImagePlugin::default_nearest())
-                .set(AssetPlugin {
-                    watch_for_changes,
-                    ..default()
-                }),
+            DefaultPlugins.set(ImagePlugin::default_nearest()),
             EasingsPlugin,
             LdtkPlugin,
         ))
@@ -126,7 +113,7 @@ fn main() {
 pub struct AssetHolder {
     /// Handle for all the LDtk info (level design).
     #[asset(path = "levels/willos-graveyard.ldtk")]
-    pub ldtk: Handle<LdtkAsset>,
+    pub ldtk: Handle<LdtkProject>,
     /// Handle for the game's spooky font.
     #[asset(path = "fonts/WayfarersToyBoxRegular-gxxER.ttf")]
     pub font: Handle<Font>,

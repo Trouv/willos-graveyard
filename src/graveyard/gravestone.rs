@@ -33,9 +33,7 @@ pub struct GravestonePlugin;
 
 impl Plugin for GravestonePlugin {
     fn build(&self, app: &mut App) {
-        let asset_folder = app.get_added_plugins::<AssetPlugin>()[0]
-            .asset_folder
-            .clone();
+        let asset_folder = app.get_added_plugins::<AssetPlugin>()[0].file_path.clone();
 
         app.add_plugins((
             InputManagerPlugin::<GraveId>::default(),
@@ -102,11 +100,23 @@ impl Default for GravestoneSettings {
 ///
 /// Also acts as the grave-action itself by implementing Actionlike.
 #[derive(
-    Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Component, Serialize, Deserialize, TypePath,
+    Actionlike,
+    Copy,
+    Clone,
+    Default,
+    PartialEq,
+    Eq,
+    Debug,
+    Hash,
+    Component,
+    Serialize,
+    Deserialize,
+    Reflect,
 )]
 pub enum GraveId {
     /// Gravestone/action that applies to "northwesty" buttons like Q and Left Bumper.
     Northwest,
+    #[default]
     /// Gravestone/action that applies to "northy" buttons like W and Triangle.
     North,
     /// Gravestone/action that applies to "northeasty" buttons like E and Right Bumper.
@@ -151,7 +161,7 @@ impl From<&EntityInstance> for GraveId {
     }
 }
 
-#[derive(Clone, Bundle, LdtkEntity)]
+#[derive(Clone, Default, Bundle, LdtkEntity)]
 struct GravestoneBundle {
     #[grid_coords]
     grid_coords: GridCoords,
@@ -198,6 +208,7 @@ fn spawn_gravestone_body(
             if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
                 .get(*grave_id)
                 .iter()
+                .flat_map(|inputs| inputs.iter())
                 .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
             {
                 parent.spawn(SpriteSheetBundle {

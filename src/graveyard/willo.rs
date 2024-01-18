@@ -145,7 +145,7 @@ impl Default for MovementTimer {
     }
 }
 
-#[derive(Clone, Bundle, LdtkEntity)]
+#[derive(Clone, Default, Bundle, LdtkEntity)]
 struct WilloBundle {
     #[grid_coords]
     grid_coords: GridCoords,

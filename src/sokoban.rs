@@ -128,8 +128,9 @@ impl<'w> SokobanCommands<'w> {
 }
 
 /// Component defining the behavior of sokoban entities on collision.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash, Component)]
 pub enum SokobanBlock {
+    #[default]
     /// The entity cannot move, push, or be pushed - but can block movement.
     Static,
     /// The entity can move, push, or be pushed.

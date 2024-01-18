@@ -94,7 +94,7 @@ fn spawn_level_card(
     mut commands: Commands,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     transition_to: Res<TransitionTo>,
-    ldtk_assets: Res<Assets<LdtkAsset>>,
+    ldtk_assets: Res<Assets<LdtkProject>>,
     assets: Res<AssetServer>,
     asset_holder: Res<AssetHolder>,
     mut images: ResMut<Assets<Image>>,
@@ -103,25 +103,19 @@ fn spawn_level_card(
     let mut level_num = None;
 
     if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
-        if let Some((level_index, level)) = ldtk_asset
-            .iter_levels()
-            .enumerate()
-            .find(|(i, level)| transition_to.is_match(i, level))
-        {
-            if level_index < ldtk_asset.project.levels.len() {
-                level_num = Some(level_index + 1);
-
-                if let Some(FieldInstance {
-                    value: FieldValue::String(Some(level_title)),
-                    ..
-                }) = level
-                    .field_instances
-                    .iter()
-                    .find(|f| f.identifier == "Title")
-                {
-                    title = level_title.clone();
-                }
-            }
+        if let Some(selected_level) = ldtk_asset.find_raw_level_by_level_selection(&transition_to) {
+            level_num = Some(
+                ldtk_asset
+                    .get_level_metadata_by_iid(&selected_level.iid)
+                    .expect("level metadata should exist for all levels")
+                    .indices()
+                    .level
+                    + 1,
+            );
+            title = selected_level
+                .get_string_field("Title")
+                .expect("all levels should have titles")
+                .clone();
         }
     }
 

@@ -30,9 +30,7 @@ pub struct GraveyardPlugin;
 
 impl Plugin for GraveyardPlugin {
     fn build(&self, app: &mut App) {
-        let asset_folder = app.get_added_plugins::<AssetPlugin>()[0]
-            .asset_folder
-            .clone();
+        let asset_folder = app.get_added_plugins::<AssetPlugin>()[0].file_path.clone();
 
         app.init_resource::<RewindSettings>()
             .add_plugins((
@@ -68,7 +66,7 @@ impl Plugin for GraveyardPlugin {
 }
 
 /// Actions other than grave-actions that can be performed during the gameplay state.
-#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize, TypePath)]
+#[derive(Actionlike, Copy, Clone, PartialEq, Eq, Debug, Hash, Serialize, Deserialize, Reflect)]
 pub enum GraveyardAction {
     /// Undo the last grave-action or restart.
     Undo,

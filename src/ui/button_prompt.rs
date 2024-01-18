@@ -89,6 +89,7 @@ fn spawn_button_prompt<T, F>(
         if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
             .get((**action).clone())
             .iter()
+            .flat_map(|inputs| inputs.iter())
             .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
         {
             commands.entity(entity).with_children(|parent| {

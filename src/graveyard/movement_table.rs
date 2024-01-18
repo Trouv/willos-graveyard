@@ -53,7 +53,7 @@ pub struct MovementTable {
     pub table: [[Option<GraveId>; 4]; 4],
 }
 
-#[derive(Clone, Bundle, LdtkEntity)]
+#[derive(Clone, Default, Bundle, LdtkEntity)]
 struct MovementTableBundle {
     #[grid_coords]
     grid_coords: GridCoords,
