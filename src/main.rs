@@ -72,20 +72,12 @@ fn main() {
         .add_state::<GameState>()
         .add_loading_state(
             LoadingState::new(GameState::AssetLoading)
-                .continue_to_state(GameState::LevelTransition),
-        )
-        .add_collection_to_loading_state::<_, AssetHolder>(GameState::AssetLoading)
-        .add_collection_to_loading_state::<_, graveyard::gravestone::GravestoneAssets>(
-            GameState::AssetLoading,
-        )
-        .add_collection_to_loading_state::<_, graveyard::control_display::ControlDisplayAssets>(
-            GameState::AssetLoading,
-        )
-        .add_collection_to_loading_state::<_, ui::icon_button::IconButtonAssets>(
-            GameState::AssetLoading,
-        )
-        .add_collection_to_loading_state::<_, ui::button_prompt::ButtonPromptAssets>(
-            GameState::AssetLoading,
+                .continue_to_state(GameState::LevelTransition)
+                .load_collection::<AssetHolder>()
+                .load_collection::<graveyard::gravestone::GravestoneAssets>()
+                .load_collection::<graveyard::control_display::ControlDisplayAssets>()
+                .load_collection::<ui::icon_button::IconButtonAssets>()
+                .load_collection::<ui::button_prompt::ButtonPromptAssets>(),
         )
         .add_plugins((
             graveyard::GraveyardPlugin,

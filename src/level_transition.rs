@@ -9,7 +9,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
+use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash, SystemSet)]
@@ -41,7 +41,7 @@ impl Plugin for LevelTransitionPlugin {
                 (level_card_update, load_next_level)
                     .in_set(LevelTransitionSystemSet::OnLevelCardEvent),
             )
-            .configure_set(
+            .configure_sets(
                 Update,
                 LevelTransitionSystemSet::OnLevelCardEvent
                     .run_if(in_state(GameState::LevelTransition))
@@ -219,7 +219,7 @@ fn load_next_level(
     transition_to: Res<TransitionTo>,
     asset_holder: Res<AssetHolder>,
 ) {
-    for event in level_card_events.iter() {
+    for event in level_card_events.read() {
         if let LevelCardEvent::Block = event {
             if *first_card_skipped {
                 *level_selection = transition_to.0.clone()
@@ -242,7 +242,7 @@ fn level_card_update(
     mut card_query: Query<(Entity, &mut Style), With<LevelCard>>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
-    for event in level_card_events.iter() {
+    for event in level_card_events.read() {
         for (entity, style) in card_query.iter_mut() {
             match event {
                 LevelCardEvent::Fall => {

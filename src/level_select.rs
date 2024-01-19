@@ -222,7 +222,7 @@ fn select_level(
     mut next_state: ResMut<NextState<GameState>>,
     mut ui_actions: EventReader<UiAction<LevelSelectAction>>,
 ) {
-    for action in ui_actions.iter() {
+    for action in ui_actions.read() {
         let UiAction(LevelSelectAction::GoToLevel(level_selection)) = action;
         commands.insert_resource(TransitionTo(level_selection.clone()));
         next_state.set(GameState::LevelTransition);
@@ -273,7 +273,7 @@ fn despawn_level_select_card(
     mut commands: Commands,
     mut level_select_card_events: EventReader<LevelSelectCardEvent>,
 ) {
-    for event in level_select_card_events.iter() {
+    for event in level_select_card_events.read() {
         if let LevelSelectCardEvent::Offscreen(entity) = event {
             commands.entity(*entity).despawn_recursive();
         }

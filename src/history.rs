@@ -58,7 +58,7 @@ fn flush_history_commands<C: Component + Clone>(
     mut history_query: Query<(&mut History<C>, &mut C)>,
     mut history_commands: EventReader<HistoryCommands>,
 ) {
-    for command in history_commands.iter() {
+    for command in history_commands.read() {
         match command {
             HistoryCommands::Record => {
                 for (mut history, component) in history_query.iter_mut() {

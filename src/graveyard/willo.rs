@@ -170,7 +170,7 @@ fn push_sugar(
 ) {
     let (willo_entity, mut animation_state) = willo_query.single_mut();
     for PushEvent { direction, .. } in push_events
-        .iter()
+        .read()
         .filter(|PushEvent { pusher, .. }| *pusher == willo_entity)
     {
         commands.spawn(AudioBundle {
@@ -211,7 +211,7 @@ fn history_sugar(
     mut willo_query: Query<&mut WilloAnimationState>,
     sfx: Res<AssetHolder>,
 ) {
-    for command in history_commands.iter() {
+    for command in history_commands.read() {
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
                 *willo_query.single_mut() = WilloAnimationState::Idle(Direction::Down);

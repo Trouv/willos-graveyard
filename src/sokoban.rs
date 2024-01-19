@@ -290,7 +290,7 @@ fn flush_sokoban_commands(
                 Some((entity, *sokoban_block));
         }
 
-        for sokoban_command in sokoban_commands.iter() {
+        for sokoban_command in sokoban_commands.read() {
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
             if let Ok((_, grid_coords, ..)) = grid_coords_query.get(*entity) {

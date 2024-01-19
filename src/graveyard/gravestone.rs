@@ -13,10 +13,7 @@ use crate::{
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
-use bevy::{
-    prelude::*,
-    reflect::{Enum, TypePath},
-};
+use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use leafwing_input_manager::{prelude::*, user_input::InputKind};

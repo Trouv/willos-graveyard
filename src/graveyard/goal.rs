@@ -225,7 +225,7 @@ fn goal_ghost_event_sugar(
     mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
     mut goal_events: EventReader<GoalEvent>,
 ) {
-    for event in goal_events.iter() {
+    for event in goal_events.read() {
         for mut animation in goal_ghost_query.iter_mut() {
             match event {
                 GoalEvent::Met { goal_entity, .. } => {

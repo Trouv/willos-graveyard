@@ -18,7 +18,7 @@ use crate::{
     ui::{action::UiActionPlugin, button_prompt::ButtonPromptPlugin},
     GameState,
 };
-use bevy::{prelude::*, reflect::TypePath};
+use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range, time::Duration};
