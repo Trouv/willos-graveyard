@@ -128,8 +128,9 @@ impl<'w> SokobanCommands<'w> {
 }
 
 /// Component defining the behavior of sokoban entities on collision.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Component)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash, Component)]
 pub enum SokobanBlock {
+    #[default]
     /// The entity cannot move, push, or be pushed - but can block movement.
     Static,
     /// The entity can move, push, or be pushed.
@@ -289,7 +290,7 @@ fn flush_sokoban_commands(
                 Some((entity, *sokoban_block));
         }
 
-        for sokoban_command in sokoban_commands.iter() {
+        for sokoban_command in sokoban_commands.read() {
             let SokobanCommand::Move { entity, direction } = sokoban_command;
 
             if let Ok((_, grid_coords, ..)) = grid_coords_query.get(*entity) {
@@ -553,7 +554,7 @@ mod tests {
 
         assert_eq!(events.len(), 1);
         assert_eq!(
-            *reader.iter(events).next().unwrap(),
+            *reader.read(events).next().unwrap(),
             PushEvent {
                 pusher: block_a,
                 direction: super::Direction::Up,

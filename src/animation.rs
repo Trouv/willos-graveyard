@@ -144,7 +144,7 @@ fn animation_finisher<F>(
 ) where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
 {
-    for event in event_reader.iter() {
+    for event in event_reader.read() {
         match event {
             AnimationEvent::Finished(entity) => {
                 if let Ok((mut from, mut sprite, mut sprite_sheet_animation)) =

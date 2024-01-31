@@ -89,6 +89,7 @@ fn spawn_button_prompt<T, F>(
         if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
             .get((**action).clone())
             .iter()
+            .flat_map(|inputs| inputs.iter())
             .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
         {
             commands.entity(entity).with_children(|parent| {
@@ -119,13 +120,12 @@ fn spawn_button_prompt<T, F>(
 
 #[cfg(test)]
 mod tests {
-    use bevy::{asset::HandleId, reflect::TypePath};
-
     use crate::ui::action::UiActionPlugin;
+    use rand::prelude::*;
 
     use super::*;
 
-    #[derive(Copy, Clone, Debug, Actionlike, TypePath)]
+    #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Reflect, Actionlike)]
     enum MyAction {
         Jump,
         Shoot,
@@ -143,8 +143,9 @@ mod tests {
     }
 
     fn asset_setup(app: &mut App) -> ButtonPromptAssets {
+        let mut rng = rand::thread_rng();
         let button_prompt_assets = ButtonPromptAssets {
-            key_code_icons: Handle::weak(HandleId::random::<TextureAtlas>()),
+            key_code_icons: Handle::weak_from_u128(rng.gen()),
         };
 
         app.insert_resource(button_prompt_assets.clone());

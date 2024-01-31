@@ -9,7 +9,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_easings::*;
-use bevy_ecs_ldtk::{ldtk::FieldInstance, prelude::*};
+use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash, SystemSet)]
@@ -41,7 +41,7 @@ impl Plugin for LevelTransitionPlugin {
                 (level_card_update, load_next_level)
                     .in_set(LevelTransitionSystemSet::OnLevelCardEvent),
             )
-            .configure_set(
+            .configure_sets(
                 Update,
                 LevelTransitionSystemSet::OnLevelCardEvent
                     .run_if(in_state(GameState::LevelTransition))
@@ -94,7 +94,7 @@ fn spawn_level_card(
     mut commands: Commands,
     mut level_card_events: ResMut<EventScheduler<LevelCardEvent>>,
     transition_to: Res<TransitionTo>,
-    ldtk_assets: Res<Assets<LdtkAsset>>,
+    ldtk_assets: Res<Assets<LdtkProject>>,
     assets: Res<AssetServer>,
     asset_holder: Res<AssetHolder>,
     mut images: ResMut<Assets<Image>>,
@@ -103,25 +103,19 @@ fn spawn_level_card(
     let mut level_num = None;
 
     if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
-        if let Some((level_index, level)) = ldtk_asset
-            .iter_levels()
-            .enumerate()
-            .find(|(i, level)| transition_to.is_match(i, level))
-        {
-            if level_index < ldtk_asset.project.levels.len() {
-                level_num = Some(level_index + 1);
-
-                if let Some(FieldInstance {
-                    value: FieldValue::String(Some(level_title)),
-                    ..
-                }) = level
-                    .field_instances
-                    .iter()
-                    .find(|f| f.identifier == "Title")
-                {
-                    title = level_title.clone();
-                }
-            }
+        if let Some(selected_level) = ldtk_asset.find_raw_level_by_level_selection(&transition_to) {
+            level_num = Some(
+                ldtk_asset
+                    .get_level_metadata_by_iid(&selected_level.iid)
+                    .expect("level metadata should exist for all levels")
+                    .indices()
+                    .level
+                    + 1,
+            );
+            title = selected_level
+                .get_string_field("Title")
+                .expect("all levels should have titles")
+                .clone();
         }
     }
 
@@ -225,7 +219,7 @@ fn load_next_level(
     transition_to: Res<TransitionTo>,
     asset_holder: Res<AssetHolder>,
 ) {
-    for event in level_card_events.iter() {
+    for event in level_card_events.read() {
         if let LevelCardEvent::Block = event {
             if *first_card_skipped {
                 *level_selection = transition_to.0.clone()
@@ -248,7 +242,7 @@ fn level_card_update(
     mut card_query: Query<(Entity, &mut Style), With<LevelCard>>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
-    for event in level_card_events.iter() {
+    for event in level_card_events.read() {
         for (entity, style) in card_query.iter_mut() {
             match event {
                 LevelCardEvent::Fall => {

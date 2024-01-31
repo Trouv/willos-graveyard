@@ -51,7 +51,7 @@ pub struct ExorcismEvent;
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash, Component)]
 struct ExorcismCard;
 
-#[derive(Clone, Bundle, LdtkIntCell)]
+#[derive(Clone, Default, Bundle, LdtkIntCell)]
 struct ExorcismTileBundle {
     volatile: Volatile,
     volatile_history: History<Volatile>,

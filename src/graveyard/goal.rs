@@ -157,7 +157,7 @@ fn check_goal(
     mut goal_events: EventWriter<GoalEvent>,
     mut next_state: ResMut<NextState<GameState>>,
     level_selection: Res<LevelSelection>,
-    ldtk_assets: Res<Assets<LdtkAsset>>,
+    ldtk_assets: Res<Assets<LdtkProject>>,
     asset_holder: Res<AssetHolder>,
 ) {
     // If the goal is not loaded for whatever reason (for example when hot-reloading levels),
@@ -201,15 +201,18 @@ fn check_goal(
         next_state.set(GameState::LevelTransition);
 
         if let Some(ldtk_asset) = ldtk_assets.get(&asset_holder.ldtk) {
-            if let Some((level_index, _)) = ldtk_asset
-                .iter_levels()
-                .enumerate()
-                .find(|(i, level)| level_selection.is_match(i, level))
-            {
-                // Currently this doesn't have a time buffer like it used to.
-                // This will change as we make a more elaborate level transition workflow.
-                commands.insert_resource(TransitionTo(LevelSelection::Index(level_index + 1)));
-            }
+            let selected_level = ldtk_asset
+                .find_raw_level_by_level_selection(&level_selection)
+                .expect("level should exist in project");
+            let level_index = ldtk_asset
+                .get_level_metadata_by_iid(&selected_level.iid)
+                .expect("level should exist in project")
+                .indices()
+                .level;
+
+            // Currently this doesn't have a time buffer like it used to.
+            // This will change as we make a more elaborate level transition workflow.
+            commands.insert_resource(TransitionTo(LevelSelection::index(level_index + 1)));
         }
 
         commands.spawn(AudioBundle {
@@ -222,7 +225,7 @@ fn goal_ghost_event_sugar(
     mut goal_ghost_query: Query<&mut GoalGhostAnimation>,
     mut goal_events: EventReader<GoalEvent>,
 ) {
-    for event in goal_events.iter() {
+    for event in goal_events.read() {
         for mut animation in goal_ghost_query.iter_mut() {
             match event {
                 GoalEvent::Met { goal_entity, .. } => {

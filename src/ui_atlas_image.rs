@@ -99,8 +99,8 @@ mod tests {
         let mut app = App::new();
 
         app.add_plugins((UiAtlasImagePlugin, AssetPlugin::default()))
-            .add_asset::<Image>()
-            .add_asset::<TextureAtlas>();
+            .init_asset::<Image>()
+            .init_asset::<TextureAtlas>();
         app
     }
 

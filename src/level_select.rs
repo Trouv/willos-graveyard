@@ -90,7 +90,7 @@ fn spawn_level_select_card(
     mut commands: Commands,
     asset_holder: Res<AssetHolder>,
     mut images: ResMut<Assets<Image>>,
-    ldtk_assets: Res<Assets<LdtkAsset>>,
+    ldtk_assets: Res<Assets<LdtkProject>>,
     mut event_writer: EventWriter<LevelSelectCardEvent>,
 ) {
     // TODO: refactor this to avoid repeated code with spawn_level_card
@@ -185,7 +185,7 @@ fn spawn_level_select_card(
                 .with_children(|parent| {
                     // spawn a button for every level
                     if let Some(ldtk) = ldtk_assets.get(&asset_holder.ldtk) {
-                        for (i, _) in ldtk.iter_levels().enumerate() {
+                        for (i, _) in ldtk.iter_raw_levels().enumerate() {
                             text_button::spawn(
                                 parent,
                                 format!("#{}", i + 1),
@@ -194,7 +194,7 @@ fn spawn_level_select_card(
                                 FontSize::Medium,
                             )
                             .insert(UiAction(
-                                LevelSelectAction::GoToLevel(LevelSelection::Index(i)),
+                                LevelSelectAction::GoToLevel(LevelSelection::index(i)),
                             ));
                         }
                     }
@@ -222,7 +222,7 @@ fn select_level(
     mut next_state: ResMut<NextState<GameState>>,
     mut ui_actions: EventReader<UiAction<LevelSelectAction>>,
 ) {
-    for action in ui_actions.iter() {
+    for action in ui_actions.read() {
         let UiAction(LevelSelectAction::GoToLevel(level_selection)) = action;
         commands.insert_resource(TransitionTo(level_selection.clone()));
         next_state.set(GameState::LevelTransition);
@@ -273,7 +273,7 @@ fn despawn_level_select_card(
     mut commands: Commands,
     mut level_select_card_events: EventReader<LevelSelectCardEvent>,
 ) {
-    for event in level_select_card_events.iter() {
+    for event in level_select_card_events.read() {
         if let LevelSelectCardEvent::Offscreen(entity) = event {
             commands.entity(*entity).despawn_recursive();
         }
