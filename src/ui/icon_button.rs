@@ -226,9 +226,8 @@ fn spawn_icon_button_elements(
 
 #[cfg(test)]
 mod tests {
-    use bevy::asset::HandleId;
-
     use super::*;
+    use rand::prelude::*;
 
     fn app_setup() -> App {
         let mut app = App::new();
@@ -241,9 +240,10 @@ mod tests {
     }
 
     fn asset_collection_setup(app: &mut App) -> IconButtonAssets {
+        let mut rng = rand::thread_rng();
         let assets = IconButtonAssets {
-            outline: Handle::weak(HandleId::random::<Image>()),
-            radial: Handle::weak(HandleId::random::<Image>()),
+            outline: Handle::weak_from_u128(rng.gen()),
+            radial: Handle::weak_from_u128(rng.gen()),
         };
 
         app.insert_resource(assets.clone());
@@ -260,7 +260,8 @@ mod tests {
         let mut app = app_setup();
         let asset_collection = asset_collection_setup(&mut app);
 
-        let icon = Handle::weak(HandleId::random::<Image>());
+        let mut rng = rand::thread_rng();
+        let icon = Handle::weak_from_u128(rng.gen());
         let icon_button_entity =
             spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(icon.clone())));
 
@@ -287,8 +288,9 @@ mod tests {
     fn elements_spawned_with_ui_atlas_image() {
         let mut app = app_setup();
         let asset_collection = asset_collection_setup(&mut app);
+        let mut rng = rand::thread_rng();
 
-        let icon = Handle::weak(HandleId::random::<TextureAtlas>());
+        let icon = Handle::weak_from_u128(rng.gen());
         let icon_button_entity = spawn_icon_button(
             &mut app,
             IconButton::AtlasImageIcon(UiAtlasImage {
@@ -323,7 +325,8 @@ mod tests {
         let mut app = app_setup();
         asset_collection_setup(&mut app);
 
-        let first_icon = Handle::weak(HandleId::random::<Image>());
+        let mut rng = rand::thread_rng();
+        let first_icon = Handle::weak_from_u128(rng.gen());
         let icon_button_entity = spawn_icon_button(
             &mut app,
             IconButton::ImageIcon(UiImage::new(first_icon.clone())),
@@ -344,7 +347,7 @@ mod tests {
         assert_eq!(children[2].texture, first_icon);
 
         // Change the component
-        let second_icon = Handle::weak(HandleId::random::<Image>());
+        let second_icon = Handle::weak_from_u128(rng.gen());
         *app.world
             .entity_mut(icon_button_entity)
             .get_mut::<IconButton>()
@@ -370,7 +373,8 @@ mod tests {
         let mut app = app_setup();
         asset_collection_setup(&mut app);
 
-        let first_icon = Handle::weak(HandleId::random::<Image>());
+        let mut rng = rand::thread_rng();
+        let first_icon = Handle::weak_from_u128(rng.gen());
 
         let icon_button_entity = spawn_icon_button(
             &mut app,

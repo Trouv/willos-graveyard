@@ -236,9 +236,8 @@ fn update_grave_action_buttons(
 
 #[cfg(test)]
 mod tests {
-    use bevy::asset::HandleId;
-
     use super::*;
+    use rand::prelude::*;
 
     fn app_setup() -> App {
         let mut app = App::new();
@@ -251,9 +250,10 @@ mod tests {
     }
 
     fn asset_setup(app: &mut App) -> ControlDisplayAssets {
+        let mut rng = rand::thread_rng();
         let control_display_assets = ControlDisplayAssets {
-            movement_table_actions: Handle::weak(HandleId::random::<TextureAtlas>()),
-            graveyard_actions: Handle::weak(HandleId::random::<TextureAtlas>()),
+            movement_table_actions: Handle::weak_from_u128(rng.gen()),
+            graveyard_actions: Handle::weak_from_u128(rng.gen()),
         };
 
         app.insert_resource(control_display_assets.clone());
