@@ -141,7 +141,7 @@ mod tests {
         let mut events: EventReader<UiAction<TestAction>> = system_state.get(&app.world);
 
         assert_eq!(events.len(), 1);
-        assert_eq!(*events.iter().next().unwrap(), UiAction(TestAction::First));
+        assert_eq!(*events.read().next().unwrap(), UiAction(TestAction::First));
 
         // Simulate the second button click, reset the first button
         *app.world
@@ -169,7 +169,7 @@ mod tests {
         let mut events: EventReader<UiAction<TestAction>> = system_state.get(&app.world);
 
         assert_eq!(events.len(), 1);
-        assert_eq!(*events.iter().next().unwrap(), UiAction(TestAction::Second));
+        assert_eq!(*events.read().next().unwrap(), UiAction(TestAction::Second));
     }
 
     #[test]

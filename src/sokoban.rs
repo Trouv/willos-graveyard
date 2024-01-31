@@ -554,7 +554,7 @@ mod tests {
 
         assert_eq!(events.len(), 1);
         assert_eq!(
-            *reader.iter(events).next().unwrap(),
+            *reader.read(events).next().unwrap(),
             PushEvent {
                 pusher: block_a,
                 direction: super::Direction::Up,
