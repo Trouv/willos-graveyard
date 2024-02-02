@@ -160,7 +160,7 @@
 				},
 				{
 					"__identifier": "S",
-					"__grid": [7,7],
+					"__grid": [8,7],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 21, "x": 192, "y": 16, "w": 16, "h": 16 },
@@ -169,7 +169,7 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 24,
-					"px": [224,224],
+					"px": [256,224],
 					"fieldInstances": []
 				},
 				{
@@ -347,7 +347,7 @@
 				},
 				{
 					"__identifier": "Goal",
-					"__grid": [7,7],
+					"__grid": [8,7],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 4, "x": 0, "y": 96, "w": 32, "h": 32 },
@@ -356,7 +356,7 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 18,
-					"px": [224,224],
+					"px": [256,224],
 					"fieldInstances": []
 				},
 				{
