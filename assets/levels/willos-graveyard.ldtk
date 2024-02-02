@@ -3439,35 +3439,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Narrow_ritual",
-			"iid": "867689a0-8990-11ee-9252-854f28f3830e",
-			"uid": 214,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 448,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Narrow_ritual.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Narrow ritual", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Narrow ritual"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Waxing_crescent",
 			"iid": "80acd760-6280-11ee-b34c-d3327b534cd2",
 			"uid": 195,
