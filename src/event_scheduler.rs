@@ -72,12 +72,12 @@ where
     }
 }
 
-fn fire_scheduled_events<E: Event>(
+fn fire_scheduled_events<E>(
     time: Res<Time>,
     mut event_scheduler: ResMut<EventScheduler<E>>,
     mut writer: EventWriter<E>,
 ) where
-    E: 'static + Send + Sync,
+    E: 'static + Event + Send + Sync,
 {
     event_scheduler.events = event_scheduler
         .events
