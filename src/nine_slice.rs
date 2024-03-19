@@ -1,6 +1,5 @@
 //! Utilities for generating nine-slice images from texture atlases.
 use bevy::{
-    math::Rect,
     prelude::*,
     render::{
         render_resource::{Extent3d, TextureDimension},

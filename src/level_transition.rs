@@ -112,10 +112,11 @@ fn spawn_level_card(
                     .level
                     + 1,
             );
-            title = selected_level
-                .get_string_field("Title")
-                .expect("all levels should have titles")
-                .clone();
+            title.clone_from(
+                selected_level
+                    .get_string_field("Title")
+                    .expect("all levels should have titles"),
+            );
         }
     }
 

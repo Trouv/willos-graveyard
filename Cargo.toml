@@ -16,7 +16,7 @@ inspector = ["bevy-inspector-egui"]
 [dependencies]
 bevy = { version = "0.12", features = ["wav"] }
 bevy_easings = "0.12"
-bevy_ecs_ldtk = { version = "0.8", default-features = false, features = ["derive", "render", "external_levels"] }
+bevy_ecs_ldtk = { version = "0.9", default-features = false, features = ["derive", "render", "external_levels"] }
 bevy_ecs_tilemap = "0.12"
 rand = "0.8"
 serde = "1"
@@ -27,8 +27,4 @@ thiserror = "1"
 leafwing-input-manager = "0.11"
 
 [target.wasm32-unknown-unknown.dependencies]
-bevy_ecs_ldtk = { version = "0.8", default-features = false, features = ["derive", "render", "external_levels", "atlas"] }
-
-[patch.crates-io]
-bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", branch = "main" }
-bevy_ecs_tilemap = { git = "https://github.com/StarArawn/bevy_ecs_tilemap", branch = "main" }
+bevy_ecs_ldtk = { version = "0.9", default-features = false, features = ["derive", "render", "external_levels", "atlas"] }
