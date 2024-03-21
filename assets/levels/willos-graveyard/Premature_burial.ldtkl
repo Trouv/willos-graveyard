@@ -180,48 +180,6 @@
 					"defUid": 194,
 					"px": [256,160],
 					"fieldInstances": []
-				},
-				{
-					"__identifier": "Grass",
-					"__grid": [4,1],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
-					"__smartColor": "#94D9B3",
-					"iid": "992015c0-d7b0-11ee-bb73-fd2290f5099f",
-					"width": 32,
-					"height": 32,
-					"defUid": 52,
-					"px": [128,32],
-					"fieldInstances": []
-				},
-				{
-					"__identifier": "Grass",
-					"__grid": [1,2],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
-					"__smartColor": "#94D9B3",
-					"iid": "99cf4180-d7b0-11ee-bb73-1fd90771f518",
-					"width": 32,
-					"height": 32,
-					"defUid": 52,
-					"px": [32,64],
-					"fieldInstances": []
-				},
-				{
-					"__identifier": "Grass",
-					"__grid": [5,3],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
-					"__smartColor": "#94D9B3",
-					"iid": "9b4e8e80-d7b0-11ee-bb73-41d506f54a90",
-					"width": 32,
-					"height": 32,
-					"defUid": 52,
-					"px": [160,96],
-					"fieldInstances": []
 				}
 			]
 		},
@@ -466,6 +424,48 @@
 					"height": 32,
 					"defUid": 18,
 					"px": [64,224],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [1,2],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "1ecd0330-d7b0-11ee-bb73-bf37289502b7",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [32,64],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [4,1],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "1f021cf0-d7b0-11ee-bb73-91359c41eb71",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [128,32],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [5,3],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "1f4e6830-d7b0-11ee-bb73-0fadd7865b4f",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [160,96],
 					"fieldInstances": []
 				}
 			]
