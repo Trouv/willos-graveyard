@@ -3417,7 +3417,7 @@
 			"worldY": -1,
 			"worldDepth": 0,
 			"pxWid": 480,
-			"pxHei": 384,
+			"pxHei": 352,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": false,
@@ -3439,14 +3439,14 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Waxing_crescent",
+			"identifier": "Premature_burial",
 			"iid": "80acd760-6280-11ee-b34c-d3327b534cd2",
 			"uid": 195,
 			"worldX": -1,
 			"worldY": -1,
 			"worldDepth": 0,
 			"pxWid": 352,
-			"pxHei": 352,
+			"pxHei": 320,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": false,
@@ -3456,11 +3456,11 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Waxing_crescent.ldtkl",
+			"externalRelPath": "willos-graveyard/Premature_burial.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Waxing crescent", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__type": "String", "__value": "Premature burial", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Waxing crescent"]
+					"params": ["Premature burial"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
