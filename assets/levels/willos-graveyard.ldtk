@@ -3591,7 +3591,7 @@
 			"worldY": -1,
 			"worldDepth": 0,
 			"pxWid": 544,
-			"pxHei": 544,
+			"pxHei": 480,
 			"__bgColor": "#3A1847",
 			"bgColor": null,
 			"useAutoIdentifier": false,
