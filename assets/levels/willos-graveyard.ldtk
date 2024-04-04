@@ -3752,10 +3752,7 @@
 					"id": "V_String",
 					"params": ["Stone scalpel"]
 				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": "Name is temporary", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Name is temporary"]
-				}] }
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [null] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
