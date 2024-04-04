@@ -3729,7 +3729,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Too_much_salt",
+			"identifier": "Stone_scalpel",
 			"iid": "0b984430-d7b0-11ee-a1a2-63730d057a3d",
 			"uid": 233,
 			"worldX": -1,
@@ -3746,11 +3746,11 @@
 			"bgPivotY": 0.5,
 			"__smartColor": "#93809A",
 			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Too_much_salt.ldtkl",
+			"externalRelPath": "willos-graveyard/Stone_scalpel.ldtkl",
 			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Too much salt", "__tile": null, "defUid": 28, "realEditorValues": [{
+				{ "__identifier": "Title", "__type": "String", "__value": "Stone scalpel", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
-					"params": ["Too much salt"]
+					"params": ["Stone scalpel"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": "Name is temporary", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",

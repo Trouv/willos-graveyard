@@ -8,7 +8,7 @@
 		"appVersion": "1.5.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Too_much_salt",
+	"identifier": "Stone_scalpel",
 	"iid": "0b984430-d7b0-11ee-a1a2-63730d057a3d",
 	"uid": 233,
 	"worldX": -1,
@@ -27,9 +27,9 @@
 	"__bgPos": null,
 	"externalRelPath": null,
 	"fieldInstances": [
-		{ "__identifier": "Title", "__type": "String", "__value": "Too much salt", "__tile": null, "defUid": 28, "realEditorValues": [{
+		{ "__identifier": "Title", "__type": "String", "__value": "Stone scalpel", "__tile": null, "defUid": 28, "realEditorValues": [{
 			"id": "V_String",
-			"params": ["Too much salt"]
+			"params": ["Stone scalpel"]
 		}] },
 		{ "__identifier": "Notes", "__type": "String", "__value": "Name is temporary", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
@@ -288,7 +288,7 @@
 				},
 				{
 					"__identifier": "Grass",
-					"__grid": [9,2],
+					"__grid": [8,3],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -297,12 +297,12 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 52,
-					"px": [288,64],
+					"px": [256,96],
 					"fieldInstances": []
 				},
 				{
 					"__identifier": "Grass",
-					"__grid": [7,5],
+					"__grid": [8,4],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -311,7 +311,7 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 52,
-					"px": [224,160],
+					"px": [256,128],
 					"fieldInstances": []
 				},
 				{
@@ -330,7 +330,7 @@
 				},
 				{
 					"__identifier": "Grass",
-					"__grid": [9,6],
+					"__grid": [8,5],
 					"__pivot": [0,0],
 					"__tags": [],
 					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -339,7 +339,7 @@
 					"width": 32,
 					"height": 32,
 					"defUid": 52,
-					"px": [288,192],
+					"px": [256,160],
 					"fieldInstances": []
 				},
 				{
@@ -396,6 +396,20 @@
 					"height": 32,
 					"defUid": 52,
 					"px": [224,0],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Grass",
+					"__grid": [8,2],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 50, "x": 0, "y": 0, "w": 32, "h": 32 },
+					"__smartColor": "#94D9B3",
+					"iid": "0bb964d0-d7b0-11ee-bb73-d7703bfb13e4",
+					"width": 32,
+					"height": 32,
+					"defUid": 52,
+					"px": [256,64],
 					"fieldInstances": []
 				}
 			]
