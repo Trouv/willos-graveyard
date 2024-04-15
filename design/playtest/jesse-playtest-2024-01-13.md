@@ -22,19 +22,3 @@
 # Trocar
 - I wonder if these initial "offsetty" puzzles are maybe not really in the spirit of the game?
 - I think he thinks that both stones touching the tree is important. like he can only offset vertically if there's a vertically aligned stone against the bush. I think it's because that was the case each time he did align himself vertically, even though that's not the exact reason he was able to.
-
-
-# Vertically challenged
-
-# Felt presence
-
-# Barrier magic
-
-# Jaw
-
-# Marguerite
-
-# D row
-
-# Danse de la terre
-
