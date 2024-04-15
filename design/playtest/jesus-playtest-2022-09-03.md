@@ -72,7 +72,7 @@ Perhaps a smaller-range puzzle between 4 and 5 would help help avoid players sli
 - *Even if players slip through some cracks, players are at least exposed to the concepts in this chapter.
 These concepts are so fundamental that maybe slipping through the cracks is okay.
 They will have to reckon with them soon whether or not they were effectively introduced here.
-And when that time comes, they'll at least have ths little bit of exposure to helm them out.
+And when that time comes, they'll at least have ths little bit of exposure to help them out.
 Maybe I'm just making excuses though.*
 
 ## 7 Origami boat
@@ -119,7 +119,3 @@ He enjoyed spirit gate, because of the left-left restriction.
 Any huge difficulty spikes?
 He breezed through it pretty quickly, so probably not.
 Nope.
-
-## 9
-
-## 10
