@@ -69,3 +69,23 @@ But it doesn't seem impossible, like she has options.
 
 - These puzzles are intended to be difficult and ramp up quickly, but not unfair. Do you think that they might be too difficult?
 Already answered.
+
+# Trocar (cont'd)
+- What are you thinking?
+"Once I push one of them it seems like it's stuck going in that direction"
+This is kinda true.
+I wonder if this is the wrong lesson going forward?
+- She also explains the end of the intended solution interestingly, I'm happy to hear she's thinking that far ahead.
+- Whenever she pushes the Q into the bush, and then gets the right vertical, it seems like she gives up on it fairly quickly.
+- *This makes me wonder if I need to demonstrate how the walls can be used as tools better.
+Or, maybe I need to place a fence in the place of the left wall to make it more obvious that it's a gameplay element.*
+(even though the right wall can serve the same purpose)
+- She does manage to get Q on the right vertical without pushing into E, but I'm not sure she realizes how she did this.
+- So this is probably too hard.
+- I gave her a couple hints:
+  - "Your first move is pushing Q into the bush"
+  - "You need to the stones off-by-one to be in the row you want them. In order to push them into that position, *you* need to be off-by-one.
+- She also managed to get E on the right vertical correctly, but then ended up pushing Q with the wrong offset afterward.
+- A few more attempts later, she gets it.
+
+*So I think the obvious two changes worth trying here is disabling the option to push Q and E together, and then putting a wall on the left to put it "in play".*
