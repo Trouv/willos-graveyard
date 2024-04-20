@@ -31,12 +31,7 @@
 			"id": "V_String",
 			"params": ["Cygnus's wing"]
 		}] },
-		{ "__identifier": "Notes", "__type": "String", "__value": "# 2024-04 Sparing\nKeeping this level because I still like the idea of a puzzle demonstrating that all-turns can work with 4 actions but not 3.", "__tile": null, "defUid": 64, "realEditorValues": [{
-			"id": "V_String",
-			"params": [
-				"# 2024-04 Sparing\nKeeping this level because I still like the idea of a puzzle demonstrating that all-turns can work with 4 actions but not 3."
-			]
-		}] }
+		{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [null] }
 	],
 	"layerInstances": [
 		{
