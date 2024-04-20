@@ -10,7 +10,7 @@
 	},
 	"iid": "ad496940-9f30-11ed-b774-e34072faa0ec",
 	"jsonVersion": "1.5.3",
-	"appBuildId": 475672,
+	"appBuildId": 475902,
 	"nextUid": 234,
 	"identifierStyle": "Capitalize",
 	"toc": [],
@@ -3758,69 +3758,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Set_the_table",
-			"iid": "f3046430-02f0-11ed-ad3f-371e1028b23b",
-			"uid": 134,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 384,
-			"pxHei": 608,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Set_the_table.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Set the table", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Set the table"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Orion_s_bow",
-			"iid": "90af5640-2a00-11ed-8561-8ba21b320aa1",
-			"uid": 181,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 512,
-			"pxHei": 448,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Orion_s_bow.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Orion's bow", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Orion's bow"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": "The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"The main design goal for this level is to demonstrate the disatvantages to this non-continuous starting table.\n\nIt will be helpful to enumerate those disadvantages:\n1. In oddly sized rooms, your range is truly limited to the subgrid (2x2 lattice)\n2. Removing ANY stone from the table to finish the level results in a table without cardinality"
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Cygnus_s_wing",
 			"iid": "efacbd70-dbe0-11ec-8458-3dad3edfb447",
 			"uid": 123,
@@ -3844,36 +3781,7 @@
 					"id": "V_String",
 					"params": ["Cygnus's wing"]
 				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Spirit_gate",
-			"iid": "4e9c97f0-02f0-11ed-ab4b-131203fb58ea",
-			"uid": 176,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 736,
-			"pxHei": 288,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Spirit_gate.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Spirit gate", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Spirit gate"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [null] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
@@ -3902,36 +3810,7 @@
 					"id": "V_String",
 					"params": ["Origami boat"]
 				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Wallflower",
-			"iid": "da164c70-dbe0-11ec-8458-f10c49c79d1b",
-			"uid": 125,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 512,
-			"pxHei": 448,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Wallflower.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Wallflower", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Wallflower"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [null] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
@@ -4000,40 +3879,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Two_Zs",
-			"iid": "4e2068f0-b4d0-11ec-885f-fd3102a60bbc",
-			"uid": 47,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 512,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Two_Zs.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Two Zs", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Two Zs"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": "This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet.", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"This level has a new unintended solution.\nI guess I wasn't good enough at the game to find it anymore.\nI added a bush on the table to try and prevent it but I haven't found a solution to this puzzle with the bush there yet."
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Yoink",
 			"iid": "6a130680-02f0-11ed-b338-99df6a572f16",
 			"uid": 179,
@@ -4092,69 +3937,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "All_tied_up",
-			"iid": "4e1ebb40-b4d0-11ec-885f-af6b4ac86dbb",
-			"uid": 66,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 192,
-			"pxHei": 288,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/All_tied_up.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "All tied up", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["All tied up"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": "# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"# 2022-07-22\nThis level kinda sucks.\nThe idea of having a level based on cancel moves is fine, but the result is too tedious.\nWe also now have \"martyr\" which also explores cancel moves pretty well, making this puzzle a bit redundant.\nThis puzzle does have one thing that martyr doesn't - \"push-off\" techniques.\nThis is good, but it isn't explored past the first couple moves.\nTime for a redesign.\n\nRedesign goals:\n- Start with a cancel pattern, requiring push-off moves to break free.\n- Require a more-creative push-off technique later in the level.\n- Make the solution less tedious, maybe by making it more open ended?"
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Walls_and_secrets",
-			"iid": "27e630f0-2a00-11ed-8367-691b40d613db",
-			"uid": 182,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 352,
-			"pxHei": 800,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Walls_and_secrets.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Walls and secrets", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Walls and secrets"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Training_week",
 			"iid": "4e1da9d0-b4d0-11ec-885f-113955d0e8d4",
 			"uid": 59,
@@ -4184,35 +3966,6 @@
 						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
 					]
 				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Cargo_train",
-			"iid": "49554690-02f0-11ed-8a27-4100851f9ebd",
-			"uid": 131,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 544,
-			"pxHei": 352,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Cargo_train.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Cargo train", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Cargo train"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 			],
 			"layerInstances": null,
 			"__neighbours": []
@@ -4276,40 +4029,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Don_t_worry_I_ll_put_it_back",
-			"iid": "4e215350-b4d0-11ec-885f-8b3b70f3d213",
-			"uid": 65,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 352,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Don_t_worry_I_ll_put_it_back.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Don't worry, I'll put it back", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Don't worry, I'll put it back"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": "Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\nWould help them grasp No Stone Unturned", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"Could probably use a level or two here that has the player deal with pushing blocks into each other, making their movements super dynamic.\nWould help them grasp No Stone Unturned"
-					]
-				}] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Only_child",
 			"iid": "068b2bf0-02f0-11ed-8a27-c1e51c1ea2d6",
 			"uid": 132,
@@ -4363,98 +4082,6 @@
 					"params": ["Martyr"]
 				}] },
 				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Two_stones_one_bird",
-			"iid": "6ee1d1c0-02f0-11ed-8a27-413ebfea4dcf",
-			"uid": 129,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 320,
-			"pxHei": 384,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Two_stones_one_bird.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Two stones, one bird", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Two stones, one bird"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "Purifying_salt_punch",
-			"iid": "aa83a190-02f0-11ed-be11-33c11018fde9",
-			"uid": 136,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 288,
-			"pxHei": 416,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Purifying_salt_punch.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Purifying salt punch", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Purifying salt punch"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
-			"identifier": "A_simple_variation",
-			"iid": "4e21ef90-b4d0-11ec-885f-41d8e5c591e4",
-			"uid": 67,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 480,
-			"pxHei": 352,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/A_simple_variation.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "A simple variation", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["A simple variation"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": "This level is currently VERY hard. Too hard??\n\nDesigner's hint: left-up, down-down, right-right\n\nOne thing this level does somewhat well is force players to think about not only the desired table, but also the order in which blocks in that desired table get placed.\nAt least, that's how I ended up solving it.\n\nI think this level will be a fine difficulty once there are more levels in between.\n\n\nApparently, you don't even need to put the stone back on the table to solve this. That might be a problem\n\nThis is probably only true because it starts as a leftward prong\n- Fixed this by returning the rightward prong/train variation", "__tile": null, "defUid": 64, "realEditorValues": [{
-					"id": "V_String",
-					"params": [
-						"This level is currently VERY hard. Too hard??\n\nDesigner's hint: left-up, down-down, right-right\n\nOne thing this level does somewhat well is force players to think about not only the desired table, but also the order in which blocks in that desired table get placed.\nAt least, that's how I ended up solving it.\n\nI think this level will be a fine difficulty once there are more levels in between.\n\n\nApparently, you don't even need to put the stone back on the table to solve this. That might be a problem\n\nThis is probably only true because it starts as a leftward prong\n- Fixed this by returning the rightward prong/train variation"
-					]
-				}] }
 			],
 			"layerInstances": null,
 			"__neighbours": []

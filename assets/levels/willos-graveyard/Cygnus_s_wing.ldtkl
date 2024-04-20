@@ -31,7 +31,7 @@
 			"id": "V_String",
 			"params": ["Cygnus's wing"]
 		}] },
-		{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+		{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [null] }
 	],
 	"layerInstances": [
 		{
