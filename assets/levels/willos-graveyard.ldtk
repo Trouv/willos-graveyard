@@ -3709,6 +3709,35 @@
 	] },
 	"levels": [
 		{
+			"identifier": "Debug",
+			"iid": "97be3000-fec0-11ee-ab12-3796d6913ce9",
+			"uid": 245,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 576,
+			"pxHei": 416,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Debug.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__type": "String", "__value": "Debug", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Debug"]
+				}] },
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
 			"identifier": "Some_poor_soul_lost_their_gravestone",
 			"iid": "2b6d3810-8990-11ee-9252-e39627025e14",
 			"uid": 215,
