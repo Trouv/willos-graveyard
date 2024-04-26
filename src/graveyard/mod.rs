@@ -2,6 +2,7 @@
 //!
 //! So, the logic for core gameplay lives here.
 
+pub mod arrow_block;
 pub mod control_display;
 pub mod exorcism;
 pub mod goal;
