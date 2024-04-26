@@ -62,6 +62,7 @@ impl Plugin for GraveyardPlugin {
                 exorcism::ExorcismPlugin,
                 wind::WindPlugin,
                 out_of_bounds::OutOfBoundsPlugin,
+                arrow_block::ArrowBlockPlugin,
             ))
             .add_systems(
                 Update,
