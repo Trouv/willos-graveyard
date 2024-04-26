@@ -77,9 +77,10 @@ where
 struct SokobanLayerIdentifier(String);
 
 /// Enumerates the four directions that sokoban blocks can be pushed in.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash)]
 pub enum Direction {
     /// North direction.
+    #[default]
     Up,
     /// West direction.
     Left,
