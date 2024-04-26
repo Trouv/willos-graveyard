@@ -55,6 +55,7 @@ impl Plugin for GraveyardPlugin {
                 goal::GoalPlugin,
                 exorcism::ExorcismPlugin,
                 wind::WindPlugin,
+                arrow_block::ArrowBlockPlugin,
             ))
             .add_systems(
                 Update,
