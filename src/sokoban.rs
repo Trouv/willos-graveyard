@@ -113,6 +113,43 @@ impl From<&Direction> for IVec2 {
     }
 }
 
+#[derive(Debug, Error)]
+#[error("Directions must have coordinates of 0s and 1s")]
+pub struct OutOfBoundsDirection;
+
+impl TryFrom<&IVec2> for Direction {
+    type Error = OutOfBoundsDirection;
+
+    fn try_from(value: &IVec2) -> Result<Direction, OutOfBoundsDirection> {
+        match (value.x, value.y) {
+            (0, 0) => Ok(Direction::Zero),
+            (1, 1) => Ok(Direction::UpRight),
+            (0, 1) => Ok(Direction::Up),
+            (-1, 1) => Ok(Direction::UpLeft),
+            (-1, 0) => Ok(Direction::Left),
+            (-1, -1) => Ok(Direction::DownLeft),
+            (0, -1) => Ok(Direction::Down),
+            (1, -1) => Ok(Direction::DownRight),
+            (1, 0) => Ok(Direction::Right),
+            _ => Err(OutOfBoundsDirection),
+        }
+    }
+}
+
+impl Direction {
+    fn try_add(self, rhs: Direction) -> Result<Direction, OutOfBoundsDirection> {
+        Direction::try_from(&(IVec2::from(&self) + IVec2::from(&rhs)))
+    }
+}
+
+impl Add<Direction> for Direction {
+    type Output = Direction;
+
+    fn add(self, rhs: Direction) -> Self::Output {
+        self.try_add(rhs).unwrap()
+    }
+}
+
 /// Enumerates commands that can be performed via [SokobanCommands].
 #[derive(Debug, Clone, Event)]
 pub enum SokobanCommand {
