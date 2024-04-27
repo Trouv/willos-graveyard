@@ -7,6 +7,8 @@
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
+use std::ops::Add;
+use thiserror::Error;
 
 /// Sets used by sokoban systems
 #[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
@@ -77,25 +79,35 @@ where
 struct SokobanLayerIdentifier(String);
 
 /// Enumerates the four directions that sokoban blocks can be pushed in.
-#[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash, Reflect)]
 pub enum Direction {
-    /// North direction.
     #[default]
+    Zero,
+    UpRight,
+    /// North direction.
     Up,
+    UpLeft,
     /// West direction.
     Left,
+    DownLeft,
     /// South direction.
     Down,
+    DownRight,
     /// East direction.
     Right,
 }
 
-impl From<Direction> for IVec2 {
-    fn from(direction: Direction) -> IVec2 {
+impl From<&Direction> for IVec2 {
+    fn from(direction: &Direction) -> IVec2 {
         match direction {
+            Direction::Zero => IVec2::ZERO,
+            Direction::UpRight => IVec2::new(1, 1),
             Direction::Up => IVec2::Y,
-            Direction::Left => IVec2::new(-1, 0),
-            Direction::Down => IVec2::new(0, -1),
+            Direction::UpLeft => IVec2::new(-1, 1),
+            Direction::Left => -IVec2::X,
+            Direction::DownLeft => IVec2::new(-1, -1),
+            Direction::Down => -IVec2::Y,
+            Direction::DownRight => IVec2::new(1, -1),
             Direction::Right => IVec2::X,
         }
     }
@@ -250,7 +262,7 @@ fn push_collision_map_entry(
     match collision_map[pusher_coords.y as usize][pusher_coords.x as usize] {
         Some((pusher, SokobanBlock::Dynamic)) => {
             // pusher is dynamic, so we try to push
-            let destination = pusher_coords + IVec2::from(direction);
+            let destination = pusher_coords + IVec2::from(&direction);
 
             match push_collision_map_entry(collision_map, destination, direction) {
                 (mut collision_map, Some(mut pushed_entities)) => {
@@ -310,7 +322,7 @@ fn flush_sokoban_commands(
                         *grid_coords_query
                             .get_component_mut::<GridCoords>(*pushed_entity)
                             .expect("pushed entity should be valid sokoban entity") +=
-                            GridCoords::from(IVec2::from(*direction));
+                            GridCoords::from(IVec2::from(direction));
                     }
 
                     // send push events
