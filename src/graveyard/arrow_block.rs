@@ -102,3 +102,53 @@ where
     #[sprite_sheet_bundle]
     sprite_sheet_bundle: SpriteSheetBundle,
 }
+
+#[derive(Copy, Clone, Default, Debug, PartialEq, Eq, Component)]
+struct MovementTile {
+    row_move: Direction,
+    column_move: Direction,
+}
+
+#[derive(Clone, Default, Bundle)]
+struct MovementTileBundle {
+    grid_coords: GridCoords,
+    movement_tile: MovementTile,
+    sprite_sheet_bundle: SpriteSheetBundle,
+}
+
+impl MovementTileBundle {
+    fn new(
+        grid_coords: GridCoords,
+        movement_tile: MovementTile,
+        movement_tile_assets: &MovementTileAssets,
+        translation_z: f32,
+    ) -> Self {
+        let translation = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
+            .extend(translation_z);
+
+        let scale = Vec3::new(0.5, 0.5, 1.);
+
+        let transform = Transform::from_translation(translation).with_scale(scale);
+
+        let index =
+            movement_tile.row_move.variant_index() * 9 + movement_tile.column_move.variant_index();
+
+        let sprite = TextureAtlasSprite {
+            index,
+            anchor: Anchor::TopCenter,
+            ..default()
+        };
+        let sprite_sheet_bundle = SpriteSheetBundle {
+            sprite,
+            texture_atlas: movement_tile_assets.movement_tiles.clone(),
+            transform,
+            ..default()
+        };
+
+        MovementTileBundle {
+            grid_coords,
+            movement_tile,
+            sprite_sheet_bundle,
+        }
+    }
+}
