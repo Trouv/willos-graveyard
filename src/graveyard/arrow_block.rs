@@ -1,26 +1,45 @@
 use std::marker::PhantomData;
 
-use bevy::prelude::*;
-use bevy_ecs_ldtk::prelude::*;
+use bevy::{prelude::*, reflect::Enum, sprite::Anchor};
+use bevy_asset_loader::{
+    asset_collection::AssetCollection,
+    loading_state::{
+        config::{ConfigureLoadingState, LoadingStateConfig},
+        LoadingStateAppExt,
+    },
+};
+use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 
 use crate::{
     history::History,
     sokoban::{Direction, SokobanBlock},
+    GameState, UNIT_LENGTH,
 };
 
 pub struct ArrowBlockPlugin;
 
 impl Plugin for ArrowBlockPlugin {
     fn build(&self, app: &mut App) {
-        app.register_ldtk_entity::<ArrowBluckBundle<Row>>("UpRow")
-            .register_ldtk_entity::<ArrowBluckBundle<Row>>("LeftRow")
-            .register_ldtk_entity::<ArrowBluckBundle<Row>>("DownRow")
-            .register_ldtk_entity::<ArrowBluckBundle<Row>>("RightRow")
-            .register_ldtk_entity::<ArrowBluckBundle<Column>>("UpColumn")
-            .register_ldtk_entity::<ArrowBluckBundle<Column>>("LeftColumn")
-            .register_ldtk_entity::<ArrowBluckBundle<Column>>("DownColumn")
-            .register_ldtk_entity::<ArrowBluckBundle<Column>>("RightColumn");
+        app.configure_loading_state(
+            LoadingStateConfig::new(GameState::AssetLoading)
+                .load_collection::<MovementTileAssets>(),
+        )
+        .register_ldtk_entity::<ArrowBluckBundle<Row>>("UpRow")
+        .register_ldtk_entity::<ArrowBluckBundle<Row>>("LeftRow")
+        .register_ldtk_entity::<ArrowBluckBundle<Row>>("DownRow")
+        .register_ldtk_entity::<ArrowBluckBundle<Row>>("RightRow")
+        .register_ldtk_entity::<ArrowBluckBundle<Column>>("UpColumn")
+        .register_ldtk_entity::<ArrowBluckBundle<Column>>("LeftColumn")
+        .register_ldtk_entity::<ArrowBluckBundle<Column>>("DownColumn")
+        .register_ldtk_entity::<ArrowBluckBundle<Column>>("RightColumn");
     }
+}
+
+#[derive(Clone, Debug, AssetCollection, Resource)]
+struct MovementTileAssets {
+    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 4, rows = 4))]
+    #[asset(path = "textures/movement-table-actions.png")]
+    movement_tiles: Handle<TextureAtlas>,
 }
 
 trait Dimension {}
