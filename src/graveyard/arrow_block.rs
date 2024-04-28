@@ -17,6 +17,7 @@ use crate::{
     utils::{any_match_filter, spawn_on_background_entities_layer},
     GameState, UNIT_LENGTH,
 };
+use itertools::Itertools;
 
 pub struct ArrowBlockPlugin;
 
@@ -221,11 +222,9 @@ fn all_movement_tiles_at_intersections(
             });
 
     aggregate_row_directions
-        .into_iter()
-        .flat_map(move |row_item| {
-            std::iter::repeat(row_item).zip(aggregate_column_directions.clone())
-        })
-        .map(move |((y, row_move), (x, column_move))| {
+        .iter()
+        .cartesian_product(&aggregate_column_directions)
+        .map(|((&y, &row_move), (&x, &column_move))| {
             let grid_coords = GridCoords::new(x, y);
             let movement_tile = MovementTile {
                 row_move,
