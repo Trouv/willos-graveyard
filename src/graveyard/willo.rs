@@ -12,7 +12,7 @@ use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
 
-use super::arrow_block::MovementTile;
+use super::gravestone_movement_queries::GravestoneMovementQueries;
 
 /// Sets used by Willo systems.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
@@ -245,52 +245,35 @@ fn move_willo_by_tiles(
         &mut WilloState,
         &mut WilloAnimationState,
     )>,
-    gravestones: Query<(&GridCoords, &GraveId)>,
-    movement_tiles: Query<(&GridCoords, &MovementTile)>,
+    gravestone_movement_queries: GravestoneMovementQueries,
     mut sokoban_commands: SokobanCommands,
     time: Res<Time>,
 ) {
-    if let Ok((entity, mut timer, mut willo, mut willo_animation_state)) =
+    if let Ok((entity, mut timer, mut willo_state, mut willo_animation_state)) =
         willo_query.get_single_mut()
     {
         timer.0.tick(time.delta());
 
         if timer.0.finished() {
-            match *willo {
+            match willo_state.as_ref() {
                 WilloState::RankMove(key) => {
-                    if let Some((_, movement_tile)) = gravestones
-                        .iter()
-                        .find(|(_, grave_id)| &key == *grave_id)
-                        .and_then(|(key_grid_coords, _)| {
-                            movement_tiles
-                                .iter()
-                                .find(|(grid_coords, _)| &key_grid_coords == grid_coords)
-                        })
-                    {
+                    if let Some(movement_tile) = gravestone_movement_queries.find_movement(key) {
                         let direction = movement_tile.row_move();
                         sokoban_commands.move_block(entity, *direction);
                         *willo_animation_state = WilloAnimationState::Idle(*direction);
                     }
 
-                    *willo = WilloState::FileMove(key);
+                    *willo_state = WilloState::FileMove(*key);
                     timer.0.reset();
                 }
                 WilloState::FileMove(key) => {
-                    if let Some((_, movement_tile)) = gravestones
-                        .iter()
-                        .find(|(_, grave_id)| &key == *grave_id)
-                        .and_then(|(key_grid_coords, _)| {
-                            movement_tiles
-                                .iter()
-                                .find(|(grid_coords, _)| &key_grid_coords == grid_coords)
-                        })
-                    {
+                    if let Some(movement_tile) = gravestone_movement_queries.find_movement(key) {
                         let direction = movement_tile.column_move();
                         sokoban_commands.move_block(entity, *direction);
                         *willo_animation_state = WilloAnimationState::Idle(*direction);
                     }
 
-                    *willo = WilloState::Waiting;
+                    *willo_state = WilloState::Waiting;
                     timer.0.reset();
                 }
                 _ => {}
