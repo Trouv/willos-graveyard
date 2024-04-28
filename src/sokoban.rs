@@ -296,6 +296,7 @@ fn push_collision_map_entry(
         || pusher_coords.y < 0
         || pusher_coords.y as usize >= collision_map.len()
         || pusher_coords.x as usize >= collision_map[0].len()
+        || direction == Direction::Zero
     {
         // no updates to collision_map, no pushes can be performed
         return (collision_map, None);
