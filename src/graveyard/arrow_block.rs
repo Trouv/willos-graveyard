@@ -159,11 +159,7 @@ impl MovementTileBundle {
         let index =
             movement_tile.row_move.variant_index() * 9 + movement_tile.column_move.variant_index();
 
-        let sprite = TextureAtlasSprite {
-            index,
-            anchor: Anchor::Center,
-            ..default()
-        };
+        let sprite = TextureAtlasSprite { index, ..default() };
         let sprite_sheet_bundle = SpriteSheetBundle {
             sprite,
             texture_atlas: movement_tile_assets.movement_tiles.clone(),
