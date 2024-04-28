@@ -3,14 +3,16 @@ use crate::{
     animation::{FromComponentAnimator, SpriteSheetAnimation},
     from_component::FromComponentSet,
     graveyard::{exorcism::ExorcismEvent, gravestone::GraveId, volatile::Volatile},
-    history::{History, HistoryCommands, HistoryPlugin},
-    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanSets},
+    history::{FlushHistoryCommands, History, HistoryCommands, HistoryPlugin},
+    sokoban::{Direction, PushEvent, PushTracker, SokobanBlock, SokobanCommands, SokobanSets},
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
+
+use super::arrow_block::MovementTile;
 
 /// Sets used by Willo systems.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
@@ -43,6 +45,11 @@ impl Plugin for WilloPlugin {
                 history_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(on_event::<HistoryCommands>()),
+                move_willo_by_tiles
+                    .run_if(in_state(GameState::Graveyard))
+                    .after(SokobanSets::LogicalMovement)
+                    .after(FlushHistoryCommands)
+                    .before(FromComponentSet),
             ),
         )
         .add_systems(
@@ -114,11 +121,11 @@ impl From<WilloAnimationState> for SpriteSheetAnimation {
             Push(Left) => 21..22,
             Push(Right) => 31..32,
             Idle(Up | UpLeft | UpRight) => 40..47,
-            Idle(Down | DownLeft | DownRight) => 50..57,
+            Idle(Zero) | Push(Zero) | Idle(Down | DownLeft | DownRight) => 50..57,
             Idle(Left) => 60..67,
             Idle(Right) => 70..77,
             Dying => 80..105,
-            Idle(Zero) | Push(Zero) | None => 3..4,
+            None => 3..4,
         };
 
         let frame_timer = Timer::new(Duration::from_millis(150), TimerMode::Repeating);
@@ -228,5 +235,66 @@ fn history_sugar(
 fn play_exorcism_animaton(mut willo_query: Query<&mut WilloAnimationState>) {
     if let Ok(mut animation_state) = willo_query.get_single_mut() {
         *animation_state = WilloAnimationState::Dying;
+    }
+}
+
+fn move_willo_by_tiles(
+    mut willo_query: Query<(
+        Entity,
+        &mut MovementTimer,
+        &mut WilloState,
+        &mut WilloAnimationState,
+    )>,
+    gravestones: Query<(&GridCoords, &GraveId)>,
+    movement_tiles: Query<(&GridCoords, &MovementTile)>,
+    mut sokoban_commands: SokobanCommands,
+    time: Res<Time>,
+) {
+    if let Ok((entity, mut timer, mut willo, mut willo_animation_state)) =
+        willo_query.get_single_mut()
+    {
+        timer.0.tick(time.delta());
+
+        if timer.0.finished() {
+            match *willo {
+                WilloState::RankMove(key) => {
+                    if let Some((_, movement_tile)) = gravestones
+                        .iter()
+                        .find(|(_, grave_id)| &key == *grave_id)
+                        .and_then(|(key_grid_coords, _)| {
+                            movement_tiles
+                                .iter()
+                                .find(|(grid_coords, _)| &key_grid_coords == grid_coords)
+                        })
+                    {
+                        let direction = movement_tile.row_move();
+                        sokoban_commands.move_block(entity, *direction);
+                        *willo_animation_state = WilloAnimationState::Idle(*direction);
+                    }
+
+                    *willo = WilloState::FileMove(key);
+                    timer.0.reset();
+                }
+                WilloState::FileMove(key) => {
+                    if let Some((_, movement_tile)) = gravestones
+                        .iter()
+                        .find(|(_, grave_id)| &key == *grave_id)
+                        .and_then(|(key_grid_coords, _)| {
+                            movement_tiles
+                                .iter()
+                                .find(|(grid_coords, _)| &key_grid_coords == grid_coords)
+                        })
+                    {
+                        let direction = movement_tile.column_move();
+                        sokoban_commands.move_block(entity, *direction);
+                        *willo_animation_state = WilloAnimationState::Idle(*direction);
+                    }
+
+                    *willo = WilloState::Waiting;
+                    timer.0.reset();
+                }
+                _ => {}
+            }
+        }
     }
 }
