@@ -148,10 +148,9 @@ impl MovementTileBundle {
         grid_coords: GridCoords,
         movement_tile: MovementTile,
         movement_tile_assets: &MovementTileAssets,
-        translation_z: f32,
     ) -> Self {
-        let translation = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
-            .extend(translation_z);
+        let translation =
+            grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH)).extend(0.);
 
         let scale = Vec3::new(0.5, 0.5, 1.);
 
@@ -162,7 +161,7 @@ impl MovementTileBundle {
 
         let sprite = TextureAtlasSprite {
             index,
-            anchor: Anchor::TopCenter,
+            anchor: Anchor::Center,
             ..default()
         };
         let sprite_sheet_bundle = SpriteSheetBundle {
