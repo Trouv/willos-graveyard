@@ -200,12 +200,6 @@ fn despawn_movement_tiles(
     current_movement_tiles.for_each(|entity| commands.entity(entity).despawn_recursive());
 }
 
-struct MovementTileBundleIntoIter<'w> {
-    movement_tile_assets: &'w MovementTileAssets,
-    aggregate_row_directions: HashMap<i32, Direction>,
-    aggregate_column_directions: HashMap<i32, Direction>,
-}
-
 /// Should be run with conservative run criteria
 fn all_movement_tiles_at_intersections(
     row_blocks: Query<(&GridCoords, &ArrowBlock<Row>)>,
