@@ -7,6 +7,7 @@ pub mod control_display;
 pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
+pub mod gravestone_movement_queries;
 pub mod movement_table;
 pub mod volatile;
 pub mod wall;
