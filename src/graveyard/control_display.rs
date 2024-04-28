@@ -1,18 +1,23 @@
 //! Plugin providing functionality for the graveyard UI element showing the current controls.
 use crate::{
     camera::PlayZonePortion,
-    graveyard::{gravestone::GraveId, movement_table::MovementTable},
+    graveyard::gravestone::GraveId,
     ui::{
         action::UiAction,
         icon_button::{IconButton, IconButtonBundle, IconButtonSet},
     },
     ui_atlas_image::UiAtlasImage,
+    utils::any_match_filter,
     GameState,
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 
-use super::GraveyardAction;
+use super::{
+    arrow_block::MovementTile, gravestone_movement_queries::GravestoneMovementQueries,
+    GraveyardAction,
+};
 
 /// Plugin providing functionality for the graveyard UI element showing the current controls.
 pub struct ControlDisplayPlugin;
@@ -23,7 +28,12 @@ impl Plugin for ControlDisplayPlugin {
             .add_systems(
                 Update,
                 update_grave_action_buttons
-                    .run_if(in_state(GameState::Graveyard))
+                    .run_if(in_state(GameState::Graveyard).and_then(
+                        any_match_filter::<(
+                            Changed<GridCoords>,
+                            Or<(With<MovementTile>, With<GraveId>)>,
+                        )>,
+                    ))
                     .before(IconButtonSet),
             );
     }
@@ -211,25 +221,20 @@ fn spawn_control_display(
 }
 
 fn update_grave_action_buttons(
-    movement_tables: Query<&MovementTable, Changed<MovementTable>>,
+    gravestone_movement_queries: GravestoneMovementQueries,
     mut grave_action_buttons: Query<(&mut IconButton, &UiAction<GraveId>)>,
     assets: Res<ControlDisplayAssets>,
 ) {
-    for movement_table in movement_tables.iter() {
-        for (mut icon_button, action) in &mut grave_action_buttons {
-            *icon_button = match movement_table
-                .table
-                .iter()
-                .flat_map(|row| row.iter())
-                .enumerate()
-                .find(|(_, g)| **g == Some(**action))
-            {
-                Some((index, _)) => IconButton::AtlasImageIcon(UiAtlasImage {
+    for (mut icon_button, action) in &mut grave_action_buttons {
+        *icon_button = match gravestone_movement_queries.find_movement(&action) {
+            Some(movement_tile) => {
+                let index = movement_tile.tileset_index();
+                IconButton::AtlasImageIcon(UiAtlasImage {
                     texture_atlas: assets.movement_table_actions.clone(),
                     index,
-                }),
-                None => IconButton::NoIcon,
+                })
             }
+            None => IconButton::NoIcon,
         }
     }
 }
