@@ -207,10 +207,10 @@ struct MovementTileBundleIntoIter<'w> {
 }
 
 /// Should be run with conservative run criteria
-fn all_movement_tiles_at_intersections<'w>(
+fn all_movement_tiles_at_intersections(
     row_blocks: Query<(&GridCoords, &ArrowBlock<Row>)>,
     column_blocks: Query<(&GridCoords, &ArrowBlock<Column>)>,
-    movement_tile_assets: Res<'w, MovementTileAssets>,
+    movement_tile_assets: Res<MovementTileAssets>,
 ) -> Vec<MovementTileBundle> {
     let aggregate_row_directions =
         row_blocks
