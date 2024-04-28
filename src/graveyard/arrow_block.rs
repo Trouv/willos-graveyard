@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{collections::HashMap, marker::PhantomData};
 
 use bevy::{prelude::*, reflect::Enum, sprite::Anchor};
 use bevy_asset_loader::{
@@ -173,4 +173,54 @@ impl MovementTileBundle {
             sprite_sheet_bundle,
         }
     }
+}
+
+fn despawn_movement_tiles(
+    mut commands: Commands,
+    current_movement_tiles: Query<Entity, With<MovementTile>>,
+) {
+    current_movement_tiles.for_each(|entity| commands.entity(entity).despawn_recursive());
+}
+
+struct MovementTileBundleIntoIter<'w> {
+    movement_tile_assets: &'w MovementTileAssets,
+    aggregate_row_directions: HashMap<i32, Direction>,
+    aggregate_column_directions: HashMap<i32, Direction>,
+}
+
+/// Should be run with conservative run criteria
+fn all_movement_tiles_at_intersections<'w>(
+    row_blocks: Query<(&GridCoords, &ArrowBlock<Row>)>,
+    column_blocks: Query<(&GridCoords, &ArrowBlock<Column>)>,
+    movement_tile_assets: Res<'w, MovementTileAssets>,
+) -> Vec<MovementTileBundle> {
+    let aggregate_row_directions =
+        row_blocks
+            .iter()
+            .fold(default(), |aggregate, (grid_coords, arrow_block)| {
+                arrow_block.fold_direction_into(grid_coords, aggregate)
+            });
+
+    let aggregate_column_directions =
+        column_blocks
+            .iter()
+            .fold(default(), |aggregate, (grid_coords, arrow_block)| {
+                arrow_block.fold_direction_into(grid_coords, aggregate)
+            });
+
+    aggregate_row_directions
+        .into_iter()
+        .flat_map(move |row_item| {
+            std::iter::repeat(row_item).zip(aggregate_column_directions.clone())
+        })
+        .map(move |((y, row_move), (x, column_move))| {
+            let grid_coords = GridCoords::new(x, y);
+            let movement_tile = MovementTile {
+                row_move,
+                column_move,
+            };
+
+            MovementTileBundle::new(grid_coords, movement_tile, &movement_tile_assets)
+        })
+        .collect()
 }
