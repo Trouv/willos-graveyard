@@ -7,7 +7,7 @@
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
-use std::ops::Add;
+use std::ops::{Add, AddAssign};
 use thiserror::Error;
 
 /// Sets used by sokoban systems
@@ -147,6 +147,12 @@ impl Add<Direction> for Direction {
 
     fn add(self, rhs: Direction) -> Self::Output {
         self.try_add(rhs).unwrap()
+    }
+}
+
+impl AddAssign for Direction {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
     }
 }
 
