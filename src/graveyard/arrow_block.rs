@@ -1,6 +1,6 @@
 use std::{collections::HashMap, marker::PhantomData};
 
-use bevy::{prelude::*, reflect::Enum, sprite::Anchor};
+use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::{
     asset_collection::AssetCollection,
     loading_state::{
@@ -19,6 +19,9 @@ use crate::{
 };
 use itertools::Itertools;
 
+#[derive(Copy, Clone, Default, Debug, PartialEq, Eq, Hash, SystemSet)]
+pub struct MovementTileUpdateSet;
+
 pub struct ArrowBlockPlugin;
 
 impl Plugin for ArrowBlockPlugin {
@@ -27,21 +30,28 @@ impl Plugin for ArrowBlockPlugin {
             LoadingStateConfig::new(GameState::AssetLoading)
                 .load_collection::<MovementTileAssets>(),
         )
-        .add_systems(
+        .configure_sets(
             Update,
-            (
-                despawn_movement_tiles,
-                all_movement_tiles_at_intersections.pipe(spawn_on_background_entities_layer),
-                apply_deferred,
-            )
-                .distributive_run_if(in_state(GameState::Graveyard).and_then(
+            MovementTileUpdateSet
+                .run_if(in_state(GameState::Graveyard).and_then(
                     any_match_filter::<(
                         Or<(With<ArrowBlock<Row>>, With<ArrowBlock<Column>>)>,
                         Changed<GridCoords>,
                     )>,
                 ))
-                .chain()
                 .before(WilloSets::Input),
+        )
+        .add_systems(
+            Update,
+            (
+                (
+                    despawn_movement_tiles,
+                    all_movement_tiles_at_intersections.pipe(spawn_on_background_entities_layer),
+                ),
+                apply_deferred,
+            )
+                .chain()
+                .in_set(MovementTileUpdateSet),
         )
         .register_ldtk_entity::<ArrowBluckBundle<Row>>("UpRow")
         .register_ldtk_entity::<ArrowBluckBundle<Row>>("LeftRow")
