@@ -73,6 +73,23 @@ where
     phantom_data: PhantomData<D>,
 }
 
+impl<D> ArrowBlock<D>
+where
+    D: Dimension,
+{
+    fn fold_direction_into(
+        &self,
+        self_grid_coords: &GridCoords,
+        mut aggregate_directions: HashMap<i32, Direction>,
+    ) -> HashMap<i32, Direction> {
+        *aggregate_directions
+            .entry(*D::significant_coordinate(self_grid_coords))
+            .or_default() += self.direction;
+
+        aggregate_directions
+    }
+}
+
 impl<D> From<&EntityInstance> for ArrowBlock<D>
 where
     D: Dimension,
