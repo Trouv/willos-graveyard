@@ -11,8 +11,10 @@ use bevy_asset_loader::{
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 
 use crate::{
+    graveyard::willo::WilloSets,
     history::History,
     sokoban::{Direction, SokobanBlock},
+    utils::{any_match_filter, spawn_on_background_entities_layer},
     GameState, UNIT_LENGTH,
 };
 
@@ -23,6 +25,22 @@ impl Plugin for ArrowBlockPlugin {
         app.configure_loading_state(
             LoadingStateConfig::new(GameState::AssetLoading)
                 .load_collection::<MovementTileAssets>(),
+        )
+        .add_systems(
+            Update,
+            (
+                despawn_movement_tiles,
+                all_movement_tiles_at_intersections.pipe(spawn_on_background_entities_layer),
+                apply_deferred,
+            )
+                .distributive_run_if(in_state(GameState::Graveyard).and_then(
+                    any_match_filter::<(
+                        Or<(With<ArrowBlock<Row>>, With<ArrowBlock<Column>>)>,
+                        Changed<GridCoords>,
+                    )>,
+                ))
+                .chain()
+                .before(WilloSets::Input),
         )
         .register_ldtk_entity::<ArrowBluckBundle<Row>>("UpRow")
         .register_ldtk_entity::<ArrowBluckBundle<Row>>("LeftRow")
