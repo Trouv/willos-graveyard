@@ -163,6 +163,10 @@ impl MovementTile {
     pub fn column_move(&self) -> &Direction {
         &self.column_move
     }
+
+    pub fn tileset_index(&self) -> usize {
+        self.row_move.variant_index() * 9 + self.column_move.variant_index()
+    }
 }
 
 #[derive(Clone, Default, Bundle)]
@@ -185,8 +189,7 @@ impl MovementTileBundle {
 
         let transform = Transform::from_translation(translation).with_scale(scale);
 
-        let index =
-            movement_tile.row_move.variant_index() * 9 + movement_tile.column_move.variant_index();
+        let index = movement_tile.tileset_index();
 
         let sprite = TextureAtlasSprite { index, ..default() };
         let sprite_sheet_bundle = SpriteSheetBundle {
