@@ -42,17 +42,27 @@ struct MovementTileAssets {
     movement_tiles: Handle<TextureAtlas>,
 }
 
-trait Dimension {}
+trait Dimension {
+    fn significant_coordinate(grid_coords: &GridCoords) -> &i32;
+}
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 struct Row;
 
-impl Dimension for Row {}
+impl Dimension for Row {
+    fn significant_coordinate(grid_coords: &GridCoords) -> &i32 {
+        &grid_coords.y
+    }
+}
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 struct Column;
 
-impl Dimension for Column {}
+impl Dimension for Column {
+    fn significant_coordinate(grid_coords: &GridCoords) -> &i32 {
+        &grid_coords.x
+    }
+}
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Component)]
 struct ArrowBlock<D>
