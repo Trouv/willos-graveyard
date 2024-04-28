@@ -150,9 +150,19 @@ where
 }
 
 #[derive(Copy, Clone, Default, Debug, PartialEq, Eq, Component)]
-struct MovementTile {
+pub struct MovementTile {
     row_move: Direction,
     column_move: Direction,
+}
+
+impl MovementTile {
+    pub fn row_move(&self) -> &Direction {
+        &self.row_move
+    }
+
+    pub fn column_move(&self) -> &Direction {
+        &self.column_move
+    }
 }
 
 #[derive(Clone, Default, Bundle)]
