@@ -36,7 +36,7 @@ struct ControlDisplay;
 /// Asset collection for loading/storing assets relevant to the control display.
 #[derive(Clone, Debug, AssetCollection, Resource)]
 pub struct ControlDisplayAssets {
-    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 4, rows = 4))]
+    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 9, rows = 9))]
     #[asset(path = "textures/movement-table-actions.png")]
     movement_table_actions: Handle<TextureAtlas>,
     #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 3, rows = 1))]
