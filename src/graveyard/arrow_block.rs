@@ -166,6 +166,12 @@ pub struct MovementTile {
 }
 
 impl MovementTile {
+    pub fn new(row_move: Direction, column_move: Direction) -> Self {
+        MovementTile {
+            row_move,
+            column_move,
+        }
+    }
     pub fn row_move(&self) -> &Direction {
         &self.row_move
     }
