@@ -4,7 +4,11 @@
 //! Spawn entities with `GridCoords` (from `bevy_ecs_ldtk`) and [SokobanBlock]s to give them
 //! sokoban-style collision.
 //! Then, move entities around with the [SokobanCommands] system parameter.
-use bevy::{ecs::system::SystemParam, prelude::*};
+use bevy::{
+    ecs::system::SystemParam,
+    prelude::*,
+    utils::{HashMap, HashSet},
+};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::ops::{Add, AddAssign};
@@ -191,6 +195,50 @@ pub enum SokobanBlock {
     Static,
     /// The entity can move, push, or be pushed.
     Dynamic,
+}
+
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
+pub enum PusherResult {
+    #[default]
+    NotBlocked,
+    Blocked,
+}
+
+impl PusherResult {
+    fn reduce(&self, other: &PusherResult) -> PusherResult {
+        match (self, other) {
+            (PusherResult::NotBlocked, PusherResult::NotBlocked) => PusherResult::NotBlocked,
+            _ => PusherResult::Blocked,
+        }
+    }
+}
+
+pub enum PusheeResult {
+    NotPushed,
+    Pushed,
+}
+
+impl PusheeResult {
+    fn reduce(&self, other: &PusheeResult) -> PusheeResult {
+        match (self, other) {
+            (PusheeResult::NotPushed, PusheeResult::NotPushed) => PusheeResult::NotPushed,
+            _ => PusheeResult::Pushed,
+        }
+    }
+}
+
+pub trait Push {
+    fn push(&self, pushee: &Self) -> (PusherResult, PusheeResult);
+}
+
+impl Push for SokobanBlock {
+    fn push(&self, pushee: &Self) -> (PusherResult, PusheeResult) {
+        match (self, pushee) {
+            (_, SokobanBlock::Static) => (PusherResult::Blocked, PusheeResult::NotPushed),
+            (SokobanBlock::Static, _) => (PusherResult::Blocked, PusheeResult::Pushed),
+            (SokobanBlock::Dynamic, _) => (PusherResult::NotBlocked, PusheeResult::Pushed),
+        }
+    }
 }
 
 impl SokobanBlock {
