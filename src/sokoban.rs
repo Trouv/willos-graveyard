@@ -284,14 +284,12 @@ impl SokobanBlock {
 pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
-#[derive(Debug, Clone, PartialEq, Eq, Event)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Event)]
 pub struct PushEvent {
     /// The [PushTracker] entity that pushed other [SokobanBlock]s.
     pub pusher: Entity,
     /// The direction of the push.
     pub direction: Direction,
-    /// The list of [SokobanBlock] entities that were pushed.
-    pub pushed: Vec<Entity>,
 }
 
 fn ease_movement(
