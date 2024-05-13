@@ -381,6 +381,9 @@ impl EntityCollisionGeographicMap {
         };
 
         let destination = *pusher_coordinate + IVec2::from(direction);
+        if &destination == pusher_coordinate {
+            return default();
+        }
 
         let (pusher_result, mut moved_entities, mut push_events) = self
             .get_entities_at_coords(&destination)
