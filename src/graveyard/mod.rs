@@ -8,6 +8,7 @@ pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
 pub mod gravestone_movement_queries;
+pub mod out_of_bounds;
 pub mod volatile;
 pub mod wall;
 pub mod willo;
@@ -55,6 +56,7 @@ impl Plugin for GraveyardPlugin {
                 exorcism::ExorcismPlugin,
                 wind::WindPlugin,
                 arrow_block::ArrowBlockPlugin,
+                out_of_bounds::OutOfBoundsPlugin,
             ))
             .add_systems(
                 Update,
