@@ -356,20 +356,6 @@
 			"gridTiles": [],
 			"entityInstances": [
 				{
-					"__identifier": "Table",
-					"__grid": [2,2],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 27, "x": 0, "y": 0, "w": 160, "h": 160 },
-					"__smartColor": "#7C7C7C",
-					"iid": "11fa5480-d7b0-11ee-a1a2-fb7b3ca6970b",
-					"width": 160,
-					"height": 160,
-					"defUid": 19,
-					"px": [64,64],
-					"fieldInstances": []
-				},
-				{
 					"__identifier": "Goal",
 					"__grid": [8,2],
 					"__pivot": [0,0],

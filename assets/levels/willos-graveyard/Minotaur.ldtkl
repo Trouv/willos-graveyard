@@ -372,20 +372,6 @@
 					"fieldInstances": []
 				},
 				{
-					"__identifier": "Table",
-					"__grid": [9,2],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 27, "x": 0, "y": 0, "w": 160, "h": 160 },
-					"__smartColor": "#7C7C7C",
-					"iid": "2af71c80-b0a0-11ee-945e-e716e02df98f",
-					"width": 160,
-					"height": 160,
-					"defUid": 19,
-					"px": [288,64],
-					"fieldInstances": []
-				},
-				{
 					"__identifier": "Grass",
 					"__grid": [2,10],
 					"__pivot": [0,0],
