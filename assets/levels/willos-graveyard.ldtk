@@ -4116,7 +4116,7 @@
 				{ "__identifier": "Notes", "__type": "String", "__value": "Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level? - probably not, as you can't move A to << without moving W to ^v. No placement of D relieves that limitation.\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level? - This is theoretically the best rotation because of the distance between the two traps", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"Should we have this \"Curve\" in the corner?\\nIt adds something semi-interesting visually, but is it worth the trouble?\\nDoes it make the level more annoying?\\n\\nDoes pushing A to << early ruin the level? - probably not, as you can't move A to << without moving W to ^v. No placement of D relieves that limitation.\\nIf so, could we use a rotation of this level?\\nDo any of the rotations result in a more interesting level? - This is theoretically the best rotation because of the distance between the two traps"
+						"Should we have this \"Curve\" in the corner?\nIt adds something semi-interesting visually, but is it worth the trouble?\nDoes it make the level more annoying?\n\nDoes pushing A to << early ruin the level? - probably not, as you can't move A to << without moving W to ^v. No placement of D relieves that limitation.\nIf so, could we use a rotation of this level?\nDo any of the rotations result in a more interesting level? - This is theoretically the best rotation because of the distance between the two traps"
 					]
 				}] }
 			],
@@ -4237,7 +4237,7 @@
 				{ "__identifier": "Notes", "__type": "String", "__value": "Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5.", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"Turns out you don't actually need to do a T-Spin on this level.\\nIs that okay?\\n- Ended up abandoning the t-spinning for this level\\n\\nReplaced > then v with v then <.\\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
+						"Turns out you don't actually need to do a T-Spin on this level.\nIs that okay?\n- Ended up abandoning the t-spinning for this level\n\nReplaced > then v with v then <.\nExcluding a couple tiles from the table ends up forcing the player to navigate the utility table graph from the edge of group 4 to another edge of group 5."
 					]
 				}] }
 			],
@@ -4387,7 +4387,7 @@
 				{ "__identifier": "Notes", "__type": "String", "__value": "It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\nIt also doesn't include any walls lol", "__tile": null, "defUid": 64, "realEditorValues": [{
 					"id": "V_String",
 					"params": [
-						"It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\\nIt also doesn't include any walls lol"
+						"It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\nIt also doesn't include any walls lol"
 					]
 				}] }
 			],
