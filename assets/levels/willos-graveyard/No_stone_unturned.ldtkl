@@ -34,7 +34,7 @@
 		{ "__identifier": "Notes", "__type": "String", "__value": "It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\nIt also doesn't include any walls lol", "__tile": null, "defUid": 64, "realEditorValues": [{
 			"id": "V_String",
 			"params": [
-				"It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\\nIt also doesn't include any walls lol"
+				"It's a little strange that the final level (so far) doesn't include exorcism tiles, but it's also kinda cool, idk.\nIt also doesn't include any walls lol"
 			]
 		}] }
 	],
