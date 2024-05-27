@@ -28,20 +28,25 @@ pub enum SokobanSets {
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
-pub struct SokobanPlugin<S, P>
+pub struct SokobanPlugin<S, P, D>
 where
     S: States,
     P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     state: S,
     layer_identifier: SokobanLayerIdentifier,
     phantom_push_component: PhantomData<P>,
+    phantom_direction: PhantomData<D>,
 }
 
-impl<S, P> SokobanPlugin<S, P>
+impl<S, P, D> SokobanPlugin<S, P, D>
 where
     S: States,
     P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     /// Constructor for the plugin.
     ///
@@ -56,14 +61,17 @@ where
             state,
             layer_identifier,
             phantom_push_component: PhantomData,
+            phantom_direction: PhantomData,
         }
     }
 }
 
-impl<S, P> Plugin for SokobanPlugin<S, P>
+impl<S, P, D> Plugin for SokobanPlugin<S, P, D>
 where
     S: States,
     P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     fn build(&self, app: &mut App) {
         app.add_event::<SokobanCommand<Direction>>()
