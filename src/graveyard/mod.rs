@@ -48,7 +48,7 @@ impl Plugin for GraveyardPlugin {
                 control_display::ControlDisplayPlugin,
                 willo::WilloPlugin,
                 movement_table::MovementTablePlugin,
-                sokoban::SokobanPlugin::<GameState, sokoban::SokobanBlock>::new(
+                sokoban::SokobanPlugin::<GameState, sokoban::SokobanBlock, sokoban::Direction>::new(
                     GameState::Graveyard,
                     "IntGrid",
                 ),
