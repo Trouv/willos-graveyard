@@ -326,8 +326,6 @@ fn ease_movement(
     }
 }
 
-type CollisionMap = Vec<Vec<HashMap<Entity, SokobanBlock>>>;
-
 #[derive(Clone, Default, Debug)]
 struct EntityCollisionGeographicMap<'a, P>
 where
