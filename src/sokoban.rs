@@ -12,6 +12,7 @@ use bevy::{
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::{
+    hash::Hash,
     marker::PhantomData,
     ops::{Add, AddAssign},
 };
@@ -65,14 +66,14 @@ where
     P: Push + Component,
 {
     fn build(&self, app: &mut App) {
-        app.add_event::<SokobanCommand>()
-            .add_event::<PushEvent>()
+        app.add_event::<SokobanCommand<Direction>>()
+            .add_event::<PushEvent<Direction>>()
             .insert_resource(self.layer_identifier.clone())
             .add_systems(
                 Update,
-                flush_sokoban_commands::<P>
+                flush_sokoban_commands::<P, Direction>
                     .run_if(in_state(self.state.clone()))
-                    .run_if(on_event::<SokobanCommand>())
+                    .run_if(on_event::<SokobanCommand<Direction>>())
                     .in_set(SokobanSets::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
@@ -109,18 +110,20 @@ pub enum Direction {
     Right,
 }
 
-impl From<&Direction> for IVec2 {
-    fn from(direction: &Direction) -> IVec2 {
+impl Add<&Direction> for IVec2 {
+    type Output = IVec2;
+
+    fn add(self, direction: &Direction) -> IVec2 {
         match direction {
-            Direction::Zero => IVec2::ZERO,
-            Direction::UpRight => IVec2::new(1, 1),
-            Direction::Up => IVec2::Y,
-            Direction::UpLeft => IVec2::new(-1, 1),
-            Direction::Left => -IVec2::X,
-            Direction::DownLeft => IVec2::new(-1, -1),
-            Direction::Down => -IVec2::Y,
-            Direction::DownRight => IVec2::new(1, -1),
-            Direction::Right => IVec2::X,
+            Direction::Zero => self + IVec2::ZERO,
+            Direction::UpRight => self + IVec2::new(1, 1),
+            Direction::Up => self + IVec2::Y,
+            Direction::UpLeft => self + IVec2::new(-1, 1),
+            Direction::Left => self - IVec2::X,
+            Direction::DownLeft => self + IVec2::new(-1, -1),
+            Direction::Down => self - IVec2::Y,
+            Direction::DownRight => self + IVec2::new(1, -1),
+            Direction::Right => self + IVec2::X,
         }
     }
 }
@@ -150,7 +153,7 @@ impl TryFrom<&IVec2> for Direction {
 
 impl Direction {
     fn try_add(self, rhs: Direction) -> Result<Direction, OutOfBoundsDirection> {
-        Direction::try_from(&(IVec2::from(&self) + IVec2::from(&rhs)))
+        Direction::try_from(&(IVec2::ZERO + &self + &rhs))
     }
 }
 
@@ -170,27 +173,39 @@ impl AddAssign for Direction {
 
 /// Enumerates commands that can be performed via [SokobanCommands].
 #[derive(Debug, Clone, Event)]
-pub enum SokobanCommand {
+pub enum SokobanCommand<D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
     /// Move a [SokobanBlock] entity in the given direction.
     Move {
         /// The [SokobanBlock] entity to move.
         entity: Entity,
         /// The direction to move the block in.
-        direction: Direction,
+        direction: D,
     },
 }
 
 /// System parameter providing an interface for commanding the SokobanPlugin.
 #[derive(SystemParam)]
-pub struct SokobanCommands<'w> {
-    writer: EventWriter<'w, SokobanCommand>,
+pub struct SokobanCommands<'w, D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
+    writer: EventWriter<'w, SokobanCommand<D>>,
 }
 
-impl<'w> SokobanCommands<'w> {
+impl<'w, D> SokobanCommands<'w, D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
     /// Move a [SokobanBlock] entity in the given direction.
     ///
     /// Will perform the necessary collision checks and block pushes.
-    pub fn move_block(&mut self, entity: Entity, direction: Direction) {
+    pub fn move_block(&mut self, entity: Entity, direction: D) {
         self.writer.send(SokobanCommand::Move { entity, direction });
     }
 }
@@ -293,11 +308,15 @@ pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Event)]
-pub struct PushEvent {
+pub struct PushEvent<D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
     /// The [PushTracker] entity that pushed other [SokobanBlock]s.
     pub pusher: Entity,
     /// The direction of the push.
-    pub direction: Direction,
+    pub direction: D,
 }
 
 fn ease_movement(
@@ -392,17 +411,21 @@ where
     }
 
     /// returns a list of entities that would be pushed
-    fn simulate_move_entity(
+    fn simulate_move_entity<D>(
         &self,
         pusher_entity: &Entity,
-        direction: &Direction,
-    ) -> (PusherResult, HashSet<Entity>, HashSet<PushEvent>) {
-        let Some((pusher_coordinate, pusher_block)) = self.get_coordinate_and_block(&pusher_entity)
+        direction: &D,
+    ) -> (PusherResult, HashSet<Entity>, HashSet<PushEvent<D>>)
+    where
+        for<'d> IVec2: Add<&'d D, Output = IVec2>,
+        D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+    {
+        let Some((pusher_coordinate, pusher_block)) = self.get_coordinate_and_block(pusher_entity)
         else {
             return default();
         };
 
-        let destination = *pusher_coordinate + IVec2::from(direction);
+        let destination = *pusher_coordinate + direction;
         if &destination == pusher_coordinate {
             return default();
         }
@@ -450,7 +473,7 @@ where
         if !moved_entities.is_empty() {
             push_events.insert(PushEvent {
                 pusher: *pusher_entity,
-                direction: *direction,
+                direction: direction.clone(),
             });
         }
 
@@ -462,12 +485,14 @@ where
     }
 }
 
-fn flush_sokoban_commands<P>(
+fn flush_sokoban_commands<P, D>(
     mut grid_coords_query: Query<(Entity, &mut GridCoords, &P, Has<PushTracker>)>,
-    mut sokoban_commands: EventReader<SokobanCommand>,
-    mut push_events: EventWriter<PushEvent>,
+    mut sokoban_commands: EventReader<SokobanCommand<D>>,
+    mut push_events: EventWriter<PushEvent<D>>,
 ) where
     P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     for sokoban_command in sokoban_commands.read() {
         let SokobanCommand::Move { entity, direction } = sokoban_command;
@@ -481,14 +506,16 @@ fn flush_sokoban_commands<P>(
                 })
                 .collect::<EntityCollisionGeographicMap<P>>();
 
-            entity_collision_geographic_map.simulate_move_entity(&entity, direction)
+            entity_collision_geographic_map.simulate_move_entity(entity, direction)
         };
 
         entities_to_move.iter().for_each(|entity_to_move| {
-            *grid_coords_query
+            let mut grid_coords = grid_coords_query
                 .get_component_mut::<GridCoords>(*entity_to_move)
-                .expect("pushed entity should be valid sokoban entity") +=
-                GridCoords::from(IVec2::from(direction));
+                .expect("pushed entity should be valid sokoban entity");
+
+            let new_coords = IVec2::from(*grid_coords) + direction;
+            *grid_coords = GridCoords::from(new_coords);
         });
 
         push_events_to_send
