@@ -94,7 +94,7 @@ fn move_willo_by_table(
         &mut WilloState,
         &mut WilloAnimationState,
     )>,
-    mut sokoban_commands: SokobanCommands,
+    mut sokoban_commands: SokobanCommands<Direction>,
     time: Res<Time>,
 ) {
     for table in table_query.iter() {

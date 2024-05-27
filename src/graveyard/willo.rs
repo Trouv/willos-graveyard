@@ -35,7 +35,7 @@ impl Plugin for WilloPlugin {
             (
                 push_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_if(on_event::<PushEvent>())
+                    .run_if(on_event::<PushEvent<Direction>>())
                     .before(FromComponentSet),
                 play_exorcism_animaton
                     .run_if(not(in_state(GameState::AssetLoading)))
@@ -164,7 +164,7 @@ struct WilloBundle {
 
 fn push_sugar(
     mut commands: Commands,
-    mut push_events: EventReader<PushEvent>,
+    mut push_events: EventReader<PushEvent<Direction>>,
     mut willo_query: Query<(Entity, &mut WilloAnimationState)>,
     sfx: Res<AssetHolder>,
 ) {
@@ -191,7 +191,7 @@ fn push_translation(
     if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.get_single() {
         let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
             + match animation_state {
-                WilloAnimationState::Push(direction) => IVec2::from(direction).as_vec2() * 5.,
+                WilloAnimationState::Push(direction) => (IVec2::ZERO + direction).as_vec2() * 5.,
                 _ => Vec2::splat(0.),
             };
 
