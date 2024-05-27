@@ -62,7 +62,7 @@ where
             .insert_resource(self.layer_identifier.clone())
             .add_systems(
                 Update,
-                flush_sokoban_commands
+                flush_sokoban_commands::<SokobanBlock>
                     .run_if(in_state(self.state.clone()))
                     .run_if(on_event::<SokobanCommand>())
                     .in_set(SokobanSets::LogicalMovement),
@@ -321,15 +321,21 @@ fn ease_movement(
 type CollisionMap = Vec<Vec<HashMap<Entity, SokobanBlock>>>;
 
 #[derive(Clone, Default, Debug)]
-struct EntityCollisionGeographicMap {
+struct EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
     coordinate_table: HashMap<IVec2, HashSet<Entity>>,
-    entity_table: HashMap<Entity, (IVec2, SokobanBlock)>,
+    entity_table: HashMap<Entity, (IVec2, &'a P)>,
 }
 
-impl<'a> FromIterator<(Entity, IVec2, SokobanBlock)> for EntityCollisionGeographicMap {
-    fn from_iter<T: IntoIterator<Item = (Entity, IVec2, SokobanBlock)>>(iter: T) -> Self {
+impl<'a, P> FromIterator<(Entity, IVec2, &'a P)> for EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    fn from_iter<T: IntoIterator<Item = (Entity, IVec2, &'a P)>>(iter: T) -> Self {
         iter.into_iter().fold(
-            default(),
+            Self::new(),
             |EntityCollisionGeographicMap {
                  mut coordinate_table,
                  mut entity_table,
@@ -350,8 +356,18 @@ impl<'a> FromIterator<(Entity, IVec2, SokobanBlock)> for EntityCollisionGeograph
     }
 }
 
-impl EntityCollisionGeographicMap {
-    fn get_coordinate_and_block(&self, entity: &Entity) -> Option<&(IVec2, SokobanBlock)> {
+impl<'a, P> EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    fn new() -> Self {
+        EntityCollisionGeographicMap {
+            coordinate_table: HashMap::new(),
+            entity_table: HashMap::new(),
+        }
+    }
+
+    fn get_coordinate_and_block(&self, entity: &Entity) -> Option<&(IVec2, &'a P)> {
         self.entity_table.get(entity)
     }
 
@@ -360,9 +376,9 @@ impl EntityCollisionGeographicMap {
             .map(|(coordinate, _)| coordinate)
     }
 
-    fn get_block(&self, entity: &Entity) -> Option<&SokobanBlock> {
+    fn get_block(&self, entity: &Entity) -> Option<&'a P> {
         self.get_coordinate_and_block(entity)
-            .map(|(_, block)| block)
+            .map(|(_, block)| *block)
     }
 
     fn get_entities_at_coords(&self, coordinate: &IVec2) -> Option<&HashSet<Entity>> {
@@ -440,24 +456,27 @@ impl EntityCollisionGeographicMap {
     }
 }
 
-fn flush_sokoban_commands(
-    mut grid_coords_query: Query<(Entity, &mut GridCoords, &SokobanBlock, Has<PushTracker>)>,
+fn flush_sokoban_commands<P>(
+    mut grid_coords_query: Query<(Entity, &mut GridCoords, &P, Has<PushTracker>)>,
     mut sokoban_commands: EventReader<SokobanCommand>,
     mut push_events: EventWriter<PushEvent>,
-) {
+) where
+    P: Push + Component,
+{
     for sokoban_command in sokoban_commands.read() {
-        // regenerate map per command to get map updates from previous command
-        let entity_collision_geographic_map = grid_coords_query
-            .iter()
-            .map(|(entity, grid_coords, sokoban_block, _)| {
-                (entity, IVec2::from(*grid_coords), *sokoban_block)
-            })
-            .collect::<EntityCollisionGeographicMap>();
-
         let SokobanCommand::Move { entity, direction } = sokoban_command;
 
-        let (_, entities_to_move, push_events_to_send) =
-            entity_collision_geographic_map.simulate_move_entity(&entity, &direction);
+        let (_, entities_to_move, push_events_to_send) = {
+            // regenerate map per command to get map updates from previous command
+            let entity_collision_geographic_map = grid_coords_query
+                .iter()
+                .map(|(entity, grid_coords, sokoban_block, _)| {
+                    (entity, IVec2::from(*grid_coords), sokoban_block)
+                })
+                .collect::<EntityCollisionGeographicMap<P>>();
+
+            entity_collision_geographic_map.simulate_move_entity(&entity, direction)
+        };
 
         entities_to_move.iter().for_each(|entity_to_move| {
             *grid_coords_query
