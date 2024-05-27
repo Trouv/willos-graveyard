@@ -48,7 +48,10 @@ impl Plugin for GraveyardPlugin {
             .add_plugins((
                 control_display::ControlDisplayPlugin,
                 willo::WilloPlugin,
-                sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"),
+                sokoban::SokobanPlugin::<GameState, sokoban::SokobanBlock>::new(
+                    GameState::Graveyard,
+                    "IntGrid",
+                ),
                 gravestone::GravestonePlugin,
                 volatile::VolatilePlugin,
                 wall::WallPlugin,
