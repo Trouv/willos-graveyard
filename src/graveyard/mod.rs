@@ -6,14 +6,8 @@ pub mod control_display;
 pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
-<<<<<<< HEAD
 pub mod movement_table;
-||||||| parent of a828bf0 (feat: add OutOfBoundsPlugin in GraveyardPlugin)
-pub mod gravestone_movement_queries;
-=======
-pub mod gravestone_movement_queries;
 pub mod out_of_bounds;
->>>>>>> a828bf0 (feat: add OutOfBoundsPlugin in GraveyardPlugin)
 pub mod volatile;
 pub mod wall;
 pub mod willo;
@@ -53,8 +47,11 @@ impl Plugin for GraveyardPlugin {
             .add_plugins((
                 control_display::ControlDisplayPlugin,
                 willo::WilloPlugin,
-                sokoban::SokobanPlugin::new(GameState::Graveyard, "IntGrid"),
                 movement_table::MovementTablePlugin,
+                sokoban::SokobanPlugin::<GameState, sokoban::SokobanBlock>::new(
+                    GameState::Graveyard,
+                    "IntGrid",
+                ),
                 gravestone::GravestonePlugin,
                 volatile::VolatilePlugin,
                 wall::WallPlugin,

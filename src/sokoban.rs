@@ -11,7 +11,10 @@ use bevy::{
 };
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
-use std::ops::{Add, AddAssign};
+use std::{
+    marker::PhantomData,
+    ops::{Add, AddAssign},
+};
 use thiserror::Error;
 
 /// Sets used by sokoban systems
@@ -24,17 +27,20 @@ pub enum SokobanSets {
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
-pub struct SokobanPlugin<S>
+pub struct SokobanPlugin<S, P>
 where
     S: States,
+    P: Push + Component,
 {
     state: S,
     layer_identifier: SokobanLayerIdentifier,
+    phantom_push_component: PhantomData<P>,
 }
 
-impl<S> SokobanPlugin<S>
+impl<S, P> SokobanPlugin<S, P>
 where
     S: States,
+    P: Push + Component,
 {
     /// Constructor for the plugin.
     ///
@@ -48,13 +54,15 @@ where
         SokobanPlugin {
             state,
             layer_identifier,
+            phantom_push_component: PhantomData,
         }
     }
 }
 
-impl<S> Plugin for SokobanPlugin<S>
+impl<S, P> Plugin for SokobanPlugin<S, P>
 where
     S: States,
+    P: Push + Component,
 {
     fn build(&self, app: &mut App) {
         app.add_event::<SokobanCommand>()
@@ -62,7 +70,7 @@ where
             .insert_resource(self.layer_identifier.clone())
             .add_systems(
                 Update,
-                flush_sokoban_commands::<SokobanBlock>
+                flush_sokoban_commands::<P>
                     .run_if(in_state(self.state.clone()))
                     .run_if(on_event::<SokobanCommand>())
                     .in_set(SokobanSets::LogicalMovement),
