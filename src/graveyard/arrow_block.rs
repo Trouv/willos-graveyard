@@ -11,7 +11,7 @@ use bevy_asset_loader::{
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 
 use crate::{
-    graveyard::willo::WilloSets,
+    graveyard::{layer::GraveyardLayer, willo::WilloSets},
     history::History,
     sokoban::{Direction, SokobanBlock},
     utils::{any_match_filter, spawn_on_background_entities_layer},
@@ -46,7 +46,9 @@ impl Plugin for ArrowBlockPlugin {
             (
                 (
                     despawn_movement_tiles,
-                    all_movement_tiles_at_intersections.pipe(spawn_on_background_entities_layer),
+                    all_movement_tiles_at_intersections
+                        .pipe(GraveyardLayer::BackgroundEntities.spawn_bundles_on())
+                        .map(bevy::utils::warn),
                 ),
                 apply_deferred,
             )
