@@ -8,6 +8,7 @@ pub mod exorcism;
 pub mod goal;
 pub mod gravestone;
 pub mod gravestone_movement_queries;
+pub mod layer;
 pub mod out_of_bounds;
 pub mod volatile;
 pub mod wall;
