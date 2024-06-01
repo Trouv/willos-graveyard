@@ -14,7 +14,7 @@ use crate::{
     graveyard::{layer::GraveyardLayer, willo::WilloSets},
     history::History,
     sokoban::{Direction, SokobanBlock},
-    utils::{any_match_filter, spawn_on_background_entities_layer},
+    utils::any_match_filter,
     GameState, UNIT_LENGTH,
 };
 use itertools::Itertools;
