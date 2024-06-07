@@ -3771,35 +3771,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Vertically_challenged",
-			"iid": "2cecfe30-8990-11ee-bfd9-0daeeaed03a8",
-			"uid": 226,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 384,
-			"pxHei": 352,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/Vertically_challenged.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "Vertically challenged", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["Vertically challenged"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Felt_presence",
 			"iid": "20976630-6280-11ee-9d82-f971632689df",
 			"uid": 197,
