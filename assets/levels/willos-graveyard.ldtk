@@ -3916,35 +3916,6 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "D_row",
-			"iid": "f9457d20-8990-11ee-aa5f-8d5d2bbfef67",
-			"uid": 204,
-			"worldX": -1,
-			"worldY": -1,
-			"worldDepth": 0,
-			"pxWid": 448,
-			"pxHei": 320,
-			"__bgColor": "#3A1847",
-			"bgColor": null,
-			"useAutoIdentifier": false,
-			"bgRelPath": null,
-			"bgPos": null,
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__smartColor": "#93809A",
-			"__bgPos": null,
-			"externalRelPath": "willos-graveyard/D_row.ldtkl",
-			"fieldInstances": [
-				{ "__identifier": "Title", "__type": "String", "__value": "D row", "__tile": null, "defUid": 28, "realEditorValues": [{
-					"id": "V_String",
-					"params": ["D row"]
-				}] },
-				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
-			],
-			"layerInstances": null,
-			"__neighbours": []
-		},
-		{
 			"identifier": "Turnover",
 			"iid": "73d2eac0-25d0-11ef-85ad-47a295ccc2dc",
 			"uid": 257,
