@@ -266,20 +266,6 @@
 					"fieldInstances": []
 				},
 				{
-					"__identifier": "Goal",
-					"__grid": [15,5],
-					"__pivot": [0,0],
-					"__tags": [],
-					"__tile": { "tilesetUid": 4, "x": 0, "y": 96, "w": 32, "h": 32 },
-					"__smartColor": "#FFFFFF",
-					"iid": "7bc27b10-4ce0-11ef-82f8-cfbfe9d2e546",
-					"width": 32,
-					"height": 32,
-					"defUid": 18,
-					"px": [480,160],
-					"fieldInstances": []
-				},
-				{
 					"__identifier": "S",
 					"__grid": [7,7],
 					"__pivot": [0,0],
@@ -433,7 +419,22 @@
 			"seed": 84077,
 			"overrideTilesetUid": null,
 			"gridTiles": [],
-			"entityInstances": []
+			"entityInstances": [
+				{
+					"__identifier": "Goal",
+					"__grid": [15,5],
+					"__pivot": [0,0],
+					"__tags": [],
+					"__tile": { "tilesetUid": 4, "x": 0, "y": 96, "w": 32, "h": 32 },
+					"__smartColor": "#FFFFFF",
+					"iid": "2ef1bcb0-4ce0-11ef-b747-8f4568ea40b0",
+					"width": 32,
+					"height": 32,
+					"defUid": 18,
+					"px": [480,160],
+					"fieldInstances": []
+				}
+			]
 		},
 		{
 			"__identifier": "BorderBG",
