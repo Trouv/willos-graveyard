@@ -8,7 +8,7 @@
 		"appVersion": "1.5.3",
 		"url": "https://ldtk.io"
 	},
-	"identifier": "Chakra",
+	"identifier": "Dense_slalom",
 	"iid": "370da7a0-4ce0-11ef-8cbd-9983cab5893a",
 	"uid": 269,
 	"worldX": -1,
@@ -27,9 +27,9 @@
 	"__bgPos": null,
 	"externalRelPath": null,
 	"fieldInstances": [
-		{ "__identifier": "Title", "__type": "String", "__value": "Chakra", "__tile": null, "defUid": 28, "realEditorValues": [{
+		{ "__identifier": "Title", "__type": "String", "__value": "Dense slalom", "__tile": null, "defUid": 28, "realEditorValues": [{
 			"id": "V_String",
-			"params": ["Chakra"]
+			"params": ["Dense slalom"]
 		}] },
 		{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
 	],
