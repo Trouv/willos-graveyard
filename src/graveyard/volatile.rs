@@ -127,10 +127,11 @@ mod tests {
 
     impl<const N: usize> SpawnVolatilesParams<N> {
         fn new() -> SpawnVolatilesParams<N> {
-            let mut volatiles: [(GridCoords, Volatile); N] = [Default::default(); N];
-            for i in 0..N {
-                volatiles[i].0.y = i as i32;
-            }
+            let volatiles = (0..N as i32)
+                .map(|y| (GridCoords { x: 0, y }, Volatile::Solid))
+                .collect::<Vec<_>>()
+                .try_into()
+                .unwrap();
 
             SpawnVolatilesParams { volatiles }
         }

@@ -94,12 +94,12 @@ fn set_initial_sprite_index(
 /// To use this plugin, follow these steps:
 /// 1. Create an enum component of animation states.
 /// 2. Provide an implementation of `From` from your enum component to [SpriteSheetAnimation].
-/// This `From` implementation defines what specific animation settings are associated with
-/// variants of your animation state.
+///    This `From` implementation defines what specific animation settings are associated with
+///    variants of your animation state.
 /// 3. Provide an implementation of `Iterator` for your enum component with itself as the item.
-/// This `Iterator` implementation defines which states lead into other states, like an animation
-/// graph.
-/// Simply point an animation state to itself when it is complete.
+///    This `Iterator` implementation defines which states lead into other states, like an animation
+///    graph.
+///    Simply point an animation state to itself when it is complete.
 pub struct FromComponentAnimator<F>
 where
     F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
