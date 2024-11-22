@@ -12,7 +12,7 @@ use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
 
-use super::gravestone_movement_queries::GravestoneMovementQueries;
+use super::{gravestone_movement_queries::GravestoneMovementQueries, volatile::Sublimation};
 
 /// Sets used by Willo systems.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
@@ -49,6 +49,7 @@ impl Plugin for WilloPlugin {
                     .run_if(in_state(GameState::Graveyard))
                     .after(SokobanSets::LogicalMovement)
                     .after(FlushHistoryCommands)
+                    .after(Sublimation)
                     .before(FromComponentSet),
             ),
         )
