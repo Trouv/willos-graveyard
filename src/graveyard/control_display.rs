@@ -16,7 +16,7 @@ use bevy_ecs_ldtk::prelude::*;
 
 use super::{
     arrow_block::MovementTile, gravestone_movement_queries::GravestoneMovementQueries,
-    GraveyardAction,
+    volatile::Sublimation, GraveyardAction,
 };
 
 /// Plugin providing functionality for the graveyard UI element showing the current controls.
@@ -34,6 +34,7 @@ impl Plugin for ControlDisplayPlugin {
                             Or<(With<MovementTile>, With<GraveId>)>,
                         )>,
                     ))
+                    .after(Sublimation)
                     .before(IconButtonSet),
             );
     }
