@@ -118,7 +118,7 @@ pub struct SokobanCommands<'w> {
     writer: EventWriter<'w, SokobanCommand>,
 }
 
-impl<'w> SokobanCommands<'w> {
+impl SokobanCommands<'_> {
     /// Move a [SokobanBlock] entity in the given direction.
     ///
     /// Will perform the necessary collision checks and block pushes.
