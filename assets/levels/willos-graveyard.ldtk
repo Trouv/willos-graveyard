@@ -11,7 +11,7 @@
 	"iid": "ad496940-9f30-11ed-b774-e34072faa0ec",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 475672,
-	"nextUid": 270,
+	"nextUid": 271,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -3673,6 +3673,35 @@
 			"__smartColor": "#93809A",
 			"__bgPos": null,
 			"externalRelPath": "willos-graveyard/Debug.ldtkl",
+			"fieldInstances": [
+				{ "__identifier": "Title", "__type": "String", "__value": "Debug", "__tile": null, "defUid": 28, "realEditorValues": [{
+					"id": "V_String",
+					"params": ["Debug"]
+				}] },
+				{ "__identifier": "Notes", "__type": "String", "__value": null, "__tile": null, "defUid": 64, "realEditorValues": [] }
+			],
+			"layerInstances": null,
+			"__neighbours": []
+		},
+		{
+			"identifier": "Debug2",
+			"iid": "3f8ddd20-9b00-11ef-998b-83b07eae7f4a",
+			"uid": 270,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 416,
+			"pxHei": 416,
+			"__bgColor": "#3A1847",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#93809A",
+			"__bgPos": null,
+			"externalRelPath": "willos-graveyard/Debug2.ldtkl",
 			"fieldInstances": [
 				{ "__identifier": "Title", "__type": "String", "__value": "Debug", "__tile": null, "defUid": 28, "realEditorValues": [{
 					"id": "V_String",
