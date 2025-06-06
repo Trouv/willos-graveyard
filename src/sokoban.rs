@@ -103,16 +103,21 @@ struct SokobanLayerIdentifier(String);
 #[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash, Reflect)]
 pub enum Direction {
     #[default]
+    /// No direction.
     Zero,
+    /// Northeast direction.
     UpRight,
     /// North direction.
     Up,
+    /// Northwest direction.
     UpLeft,
     /// West direction.
     Left,
+    /// Southwest direction.
     DownLeft,
     /// South direction.
     Down,
+    /// Southeast direction.
     DownRight,
     /// East direction.
     Right,
@@ -136,6 +141,7 @@ impl Add<&Direction> for IVec2 {
     }
 }
 
+/// Directions must have coordinates of 0s and 1s.
 #[derive(Debug, Error)]
 #[error("Directions must have coordinates of 0s and 1s")]
 pub struct OutOfBoundsDirection;
@@ -228,10 +234,13 @@ pub enum SokobanBlock {
     Dynamic,
 }
 
+/// Possible outcomes for a block that is pushing another block.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 pub enum PusherResult {
+    /// The push was not blocked, the pusher can move in the direction of the push.
     #[default]
     NotBlocked,
+    /// The push was blocked, the pusher cannot move in the direction of the push.
     Blocked,
 }
 
@@ -244,21 +253,19 @@ impl PusherResult {
     }
 }
 
+/// Possible outcomes for a block that is being pushed by another block.
 pub enum PusheeResult {
+    /// The push is successful, the pushee can move in the direction of the push.
     NotPushed,
+    /// The push was unsuccessful, the pushee cannot move in the direction of the push.
     Pushed,
 }
 
-impl PusheeResult {
-    fn reduce(&self, other: &PusheeResult) -> PusheeResult {
-        match (self, other) {
-            (PusheeResult::NotPushed, PusheeResult::NotPushed) => PusheeResult::NotPushed,
-            _ => PusheeResult::Pushed,
-        }
-    }
-}
-
+/// Abstraction for types that can pushed or be pushed in the context of sokoban.
+///
+/// Essentially defines the rules of the sokoban game.
 pub trait Push {
+    /// Returns the outcome of this instance pushing another.
     fn push(&self, pushee: &Self) -> (PusherResult, PusheeResult);
 }
 
@@ -407,11 +414,6 @@ where
 {
     fn get_coordinate_and_block(&self, entity: &Entity) -> Option<&(IVec2, &'a P)> {
         self.entity_table.get(entity)
-    }
-
-    fn get_coordinate(&self, entity: &Entity) -> Option<&IVec2> {
-        self.get_coordinate_and_block(entity)
-            .map(|(coordinate, _)| coordinate)
     }
 
     fn get_block(&self, entity: &Entity) -> Option<&'a P> {
