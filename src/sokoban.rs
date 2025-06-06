@@ -548,15 +548,19 @@ mod tests {
     fn push_dynamic_into_empty() {
         let pusher = Entity::from_raw(0);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
-
-        let mut expected_collision_map = vec![vec![None; 3]; 3];
-        expected_collision_map[2][1] = Some((pusher, SokobanBlock::Dynamic));
+        let collision_map = EntityCollisionGeographicMap::from_iter([(
+            pusher,
+            IVec2::new(1, 1),
+            &SokobanBlock::Dynamic,
+        )]);
 
         assert_eq!(
-            push_collision_map_entry(collision_map, IVec2::new(1, 1), super::Direction::Up),
-            (expected_collision_map, Some(vec![pusher]))
+            collision_map.simulate_move_entity(&pusher, &Direction::Up),
+            (
+                PusherResult::NotBlocked,
+                HashSet::from_iter([pusher]),
+                HashSet::new()
+            )
         );
     }
 
@@ -565,34 +569,14 @@ mod tests {
         let pusher = Entity::from_raw(0);
         let wall = Entity::from_raw(1);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[2][1] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[1][1] = Some((wall, SokobanBlock::Static));
+        let collision_map = EntityCollisionGeographicMap::from_iter([
+            (wall, IVec2::new(1, 1), &SokobanBlock::Static),
+            (pusher, IVec2::new(1, 2), &SokobanBlock::Dynamic),
+        ]);
 
         assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(1, 2),
-                super::Direction::Down
-            ),
-            (collision_map, None)
-        );
-    }
-
-    #[test]
-    fn push_dynamic_into_boundary() {
-        let pusher = Entity::from_raw(0);
-
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[0][0] = Some((pusher, SokobanBlock::Dynamic));
-
-        assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(0, 0),
-                super::Direction::Left
-            ),
-            (collision_map, None)
+            collision_map.simulate_move_entity(&pusher, &Direction::Down),
+            (PusherResult::Blocked, HashSet::new(), HashSet::new())
         );
     }
 
@@ -601,17 +585,21 @@ mod tests {
         let pusher = Entity::from_raw(0);
         let pushed = Entity::from_raw(1);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[1][0] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[1][1] = Some((pushed, SokobanBlock::Dynamic));
-
-        let mut expected_collision_map = vec![vec![None; 3]; 3];
-        expected_collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
-        expected_collision_map[1][2] = Some((pushed, SokobanBlock::Dynamic));
+        let collision_map = EntityCollisionGeographicMap::from_iter([
+            (pusher, IVec2::new(0, 1), &SokobanBlock::Dynamic),
+            (pushed, IVec2::new(1, 1), &SokobanBlock::Dynamic),
+        ]);
 
         assert_eq!(
-            push_collision_map_entry(collision_map, IVec2::new(0, 1), super::Direction::Right),
-            (expected_collision_map, Some(vec![pushed, pusher]))
+            collision_map.simulate_move_entity(&pusher, &Direction::Right),
+            (
+                PusherResult::NotBlocked,
+                HashSet::from_iter([pusher, pushed]),
+                HashSet::from_iter([PushEvent {
+                    pusher,
+                    direction: Direction::Right
+                }])
+            )
         );
     }
 
@@ -621,37 +609,15 @@ mod tests {
         let pushed = Entity::from_raw(1);
         let wall = Entity::from_raw(2);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[2][0] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[2][1] = Some((pushed, SokobanBlock::Dynamic));
-        collision_map[2][2] = Some((wall, SokobanBlock::Static));
+        let collision_map = EntityCollisionGeographicMap::from_iter([
+            (pusher, IVec2::new(0, 2), &SokobanBlock::Dynamic),
+            (pushed, IVec2::new(1, 2), &SokobanBlock::Dynamic),
+            (wall, IVec2::new(2, 2), &SokobanBlock::Static),
+        ]);
 
         assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(0, 2),
-                super::Direction::Right
-            ),
-            (collision_map, None)
-        );
-    }
-
-    #[test]
-    fn push_dynamic_into_dynamic_into_boundary() {
-        let pusher = Entity::from_raw(0);
-        let pushed = Entity::from_raw(1);
-
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[2][1] = Some((pushed, SokobanBlock::Dynamic));
-
-        assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(1, 1),
-                super::Direction::Up,
-            ),
-            (collision_map, None)
+            collision_map.simulate_move_entity(&pusher, &Direction::Right),
+            (PusherResult::Blocked, HashSet::new(), HashSet::new())
         );
     }
 
@@ -665,7 +631,10 @@ mod tests {
         let mut app = App::new();
 
         app.add_state::<State>()
-            .add_plugins(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
+            .add_plugins(SokobanPlugin::<_, SokobanBlock, Direction>::new(
+                State::Only,
+                "MyLayerIdentifier",
+            ));
 
         app.world.spawn(LayerMetadata {
             c_wid: 3,
@@ -695,8 +664,9 @@ mod tests {
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
-        let mut system_state: SystemState<SokobanCommands> = SystemState::new(&mut app.world);
-        let mut sokoban_commands: SokobanCommands = system_state.get_mut(&mut app.world);
+        let mut system_state: SystemState<SokobanCommands<Direction>> =
+            SystemState::new(&mut app.world);
+        let mut sokoban_commands = system_state.get_mut(&mut app.world);
 
         sokoban_commands.move_block(block_a, super::Direction::Up);
         sokoban_commands.move_block(block_c, super::Direction::Left);
@@ -727,17 +697,16 @@ mod tests {
             .world
             .spawn((GridCoords::new(1, 1), SokobanBlock::Dynamic, PushTracker))
             .id();
-        let block_b = app
-            .world
-            .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic))
-            .id();
+        app.world
+            .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic));
         let block_c = app
             .world
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
-        let mut system_state: SystemState<SokobanCommands> = SystemState::new(&mut app.world);
-        let mut sokoban_commands: SokobanCommands = system_state.get_mut(&mut app.world);
+        let mut system_state: SystemState<SokobanCommands<Direction>> =
+            SystemState::new(&mut app.world);
+        let mut sokoban_commands = system_state.get_mut(&mut app.world);
 
         sokoban_commands.move_block(block_a, super::Direction::Up);
         sokoban_commands.move_block(block_c, super::Direction::Left);
@@ -746,7 +715,7 @@ mod tests {
 
         app.update();
 
-        let events = app.world.resource::<Events<PushEvent>>();
+        let events = app.world.resource::<Events<PushEvent<Direction>>>();
         let mut reader = events.get_reader();
 
         assert_eq!(events.len(), 1);
@@ -755,7 +724,6 @@ mod tests {
             PushEvent {
                 pusher: block_a,
                 direction: super::Direction::Up,
-                pushed: vec![block_b],
             }
         );
     }
