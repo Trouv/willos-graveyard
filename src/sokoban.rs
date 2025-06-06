@@ -353,7 +353,7 @@ fn ease_movement(
     }
 }
 
-#[derive(Clone, Default, Debug)]
+#[derive(Clone, Debug)]
 struct EntityCollisionGeographicMap<'a, P>
 where
     P: Push + Component,
@@ -362,13 +362,25 @@ where
     entity_table: HashMap<Entity, (IVec2, &'a P)>,
 }
 
+impl<'a, P> Default for EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    fn default() -> Self {
+        EntityCollisionGeographicMap {
+            coordinate_table: HashMap::new(),
+            entity_table: HashMap::new(),
+        }
+    }
+}
+
 impl<'a, P> FromIterator<(Entity, IVec2, &'a P)> for EntityCollisionGeographicMap<'a, P>
 where
     P: Push + Component,
 {
     fn from_iter<T: IntoIterator<Item = (Entity, IVec2, &'a P)>>(iter: T) -> Self {
         iter.into_iter().fold(
-            Self::new(),
+            Self::default(),
             |EntityCollisionGeographicMap {
                  mut coordinate_table,
                  mut entity_table,
@@ -393,13 +405,6 @@ impl<'a, P> EntityCollisionGeographicMap<'a, P>
 where
     P: Push + Component,
 {
-    fn new() -> Self {
-        EntityCollisionGeographicMap {
-            coordinate_table: HashMap::new(),
-            entity_table: HashMap::new(),
-        }
-    }
-
     fn get_coordinate_and_block(&self, entity: &Entity) -> Option<&(IVec2, &'a P)> {
         self.entity_table.get(entity)
     }
