@@ -1,7 +1,10 @@
+//! Contains [`OutOfBoundsPlugin`], which places invisible walls on level boundaries.
+
 use crate::{sokoban::SokobanBlock, utils::any_match_filter, AssetHolder, GameState, UNIT_LENGTH};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+/// Plugin that spawns [`SokobanBlock::Static`] on the boundaries of LDtk levels.
 pub struct OutOfBoundsPlugin;
 
 impl Plugin for OutOfBoundsPlugin {
