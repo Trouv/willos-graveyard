@@ -35,7 +35,7 @@ impl Plugin for WilloPlugin {
             (
                 push_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_if(on_event::<PushEvent>())
+                    .run_if(on_event::<PushEvent<Direction>>())
                     .before(FromComponentSet),
                 play_exorcism_animaton
                     .run_if(not(in_state(GameState::AssetLoading)))
@@ -109,16 +109,16 @@ impl From<WilloAnimationState> for SpriteSheetAnimation {
         use WilloAnimationState::*;
 
         let indices = match state {
-            Push(Up) => 1..2,
-            Push(Down) => 11..12,
+            Push(Up | UpLeft | UpRight) => 1..2,
+            Push(Down | DownLeft | DownRight) => 11..12,
             Push(Left) => 21..22,
             Push(Right) => 31..32,
-            Idle(Up) => 40..47,
-            Idle(Down) => 50..57,
+            Idle(Up | UpLeft | UpRight) => 40..47,
+            Idle(Down | DownLeft | DownRight) => 50..57,
             Idle(Left) => 60..67,
             Idle(Right) => 70..77,
             Dying => 80..105,
-            None => 3..4,
+            Idle(Zero) | Push(Zero) | None => 3..4,
         };
 
         let frame_timer = Timer::new(Duration::from_millis(150), TimerMode::Repeating);
@@ -164,7 +164,7 @@ struct WilloBundle {
 
 fn push_sugar(
     mut commands: Commands,
-    mut push_events: EventReader<PushEvent>,
+    mut push_events: EventReader<PushEvent<Direction>>,
     mut willo_query: Query<(Entity, &mut WilloAnimationState)>,
     sfx: Res<AssetHolder>,
 ) {
@@ -191,7 +191,7 @@ fn push_translation(
     if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.get_single() {
         let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
             + match animation_state {
-                WilloAnimationState::Push(direction) => IVec2::from(*direction).as_vec2() * 5.,
+                WilloAnimationState::Push(direction) => (IVec2::ZERO + direction).as_vec2() * 5.,
                 _ => Vec2::splat(0.),
             };
 

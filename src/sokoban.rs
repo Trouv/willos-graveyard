@@ -4,9 +4,19 @@
 //! Spawn entities with `GridCoords` (from `bevy_ecs_ldtk`) and [SokobanBlock]s to give them
 //! sokoban-style collision.
 //! Then, move entities around with the [SokobanCommands] system parameter.
-use bevy::{ecs::system::SystemParam, prelude::*};
+use bevy::{
+    ecs::system::SystemParam,
+    prelude::*,
+    utils::{HashMap, HashSet},
+};
 use bevy_easings::*;
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
+use std::{
+    hash::Hash,
+    marker::PhantomData,
+    ops::{Add, AddAssign},
+};
+use thiserror::Error;
 
 /// Sets used by sokoban systems
 #[derive(Clone, Debug, PartialEq, Eq, Hash, SystemSet)]
@@ -18,17 +28,25 @@ pub enum SokobanSets {
 }
 
 /// Plugin providing functionality for sokoban-style movement and collision to LDtk levels.
-pub struct SokobanPlugin<S>
+pub struct SokobanPlugin<S, P, D>
 where
     S: States,
+    P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     state: S,
     layer_identifier: SokobanLayerIdentifier,
+    phantom_push_component: PhantomData<P>,
+    phantom_direction: PhantomData<D>,
 }
 
-impl<S> SokobanPlugin<S>
+impl<S, P, D> SokobanPlugin<S, P, D>
 where
     S: States,
+    P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     /// Constructor for the plugin.
     ///
@@ -42,23 +60,28 @@ where
         SokobanPlugin {
             state,
             layer_identifier,
+            phantom_push_component: PhantomData,
+            phantom_direction: PhantomData,
         }
     }
 }
 
-impl<S> Plugin for SokobanPlugin<S>
+impl<S, P, D> Plugin for SokobanPlugin<S, P, D>
 where
     S: States,
+    P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
 {
     fn build(&self, app: &mut App) {
-        app.add_event::<SokobanCommand>()
-            .add_event::<PushEvent>()
+        app.add_event::<SokobanCommand<Direction>>()
+            .add_event::<PushEvent<Direction>>()
             .insert_resource(self.layer_identifier.clone())
             .add_systems(
                 Update,
-                flush_sokoban_commands
+                flush_sokoban_commands::<P, Direction>
                     .run_if(in_state(self.state.clone()))
-                    .run_if(on_event::<SokobanCommand>())
+                    .run_if(on_event::<SokobanCommand<Direction>>())
                     .in_set(SokobanSets::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
@@ -77,52 +100,126 @@ where
 struct SokobanLayerIdentifier(String);
 
 /// Enumerates the four directions that sokoban blocks can be pushed in.
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, Debug, Hash, Reflect)]
 pub enum Direction {
+    #[default]
+    /// No direction.
+    Zero,
+    /// Northeast direction.
+    UpRight,
     /// North direction.
     Up,
+    /// Northwest direction.
+    UpLeft,
     /// West direction.
     Left,
+    /// Southwest direction.
+    DownLeft,
     /// South direction.
     Down,
+    /// Southeast direction.
+    DownRight,
     /// East direction.
     Right,
 }
 
-impl From<Direction> for IVec2 {
-    fn from(direction: Direction) -> IVec2 {
+impl Add<&Direction> for IVec2 {
+    type Output = IVec2;
+
+    fn add(self, direction: &Direction) -> IVec2 {
         match direction {
-            Direction::Up => IVec2::Y,
-            Direction::Left => IVec2::new(-1, 0),
-            Direction::Down => IVec2::new(0, -1),
-            Direction::Right => IVec2::X,
+            Direction::Zero => self + IVec2::ZERO,
+            Direction::UpRight => self + IVec2::new(1, 1),
+            Direction::Up => self + IVec2::Y,
+            Direction::UpLeft => self + IVec2::new(-1, 1),
+            Direction::Left => self - IVec2::X,
+            Direction::DownLeft => self + IVec2::new(-1, -1),
+            Direction::Down => self - IVec2::Y,
+            Direction::DownRight => self + IVec2::new(1, -1),
+            Direction::Right => self + IVec2::X,
         }
+    }
+}
+
+/// Directions must have coordinates of 0s and 1s.
+#[derive(Debug, Error)]
+#[error("Directions must have coordinates of 0s and 1s")]
+pub struct OutOfBoundsDirection;
+
+impl TryFrom<&IVec2> for Direction {
+    type Error = OutOfBoundsDirection;
+
+    fn try_from(value: &IVec2) -> Result<Direction, OutOfBoundsDirection> {
+        match (value.x, value.y) {
+            (0, 0) => Ok(Direction::Zero),
+            (1, 1) => Ok(Direction::UpRight),
+            (0, 1) => Ok(Direction::Up),
+            (-1, 1) => Ok(Direction::UpLeft),
+            (-1, 0) => Ok(Direction::Left),
+            (-1, -1) => Ok(Direction::DownLeft),
+            (0, -1) => Ok(Direction::Down),
+            (1, -1) => Ok(Direction::DownRight),
+            (1, 0) => Ok(Direction::Right),
+            _ => Err(OutOfBoundsDirection),
+        }
+    }
+}
+
+impl Direction {
+    fn try_add(self, rhs: Direction) -> Result<Direction, OutOfBoundsDirection> {
+        Direction::try_from(&(IVec2::ZERO + &self + &rhs))
+    }
+}
+
+impl Add<Direction> for Direction {
+    type Output = Direction;
+
+    fn add(self, rhs: Direction) -> Self::Output {
+        self.try_add(rhs).unwrap()
+    }
+}
+
+impl AddAssign for Direction {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
     }
 }
 
 /// Enumerates commands that can be performed via [SokobanCommands].
 #[derive(Debug, Clone, Event)]
-pub enum SokobanCommand {
+pub enum SokobanCommand<D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
     /// Move a [SokobanBlock] entity in the given direction.
     Move {
         /// The [SokobanBlock] entity to move.
         entity: Entity,
         /// The direction to move the block in.
-        direction: Direction,
+        direction: D,
     },
 }
 
 /// System parameter providing an interface for commanding the SokobanPlugin.
 #[derive(SystemParam)]
-pub struct SokobanCommands<'w> {
-    writer: EventWriter<'w, SokobanCommand>,
+pub struct SokobanCommands<'w, D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
+    writer: EventWriter<'w, SokobanCommand<D>>,
 }
 
-impl SokobanCommands<'_> {
+impl<'w, D> SokobanCommands<'w, D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
     /// Move a [SokobanBlock] entity in the given direction.
     ///
     /// Will perform the necessary collision checks and block pushes.
-    pub fn move_block(&mut self, entity: Entity, direction: Direction) {
+    pub fn move_block(&mut self, entity: Entity, direction: D) {
         self.writer.send(SokobanCommand::Move { entity, direction });
     }
 }
@@ -135,6 +232,51 @@ pub enum SokobanBlock {
     Static,
     /// The entity can move, push, or be pushed.
     Dynamic,
+}
+
+/// Possible outcomes for a block that is pushing another block.
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
+pub enum PusherResult {
+    /// The push was not blocked, the pusher can move in the direction of the push.
+    #[default]
+    NotBlocked,
+    /// The push was blocked, the pusher cannot move in the direction of the push.
+    Blocked,
+}
+
+impl PusherResult {
+    fn reduce(&self, other: &PusherResult) -> PusherResult {
+        match (self, other) {
+            (PusherResult::NotBlocked, PusherResult::NotBlocked) => PusherResult::NotBlocked,
+            _ => PusherResult::Blocked,
+        }
+    }
+}
+
+/// Possible outcomes for a block that is being pushed by another block.
+pub enum PusheeResult {
+    /// The push is successful, the pushee can move in the direction of the push.
+    NotPushed,
+    /// The push was unsuccessful, the pushee cannot move in the direction of the push.
+    Pushed,
+}
+
+/// Abstraction for types that can pushed or be pushed in the context of sokoban.
+///
+/// Essentially defines the rules of the sokoban game.
+pub trait Push {
+    /// Returns the outcome of this instance pushing another.
+    fn push(&self, pushee: &Self) -> (PusherResult, PusheeResult);
+}
+
+impl Push for SokobanBlock {
+    fn push(&self, pushee: &Self) -> (PusherResult, PusheeResult) {
+        match (self, pushee) {
+            (_, SokobanBlock::Static) => (PusherResult::Blocked, PusheeResult::NotPushed),
+            (SokobanBlock::Static, _) => (PusherResult::Blocked, PusheeResult::Pushed),
+            (SokobanBlock::Dynamic, _) => (PusherResult::NotBlocked, PusheeResult::Pushed),
+        }
+    }
 }
 
 impl SokobanBlock {
@@ -180,14 +322,16 @@ impl SokobanBlock {
 pub struct PushTracker;
 
 /// Event that fires when a [PushTracker] entity pushes other [SokobanBlock]s.
-#[derive(Debug, Clone, PartialEq, Eq, Event)]
-pub struct PushEvent {
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Event)]
+pub struct PushEvent<D>
+where
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
     /// The [PushTracker] entity that pushed other [SokobanBlock]s.
     pub pusher: Entity,
     /// The direction of the push.
-    pub direction: Direction,
-    /// The list of [SokobanBlock] entities that were pushed.
-    pub pushed: Vec<Entity>,
+    pub direction: D,
 }
 
 fn ease_movement(
@@ -216,129 +360,189 @@ fn ease_movement(
     }
 }
 
-type CollisionMap = Vec<Vec<Option<(Entity, SokobanBlock)>>>;
+#[derive(Clone, Debug)]
+struct EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    coordinate_table: HashMap<IVec2, HashSet<Entity>>,
+    entity_table: HashMap<Entity, (IVec2, &'a P)>,
+}
 
-/// Pushes the entry at the given coordinates in the collision_map in the given direction.
-///
-/// If possible, it will also push any entries it collides with.
-///
-/// # Returns
-/// Returns a tuple containing the updated collision_map, and an optional list of pushed entities.
-///
-/// If the optional list is `None`, no entities were pushed due to collision with either a
-/// [SokobanBlock::Static] entry or a boundary of the map.
-///
-/// If the optional list is empty, no entities were pushed due to the provided coordinates pointing
-/// to an empty entry. This distinction is important for the recursive algorithm.
-fn push_collision_map_entry(
-    collision_map: CollisionMap,
-    pusher_coords: IVec2,
-    direction: Direction,
-) -> (CollisionMap, Option<Vec<Entity>>) {
-    // check if pusher is out-of-bounds
-    if pusher_coords.x < 0
-        || pusher_coords.y < 0
-        || pusher_coords.y as usize >= collision_map.len()
-        || pusher_coords.x as usize >= collision_map[0].len()
-    {
-        // no updates to collision_map, no pushes can be performed
-        return (collision_map, None);
-    }
-
-    // match against the pusher's CollisionMap entry
-    match collision_map[pusher_coords.y as usize][pusher_coords.x as usize] {
-        Some((pusher, SokobanBlock::Dynamic)) => {
-            // pusher is dynamic, so we try to push
-            let destination = pusher_coords + IVec2::from(direction);
-
-            match push_collision_map_entry(collision_map, destination, direction) {
-                (mut collision_map, Some(mut pushed_entities)) => {
-                    // destination is either empty or has been pushed, so we can push the pusher
-                    collision_map[destination.y as usize][destination.x as usize] =
-                        collision_map[pusher_coords.y as usize][pusher_coords.x as usize].take();
-                    pushed_entities.push(pusher);
-
-                    (collision_map, Some(pushed_entities))
-                }
-                // destination can't be pushed, so the pusher can't be pushed either
-                none_case => none_case,
-            }
+impl<'a, P> Default for EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    fn default() -> Self {
+        EntityCollisionGeographicMap {
+            coordinate_table: HashMap::new(),
+            entity_table: HashMap::new(),
         }
-        // pusher is static, no pushes can be performed
-        Some((_, SokobanBlock::Static)) => (collision_map, None),
-        // pusher's entry is empty, no push is performed here but the caller is able to
-        None => (collision_map, Some(Vec::new())),
     }
 }
 
-fn flush_sokoban_commands(
-    mut grid_coords_query: Query<(Entity, &mut GridCoords, &SokobanBlock, Option<&PushTracker>)>,
-    mut sokoban_commands: EventReader<SokobanCommand>,
-    mut push_events: EventWriter<PushEvent>,
-    layers: Query<&LayerMetadata>,
-    layer_id: Res<SokobanLayerIdentifier>,
-) {
-    // Get dimensions of the currently-loaded level
-    if let Some(LayerMetadata { c_wid, c_hei, .. }) =
-        layers.iter().find(|l| l.identifier == **layer_id)
-    {
-        // Generate current collision map
-        let mut collision_map: CollisionMap = vec![vec![None; *c_wid as usize]; *c_hei as usize];
+impl<'a, P> FromIterator<(Entity, IVec2, &'a P)> for EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    fn from_iter<T: IntoIterator<Item = (Entity, IVec2, &'a P)>>(iter: T) -> Self {
+        iter.into_iter().fold(
+            Self::default(),
+            |EntityCollisionGeographicMap {
+                 mut coordinate_table,
+                 mut entity_table,
+             },
+             (entity, coordinate, push_block)| {
+                coordinate_table
+                    .entry(coordinate)
+                    .or_default()
+                    .insert(entity);
+                entity_table.insert(entity, (coordinate, push_block));
 
-        for (entity, grid_coords, sokoban_block, _) in grid_coords_query.iter_mut() {
-            collision_map[grid_coords.y as usize][grid_coords.x as usize] =
-                Some((entity, *sokoban_block));
-        }
-
-        for sokoban_command in sokoban_commands.read() {
-            let SokobanCommand::Move { entity, direction } = sokoban_command;
-
-            if let Ok((_, grid_coords, ..)) = grid_coords_query.get(*entity) {
-                // Determine if move can happen, who moves, how the collision_map should be
-                // updated...
-                let (new_collision_map, pushed_entities) =
-                    push_collision_map_entry(collision_map, IVec2::from(*grid_coords), *direction);
-
-                collision_map = new_collision_map;
-
-                if let Some(mut pushed_entities) = pushed_entities {
-                    pushed_entities.reverse();
-
-                    // update GridCoords components of pushed entities
-                    for pushed_entity in &pushed_entities {
-                        *grid_coords_query
-                            .get_component_mut::<GridCoords>(*pushed_entity)
-                            .expect("pushed entity should be valid sokoban entity") +=
-                            GridCoords::from(IVec2::from(*direction));
-                    }
-
-                    // send push events
-                    for (i, pusher) in pushed_entities.iter().enumerate() {
-                        let pushed = &pushed_entities[i + 1..];
-
-                        if !pushed.is_empty() {
-                            if let (.., Some(_)) = grid_coords_query
-                                .get(*pusher)
-                                .expect("pusher should be valid sokoban entity")
-                            {
-                                push_events.send(PushEvent {
-                                    pusher: *pusher,
-                                    direction: *direction,
-                                    pushed: pushed.into(),
-                                });
-                            }
-                        }
-                    }
+                EntityCollisionGeographicMap {
+                    coordinate_table,
+                    entity_table,
                 }
-            } else {
-                warn!("attempted to move sokoban entity {entity:?}, but it does not exist or is malformed")
-            }
+            },
+        )
+    }
+}
+
+impl<'a, P> EntityCollisionGeographicMap<'a, P>
+where
+    P: Push + Component,
+{
+    fn get_coordinate_and_block(&self, entity: &Entity) -> Option<&(IVec2, &'a P)> {
+        self.entity_table.get(entity)
+    }
+
+    fn get_block(&self, entity: &Entity) -> Option<&'a P> {
+        self.get_coordinate_and_block(entity)
+            .map(|(_, block)| *block)
+    }
+
+    fn get_entities_at_coords(&self, coordinate: &IVec2) -> Option<&HashSet<Entity>> {
+        self.coordinate_table.get(coordinate)
+    }
+
+    /// returns a list of entities that would be pushed
+    fn simulate_move_entity<D>(
+        &self,
+        pusher_entity: &Entity,
+        direction: &D,
+    ) -> (PusherResult, HashSet<Entity>, HashSet<PushEvent<D>>)
+    where
+        for<'d> IVec2: Add<&'d D, Output = IVec2>,
+        D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+    {
+        let Some((pusher_coordinate, pusher_block)) = self.get_coordinate_and_block(pusher_entity)
+        else {
+            return default();
+        };
+
+        let destination = *pusher_coordinate + direction;
+        if &destination == pusher_coordinate {
+            return default();
         }
-    } else {
-        warn!(
-            "could not find {} layer specified by SokobanLayerIdentifier resource",
-            **layer_id
-        );
+
+        let (pusher_result, mut moved_entities, mut push_events) = self
+            .get_entities_at_coords(&destination)
+            .iter()
+            .copied()
+            .flatten()
+            .map(|pushee_entity| {
+                let pushee_block = self
+                    .get_block(pushee_entity)
+                    .expect("entities in coordinate table should also exist in entity table");
+
+                let (our_pusher_result, pushee_result) = pusher_block.push(pushee_block);
+
+                let (their_pusher_result, moved_entities, push_events) = match pushee_result {
+                    PusheeResult::Pushed => self.simulate_move_entity(pushee_entity, direction),
+                    PusheeResult::NotPushed => default(),
+                };
+
+                let pusher_result = our_pusher_result.reduce(&their_pusher_result);
+
+                (pusher_result, moved_entities, push_events)
+            })
+            .reduce(
+                |(
+                    previous_pusher_result,
+                    mut previous_moved_entities,
+                    mut previous_push_events,
+                ),
+                 (pusher_result, moved_entities, push_events)| {
+                    previous_moved_entities.extend(moved_entities);
+                    previous_push_events.extend(push_events);
+
+                    (
+                        previous_pusher_result.reduce(&pusher_result),
+                        previous_moved_entities,
+                        previous_push_events,
+                    )
+                },
+            )
+            .unwrap_or_default();
+
+        if !moved_entities.is_empty() {
+            push_events.insert(PushEvent {
+                pusher: *pusher_entity,
+                direction: direction.clone(),
+            });
+        }
+
+        if pusher_result == PusherResult::NotBlocked {
+            moved_entities.insert(*pusher_entity);
+        }
+
+        (pusher_result, moved_entities, push_events)
+    }
+}
+
+fn flush_sokoban_commands<P, D>(
+    mut grid_coords_query: Query<(Entity, &mut GridCoords, &P, Has<PushTracker>)>,
+    mut sokoban_commands: EventReader<SokobanCommand<D>>,
+    mut push_events: EventWriter<PushEvent<D>>,
+) where
+    P: Push + Component,
+    for<'d> IVec2: Add<&'d D, Output = IVec2>,
+    D: Hash + PartialEq + Eq + Clone + Send + Sync + 'static,
+{
+    for sokoban_command in sokoban_commands.read() {
+        let SokobanCommand::Move { entity, direction } = sokoban_command;
+
+        let (_, entities_to_move, push_events_to_send) = {
+            // regenerate map per command to get map updates from previous command
+            let entity_collision_geographic_map = grid_coords_query
+                .iter()
+                .map(|(entity, grid_coords, sokoban_block, _)| {
+                    (entity, IVec2::from(*grid_coords), sokoban_block)
+                })
+                .collect::<EntityCollisionGeographicMap<P>>();
+
+            entity_collision_geographic_map.simulate_move_entity(entity, direction)
+        };
+
+        entities_to_move.iter().for_each(|entity_to_move| {
+            let mut grid_coords = grid_coords_query
+                .get_component_mut::<GridCoords>(*entity_to_move)
+                .expect("pushed entity should be valid sokoban entity");
+
+            let new_coords = IVec2::from(*grid_coords) + direction;
+            *grid_coords = GridCoords::from(new_coords);
+        });
+
+        push_events_to_send
+            .into_iter()
+            .filter(|push_event| {
+                let (.., is_push_tracker) = grid_coords_query
+                    .get(push_event.pusher)
+                    .expect("entity source from query should still exist in query");
+
+                is_push_tracker
+            })
+            .for_each(|push_event| push_events.send(push_event));
     }
 }
 
@@ -351,15 +555,19 @@ mod tests {
     fn push_dynamic_into_empty() {
         let pusher = Entity::from_raw(0);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
-
-        let mut expected_collision_map = vec![vec![None; 3]; 3];
-        expected_collision_map[2][1] = Some((pusher, SokobanBlock::Dynamic));
+        let collision_map = EntityCollisionGeographicMap::from_iter([(
+            pusher,
+            IVec2::new(1, 1),
+            &SokobanBlock::Dynamic,
+        )]);
 
         assert_eq!(
-            push_collision_map_entry(collision_map, IVec2::new(1, 1), super::Direction::Up),
-            (expected_collision_map, Some(vec![pusher]))
+            collision_map.simulate_move_entity(&pusher, &Direction::Up),
+            (
+                PusherResult::NotBlocked,
+                HashSet::from_iter([pusher]),
+                HashSet::new()
+            )
         );
     }
 
@@ -368,34 +576,14 @@ mod tests {
         let pusher = Entity::from_raw(0);
         let wall = Entity::from_raw(1);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[2][1] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[1][1] = Some((wall, SokobanBlock::Static));
+        let collision_map = EntityCollisionGeographicMap::from_iter([
+            (wall, IVec2::new(1, 1), &SokobanBlock::Static),
+            (pusher, IVec2::new(1, 2), &SokobanBlock::Dynamic),
+        ]);
 
         assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(1, 2),
-                super::Direction::Down
-            ),
-            (collision_map, None)
-        );
-    }
-
-    #[test]
-    fn push_dynamic_into_boundary() {
-        let pusher = Entity::from_raw(0);
-
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[0][0] = Some((pusher, SokobanBlock::Dynamic));
-
-        assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(0, 0),
-                super::Direction::Left
-            ),
-            (collision_map, None)
+            collision_map.simulate_move_entity(&pusher, &Direction::Down),
+            (PusherResult::Blocked, HashSet::new(), HashSet::new())
         );
     }
 
@@ -404,17 +592,21 @@ mod tests {
         let pusher = Entity::from_raw(0);
         let pushed = Entity::from_raw(1);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[1][0] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[1][1] = Some((pushed, SokobanBlock::Dynamic));
-
-        let mut expected_collision_map = vec![vec![None; 3]; 3];
-        expected_collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
-        expected_collision_map[1][2] = Some((pushed, SokobanBlock::Dynamic));
+        let collision_map = EntityCollisionGeographicMap::from_iter([
+            (pusher, IVec2::new(0, 1), &SokobanBlock::Dynamic),
+            (pushed, IVec2::new(1, 1), &SokobanBlock::Dynamic),
+        ]);
 
         assert_eq!(
-            push_collision_map_entry(collision_map, IVec2::new(0, 1), super::Direction::Right),
-            (expected_collision_map, Some(vec![pushed, pusher]))
+            collision_map.simulate_move_entity(&pusher, &Direction::Right),
+            (
+                PusherResult::NotBlocked,
+                HashSet::from_iter([pusher, pushed]),
+                HashSet::from_iter([PushEvent {
+                    pusher,
+                    direction: Direction::Right
+                }])
+            )
         );
     }
 
@@ -424,37 +616,15 @@ mod tests {
         let pushed = Entity::from_raw(1);
         let wall = Entity::from_raw(2);
 
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[2][0] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[2][1] = Some((pushed, SokobanBlock::Dynamic));
-        collision_map[2][2] = Some((wall, SokobanBlock::Static));
+        let collision_map = EntityCollisionGeographicMap::from_iter([
+            (pusher, IVec2::new(0, 2), &SokobanBlock::Dynamic),
+            (pushed, IVec2::new(1, 2), &SokobanBlock::Dynamic),
+            (wall, IVec2::new(2, 2), &SokobanBlock::Static),
+        ]);
 
         assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(0, 2),
-                super::Direction::Right
-            ),
-            (collision_map, None)
-        );
-    }
-
-    #[test]
-    fn push_dynamic_into_dynamic_into_boundary() {
-        let pusher = Entity::from_raw(0);
-        let pushed = Entity::from_raw(1);
-
-        let mut collision_map = vec![vec![None; 3]; 3];
-        collision_map[1][1] = Some((pusher, SokobanBlock::Dynamic));
-        collision_map[2][1] = Some((pushed, SokobanBlock::Dynamic));
-
-        assert_eq!(
-            push_collision_map_entry(
-                collision_map.clone(),
-                IVec2::new(1, 1),
-                super::Direction::Up,
-            ),
-            (collision_map, None)
+            collision_map.simulate_move_entity(&pusher, &Direction::Right),
+            (PusherResult::Blocked, HashSet::new(), HashSet::new())
         );
     }
 
@@ -468,7 +638,10 @@ mod tests {
         let mut app = App::new();
 
         app.add_state::<State>()
-            .add_plugins(SokobanPlugin::new(State::Only, "MyLayerIdentifier"));
+            .add_plugins(SokobanPlugin::<_, SokobanBlock, Direction>::new(
+                State::Only,
+                "MyLayerIdentifier",
+            ));
 
         app.world.spawn(LayerMetadata {
             c_wid: 3,
@@ -498,8 +671,9 @@ mod tests {
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
-        let mut system_state: SystemState<SokobanCommands> = SystemState::new(&mut app.world);
-        let mut sokoban_commands: SokobanCommands = system_state.get_mut(&mut app.world);
+        let mut system_state: SystemState<SokobanCommands<Direction>> =
+            SystemState::new(&mut app.world);
+        let mut sokoban_commands = system_state.get_mut(&mut app.world);
 
         sokoban_commands.move_block(block_a, super::Direction::Up);
         sokoban_commands.move_block(block_c, super::Direction::Left);
@@ -530,17 +704,16 @@ mod tests {
             .world
             .spawn((GridCoords::new(1, 1), SokobanBlock::Dynamic, PushTracker))
             .id();
-        let block_b = app
-            .world
-            .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic))
-            .id();
+        app.world
+            .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic));
         let block_c = app
             .world
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
-        let mut system_state: SystemState<SokobanCommands> = SystemState::new(&mut app.world);
-        let mut sokoban_commands: SokobanCommands = system_state.get_mut(&mut app.world);
+        let mut system_state: SystemState<SokobanCommands<Direction>> =
+            SystemState::new(&mut app.world);
+        let mut sokoban_commands = system_state.get_mut(&mut app.world);
 
         sokoban_commands.move_block(block_a, super::Direction::Up);
         sokoban_commands.move_block(block_c, super::Direction::Left);
@@ -549,7 +722,7 @@ mod tests {
 
         app.update();
 
-        let events = app.world.resource::<Events<PushEvent>>();
+        let events = app.world.resource::<Events<PushEvent<Direction>>>();
         let mut reader = events.get_reader();
 
         assert_eq!(events.len(), 1);
@@ -558,7 +731,6 @@ mod tests {
             PushEvent {
                 pusher: block_a,
                 direction: super::Direction::Up,
-                pushed: vec![block_b],
             }
         );
     }
