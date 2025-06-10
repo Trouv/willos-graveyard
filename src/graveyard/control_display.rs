@@ -322,7 +322,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::Northwest),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 1
+                index: 22
             })
         );
 
@@ -330,7 +330,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 0
+                index: 20
             })
         );
 
@@ -338,7 +338,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::Northeast),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 3
+                index: 26
             })
         );
 
@@ -346,7 +346,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::West),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 5
+                index: 40
             }),
         );
 
@@ -354,7 +354,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::South),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 10
+                index: 60
             }),
         );
 
@@ -362,7 +362,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::East),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 15
+                index: 80
             }),
         );
 
@@ -403,7 +403,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 0
+                index: 20
             })
         );
 
@@ -411,8 +411,8 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::West),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 5
-            }),
+                index: 40
+            })
         );
 
         // change the movement table and check those buttons again
@@ -430,7 +430,7 @@ mod tests {
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
-                index: 2
+                index: 24
             })
         );
 
