@@ -1,3 +1,5 @@
+//! Plugin responsible for spawning arrow blocks and movement tiles.
+
 use std::{collections::HashMap, marker::PhantomData};
 
 use bevy::{prelude::*, reflect::Enum};
@@ -19,9 +21,11 @@ use crate::{
 };
 use itertools::Itertools;
 
+/// System set that handles updates to movement tiles.
 #[derive(Copy, Clone, Default, Debug, PartialEq, Eq, Hash, SystemSet)]
 pub struct MovementTileUpdateSet;
 
+/// Plugin responsible for spawning arrow blocks and movement tiles.
 pub struct ArrowBlockPlugin;
 
 impl Plugin for ArrowBlockPlugin {
@@ -161,6 +165,7 @@ where
     sprite_sheet_bundle: SpriteSheetBundle,
 }
 
+/// Primary component for movement tiles, storing information about the directions of the movement.
 #[derive(Copy, Clone, Default, Debug, PartialEq, Eq, Component)]
 pub struct MovementTile {
     row_move: Direction,
@@ -168,20 +173,25 @@ pub struct MovementTile {
 }
 
 impl MovementTile {
+    /// Construct a new [`MovementTile`].
     pub fn new(row_move: Direction, column_move: Direction) -> Self {
         MovementTile {
             row_move,
             column_move,
         }
     }
+
+    /// Returns the "row" (first) component of this tile's movement.
     pub fn row_move(&self) -> &Direction {
         &self.row_move
     }
 
+    /// Returns the "column" (last) component of this tile's movement.
     pub fn column_move(&self) -> &Direction {
         &self.column_move
     }
 
+    /// Returns the index of this movement's icon in [`MovementTileAssets::movement_tiles`].
     pub fn tileset_index(&self) -> usize {
         self.row_move.variant_index() * 9 + self.column_move.variant_index()
     }
