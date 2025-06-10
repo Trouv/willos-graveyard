@@ -36,7 +36,7 @@ struct ControlDisplay;
 /// Asset collection for loading/storing assets relevant to the control display.
 #[derive(Clone, Debug, AssetCollection, Resource)]
 pub struct ControlDisplayAssets {
-    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 4, rows = 4))]
+    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 9, rows = 9))]
     #[asset(path = "textures/movement-table-actions.png")]
     movement_table_actions: Handle<TextureAtlas>,
     #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 3, rows = 1))]
@@ -224,10 +224,16 @@ fn update_grave_action_buttons(
                 .enumerate()
                 .find(|(_, g)| **g == Some(**action))
             {
-                Some((index, _)) => IconButton::AtlasImageIcon(UiAtlasImage {
-                    texture_atlas: assets.movement_table_actions.clone(),
-                    index,
-                }),
+                Some((index, _)) => {
+                    let index_adjusted_for_9_height_component = 18 * (1 + (index / 4));
+                    let index_adjusted_for_9_width_component = 2 * (1 + (index % 4));
+                    let index_adjusted_for_9 = index_adjusted_for_9_width_component
+                        + index_adjusted_for_9_height_component;
+                    IconButton::AtlasImageIcon(UiAtlasImage {
+                        texture_atlas: assets.movement_table_actions.clone(),
+                        index: index_adjusted_for_9,
+                    })
+                }
                 None => IconButton::NoIcon,
             }
         }
