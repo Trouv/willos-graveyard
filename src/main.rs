@@ -19,7 +19,7 @@ pub mod ui_atlas_image;
 pub mod utils;
 
 use animation::SpriteSheetAnimationPlugin;
-use bevy::prelude::*;
+use bevy::{asset::AssetMetaCheck, prelude::*};
 
 use bevy_asset_loader::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -60,8 +60,19 @@ fn main() {
     let mut app = App::new();
 
     app.insert_resource(Msaa::Off)
+        .insert_resource(AssetMetaCheck::Never)
         .add_plugins((
-            DefaultPlugins.set(ImagePlugin::default_nearest()),
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        fit_canvas_to_parent: true,
+                        canvas: Some("#bevy".to_string()),
+                        ..default()
+                    }),
+
+                    ..default()
+                }),
             EasingsPlugin,
             LdtkPlugin,
         ))
