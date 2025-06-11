@@ -10,6 +10,7 @@ jobs:
   version:
     name: Update Version
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[version ci]')"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -56,7 +57,7 @@ jobs:
                 echo "updating cargo"
                 sed "s/^version = \".*\"$/version = \"$CODE_VERSION\"/" Cargo.toml -i
                 git add Cargo.toml
-                git commit -m "build: increment version to $CODE_VERSION [skip ci]"
+                git commit -m "build: increment version to $CODE_VERSION [version ci]"
               fi
 
               DATE_VERSION=$(date +%y.%m.%d)
