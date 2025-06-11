@@ -1,3 +1,4 @@
+//! Contains the [`GravestoneMovementQueries`] system param, for finding available movements.
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_ecs_ldtk::prelude::*;
 
@@ -5,6 +6,7 @@ use crate::graveyard::{arrow_block::MovementTile, gravestone::GraveId};
 
 use super::volatile::Volatile;
 
+/// System param that can be used to find available movements.
 #[derive(Debug, SystemParam)]
 pub struct GravestoneMovementQueries<'w, 's> {
     gravestones: Query<'w, 's, (&'static GridCoords, &'static GraveId, &'static Volatile)>,
@@ -12,6 +14,7 @@ pub struct GravestoneMovementQueries<'w, 's> {
 }
 
 impl<'w, 's> GravestoneMovementQueries<'w, 's> {
+    /// Resturns the movement associated with the given [`GraveId`], if it has one.
     pub fn find_movement(&self, grave_id: &GraveId) -> Option<&MovementTile> {
         self.gravestones
             .iter()
