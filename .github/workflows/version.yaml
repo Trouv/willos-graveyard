@@ -1,7 +1,7 @@
 name: Version
 
 on:
-  pushes:
+  push:
     branches:
       - 'main'
   workflow_dispatch:
