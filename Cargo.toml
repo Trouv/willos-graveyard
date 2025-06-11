@@ -29,3 +29,8 @@ itertools = "0.12.1"
 
 [target.wasm32-unknown-unknown.dependencies]
 bevy_ecs_ldtk = { version = "0.9", default-features = false, features = ["derive", "render", "external_levels", "atlas"] }
+# While we don't depend on these directly, some bevy dependencies do, and they
+# both upgraded their getrandom dependency in their proceeding releases in a
+# way that broke wasm compatibility
+uuid = "=1.12.1"
+ahash = "=0.8.11"
