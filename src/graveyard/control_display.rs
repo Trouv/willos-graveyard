@@ -227,7 +227,7 @@ fn update_grave_action_buttons(
     assets: Res<ControlDisplayAssets>,
 ) {
     for (mut icon_button, action) in &mut grave_action_buttons {
-        *icon_button = match gravestone_movement_queries.find_movement(&action) {
+        *icon_button = match gravestone_movement_queries.find_movement(action) {
             Some(movement_tile) => {
                 let index = movement_tile.tileset_index();
                 IconButton::AtlasImageIcon(UiAtlasImage {
