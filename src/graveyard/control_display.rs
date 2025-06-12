@@ -242,7 +242,7 @@ fn update_grave_action_buttons(
 
 #[cfg(test)]
 mod tests {
-    use crate::sokoban::Direction;
+    use crate::{graveyard::volatile::Volatile, sokoban::Direction};
 
     use super::*;
     use bevy::reflect::Enum;
@@ -318,6 +318,7 @@ mod tests {
                     gravestone: world
                         .spawn(hash_movement_to_grid_coords(&self.northwest_grave_tile))
                         .insert(GraveId::Northwest)
+                        .insert(Volatile::Solid)
                         .id(),
                     movement_tile: world
                         .spawn(hash_movement_to_grid_coords(&self.northwest_grave_tile))
@@ -328,6 +329,7 @@ mod tests {
                     gravestone: world
                         .spawn(hash_movement_to_grid_coords(&self.north_grave_tile))
                         .insert(GraveId::North)
+                        .insert(Volatile::Solid)
                         .id(),
                     movement_tile: world
                         .spawn(hash_movement_to_grid_coords(&self.north_grave_tile))
@@ -338,6 +340,7 @@ mod tests {
                     gravestone: world
                         .spawn(hash_movement_to_grid_coords(&self.northeast_grave_tile))
                         .insert(GraveId::Northeast)
+                        .insert(Volatile::Solid)
                         .id(),
                     movement_tile: world
                         .spawn(hash_movement_to_grid_coords(&self.northeast_grave_tile))
@@ -348,6 +351,7 @@ mod tests {
                     gravestone: world
                         .spawn(hash_movement_to_grid_coords(&self.west_grave_tile))
                         .insert(GraveId::West)
+                        .insert(Volatile::Solid)
                         .id(),
                     movement_tile: world
                         .spawn(hash_movement_to_grid_coords(&self.west_grave_tile))
@@ -358,6 +362,7 @@ mod tests {
                     gravestone: world
                         .spawn(hash_movement_to_grid_coords(&self.south_grave_tile))
                         .insert(GraveId::South)
+                        .insert(Volatile::Solid)
                         .id(),
                     movement_tile: world
                         .spawn(hash_movement_to_grid_coords(&self.south_grave_tile))
@@ -368,6 +373,7 @@ mod tests {
                     gravestone: world
                         .spawn(hash_movement_to_grid_coords(&self.east_grave_tile))
                         .insert(GraveId::East)
+                        .insert(Volatile::Solid)
                         .id(),
                     movement_tile: world
                         .spawn(hash_movement_to_grid_coords(&self.east_grave_tile))
