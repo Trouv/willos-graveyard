@@ -9,7 +9,6 @@ pub mod goal;
 pub mod gravestone;
 pub mod gravestone_movement_queries;
 pub mod layer;
-pub mod movement_table;
 pub mod out_of_bounds;
 pub mod volatile;
 pub mod wall;
@@ -50,7 +49,6 @@ impl Plugin for GraveyardPlugin {
             .add_plugins((
                 control_display::ControlDisplayPlugin,
                 willo::WilloPlugin,
-                movement_table::MovementTablePlugin,
                 sokoban::SokobanPlugin::<GameState, sokoban::SokobanBlock, sokoban::Direction>::new(
                     GameState::Graveyard,
                     "IntGrid",
@@ -62,6 +60,7 @@ impl Plugin for GraveyardPlugin {
                 exorcism::ExorcismPlugin,
                 wind::WindPlugin,
                 out_of_bounds::OutOfBoundsPlugin,
+                arrow_block::ArrowBlockPlugin,
             ))
             .add_systems(
                 Update,

@@ -1,18 +1,23 @@
 //! Plugin providing functionality for the graveyard UI element showing the current controls.
 use crate::{
     camera::PlayZonePortion,
-    graveyard::{gravestone::GraveId, movement_table::MovementTable},
+    graveyard::gravestone::GraveId,
     ui::{
         action::UiAction,
         icon_button::{IconButton, IconButtonBundle, IconButtonSet},
     },
     ui_atlas_image::UiAtlasImage,
+    utils::any_match_filter,
     GameState,
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 
-use super::GraveyardAction;
+use super::{
+    arrow_block::MovementTile, gravestone_movement_queries::GravestoneMovementQueries,
+    volatile::Sublimation, GraveyardAction,
+};
 
 /// Plugin providing functionality for the graveyard UI element showing the current controls.
 pub struct ControlDisplayPlugin;
@@ -23,7 +28,13 @@ impl Plugin for ControlDisplayPlugin {
             .add_systems(
                 Update,
                 update_grave_action_buttons
-                    .run_if(in_state(GameState::Graveyard))
+                    .run_if(in_state(GameState::Graveyard).and_then(
+                        any_match_filter::<(
+                            Changed<GridCoords>,
+                            Or<(With<MovementTile>, With<GraveId>)>,
+                        )>,
+                    ))
+                    .after(Sublimation)
                     .before(IconButtonSet),
             );
     }
@@ -211,38 +222,30 @@ fn spawn_control_display(
 }
 
 fn update_grave_action_buttons(
-    movement_tables: Query<&MovementTable, Changed<MovementTable>>,
+    gravestone_movement_queries: GravestoneMovementQueries,
     mut grave_action_buttons: Query<(&mut IconButton, &UiAction<GraveId>)>,
     assets: Res<ControlDisplayAssets>,
 ) {
-    for movement_table in movement_tables.iter() {
-        for (mut icon_button, action) in &mut grave_action_buttons {
-            *icon_button = match movement_table
-                .table
-                .iter()
-                .flat_map(|row| row.iter())
-                .enumerate()
-                .find(|(_, g)| **g == Some(**action))
-            {
-                Some((index, _)) => {
-                    let index_adjusted_for_9_height_component = 18 * (1 + (index / 4));
-                    let index_adjusted_for_9_width_component = 2 * (1 + (index % 4));
-                    let index_adjusted_for_9 = index_adjusted_for_9_width_component
-                        + index_adjusted_for_9_height_component;
-                    IconButton::AtlasImageIcon(UiAtlasImage {
-                        texture_atlas: assets.movement_table_actions.clone(),
-                        index: index_adjusted_for_9,
-                    })
-                }
-                None => IconButton::NoIcon,
+    for (mut icon_button, action) in &mut grave_action_buttons {
+        *icon_button = match gravestone_movement_queries.find_movement(action) {
+            Some(movement_tile) => {
+                let index = movement_tile.tileset_index();
+                IconButton::AtlasImageIcon(UiAtlasImage {
+                    texture_atlas: assets.movement_table_actions.clone(),
+                    index,
+                })
             }
+            None => IconButton::NoIcon,
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::{graveyard::volatile::Volatile, sokoban::Direction};
+
     use super::*;
+    use bevy::reflect::Enum;
     use rand::prelude::*;
 
     fn app_setup() -> App {
@@ -267,22 +270,118 @@ mod tests {
         control_display_assets
     }
 
-    fn spawn_movement_table(app: &mut App) -> Entity {
-        app.world
-            .spawn(MovementTable {
-                table: [
-                    [
-                        Some(GraveId::North),
-                        Some(GraveId::Northwest),
-                        None,
-                        Some(GraveId::Northeast),
-                    ],
-                    [None, Some(GraveId::West), None, None],
-                    [None, None, Some(GraveId::South), None],
-                    [None, None, None, Some(GraveId::East)],
-                ],
-            })
-            .id()
+    struct GravestoneMovementTilePairTestSpawner {
+        northwest_grave_tile: MovementTile,
+        north_grave_tile: MovementTile,
+        northeast_grave_tile: MovementTile,
+        west_grave_tile: MovementTile,
+        south_grave_tile: MovementTile,
+        east_grave_tile: MovementTile,
+    }
+
+    struct GravestoneMovementTilePair {
+        gravestone: Entity,
+        movement_tile: Entity,
+    }
+
+    struct SpawnedGravestoneMovementTilePairs {
+        northwest_pair: GravestoneMovementTilePair,
+        north_pair: GravestoneMovementTilePair,
+        northeast_pair: GravestoneMovementTilePair,
+        west_pair: GravestoneMovementTilePair,
+        south_pair: GravestoneMovementTilePair,
+        east_pair: GravestoneMovementTilePair,
+    }
+
+    fn hash_movement_to_grid_coords(movement_tile: &MovementTile) -> GridCoords {
+        GridCoords::new(
+            9 - movement_tile.row_move().variant_index() as i32,
+            movement_tile.column_move().variant_index() as i32,
+        )
+    }
+
+    impl GravestoneMovementTilePairTestSpawner {
+        fn new_valid() -> Self {
+            GravestoneMovementTilePairTestSpawner {
+                northwest_grave_tile: MovementTile::new(Direction::Up, Direction::Left),
+                north_grave_tile: MovementTile::new(Direction::Up, Direction::Up),
+                northeast_grave_tile: MovementTile::new(Direction::Up, Direction::Right),
+                west_grave_tile: MovementTile::new(Direction::Left, Direction::Left),
+                south_grave_tile: MovementTile::new(Direction::Down, Direction::Down),
+                east_grave_tile: MovementTile::new(Direction::Right, Direction::Right),
+            }
+        }
+
+        fn spawn(self, world: &mut World) -> SpawnedGravestoneMovementTilePairs {
+            SpawnedGravestoneMovementTilePairs {
+                northwest_pair: GravestoneMovementTilePair {
+                    gravestone: world
+                        .spawn(hash_movement_to_grid_coords(&self.northwest_grave_tile))
+                        .insert(GraveId::Northwest)
+                        .insert(Volatile::Solid)
+                        .id(),
+                    movement_tile: world
+                        .spawn(hash_movement_to_grid_coords(&self.northwest_grave_tile))
+                        .insert(self.northwest_grave_tile)
+                        .id(),
+                },
+                north_pair: GravestoneMovementTilePair {
+                    gravestone: world
+                        .spawn(hash_movement_to_grid_coords(&self.north_grave_tile))
+                        .insert(GraveId::North)
+                        .insert(Volatile::Solid)
+                        .id(),
+                    movement_tile: world
+                        .spawn(hash_movement_to_grid_coords(&self.north_grave_tile))
+                        .insert(self.north_grave_tile)
+                        .id(),
+                },
+                northeast_pair: GravestoneMovementTilePair {
+                    gravestone: world
+                        .spawn(hash_movement_to_grid_coords(&self.northeast_grave_tile))
+                        .insert(GraveId::Northeast)
+                        .insert(Volatile::Solid)
+                        .id(),
+                    movement_tile: world
+                        .spawn(hash_movement_to_grid_coords(&self.northeast_grave_tile))
+                        .insert(self.northeast_grave_tile)
+                        .id(),
+                },
+                west_pair: GravestoneMovementTilePair {
+                    gravestone: world
+                        .spawn(hash_movement_to_grid_coords(&self.west_grave_tile))
+                        .insert(GraveId::West)
+                        .insert(Volatile::Solid)
+                        .id(),
+                    movement_tile: world
+                        .spawn(hash_movement_to_grid_coords(&self.west_grave_tile))
+                        .insert(self.west_grave_tile)
+                        .id(),
+                },
+                south_pair: GravestoneMovementTilePair {
+                    gravestone: world
+                        .spawn(hash_movement_to_grid_coords(&self.south_grave_tile))
+                        .insert(GraveId::South)
+                        .insert(Volatile::Solid)
+                        .id(),
+                    movement_tile: world
+                        .spawn(hash_movement_to_grid_coords(&self.south_grave_tile))
+                        .insert(self.south_grave_tile)
+                        .id(),
+                },
+                east_pair: GravestoneMovementTilePair {
+                    gravestone: world
+                        .spawn(hash_movement_to_grid_coords(&self.east_grave_tile))
+                        .insert(GraveId::East)
+                        .insert(Volatile::Solid)
+                        .id(),
+                    movement_tile: world
+                        .spawn(hash_movement_to_grid_coords(&self.east_grave_tile))
+                        .insert(self.east_grave_tile)
+                        .id(),
+                },
+            }
+        }
     }
 
     fn initial_state_changes(app: &mut App) {
@@ -315,7 +414,7 @@ mod tests {
     fn plugin_spawns_all_buttons() {
         let mut app = app_setup();
         let assets = asset_setup(&mut app);
-        spawn_movement_table(&mut app);
+        GravestoneMovementTilePairTestSpawner::new_valid().spawn(&mut app.world);
         initial_state_changes(&mut app);
 
         assert_eq!(
@@ -395,7 +494,8 @@ mod tests {
     fn grave_id_buttons_change_according_to_movement_table() {
         let mut app = app_setup();
         let assets = asset_setup(&mut app);
-        let movement_table_entity = spawn_movement_table(&mut app);
+        let spawned_gravestone_movement_tile_pairs =
+            GravestoneMovementTilePairTestSpawner::new_valid().spawn(&mut app.world);
         initial_state_changes(&mut app);
 
         // check initial values of a couple buttons
@@ -412,17 +512,25 @@ mod tests {
             &IconButton::AtlasImageIcon(UiAtlasImage {
                 texture_atlas: assets.movement_table_actions.clone(),
                 index: 40
-            })
+            }),
         );
 
         // change the movement table and check those buttons again
-        let mut movement_table_mut = app.world.entity_mut(movement_table_entity);
+        let mut north_grave = app
+            .world
+            .entity_mut(spawned_gravestone_movement_tile_pairs.north_pair.gravestone);
 
-        let mut movement_table = movement_table_mut.get_mut::<MovementTable>().unwrap();
+        let target_movement_tile = MovementTile::new(Direction::Up, Direction::Down);
 
-        movement_table.table[0][0] = None;
-        movement_table.table[0][2] = Some(GraveId::North);
-        movement_table.table[1][1] = None;
+        *north_grave.get_mut::<GridCoords>().unwrap() =
+            hash_movement_to_grid_coords(&target_movement_tile);
+
+        app.world
+            .spawn(hash_movement_to_grid_coords(&target_movement_tile))
+            .insert(target_movement_tile);
+
+        app.world
+            .despawn(spawned_gravestone_movement_tile_pairs.west_pair.gravestone);
 
         app.update();
 
