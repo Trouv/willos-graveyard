@@ -247,7 +247,7 @@ fn move_willo_by_tiles(
         &mut WilloAnimationState,
     )>,
     gravestone_movement_queries: GravestoneMovementQueries,
-    mut sokoban_commands: SokobanCommands,
+    mut sokoban_commands: SokobanCommands<Direction>,
     time: Res<Time>,
 ) {
     if let Ok((entity, mut timer, mut willo_state, mut willo_animation_state)) =
