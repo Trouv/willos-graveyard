@@ -50,11 +50,11 @@ fn main() {
         let level_arg = std::env::args().next_back().unwrap();
 
         match level_arg.parse::<usize>() {
-            Ok(num) => LevelSelection::index(num - 1),
+            Ok(num) => LevelSelection::index(num),
             _ => LevelSelection::Identifier(level_arg),
         }
     } else {
-        LevelSelection::index(0)
+        LevelSelection::index(1)
     };
 
     let mut app = App::new();

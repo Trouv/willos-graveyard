@@ -109,8 +109,7 @@ fn spawn_level_card(
                     .get_level_metadata_by_iid(&selected_level.iid)
                     .expect("level metadata should exist for all levels")
                     .indices()
-                    .level
-                    + 1,
+                    .level,
             );
             title.clone_from(
                 selected_level
