@@ -185,10 +185,10 @@ fn spawn_level_select_card(
                 .with_children(|parent| {
                     // spawn a button for every level
                     if let Some(ldtk) = ldtk_assets.get(&asset_holder.ldtk) {
-                        for (i, _) in ldtk.iter_raw_levels().enumerate() {
+                        for (i, _) in ldtk.iter_raw_levels().enumerate().skip(1) {
                             text_button::spawn(
                                 parent,
-                                format!("#{}", i + 1),
+                                format!("#{i}"),
                                 &asset_holder,
                                 Val::Percent(2.),
                                 FontSize::Medium,
