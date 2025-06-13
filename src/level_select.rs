@@ -188,7 +188,7 @@ fn spawn_level_select_card(
                         for (i, _) in ldtk.iter_raw_levels().enumerate().skip(1) {
                             text_button::spawn(
                                 parent,
-                                format!("#{}", i),
+                                format!("#{i}"),
                                 &asset_holder,
                                 Val::Percent(2.),
                                 FontSize::Medium,
