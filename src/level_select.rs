@@ -14,7 +14,7 @@ use crate::{
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::{EaseFunction, *};
 use bevy_ecs_ldtk::prelude::*;
 use leafwing_input_manager::prelude::*;
 use std::time::Duration;
@@ -36,8 +36,8 @@ impl Plugin for LevelSelectPlugin {
                     unpause.run_if(in_state(GameState::LevelSelect)),
                     select_level
                         .run_if(in_state(GameState::LevelSelect))
-                        .run_if(on_event::<UiAction<LevelSelectAction>>()),
-                    despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>()),
+                        .run_if(on_event::<UiAction<LevelSelectAction>>),
+                    despawn_level_select_card.run_if(on_event::<LevelSelectCardEvent>),
                 ),
             )
             .add_systems(OnExit(GameState::LevelSelect), drop_level_select_card);
@@ -64,14 +64,14 @@ enum LevelSelectAction {
     GoToLevel(LevelSelection),
 }
 
-fn level_select_card_style(position: UiRect) -> Style {
+fn level_select_card_style(position: UiRect) -> Node {
     let UiRect {
         left,
         right,
         top,
         bottom,
     } = position;
-    Style {
+    Node {
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
         flex_direction: FlexDirection::Column,
@@ -114,10 +114,7 @@ fn spawn_level_select_card(
     .unwrap();
 
     let level_select_entity = commands
-        .spawn(ImageBundle {
-            image: UiImage::new(level_card_texture),
-            ..default()
-        })
+        .spawn(ImageNode::new(level_card_texture))
         .insert(
             level_select_card_style(UiRect {
                 top: Val::Percent(100.),
@@ -140,17 +137,11 @@ fn spawn_level_select_card(
         .with_children(|parent| {
             // spawn title
             parent
-                .spawn(TextBundle {
-                    text: Text::from_section(
-                        "Level Select",
-                        TextStyle {
-                            font: asset_holder.font.clone(),
-                            color: Color::WHITE,
-                            ..default()
-                        },
-                    )
-                    .with_alignment(TextAlignment::Center),
-                    style: Style {
+                .spawn((
+                    Text::from_section("Level Select").with_justify(JustifyText::Center),
+                    TextFont::new(asset_holder.font.clone()),
+                    TextColor::new(Color::WHITE),
+                    Node {
                         margin: UiRect {
                             top: Val::Px(10.),
                             bottom: Val::Px(10.),
@@ -159,15 +150,14 @@ fn spawn_level_select_card(
                         },
                         ..default()
                     },
-                    ..default()
-                })
+                ))
                 .insert(FontScale::from(FontSize::Huge));
 
             // spawn level button container
             parent
-                .spawn(NodeBundle {
-                    background_color: BackgroundColor(Color::NONE),
-                    style: Style {
+                .spawn((
+                    BackgroundColor(Color::NONE),
+                    Node {
                         flex_wrap: FlexWrap::Wrap,
                         justify_content: JustifyContent::SpaceAround,
                         margin: UiRect {
@@ -180,8 +170,7 @@ fn spawn_level_select_card(
                         height: Val::Percent(60.),
                         ..default()
                     },
-                    ..default()
-                })
+                ))
                 .with_children(|parent| {
                     // spawn a button for every level
                     if let Some(ldtk) = ldtk_assets.get(&asset_holder.ldtk) {
@@ -206,13 +195,13 @@ fn spawn_level_select_card(
 }
 
 fn pause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
-    if input.just_pressed(GraveyardAction::Pause) {
+    if input.just_pressed(&GraveyardAction::Pause) {
         next_state.set(GameState::LevelSelect);
     }
 }
 
 fn unpause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
-    if input.just_pressed(GraveyardAction::Pause) {
+    if input.just_pressed(&GraveyardAction::Pause) {
         next_state.set(GameState::Graveyard);
     }
 }
@@ -231,7 +220,7 @@ fn select_level(
 
 fn drop_level_select_card(
     mut commands: Commands,
-    level_select_card_query: Query<(Entity, &Style), With<LevelSelectCard>>,
+    level_select_card_query: Query<(Entity, &Node), With<LevelSelectCard>>,
     mut level_select_card_events: ResMut<EventScheduler<LevelSelectCardEvent>>,
 ) {
     for (entity, style) in level_select_card_query.iter() {

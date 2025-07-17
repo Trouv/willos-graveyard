@@ -9,7 +9,7 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::{EaseFunction, *};
 use bevy_ecs_ldtk::prelude::*;
 use bevy_ecs_tilemap::tiles::TileVisible;
 use std::time::Duration;
@@ -88,15 +88,15 @@ fn spawn_death_card(
         if *state == WilloState::Dead && *last_state != WilloState::Dead {
             // Player just died
             commands
-                .spawn(NodeBundle {
-                    background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
+                .spawn((
+                    Node::default(),
+                    BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
-                    visibility: Visibility::Hidden,
-                    ..Default::default()
-                })
+                    Visibility::Hidden,
+                ))
                 .insert(
-                    Style {
+                    Node {
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         position_type: PositionType::Absolute,
@@ -108,7 +108,7 @@ fn spawn_death_card(
                         ..Default::default()
                     }
                     .ease_to(
-                        Style {
+                        Node {
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
                             position_type: PositionType::Absolute,
@@ -128,18 +128,12 @@ fn spawn_death_card(
                 .insert(ExorcismCard)
                 .with_children(|parent| {
                     parent
-                        .spawn(TextBundle {
-                            text: Text::from_section(
-                                "EXORCISED\n\nR to restart\nZ to undo",
-                                TextStyle {
-                                    font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                    color: Color::WHITE,
-                                    ..default()
-                                },
-                            )
-                            .with_alignment(TextAlignment::Center),
-                            ..Default::default()
-                        })
+                        .spawn((
+                            Text::from_section("EXORCISED\n\nR to restart\nZ to undo")
+                                .with_justify(JustifyText::Center),
+                            TextFont::new(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
+                            TextColor::new(Color::WHITE),
+                        ))
                         .insert(FontScale::from(FontSize::Medium));
                 });
         } else if *state != WilloState::Dead && *last_state == WilloState::Dead {

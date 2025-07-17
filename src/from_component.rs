@@ -1,5 +1,5 @@
 //! Plugin that maintains `Into` components from entities' corresponding `From` component.
-use bevy::prelude::*;
+use bevy::{ecs::component::Mutable, prelude::*};
 use std::marker::PhantomData;
 
 /// Set used by systems in the [FromComponentPlugin].
@@ -67,7 +67,7 @@ where
 fn from_changed_component<F, I>(mut query: Query<(&F, &mut I), Changed<F>>)
 where
     F: Into<I> + Component + 'static + Send + Sync + Clone,
-    I: Component + 'static + Send + Sync,
+    I: Component<Mutability = Mutable> + 'static + Send + Sync,
 {
     for (from_component, mut into_component) in query.iter_mut() {
         *into_component = from_component.clone().into();

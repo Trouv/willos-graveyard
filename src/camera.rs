@@ -18,7 +18,7 @@ impl Plugin for CameraPlugin {
                 Update,
                 fit_camera_around_play_zone_padded
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_if(on_event::<bevy::window::WindowResized>()),
+                    .run_if(on_event::<bevy::window::WindowResized>),
             );
     }
 }
@@ -29,11 +29,11 @@ impl Plugin for CameraPlugin {
 pub struct PlayZonePortion(pub f32);
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d::default());
 }
 
 fn fit_camera_around_play_zone_padded(
-    mut camera_query: Query<(&mut Transform, &mut OrthographicProjection), With<Camera>>,
+    mut camera_query: Query<(&mut Transform, &mut Projection), With<Camera2d>>,
     level_query: Query<&LevelIid>,
     project_assets: Res<Assets<LdtkProject>>,
     asset_holder: Res<AssetHolder>,

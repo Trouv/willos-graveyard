@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 //! Plugin for displaying images in the UI from a TextureAtlas.
-use bevy::prelude::*;
+use bevy::{asset::RenderAssetUsages, prelude::*};
 use std::collections::HashMap;
 
 /// Plugin for displaying images in the UI from a TextureAtlas.
@@ -17,29 +17,20 @@ impl Plugin for UiAtlasImagePlugin {
 
 /// Resource that caches TextureAtlases and their corresponding images.
 #[derive(Debug, Default, Deref, DerefMut, Resource)]
-struct UiAtlasImageMap(HashMap<Handle<TextureAtlas>, Vec<Handle<Image>>>);
+struct UiAtlasImageMap(HashMap<Handle<TextureAtlasLayout>, Vec<Handle<Image>>>);
 
 /// Component that defines a UiAtlasImage.
 ///
 /// The plugin will respond to changes in this component.
 /// First, it generates plain [Image](bevy::render::Image)s based off the textures in the texture atlas.
-/// Using these images, it will insert the appropriate [UiImage](bevy::render::UiImage) on your entity.
+/// Using these images, it will insert the appropriate `ImageNode` on your entity.
 #[derive(Clone, Debug, Default, Eq, PartialEq, Component)]
+#[require(ImageNode)]
 pub struct UiAtlasImage {
     /// Atlas that defines the texture and its partitions.
-    pub texture_atlas: Handle<TextureAtlas>,
+    pub texture_atlas: Handle<TextureAtlasLayout>,
     /// Index of the texture partition to display on this entity.
     pub index: usize,
-}
-
-/// Bundle for [UiAtlasImage] and the components it needs to render.
-#[derive(Debug, Default, Bundle)]
-pub struct AtlasImageBundle {
-    /// The [UiAtlasImage] for this entity.
-    pub atlas_image: UiAtlasImage,
-    /// The plugin just generates a UiImage on the entity.
-    /// So, an ImageBundle will always contain everything it needs to render properly.
-    pub image_bundle: ImageBundle,
 }
 
 fn resolve_ui_atlas_image(
@@ -47,7 +38,7 @@ fn resolve_ui_atlas_image(
     mut map: ResMut<UiAtlasImageMap>,
     ui_atlas_images: Query<(Entity, &UiAtlasImage), Changed<UiAtlasImage>>,
     mut images: ResMut<Assets<Image>>,
-    atlases: Res<Assets<TextureAtlas>>,
+    atlases: Res<Assets<TextureAtlasLayout>>,
 ) {
     for (entity, ui_atlas_image) in &ui_atlas_images {
         let images = map
@@ -77,6 +68,7 @@ fn resolve_ui_atlas_image(
                                 rect.height() as u32,
                             ),
                             is_srgb,
+                            RenderAssetUsages::RENDER_WORLD,
                         );
 
                         images.add(crop)
@@ -86,7 +78,7 @@ fn resolve_ui_atlas_image(
 
         commands
             .entity(entity)
-            .insert(UiImage::new(images[ui_atlas_image.index].clone()));
+            .insert(ImageNode::new(images[ui_atlas_image.index].clone()));
     }
 }
 

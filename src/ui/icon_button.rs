@@ -38,20 +38,20 @@ pub enum IconButton {
     /// Button with all other elements, but no icon.
     NoIcon,
     /// Use a simple Image for the button's icon.
-    ImageIcon(UiImage),
+    ImageIcon(ImageNode),
     /// Use a texture atlas + index for the button's icon.
     AtlasImageIcon(UiAtlasImage),
 }
 
-// PartialEq is useful for testing, but UiImage does not implement it.
+// PartialEq is useful for testing, but ImageNode does not implement it.
 // So, this trivial manual implementation is provided.
 impl PartialEq for IconButton {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (IconButton::NoIcon, IconButton::NoIcon) => true,
             (
-                IconButton::ImageIcon(UiImage { texture: s, .. }),
-                IconButton::ImageIcon(UiImage { texture: o, .. }),
+                IconButton::ImageIcon(ImageNode { image: s, .. }),
+                IconButton::ImageIcon(ImageNode { image: o, .. }),
             ) => s == o,
             (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
             _ => false,
@@ -62,6 +62,7 @@ impl PartialEq for IconButton {
 impl Eq for IconButton {}
 
 #[derive(Debug, Component)]
+#[require(Button, PreviousComponent<Interaction>)]
 struct IconButtonElement;
 
 /// Bundle containing all components necessary for a functional IconButton.
@@ -153,7 +154,7 @@ pub struct IconButtonAssets {
 fn spawn_icon_button_elements(
     mut commands: Commands,
     icon_buttons: Query<(Entity, &IconButton), Changed<IconButton>>,
-    icon_button_elements: Query<(Entity, &Parent), With<IconButtonElement>>,
+    icon_button_elements: Query<(Entity, &ChildOf), With<IconButtonElement>>,
     assets: Res<IconButtonAssets>,
 ) {
     for (entity, icon_button) in &icon_buttons {
@@ -166,9 +167,9 @@ fn spawn_icon_button_elements(
             // Radial
             parent
                 .spawn(ButtonRadial)
-                .insert(ImageBundle {
-                    image: UiImage::new(assets.radial.clone()),
-                    style: Style {
+                .insert((
+                    ImageNode::new(assets.radial.clone()),
+                    Node {
                         position_type: PositionType::Absolute,
                         left: Val::Percent(12.5),
                         right: Val::Percent(12.5),
@@ -176,17 +177,16 @@ fn spawn_icon_button_elements(
                         bottom: Val::Percent(12.5),
                         ..default()
                     },
-                    focus_policy: FocusPolicy::Pass,
-                    background_color: BackgroundColor(Color::NONE),
-                    ..default()
-                })
+                    FocusPolicy::Pass,
+                    BackgroundColor(Color::NONE),
+                ))
                 .insert(IconButtonElement);
 
             // Outline
             parent
-                .spawn(ImageBundle {
-                    image: UiImage::new(assets.outline.clone()),
-                    style: Style {
+                .spawn((
+                    ImageNode::new(assets.outline.clone()),
+                    Node {
                         position_type: PositionType::Absolute,
                         left: Val::Percent(0.),
                         right: Val::Percent(0.),
@@ -194,14 +194,13 @@ fn spawn_icon_button_elements(
                         bottom: Val::Percent(0.),
                         ..default()
                     },
-                    focus_policy: FocusPolicy::Pass,
-                    ..default()
-                })
+                    FocusPolicy::Pass,
+                ))
                 .insert(IconButtonElement);
 
             // Icon
-            let mut icon_entity = parent.spawn(ImageBundle {
-                style: Style {
+            let mut icon_entity = parent.spawn((
+                Node {
                     position_type: PositionType::Absolute,
                     left: Val::Percent(0.),
                     right: Val::Percent(0.),
@@ -209,9 +208,8 @@ fn spawn_icon_button_elements(
                     bottom: Val::Percent(0.),
                     ..default()
                 },
-                focus_policy: FocusPolicy::Pass,
-                ..default()
-            });
+                FocusPolicy::Pass,
+            ));
 
             icon_entity.insert(IconButtonElement);
 

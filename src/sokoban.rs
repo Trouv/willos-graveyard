@@ -6,10 +6,10 @@
 //! Then, move entities around with the [SokobanCommands] system parameter.
 use bevy::{
     ecs::system::SystemParam,
+    platform::collections::{HashMap, HashSet},
     prelude::*,
-    utils::{HashMap, HashSet},
 };
-use bevy_easings::*;
+use bevy_easings::{EaseFunction, *};
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::{
     hash::Hash,

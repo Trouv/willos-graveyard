@@ -73,7 +73,7 @@ fn main() {
 
                     ..default()
                 }),
-            EasingsPlugin,
+            EasingsPlugin::default(),
             LdtkPlugin,
         ))
         .insert_resource(LdtkSettings {

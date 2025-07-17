@@ -16,7 +16,7 @@ use crate::{
 use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use leafwing_input_manager::{prelude::*, user_input::InputKind};
+use leafwing_input_manager::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range};
@@ -68,12 +68,14 @@ impl Plugin for GravestonePlugin {
 /// Asset collection for loading assets relevant to gravestones and gravestone controls.
 #[derive(Debug, Default, AssetCollection, Resource)]
 pub struct GravestoneAssets {
-    #[asset(texture_atlas(tile_size_x = 32., tile_size_y = 32., columns = 10, rows = 2))]
+    #[asset(texture_atlas(tile_size_x = 32, tile_size_y = 32, columns = 10, rows = 2))]
+    grave_bodies_layout: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/graves-Sheet.png")]
-    grave_bodies: Handle<TextureAtlas>,
-    #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
+    grave_bodies: Handle<Image>,
+    #[asset(texture_atlas(tile_size_x = 16, tile_size_y = 16, columns = 16, rows = 11))]
+    key_code_icons_layout: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/key-code-icons.png")]
-    key_code_icons: Handle<TextureAtlas>,
+    key_code_icons: Handle<TextureAtlasLayout>,
 }
 
 #[derive(Debug, Resource)]
@@ -190,33 +192,37 @@ fn spawn_gravestone_body(
             let mut rng = rand::thread_rng();
 
             // body entity
-            parent.spawn(SpriteSheetBundle {
-                sprite: TextureAtlasSprite {
-                    index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
-                        [dist.sample(&mut rng)],
+            parent.spawn((
+                Sprite {
+                    image: assets.grave_bodies.clone(),
+                    texture_atlas: Some(TextureAtlas {
+                        layout: assets.grave_bodies_layout.clone(),
+                        index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
+                            [dist.sample(&mut rng)],
+                    }),
                     ..default()
                 },
-                texture_atlas: assets.grave_bodies.clone(),
-                transform: Transform::from_translation(settings.gravestone_translation),
-                ..default()
-            });
+                Transform::from_translation(settings.gravestone_translation),
+            ));
 
             // icon entity
-            if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
-                .get(*grave_id)
+            if let Some(key_code) = input_map
+                .get_buttonlike(grave_id)
                 .iter()
                 .flat_map(|inputs| inputs.iter())
-                .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
+                .find_map(|i| i.as_any().downcast_ref::<KeyCode>())
             {
-                parent.spawn(SpriteSheetBundle {
-                    sprite: TextureAtlasSprite {
-                        index: key_code.variant_index(),
+                parent.spawn((
+                    Sprite {
+                        image: assets.key_code_icons.clone(),
+                        texture_atlas: Some(TextureAtlas {
+                            layout: assets.key_code_icons_layout.clone(),
+                            index: key_code.variant_index(),
+                        }),
                         ..default()
                     },
-                    texture_atlas: assets.key_code_icons.clone(),
-                    transform: Transform::from_translation(settings.icon_translation),
-                    ..default()
-                });
+                    Transform::from_translation(settings.icon_translation),
+                ));
             }
         });
     }

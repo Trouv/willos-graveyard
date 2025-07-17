@@ -8,7 +8,7 @@ use crate::{
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::{EaseFunction, *};
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
 
@@ -163,8 +163,8 @@ struct WilloBundle {
     push_tracker: PushTracker,
     willo_state: WilloState,
     movement_timer: MovementTimer,
-    #[sprite_sheet_bundle]
-    sprite_sheet_bundle: SpriteSheetBundle,
+    #[sprite_sheet]
+    sprite_sheet: Sprite,
     willo_animation_state: WilloAnimationState,
     volatile: Volatile,
     volatile_history: History<Volatile>,
@@ -181,10 +181,10 @@ fn push_sugar(
         .read()
         .filter(|PushEvent { pusher, .. }| *pusher == willo_entity)
     {
-        commands.spawn(AudioBundle {
-            source: sfx.push_sound.clone(),
-            settings: PlaybackSettings::DESPAWN,
-        });
+        commands.spawn((
+            AudioSource::new(sfx.push_sound.clone()),
+            PlaybackSettings::DESPAWN,
+        ));
         *animation_state = WilloAnimationState::Push(*direction);
     }
 }
@@ -223,10 +223,10 @@ fn history_sugar(
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
                 *willo_query.single_mut() = WilloAnimationState::Idle(Direction::Down);
-                commands.spawn(AudioBundle {
-                    source: sfx.undo_sound.clone(),
-                    settings: PlaybackSettings::DESPAWN,
-                });
+                commands.spawn((
+                    AudioSource::new(sfx.undo_sound.clone()),
+                    PlaybackSettings::DESPAWN,
+                ));
             }
             _ => (),
         }

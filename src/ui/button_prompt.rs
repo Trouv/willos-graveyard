@@ -6,9 +6,9 @@
 //! Finally, [`ButtonPromptPlugin<T>`](ButtonPromptPlugin) needs to be added to the app.
 use std::marker::PhantomData;
 
-use bevy::{ecs::query::ReadOnlyWorldQuery, prelude::*, reflect::Enum};
+use bevy::{ecs::query::QueryFilter, prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
-use leafwing_input_manager::{prelude::*, user_input::InputKind};
+use leafwing_input_manager::prelude::*;
 
 use crate::{
     ui::action::UiAction,
@@ -48,9 +48,9 @@ where
             Update,
             (
                 spawn_button_prompt::<T, Changed<UiAction<T>>>
-                    .run_if(resource_exists::<ButtonPromptAssets>()),
+                    .run_if(resource_exists::<ButtonPromptAssets>),
                 spawn_button_prompt::<T, ()>
-                    .run_if(resource_exists::<ButtonPromptAssets>())
+                    .run_if(resource_exists::<ButtonPromptAssets>)
                     .run_if(resource_changed::<InputMap<T>>),
             ),
         );
@@ -60,9 +60,9 @@ where
 /// Asset collection for assets relevant to button prompts.
 #[derive(Clone, Debug, AssetCollection, Resource)]
 pub struct ButtonPromptAssets {
-    #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
+    #[asset(texture_atlas(tile_size_x = 16, tile_size_y = 16, columns = 16, rows = 11))]
     #[asset(path = "textures/key-code-icons.png")]
-    key_code_icons: Handle<TextureAtlas>,
+    key_code_icons: Handle<TextureAtlasLayout>,
 }
 
 #[derive(Copy, Clone, Debug, Default, Component)]
@@ -71,12 +71,12 @@ struct ButtonPrompt;
 fn spawn_button_prompt<T, F>(
     mut commands: Commands,
     actions: Query<(Entity, &UiAction<T>), F>,
-    existing_prompts: Query<(Entity, &Parent), With<ButtonPrompt>>,
+    existing_prompts: Query<(Entity, &ChildOf), With<ButtonPrompt>>,
     input_map: Res<InputMap<T>>,
     assets: Res<ButtonPromptAssets>,
 ) where
     T: Actionlike + Send + Sync + Clone + 'static,
-    F: ReadOnlyWorldQuery,
+    F: QueryFilter,
 {
     for (entity, action) in &actions {
         // despawn any existing prompts
@@ -86,11 +86,11 @@ fn spawn_button_prompt<T, F>(
             .for_each(|(e, _)| commands.entity(e).despawn_recursive());
 
         // spawn button prompt
-        if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
-            .get((**action).clone())
+        if let Some(key_code) = input_map
+            .get_buttonlike(action)
             .iter()
             .flat_map(|inputs| inputs.iter())
-            .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
+            .find_map(|i| i.as_any().downcast_ref::<KeyCode>())
         {
             commands.entity(entity).with_children(|parent| {
                 parent
@@ -99,7 +99,7 @@ fn spawn_button_prompt<T, F>(
                             texture_atlas: assets.key_code_icons.clone(),
                             index: key_code.variant_index(),
                         },
-                        image_bundle: ImageBundle {
+                        image_node: ImageBundle {
                             style: Style {
                                 position_type: PositionType::Absolute,
                                 top: Val::Px(0.),

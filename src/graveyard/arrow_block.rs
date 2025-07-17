@@ -51,10 +51,9 @@ impl Plugin for ArrowBlockPlugin {
                 (
                     despawn_movement_tiles,
                     all_movement_tiles_at_intersections
-                        .pipe(GraveyardLayer::BackgroundEntities.spawn_bundles_on())
-                        .map(bevy::utils::warn),
+                        .pipe(GraveyardLayer::BackgroundEntities.spawn_bundles_on()),
                 ),
-                apply_deferred,
+                ApplyDeferred,
             )
                 .chain()
                 .in_set(MovementTileUpdateSet),
@@ -72,9 +71,10 @@ impl Plugin for ArrowBlockPlugin {
 
 #[derive(Clone, Debug, AssetCollection, Resource)]
 struct MovementTileAssets {
-    #[asset(texture_atlas(tile_size_x = 64., tile_size_y = 64., columns = 9, rows = 9))]
+    #[asset(texture_atlas(tile_size_x = 64, tile_size_y = 64, columns = 9, rows = 9))]
+    movement_tiles_layout: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/movement-table-actions.png")]
-    movement_tiles: Handle<TextureAtlas>,
+    movement_tiles: Handle<Image>,
 }
 
 trait Dimension {
@@ -161,8 +161,8 @@ where
     history: History<GridCoords>,
     #[with(SokobanBlock::new_dynamic)]
     sokoban_block: SokobanBlock,
-    #[sprite_sheet_bundle]
-    sprite_sheet_bundle: SpriteSheetBundle,
+    #[sprite_sheet]
+    sprite_sheet: Sprite,
 }
 
 /// Primary component for movement tiles, storing information about the directions of the movement.
@@ -222,7 +222,7 @@ impl MovementTileBundle {
         let sprite = TextureAtlasSprite { index, ..default() };
         let sprite_sheet_bundle = SpriteSheetBundle {
             sprite,
-            texture_atlas: movement_tile_assets.movement_tiles.clone(),
+            texture_atlas: movement_tile_assets.movement_tiles_layout.clone(),
             transform,
             ..default()
         };
