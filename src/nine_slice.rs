@@ -1,10 +1,8 @@
 //! Utilities for generating nine-slice images from texture atlases.
 use bevy::{
+    image::TextureFormatPixelInfo,
     prelude::*,
-    render::{
-        render_resource::{Extent3d, TextureDimension},
-        texture::TextureFormatPixelInfo,
-    },
+    render::render_resource::{Extent3d, TextureDimension},
 };
 use thiserror::Error;
 

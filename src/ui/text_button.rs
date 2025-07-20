@@ -22,7 +22,7 @@ pub struct TextButton;
 /// To give this button simple functionality, consider inserting a [crate::ui::actions::UiAction].
 #[allow(dead_code)]
 pub fn spawn<'w, S: Into<String>>(
-    child_builder: &mut ChildSpawnerCommands<'w>,
+    child_builder: &'w mut ChildSpawnerCommands<'w>,
     button_text: S,
     asset_holder: &AssetHolder,
     margin: Val,
@@ -73,9 +73,9 @@ pub fn spawn<'w, S: Into<String>>(
         // spawn the text
         button
             .spawn((
-                Text::from_section(button_text),
-                TextFont::new(asset_holder.font.clone()),
-                TextColor::new(Color::WHITE),
+                Text(button_text.into()),
+                TextFont::from_font(asset_holder.font.clone()),
+                TextColor(Color::WHITE),
             ))
             .insert(FontScale::from(font_size))
             .insert(Node {

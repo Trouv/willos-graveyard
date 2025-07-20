@@ -29,7 +29,7 @@ impl Plugin for CameraPlugin {
 pub struct PlayZonePortion(pub f32);
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2d::default());
+    commands.spawn(Camera2d::default()).insert(Msaa::Off);
 }
 
 fn fit_camera_around_play_zone_padded(

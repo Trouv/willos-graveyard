@@ -249,7 +249,7 @@ fn goal_ghost_animation(
     time: Res<Time>,
 ) {
     for (mut animation, mut sprite) in goal_ghost_query.iter_mut() {
-        let Some(mut sprite) = sprite.texture_atlas else {
+        let Some(sprite) = sprite.texture_atlas.as_mut() else {
             continue;
         };
 

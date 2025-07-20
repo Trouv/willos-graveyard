@@ -27,12 +27,13 @@ impl Plugin for FontScalePlugin {
 
 /// Font sizes available for font scaling with the [FontScale] component.
 #[allow(dead_code)]
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug, Default)]
 pub enum FontSize {
     /// A tiny font size, good for footnotes.
     Tiny,
     /// A small font size, good for description bodies.
     Small,
+    #[default]
     /// A medium font size, good for button text and sub-titles.
     Medium,
     /// A large font size, good for section titles.
@@ -56,11 +57,11 @@ pub enum FontSize {
 /// single-element `FontSize` list.
 /// A single-element `FontScale` can be instantiated with `FontScale::from(FontSize::...)`.
 #[derive(Clone, PartialEq, Debug, Default, Component, Deref, DerefMut)]
-pub struct FontScale(pub Vec<FontSize>);
+pub struct FontScale(FontSize);
 
 impl From<FontSize> for FontScale {
     fn from(value: FontSize) -> Self {
-        FontScale(vec![value])
+        FontScale(value)
     }
 }
 
@@ -111,23 +112,17 @@ impl Default for FontSizeRatios {
 }
 
 fn font_scale(
-    mut query: Query<(&FontScale, &mut Text)>,
+    mut query: Query<(&FontScale, &mut TextFont)>,
     windows: Query<&Window, With<PrimaryWindow>>,
     ratios: Res<FontSizeRatios>,
 ) {
-    for (font_scale, mut text) in query.iter_mut() {
+    for (font_scale, mut text_font) in query.iter_mut() {
         if let Ok(primary) = windows.get_single() {
             // To best support ultra-wide and vertical windows, we base the fonts off the smaller
             // of the two dimensions
             let min_length = primary.width().min(primary.height());
 
-            font_scale
-                .iter()
-                .cycle()
-                .zip(text.sections.iter_mut())
-                .for_each(|(font_size, section)| {
-                    section.style.font_size = ratios.get(font_size) * min_length;
-                });
+            text_font.font_size = ratios.get(font_scale) * min_length;
         }
     }
 }

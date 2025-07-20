@@ -58,7 +58,7 @@ fn sprite_sheet_animation(
 ) {
     for (entity, mut sprite, mut sprite_sheet_animation) in query.iter_mut() {
         sprite_sheet_animation.frame_timer.tick(time.delta());
-        let Some(mut sprite) = sprite.texture_atlas else {
+        let Some(sprite) = sprite.texture_atlas.as_mut() else {
             continue;
         };
 
@@ -81,7 +81,7 @@ fn set_initial_sprite_index(
     mut query: Query<(&mut Sprite, &SpriteSheetAnimation), Changed<SpriteSheetAnimation>>,
 ) {
     for (mut sprite, sprite_sheet_animation) in query.iter_mut() {
-        let Some(mut sprite) = sprite.texture_atlas else {
+        let Some(sprite) = sprite.texture_atlas.as_mut() else {
             continue;
         };
         let indices = &sprite_sheet_animation.indices;
@@ -159,7 +159,7 @@ fn animation_finisher<F>(
                 if let Ok((mut from, mut sprite, mut sprite_sheet_animation)) =
                     query.get_mut(*entity)
                 {
-                    let Some(mut sprite) = sprite.texture_atlas else {
+                    let Some(sprite) = sprite.texture_atlas.as_mut() else {
                         continue;
                     };
                     *from = from.next().unwrap();

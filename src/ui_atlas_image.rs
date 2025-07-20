@@ -25,8 +25,8 @@ struct UiAtlasImageMap(HashMap<Handle<TextureAtlasLayout>, Vec<Handle<Image>>>);
 /// First, it generates plain [Image](bevy::render::Image)s based off the textures in the texture atlas.
 /// Using these images, it will insert the appropriate `ImageNode` on your entity.
 #[derive(Clone, Debug, Default, Eq, PartialEq, Component)]
-#[require(ImageNode)]
 pub struct UiAtlasImage {
+    pub image: Handle<Image>,
     /// Atlas that defines the texture and its partitions.
     pub texture_atlas: Handle<TextureAtlasLayout>,
     /// Index of the texture partition to display on this entity.
@@ -49,7 +49,7 @@ fn resolve_ui_atlas_image(
                     .expect("Handle used in UiAtlasImage should be in Assets<TextureAtlas>");
 
                 let image = images
-                    .get(&atlas.texture)
+                    .get(&ui_atlas_image.image)
                     .expect("source image for UiAtlasImage should be in Assets<Image>");
 
                 let is_srgb = image.texture_descriptor.format.is_srgb();
