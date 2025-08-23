@@ -76,7 +76,7 @@ pub(super) fn ui_action<T>(
 {
     for (action, interaction, previous) in actions.iter() {
         if (Interaction::Hovered, Interaction::Pressed) == (*interaction, *previous.get()) {
-            event_writer.send(action.clone())
+            event_writer.write(action.clone());
         }
     }
 }

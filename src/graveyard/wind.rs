@@ -40,24 +40,20 @@ fn animate_grass_system(
     texture_atlases: Res<Assets<TextureAtlasLayout>>,
     mut query: Query<(&mut WindTimer, &mut Sprite)>,
 ) {
-    for (
-        mut timer,
-        Sprite {
-            texture_atlas: Some(mut texture_atlas),
-            ..
-        },
-    ) in query.iter_mut()
-    {
+    for (mut timer, mut sprite) in query.iter_mut() {
         timer.0.tick(time.delta());
+
         if timer.0.finished() {
-            let texture_atlas_layout = texture_atlases.get(texture_atlas.layout).unwrap();
-            let mut rng = rand::thread_rng();
-            let chance = rng.gen::<f32>();
-            if chance <= 0.2 {
-                texture_atlas.index =
-                    cmp::min(texture_atlas.index + 1, texture_atlas_layout.len() - 1);
-            } else if chance > 0.2 && chance <= 0.6 {
-                texture_atlas.index = cmp::max(texture_atlas.index as i32 - 1, 0) as usize;
+            if let Some(texture_atlas) = &mut sprite.texture_atlas {
+                let texture_atlas_layout = texture_atlases.get(&texture_atlas.layout).unwrap();
+                let mut rng = rand::thread_rng();
+                let chance = rng.gen::<f32>();
+                if chance <= 0.2 {
+                    texture_atlas.index =
+                        cmp::min(texture_atlas.index + 1, texture_atlas_layout.len() - 1);
+                } else if chance > 0.2 && chance <= 0.6 {
+                    texture_atlas.index = cmp::max(texture_atlas.index as i32 - 1, 0) as usize;
+                }
             }
         }
     }

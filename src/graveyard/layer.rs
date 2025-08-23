@@ -48,7 +48,7 @@ impl GraveyardLayer {
     /// Returns a system that takes a pipe input of bundles and spawns them on this layer.
     pub fn spawn_bundles_on<I>(
         self,
-    ) -> impl Fn(In<I>, Commands, Query<(Entity, &LayerMetadata)>) -> Result<(), LayerEntityDoesNotExist>
+    ) -> impl Fn(In<I>, Commands, Query<(Entity, &LayerMetadata)>) -> Result<()>
     where
         I: IntoIterator,
         <I as IntoIterator>::Item: Bundle,
@@ -60,7 +60,7 @@ impl GraveyardLayer {
                 .ok_or(LayerEntityDoesNotExist(self))?;
 
             bundles_iter.into_iter().for_each(|bundle| {
-                commands.spawn(bundle).set_parent(layer_entity);
+                commands.spawn(bundle).insert(ChildOf(layer_entity));
             });
 
             Ok(())

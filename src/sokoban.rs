@@ -9,7 +9,7 @@ use bevy::{
     platform::collections::{HashMap, HashSet},
     prelude::*,
 };
-use bevy_easings::{EaseFunction, *};
+use bevy_easings::{Ease, EaseFunction, *};
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::{
     hash::Hash,
@@ -81,7 +81,7 @@ where
                 Update,
                 flush_sokoban_commands::<P, Direction>
                     .run_if(in_state(self.state.clone()))
-                    .run_if(on_event::<SokobanCommand<Direction>>())
+                    .run_if(on_event::<SokobanCommand<Direction>>)
                     .in_set(SokobanSets::LogicalMovement),
             )
             // Systems with potential easing end/beginning collisions cannot be in CoreSet::Update
@@ -220,7 +220,8 @@ where
     ///
     /// Will perform the necessary collision checks and block pushes.
     pub fn move_block(&mut self, entity: Entity, direction: D) {
-        self.writer.send(SokobanCommand::Move { entity, direction });
+        self.writer
+            .write(SokobanCommand::Move { entity, direction });
     }
 }
 
@@ -525,8 +526,8 @@ fn flush_sokoban_commands<P, D>(
         };
 
         entities_to_move.iter().for_each(|entity_to_move| {
-            let mut grid_coords = grid_coords_query
-                .get_component_mut::<GridCoords>(*entity_to_move)
+            let (_, mut grid_coords, ..) = grid_coords_query
+                .get_mut(*entity_to_move)
                 .expect("pushed entity should be valid sokoban entity");
 
             let new_coords = IVec2::from(*grid_coords) + direction;
@@ -542,7 +543,9 @@ fn flush_sokoban_commands<P, D>(
 
                 is_push_tracker
             })
-            .for_each(|push_event| push_events.send(push_event));
+            .for_each(|push_event| {
+                push_events.write(push_event);
+            });
     }
 }
 

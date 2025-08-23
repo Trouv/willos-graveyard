@@ -34,6 +34,7 @@ impl Plugin for IconButtonPlugin {
 ///
 /// Currently, the only metadata needed is the image to use as an icon.
 #[derive(Debug, Component)]
+#[require(Button)]
 pub enum IconButton {
     /// Button with all other elements, but no icon.
     NoIcon,
@@ -71,7 +72,7 @@ struct IconButtonElement;
 #[derive(Debug, Bundle)]
 pub struct IconButtonBundle {
     icon_button: IconButton,
-    button_bundle: ButtonBundle,
+    node: Node,
     previous_interaction: PreviousComponent<Interaction>,
 }
 
@@ -80,13 +81,9 @@ impl IconButtonBundle {
     pub fn new(icon_button: IconButton) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
-            button_bundle: ButtonBundle {
-                style: Style {
-                    flex_grow: 1.,
-                    aspect_ratio: Some(1.),
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::NONE),
+            node: Node {
+                flex_grow: 1.,
+                aspect_ratio: Some(1.),
                 ..default()
             },
             previous_interaction: PreviousComponent::<Interaction>::default(),
@@ -97,14 +94,10 @@ impl IconButtonBundle {
     pub fn new_with_size(icon_button: IconButton, width: Val, height: Val) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
-            button_bundle: ButtonBundle {
-                style: Style {
-                    width,
-                    height,
-                    aspect_ratio: Some(1.),
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::NONE),
+            node: Node {
+                width,
+                height,
+                aspect_ratio: Some(1.),
                 ..default()
             },
             previous_interaction: PreviousComponent::<Interaction>::default(),
@@ -124,17 +117,13 @@ impl IconButtonBundle {
         } = position;
         IconButtonBundle {
             icon_button,
-            button_bundle: ButtonBundle {
-                style: Style {
-                    position_type: PositionType::Absolute,
-                    left,
-                    right,
-                    top,
-                    bottom,
-                    aspect_ratio: Some(1.),
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::NONE),
+            node: Node {
+                position_type: PositionType::Absolute,
+                left,
+                right,
+                top,
+                bottom,
+                aspect_ratio: Some(1.),
                 ..default()
             },
             previous_interaction: PreviousComponent::<Interaction>::default(),
@@ -160,8 +149,8 @@ fn spawn_icon_button_elements(
     for (entity, icon_button) in &icon_buttons {
         icon_button_elements
             .iter()
-            .filter(|(_, p)| p.get() == entity)
-            .for_each(|(e, _)| commands.entity(e).despawn_recursive());
+            .filter(|(_, p)| p.parent() == entity)
+            .for_each(|(e, _)| commands.entity(e).despawn());
 
         commands.entity(entity).with_children(|parent| {
             // Radial

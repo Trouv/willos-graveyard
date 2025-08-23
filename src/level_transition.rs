@@ -8,7 +8,7 @@ use crate::{
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
-use bevy_easings::{EaseFunction, *};
+use bevy_easings::{Ease, EaseFunction, *};
 use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
 
@@ -119,14 +119,7 @@ fn spawn_level_card(
         }
     }
 
-    let level_card_atlas = texture_atlas_from_nine_slice(
-        asset_holder.tarot_sheet.clone(),
-        Vec2::splat(64.),
-        16.,
-        16.,
-        16.,
-        16.,
-    );
+    let level_card_atlas = texture_atlas_from_nine_slice(UVec2::splat(64), 16, 16, 16, 16);
     let level_card_texture = generate_nineslice_image(
         NineSliceSize {
             inner_width: 8,
@@ -134,6 +127,7 @@ fn spawn_level_card(
         },
         NineSliceIndex::default(),
         &level_card_atlas,
+        &asset_holder.tarot_sheet,
         &mut images,
     )
     .unwrap();
@@ -174,18 +168,17 @@ fn spawn_level_card(
             if let Some(level_num) = level_num {
                 parent
                     .spawn((
-                        Text::from_section(format!("#{level_num}"))
-                            .with_justify(JustifyText::Center),
-                        TextFont::new(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
-                        TextColor::new(Color::WHITE),
+                        Text(format!("#{level_num}")),
+                        TextFont::from_font(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
+                        TextColor(Color::WHITE),
                     ))
                     .insert(FontScale::from(FontSize::Huge));
             }
             parent
                 .spawn((
-                    Text::from_section(title),
-                    TextFont::new(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
-                    TextColor::new(Color::WHITE),
+                    Text(title),
+                    TextFont::from_font(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
+                    TextColor(Color::WHITE),
                 ))
                 .insert(FontScale::from(FontSize::Medium));
         })
@@ -210,7 +203,7 @@ fn load_next_level(
                 *level_selection = transition_to.0.clone()
             } else {
                 commands.spawn(LdtkWorldBundle {
-                    ldtk_handle: asset_holder.ldtk.clone(),
+                    ldtk_handle: asset_holder.ldtk.clone().into(),
                     transform: Transform::from_xyz(32., 32., 0.),
                     ..Default::default()
                 });
@@ -247,7 +240,7 @@ fn level_card_update(
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT
-                    commands.entity(entity).despawn_recursive();
+                    commands.entity(entity).despawn();
                 }
                 _ => (),
             }

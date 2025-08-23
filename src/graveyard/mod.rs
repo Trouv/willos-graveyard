@@ -148,30 +148,30 @@ fn graveyard_input(
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == willo::WilloState::Waiting || *willo == willo::WilloState::Dead {
-            if gameplay_input.just_pressed(GraveyardAction::Undo) {
-                history_commands.send(HistoryCommands::Rewind);
+            if gameplay_input.just_pressed(&GraveyardAction::Undo) {
+                history_commands.write(HistoryCommands::Rewind);
                 *willo = willo::WilloState::Waiting;
                 rewind_settings.hold_timer =
                     Some(RewindTimer::new(rewind_settings.hold_range_millis.end));
-            } else if gameplay_input.pressed(GraveyardAction::Undo) {
+            } else if gameplay_input.pressed(&GraveyardAction::Undo) {
                 let range = rewind_settings.hold_range_millis.clone();
                 let acceleration = rewind_settings.hold_acceleration;
 
                 if let Some(RewindTimer { velocity, timer }) = &mut rewind_settings.hold_timer {
-                    *velocity = (*velocity - (acceleration * time.delta_seconds()))
+                    *velocity = (*velocity - (acceleration * time.delta_secs()))
                         .clamp(range.start as f32, range.end as f32);
 
                     timer.tick(time.delta());
 
                     if timer.just_finished() {
-                        history_commands.send(HistoryCommands::Rewind);
+                        history_commands.write(HistoryCommands::Rewind);
                         *willo = willo::WilloState::Waiting;
 
                         timer.set_duration(Duration::from_millis(*velocity as u64));
                     }
                 }
-            } else if gameplay_input.just_pressed(GraveyardAction::Restart) {
-                history_commands.send(HistoryCommands::Reset);
+            } else if gameplay_input.just_pressed(&GraveyardAction::Restart) {
+                history_commands.write(HistoryCommands::Reset);
                 *willo = willo::WilloState::Waiting;
             }
         }

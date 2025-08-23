@@ -28,7 +28,7 @@ impl Plugin for ControlDisplayPlugin {
             .add_systems(
                 Update,
                 update_grave_action_buttons
-                    .run_if(in_state(GameState::Graveyard).and_then(
+                    .run_if(in_state(GameState::Graveyard).and(
                         any_match_filter::<(
                             Changed<GridCoords>,
                             Or<(With<MovementTile>, With<GraveId>)>,
@@ -81,7 +81,7 @@ fn spawn_control_display(
                     right: Val::Percent(0.),
                     ..Default::default()
                 },
-                ZIndex::Local(-1),
+                ZIndex(-1),
             ))
             .insert(ControlDisplay)
             .with_children(|control_display| {
@@ -184,7 +184,8 @@ fn spawn_control_display(
                         graveyard_action_container
                             .spawn(IconButtonBundle::new(IconButton::AtlasImageIcon(
                                 UiAtlasImage {
-                                    texture_atlas: assets.graveyard_actions.clone(),
+                                    texture_atlas: assets.graveyard_actions_layout.clone(),
+                                    image: assets.graveyard_actions.clone(),
                                     index: 0,
                                 },
                             )))
@@ -194,7 +195,8 @@ fn spawn_control_display(
                         graveyard_action_container
                             .spawn(IconButtonBundle::new(IconButton::AtlasImageIcon(
                                 UiAtlasImage {
-                                    texture_atlas: assets.graveyard_actions.clone(),
+                                    texture_atlas: assets.graveyard_actions_layout.clone(),
+                                    image: assets.graveyard_actions.clone(),
                                     index: 1,
                                 },
                             )))
@@ -204,7 +206,8 @@ fn spawn_control_display(
                         graveyard_action_container
                             .spawn(IconButtonBundle::new(IconButton::AtlasImageIcon(
                                 UiAtlasImage {
-                                    texture_atlas: assets.graveyard_actions.clone(),
+                                    texture_atlas: assets.graveyard_actions_layout.clone(),
+                                    image: assets.graveyard_actions.clone(),
                                     index: 2,
                                 },
                             )))
@@ -227,6 +230,7 @@ fn update_grave_action_buttons(
                 let index = movement_tile.tileset_index();
                 IconButton::AtlasImageIcon(UiAtlasImage {
                     texture_atlas: assets.movement_table_actions_layout.clone(),
+                    image: assets.movement_table_actions.clone(),
                     index,
                 })
             }

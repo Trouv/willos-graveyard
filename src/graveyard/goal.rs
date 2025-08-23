@@ -178,7 +178,7 @@ fn check_goal(
                 if !goal.met {
                     goal.met = true;
 
-                    goal_events.send(GoalEvent::Met {
+                    goal_events.write(GoalEvent::Met {
                         stone_entity,
                         goal_entity,
                     });
@@ -191,7 +191,7 @@ fn check_goal(
             level_goal_met = false;
 
             if goal.met {
-                goal_events.send(GoalEvent::UnMet { goal_entity });
+                goal_events.write(GoalEvent::UnMet { goal_entity });
                 goal.met = false;
             }
         }
@@ -216,7 +216,7 @@ fn check_goal(
         }
 
         commands.spawn((
-            AudioSource::new(asset_holder.victory_sound.clone()),
+            AudioPlayer::new(asset_holder.victory_sound.clone()),
             PlaybackSettings::DESPAWN,
         ));
     }
@@ -367,9 +367,9 @@ fn spawn_goal_ghosts(
             Some(atlas) => atlas.clone(),
             None => {
                 let texture_atlas = TextureAtlasLayout::from_grid(
-                    Vec2::splat(32.),
-                    goal_ghost_settings.num_columns,
-                    goal_ghost_settings.num_rows,
+                    UVec2::splat(32),
+                    goal_ghost_settings.num_columns as u32,
+                    goal_ghost_settings.num_rows as u32,
                     None,
                     None,
                 );

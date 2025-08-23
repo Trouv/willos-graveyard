@@ -26,6 +26,7 @@ struct UiAtlasImageMap(HashMap<Handle<TextureAtlasLayout>, Vec<Handle<Image>>>);
 /// Using these images, it will insert the appropriate `ImageNode` on your entity.
 #[derive(Clone, Debug, Default, Eq, PartialEq, Component)]
 pub struct UiAtlasImage {
+    /// Source image.
     pub image: Handle<Image>,
     /// Atlas that defines the texture and its partitions.
     pub texture_atlas: Handle<TextureAtlasLayout>,

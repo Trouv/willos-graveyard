@@ -70,7 +70,7 @@ fn sprite_sheet_animation(
                     sprite.index = sprite_sheet_animation.indices.start;
                 } else {
                     sprite.index = sprite_sheet_animation.indices.end - 1;
-                    event_writer.send(AnimationEvent::Finished(entity));
+                    event_writer.write(AnimationEvent::Finished(entity));
                 }
             }
         }
@@ -105,14 +105,26 @@ fn set_initial_sprite_index(
 ///    Simply point an animation state to itself when it is complete.
 pub struct FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     from_type: PhantomData<F>,
 }
 
 impl<F> FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     /// Basic constructor for [FromComponentAnimator].
     pub fn new() -> Self {
@@ -122,7 +134,13 @@ where
 
 impl<F> Default for FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     fn default() -> Self {
         FromComponentAnimator {
@@ -133,7 +151,13 @@ where
 
 impl<F> Plugin for FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     fn build(&self, app: &mut App) {
         app.add_plugins(FromComponentPlugin::<F, SpriteSheetAnimation>::new())

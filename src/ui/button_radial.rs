@@ -1,5 +1,5 @@
 //! Simple plugin providing functionality for displaying the state of a button's interaction.
-use bevy::prelude::*;
+use bevy::{color::palettes::css::GRAY, prelude::*};
 
 use crate::GameState;
 
@@ -24,12 +24,12 @@ pub struct ButtonRadial;
 /// System that alters the visuals of a button radial to show interaction.
 fn highlight_button_radial(
     text_buttons: Query<(Entity, &Interaction), Changed<Interaction>>,
-    mut button_radials: Query<(&mut BackgroundColor, &Parent), With<ButtonRadial>>,
+    mut button_radials: Query<(&mut BackgroundColor, &ChildOf), With<ButtonRadial>>,
 ) {
     for (button_entity, interaction) in text_buttons.iter() {
         if let Some((mut radial_color, _)) = button_radials
             .iter_mut()
-            .find(|(_, parent)| parent.get() == button_entity)
+            .find(|(_, child_of)| child_of.parent() == button_entity)
         {
             match interaction {
                 Interaction::None => {
@@ -39,7 +39,7 @@ fn highlight_button_radial(
                     *radial_color = BackgroundColor(Color::WHITE);
                 }
                 Interaction::Pressed => {
-                    *radial_color = BackgroundColor(Color::GRAY);
+                    *radial_color = BackgroundColor(GRAY.into());
                 }
             }
         }

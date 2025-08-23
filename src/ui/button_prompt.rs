@@ -10,11 +10,7 @@ use bevy::{ecs::query::QueryFilter, prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::{
-    ui::action::UiAction,
-    ui_atlas_image::{AtlasImageBundle, UiAtlasImage},
-    utils::resource_changed,
-};
+use crate::{ui::action::UiAction, ui_atlas_image::UiAtlasImage, utils::resource_changed};
 
 /// Plugin for displaying button prompts on UI buttons that can be triggered by a physical button.
 ///
@@ -61,8 +57,9 @@ where
 #[derive(Clone, Debug, AssetCollection, Resource)]
 pub struct ButtonPromptAssets {
     #[asset(texture_atlas(tile_size_x = 16, tile_size_y = 16, columns = 16, rows = 11))]
+    key_code_icons_atlas: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/key-code-icons.png")]
-    key_code_icons: Handle<TextureAtlasLayout>,
+    key_code_icons_image: Handle<Image>,
 }
 
 #[derive(Copy, Clone, Debug, Default, Component)]
@@ -82,8 +79,8 @@ fn spawn_button_prompt<T, F>(
         // despawn any existing prompts
         existing_prompts
             .iter()
-            .filter(|(_, p)| p.get() == entity)
-            .for_each(|(e, _)| commands.entity(e).despawn_recursive());
+            .filter(|(_, p)| p.parent() == entity)
+            .for_each(|(e, _)| commands.entity(e).despawn());
 
         // spawn button prompt
         if let Some(key_code) = input_map
@@ -94,24 +91,22 @@ fn spawn_button_prompt<T, F>(
         {
             commands.entity(entity).with_children(|parent| {
                 parent
-                    .spawn(AtlasImageBundle {
-                        atlas_image: UiAtlasImage {
-                            texture_atlas: assets.key_code_icons.clone(),
+                    .spawn((
+                        UiAtlasImage {
+                            image: assets.key_code_icons_image.clone(),
+                            texture_atlas: assets.key_code_icons_atlas.clone(),
                             index: key_code.variant_index(),
                         },
-                        image_node: ImageBundle {
-                            style: Style {
-                                position_type: PositionType::Absolute,
-                                top: Val::Px(0.),
-                                left: Val::Px(0.),
-                                height: Val::Percent(25.),
-                                aspect_ratio: Some(1.),
-                                ..default()
-                            },
-                            z_index: ZIndex::Local(10),
+                        Node {
+                            position_type: PositionType::Absolute,
+                            top: Val::Px(0.),
+                            left: Val::Px(0.),
+                            height: Val::Percent(25.),
+                            aspect_ratio: Some(1.),
                             ..default()
                         },
-                    })
+                        ZIndex(10),
+                    ))
                     .insert(ButtonPrompt);
             });
         }
@@ -145,7 +140,7 @@ mod tests {
     fn asset_setup(app: &mut App) -> ButtonPromptAssets {
         let mut rng = rand::thread_rng();
         let button_prompt_assets = ButtonPromptAssets {
-            key_code_icons: Handle::weak_from_u128(rng.gen()),
+            key_code_icons_atlas: Handle::weak_from_u128(rng.gen()),
         };
 
         app.insert_resource(button_prompt_assets.clone());
@@ -195,7 +190,7 @@ mod tests {
         assert_eq!(
             *jump_button_prompt,
             UiAtlasImage {
-                texture_atlas: assets.key_code_icons.clone(),
+                texture_atlas: assets.key_code_icons_atlas.clone(),
                 index: 76
             }
         );
@@ -205,7 +200,7 @@ mod tests {
         assert_eq!(
             *shoot_button_prompt,
             UiAtlasImage {
-                texture_atlas: assets.key_code_icons,
+                texture_atlas: assets.key_code_icons_atlas,
                 index: 15
             }
         );
@@ -227,7 +222,7 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
-                texture_atlas: assets.key_code_icons.clone(),
+                texture_atlas: assets.key_code_icons_atlas.clone(),
                 index: 76
             }
         );
@@ -246,7 +241,7 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
-                texture_atlas: assets.key_code_icons.clone(),
+                texture_atlas: assets.key_code_icons_atlas.clone(),
                 index: 15
             }
         );
@@ -268,7 +263,7 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
-                texture_atlas: assets.key_code_icons.clone(),
+                texture_atlas: assets.key_code_icons_atlas.clone(),
                 index: 76
             }
         );
@@ -289,7 +284,7 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
-                texture_atlas: assets.key_code_icons.clone(),
+                texture_atlas: assets.key_code_icons_atlas.clone(),
                 index: 32
             }
         );

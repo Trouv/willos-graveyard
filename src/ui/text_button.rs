@@ -21,13 +21,13 @@ pub struct TextButton;
 ///
 /// To give this button simple functionality, consider inserting a [crate::ui::actions::UiAction].
 #[allow(dead_code)]
-pub fn spawn<'w, S: Into<String>>(
-    child_builder: &'w mut ChildSpawnerCommands<'w>,
+pub fn spawn<'c, 'w, S: Into<String>>(
+    child_builder: &'c mut ChildSpawnerCommands<'w>,
     button_text: S,
     asset_holder: &AssetHolder,
     margin: Val,
     font_size: FontSize,
-) -> EntityCommands<'w> {
+) -> EntityCommands<'c> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
     let mut e = child_builder.spawn((

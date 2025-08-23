@@ -40,7 +40,7 @@ fn fit_camera_around_play_zone_padded(
     windows: Query<&Window, With<PrimaryWindow>>,
     play_zone_portion: Res<PlayZonePortion>,
 ) {
-    if let Ok(level_iid) = level_query.get_single() {
+    if let Ok(level_iid) = level_query.single() {
         let ldtk_project = project_assets
             .get(&asset_holder.ldtk)
             .expect("LDtk project should already be loaded");
@@ -50,13 +50,20 @@ fn fit_camera_around_play_zone_padded(
         let level_size = IVec2::new(level.px_wid, level.px_hei);
         let padded_level_size = level_size + IVec2::splat(32 * 2);
 
-        let window = windows.single();
+        let window = windows.single().expect("game should only have one window");
 
         let padded_level_ratio = padded_level_size.x as f32 / padded_level_size.y as f32;
         let aspect_ratio = window.width() / window.height();
         let play_zone_ratio = aspect_ratio * **play_zone_portion;
 
-        let (mut transform, mut projection) = camera_query.single_mut();
+        let (mut transform, mut projection) = camera_query
+            .single_mut()
+            .expect("game should only have one camera");
+
+        let Projection::Orthographic(projection) = projection.as_mut() else {
+            panic!("game camera should be orthographic");
+        };
+
         projection.viewport_origin = Vec2::ZERO;
 
         let play_zone_size = if padded_level_ratio > play_zone_ratio {

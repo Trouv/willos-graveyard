@@ -20,7 +20,7 @@ impl<C: Component + Clone, S: States> HistoryPlugin<C, S> {
     }
 }
 
-impl<C: Component + Clone, S: States> Plugin for HistoryPlugin<C, S> {
+impl<C: Component<Mutability = Mutable> + Clone, S: States> Plugin for HistoryPlugin<C, S> {
     fn build(&self, app: &mut App) {
         app.add_event::<HistoryCommands>().add_systems(
             Update,

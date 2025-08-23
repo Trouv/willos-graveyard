@@ -17,7 +17,7 @@ impl Plugin for FontScalePlugin {
             Update,
             (
                 font_scale
-                    .run_if(on_event::<WindowResized>())
+                    .run_if(on_event::<WindowResized>)
                     .in_set(FontScaleSet),
                 font_scale.run_if(font_scale_changed).in_set(FontScaleSet),
             ),
@@ -117,7 +117,7 @@ fn font_scale(
     ratios: Res<FontSizeRatios>,
 ) {
     for (font_scale, mut text_font) in query.iter_mut() {
-        if let Ok(primary) = windows.get_single() {
+        if let Ok(primary) = windows.single() {
             // To best support ultra-wide and vertical windows, we base the fonts off the smaller
             // of the two dimensions
             let min_length = primary.width().min(primary.height());

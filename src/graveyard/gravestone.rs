@@ -75,7 +75,7 @@ pub struct GravestoneAssets {
     #[asset(texture_atlas(tile_size_x = 16, tile_size_y = 16, columns = 16, rows = 11))]
     key_code_icons_layout: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/key-code-icons.png")]
-    key_code_icons: Handle<TextureAtlasLayout>,
+    key_code_icons: Handle<Image>,
 }
 
 #[derive(Debug, Resource)]
@@ -258,23 +258,23 @@ fn gravestone_input(
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == WilloState::Waiting {
-            if grave_input.just_pressed(GraveId::Northwest) {
-                history_commands.send(HistoryCommands::Record);
+            if grave_input.just_pressed(&GraveId::Northwest) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::Northwest)
-            } else if grave_input.just_pressed(GraveId::North) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::North) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::North)
-            } else if grave_input.just_pressed(GraveId::Northeast) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::Northeast) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::Northeast)
-            } else if grave_input.just_pressed(GraveId::West) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::West) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::West)
-            } else if grave_input.just_pressed(GraveId::South) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::South) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::South)
-            } else if grave_input.just_pressed(GraveId::East) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::East) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::East)
             }
         }

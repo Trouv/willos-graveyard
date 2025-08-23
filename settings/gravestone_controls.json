@@ -1,76 +1,55 @@
 {
-  "map": {
+  "buttonlike_map": {
     "Northwest": [
       {
-        "Single": {
-          "Keyboard": "Q"
-        }
+        "KeyCode": "KeyQ"
       },
       {
-        "Single": {
-          "GamepadButton": "LeftTrigger"
-        }
+        "GamepadButton": "LeftTrigger"
       }
     ],
     "North": [
       {
-        "Single": {
-          "Keyboard": "W"
-        }
+        "KeyCode": "KeyW"
       },
       {
-        "Single": {
-          "GamepadButton": "North"
-        }
+        "GamepadButton": "North"
       }
     ],
     "Northeast": [
       {
-        "Single": {
-          "Keyboard": "E"
-        }
+        "KeyCode": "KeyE"
       },
       {
-        "Single": {
-          "GamepadButton": "RightTrigger"
-        }
+        "GamepadButton": "RightTrigger"
       }
     ],
     "West": [
       {
-        "Single": {
-          "Keyboard": "A"
-        }
+        "KeyCode": "KeyA"
       },
       {
-        "Single": {
-          "GamepadButton": "West"
-        }
+        "GamepadButton": "West"
       }
     ],
     "South": [
       {
-        "Single": {
-          "Keyboard": "S"
-        }
+        "KeyCode": "KeyS"
       },
       {
-        "Single": {
-          "GamepadButton": "South"
-        }
+        "GamepadButton": "South"
       }
     ],
     "East": [
       {
-        "Single": {
-          "Keyboard": "D"
-        }
+        "KeyCode": "KeyD"
       },
       {
-        "Single": {
-          "GamepadButton": "East"
-        }
+        "GamepadButton": "East"
       }
     ]
-  }
+  },
+  "axislike_map": {},
+  "dual_axislike_map": {},
+  "triple_axislike_map": {}
 }

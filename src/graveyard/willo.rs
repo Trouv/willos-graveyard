@@ -8,7 +8,7 @@ use crate::{
     AssetHolder, GameState, UNIT_LENGTH,
 };
 use bevy::prelude::*;
-use bevy_easings::{EaseFunction, *};
+use bevy_easings::{Ease, EaseFunction, *};
 use bevy_ecs_ldtk::{prelude::*, utils::grid_coords_to_translation};
 use std::time::Duration;
 
@@ -37,14 +37,14 @@ impl Plugin for WilloPlugin {
             (
                 push_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_if(on_event::<PushEvent<Direction>>())
+                    .run_if(on_event::<PushEvent<Direction>>)
                     .before(FromComponentSet),
                 play_exorcism_animaton
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_if(on_event::<ExorcismEvent>()),
+                    .run_if(on_event::<ExorcismEvent>),
                 history_sugar
                     .run_if(not(in_state(GameState::AssetLoading)))
-                    .run_if(on_event::<HistoryCommands>()),
+                    .run_if(on_event::<HistoryCommands>),
                 move_willo_by_tiles
                     .run_if(in_state(GameState::Graveyard))
                     .after(SokobanSets::LogicalMovement)
@@ -176,13 +176,15 @@ fn push_sugar(
     mut willo_query: Query<(Entity, &mut WilloAnimationState)>,
     sfx: Res<AssetHolder>,
 ) {
-    let (willo_entity, mut animation_state) = willo_query.single_mut();
+    let (willo_entity, mut animation_state) = willo_query
+        .single_mut()
+        .expect("willo should exist in this system");
     for PushEvent { direction, .. } in push_events
         .read()
         .filter(|PushEvent { pusher, .. }| *pusher == willo_entity)
     {
         commands.spawn((
-            AudioSource::new(sfx.push_sound.clone()),
+            AudioPlayer::new(sfx.push_sound.clone()),
             PlaybackSettings::DESPAWN,
         ));
         *animation_state = WilloAnimationState::Push(*direction);
@@ -196,7 +198,7 @@ fn push_translation(
         Changed<WilloAnimationState>,
     >,
 ) {
-    if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.get_single() {
+    if let Ok((entity, &grid_coords, transform, animation_state)) = willo_query.single() {
         let xy = grid_coords_to_translation(grid_coords, IVec2::splat(UNIT_LENGTH))
             + match animation_state {
                 WilloAnimationState::Push(direction) => (IVec2::ZERO + direction).as_vec2() * 5.,
@@ -222,9 +224,12 @@ fn history_sugar(
     for command in history_commands.read() {
         match command {
             HistoryCommands::Rewind | HistoryCommands::Reset => {
-                *willo_query.single_mut() = WilloAnimationState::Idle(Direction::Down);
+                *willo_query
+                    .single_mut()
+                    .expect("willo should exist during this system") =
+                    WilloAnimationState::Idle(Direction::Down);
                 commands.spawn((
-                    AudioSource::new(sfx.undo_sound.clone()),
+                    AudioPlayer::new(sfx.undo_sound.clone()),
                     PlaybackSettings::DESPAWN,
                 ));
             }
@@ -234,7 +239,7 @@ fn history_sugar(
 }
 
 fn play_exorcism_animaton(mut willo_query: Query<&mut WilloAnimationState>) {
-    if let Ok(mut animation_state) = willo_query.get_single_mut() {
+    if let Ok(mut animation_state) = willo_query.single_mut() {
         *animation_state = WilloAnimationState::Dying;
     }
 }
@@ -251,7 +256,7 @@ fn move_willo_by_tiles(
     time: Res<Time>,
 ) {
     if let Ok((entity, mut timer, mut willo_state, mut willo_animation_state)) =
-        willo_query.get_single_mut()
+        willo_query.single_mut()
     {
         timer.0.tick(time.delta());
 

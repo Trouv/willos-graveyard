@@ -37,7 +37,7 @@ impl Plugin for ArrowBlockPlugin {
         .configure_sets(
             Update,
             MovementTileUpdateSet
-                .run_if(in_state(GameState::Graveyard).and_then(
+                .run_if(in_state(GameState::Graveyard).and(
                     any_match_filter::<(
                         Or<(With<ArrowBlock<Row>>, With<ArrowBlock<Column>>)>,
                         Changed<GridCoords>,
@@ -201,7 +201,8 @@ impl MovementTile {
 struct MovementTileBundle {
     grid_coords: GridCoords,
     movement_tile: MovementTile,
-    sprite_sheet_bundle: SpriteSheetBundle,
+    sprite: Sprite,
+    transform: Transform,
 }
 
 impl MovementTileBundle {
@@ -219,18 +220,20 @@ impl MovementTileBundle {
 
         let index = movement_tile.tileset_index();
 
-        let sprite = TextureAtlasSprite { index, ..default() };
-        let sprite_sheet_bundle = SpriteSheetBundle {
-            sprite,
-            texture_atlas: movement_tile_assets.movement_tiles_layout.clone(),
-            transform,
+        let sprite = Sprite {
+            image: movement_tile_assets.movement_tiles.clone(),
+            texture_atlas: Some(TextureAtlas {
+                layout: movement_tile_assets.movement_tiles_layout.clone(),
+                index,
+            }),
             ..default()
         };
 
         MovementTileBundle {
             grid_coords,
             movement_tile,
-            sprite_sheet_bundle,
+            sprite,
+            transform,
         }
     }
 }
@@ -239,7 +242,9 @@ fn despawn_movement_tiles(
     mut commands: Commands,
     current_movement_tiles: Query<Entity, With<MovementTile>>,
 ) {
-    current_movement_tiles.for_each(|entity| commands.entity(entity).despawn_recursive());
+    current_movement_tiles
+        .into_iter()
+        .for_each(|entity| commands.entity(entity).despawn());
 }
 
 /// Should be run with conservative run criteria

@@ -14,7 +14,7 @@ use crate::{
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
-use bevy_easings::{EaseFunction, *};
+use bevy_easings::{Ease, EaseFunction, *};
 use bevy_ecs_ldtk::prelude::*;
 use leafwing_input_manager::prelude::*;
 use std::time::Duration;
@@ -94,14 +94,7 @@ fn spawn_level_select_card(
     mut event_writer: EventWriter<LevelSelectCardEvent>,
 ) {
     // TODO: refactor this to avoid repeated code with spawn_level_card
-    let level_card_atlas = texture_atlas_from_nine_slice(
-        asset_holder.tarot_sheet.clone(),
-        Vec2::splat(64.),
-        16.,
-        16.,
-        16.,
-        16.,
-    );
+    let level_card_atlas = texture_atlas_from_nine_slice(UVec2::splat(64), 16, 16, 16, 16);
     let level_card_texture = generate_nineslice_image(
         NineSliceSize {
             inner_width: 8,
@@ -109,6 +102,7 @@ fn spawn_level_select_card(
         },
         NineSliceIndex::default(),
         &level_card_atlas,
+        &asset_holder.tarot_sheet,
         &mut images,
     )
     .unwrap();
@@ -138,9 +132,9 @@ fn spawn_level_select_card(
             // spawn title
             parent
                 .spawn((
-                    Text::from_section("Level Select").with_justify(JustifyText::Center),
-                    TextFont::new(asset_holder.font.clone()),
-                    TextColor::new(Color::WHITE),
+                    Text("Level Select".to_string()),
+                    TextFont::from_font(asset_holder.font.clone()),
+                    TextColor(Color::WHITE),
                     Node {
                         margin: UiRect {
                             top: Val::Px(10.),
@@ -191,7 +185,7 @@ fn spawn_level_select_card(
         })
         .id();
 
-    event_writer.send(LevelSelectCardEvent::Spawned(level_select_entity));
+    event_writer.write(LevelSelectCardEvent::Spawned(level_select_entity));
 }
 
 fn pause(mut next_state: ResMut<NextState<GameState>>, input: Res<ActionState<GraveyardAction>>) {
@@ -264,7 +258,7 @@ fn despawn_level_select_card(
 ) {
     for event in level_select_card_events.read() {
         if let LevelSelectCardEvent::Offscreen(entity) = event {
-            commands.entity(*entity).despawn_recursive();
+            commands.entity(*entity).despawn();
         }
     }
 }
