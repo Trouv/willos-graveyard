@@ -105,7 +105,12 @@ fn main() {
 
     #[cfg(feature = "inspector")]
     {
-        app.add_plugins(WorldInspectorPlugin::new());
+        use bevy_inspector_egui::bevy_egui::EguiPlugin;
+
+        app.add_plugins(EguiPlugin {
+            enable_multipass_for_primary_context: true,
+        })
+        .add_plugins(WorldInspectorPlugin::new());
     }
 
     app.run();
