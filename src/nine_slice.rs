@@ -171,7 +171,7 @@ pub fn generate_nineslice_image(
         texture_dimension,
         data,
         texture_format,
-        RenderAssetUsages::MAIN_WORLD,
+        RenderAssetUsages::all(),
     );
 
     Ok(images.add(image))
