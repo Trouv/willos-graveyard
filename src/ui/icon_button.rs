@@ -157,7 +157,11 @@ fn spawn_icon_button_elements(
             parent
                 .spawn(ButtonRadial)
                 .insert((
-                    ImageNode::new(assets.radial.clone()),
+                    ImageNode {
+                        image: assets.radial.clone(),
+                        color: Color::NONE,
+                        ..default()
+                    },
                     Node {
                         position_type: PositionType::Absolute,
                         left: Val::Percent(12.5),
