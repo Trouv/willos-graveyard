@@ -1,6 +1,6 @@
 [package]
 name = "willos-graveyard"
-version = "0.11.4"
+version = "0.12.0"
 authors = ["TLovell <trevorlovelldesign@gmail.com>"]
 edition = "2021"
 
