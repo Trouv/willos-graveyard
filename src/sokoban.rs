@@ -552,7 +552,7 @@ fn flush_sokoban_commands<P, D>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use bevy::ecs::system::SystemState;
+    use bevy::{ecs::system::SystemState, state::app::StatesPlugin};
 
     #[test]
     fn push_dynamic_into_empty() {
@@ -640,13 +640,14 @@ mod tests {
 
         let mut app = App::new();
 
-        app.add_state::<State>()
+        app.add_plugins(StatesPlugin)
+            .init_state::<State>()
             .add_plugins(SokobanPlugin::<_, SokobanBlock, Direction>::new(
                 State::Only,
                 "MyLayerIdentifier",
             ));
 
-        app.world.spawn(LayerMetadata {
+        app.world_mut().spawn(LayerMetadata {
             c_wid: 3,
             c_hei: 4,
             grid_size: 32,
@@ -662,39 +663,39 @@ mod tests {
         let mut app = app_setup();
 
         let block_a = app
-            .world
+            .world_mut()
             .spawn((GridCoords::new(1, 1), SokobanBlock::Dynamic))
             .id();
         let block_b = app
-            .world
+            .world_mut()
             .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic))
             .id();
         let block_c = app
-            .world
+            .world_mut()
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
         let mut system_state: SystemState<SokobanCommands<Direction>> =
-            SystemState::new(&mut app.world);
-        let mut sokoban_commands = system_state.get_mut(&mut app.world);
+            SystemState::new(&mut app.world_mut());
+        let mut sokoban_commands = system_state.get_mut(app.world_mut());
 
         sokoban_commands.move_block(block_a, super::Direction::Up);
         sokoban_commands.move_block(block_c, super::Direction::Left);
 
-        system_state.apply(&mut app.world);
+        system_state.apply(&mut app.world_mut());
 
         app.update();
 
         assert_eq!(
-            *app.world.entity(block_a).get::<GridCoords>().unwrap(),
+            *app.world().entity(block_a).get::<GridCoords>().unwrap(),
             GridCoords::new(0, 2)
         );
         assert_eq!(
-            *app.world.entity(block_b).get::<GridCoords>().unwrap(),
+            *app.world().entity(block_b).get::<GridCoords>().unwrap(),
             GridCoords::new(1, 3)
         );
         assert_eq!(
-            *app.world.entity(block_c).get::<GridCoords>().unwrap(),
+            *app.world().entity(block_c).get::<GridCoords>().unwrap(),
             GridCoords::new(1, 2)
         );
     }
@@ -704,29 +705,29 @@ mod tests {
         let mut app = app_setup();
 
         let block_a = app
-            .world
+            .world_mut()
             .spawn((GridCoords::new(1, 1), SokobanBlock::Dynamic, PushTracker))
             .id();
-        app.world
+        app.world_mut()
             .spawn((GridCoords::new(1, 2), SokobanBlock::Dynamic));
         let block_c = app
-            .world
+            .world_mut()
             .spawn((GridCoords::new(2, 2), SokobanBlock::Dynamic))
             .id();
 
         let mut system_state: SystemState<SokobanCommands<Direction>> =
-            SystemState::new(&mut app.world);
-        let mut sokoban_commands = system_state.get_mut(&mut app.world);
+            SystemState::new(app.world_mut());
+        let mut sokoban_commands = system_state.get_mut(app.world_mut());
 
         sokoban_commands.move_block(block_a, super::Direction::Up);
         sokoban_commands.move_block(block_c, super::Direction::Left);
 
-        system_state.apply(&mut app.world);
+        system_state.apply(app.world_mut());
 
         app.update();
 
-        let events = app.world.resource::<Events<PushEvent<Direction>>>();
-        let mut reader = events.get_reader();
+        let events = app.world().resource::<Events<PushEvent<Direction>>>();
+        let mut reader = events.get_cursor();
 
         assert_eq!(events.len(), 1);
         assert_eq!(

@@ -93,11 +93,11 @@ mod tests {
 
         app.add_plugins((UiAtlasImagePlugin, AssetPlugin::default()))
             .init_asset::<Image>()
-            .init_asset::<TextureAtlas>();
+            .init_asset::<TextureAtlasLayout>();
         app
     }
 
-    fn generate_texture_atlas(app: &mut App) -> Handle<TextureAtlas> {
+    fn generate_texture_atlas(app: &mut App) -> (Handle<Image>, Handle<TextureAtlasLayout>) {
         let image = Image::new(
             Extent3d {
                 width: 4,
@@ -109,27 +109,35 @@ mod tests {
                 0, 0, 100, 100, 0, 0, 100, 100, 200, 200, 255, 255, 200, 200, 255, 255,
             ],
             TextureFormat::R8Unorm,
+            RenderAssetUsages::MAIN_WORLD,
         );
 
         let image_handle = app
-            .world
+            .world_mut()
             .get_resource_mut::<Assets<Image>>()
             .unwrap()
             .add(image);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(image_handle, Vec2::new(2., 2.), 2, 2, None, None);
+        let texture_atlas = TextureAtlasLayout::from_grid(UVec2::new(2, 2), 2, 2, None, None);
 
-        app.world
-            .get_resource_mut::<Assets<TextureAtlas>>()
+        let texture_atlas_handle = app
+            .world_mut()
+            .get_resource_mut::<Assets<TextureAtlasLayout>>()
             .unwrap()
-            .add(texture_atlas)
+            .add(texture_atlas);
+
+        (image_handle, texture_atlas_handle)
     }
 
-    fn spawn_ui_atlas_image_entity(app: &mut App, texture_atlas: Handle<TextureAtlas>) -> Entity {
-        app.world
+    fn spawn_ui_atlas_image_entity(
+        app: &mut App,
+        image: Handle<Image>,
+        texture_atlas: Handle<TextureAtlasLayout>,
+    ) -> Entity {
+        app.world_mut()
             .spawn(UiAtlasImage {
-                texture_atlas: texture_atlas.clone(),
+                image,
+                texture_atlas,
                 index: 1,
             })
             .id()
@@ -138,19 +146,20 @@ mod tests {
     #[test]
     fn map_and_image_resolve() {
         let mut app = app_setup();
-        let texture_atlas = generate_texture_atlas(&mut app);
-        let ui_atlas_image_entity = spawn_ui_atlas_image_entity(&mut app, texture_atlas.clone());
+        let (image, texture_atlas) = generate_texture_atlas(&mut app);
+        let ui_atlas_image_entity =
+            spawn_ui_atlas_image_entity(&mut app, image, texture_atlas.clone());
 
         app.update();
 
         let image_handles = app
-            .world
+            .world()
             .get_resource::<UiAtlasImageMap>()
             .unwrap()
             .get(&texture_atlas)
             .unwrap();
 
-        let image_assets = app.world.get_resource::<Assets<Image>>().unwrap();
+        let image_assets = app.world().get_resource::<Assets<Image>>().unwrap();
 
         let images: Vec<&Image> = image_handles
             .iter()
@@ -158,18 +167,18 @@ mod tests {
             .collect();
 
         // Test that each image contains the right data
-        assert_eq!(images[0].data, [0, 0, 0, 255].repeat(4));
-        assert_eq!(images[1].data, [100, 100, 100, 255].repeat(4));
-        assert_eq!(images[2].data, [200, 200, 200, 255].repeat(4));
-        assert_eq!(images[3].data, [255, 255, 255, 255].repeat(4));
+        assert_eq!(images[0].data, Some([0, 0, 0, 255].repeat(4)));
+        assert_eq!(images[1].data, Some([100, 100, 100, 255].repeat(4)));
+        assert_eq!(images[2].data, Some([200, 200, 200, 255].repeat(4)));
+        assert_eq!(images[3].data, Some([255, 255, 255, 255].repeat(4)));
 
         // Test that the entity's UiImage resolved appropriately (whose data has already been verified)
         assert_eq!(
-            app.world
+            app.world()
                 .entity(ui_atlas_image_entity)
-                .get::<UiImage>()
+                .get::<ImageNode>()
                 .unwrap()
-                .texture,
+                .image,
             image_handles[1]
         );
     }
@@ -177,13 +186,14 @@ mod tests {
     #[test]
     fn index_changes_dont_generate_more_images() {
         let mut app = app_setup();
-        let texture_atlas = generate_texture_atlas(&mut app);
-        let ui_atlas_image_entity = spawn_ui_atlas_image_entity(&mut app, texture_atlas.clone());
+        let (image, texture_atlas) = generate_texture_atlas(&mut app);
+        let ui_atlas_image_entity =
+            spawn_ui_atlas_image_entity(&mut app, image, texture_atlas.clone());
 
         app.update();
 
         let image_handles = app
-            .world
+            .world()
             .get_resource::<UiAtlasImageMap>()
             .unwrap()
             .get(&texture_atlas)
@@ -192,15 +202,15 @@ mod tests {
 
         // Test that the entity's UiImage resolved appropriately
         assert_eq!(
-            app.world
+            app.world()
                 .entity(ui_atlas_image_entity)
-                .get::<UiImage>()
+                .get::<ImageNode>()
                 .unwrap()
-                .texture,
+                .image,
             image_handles[1]
         );
 
-        app.world
+        app.world_mut()
             .entity_mut(ui_atlas_image_entity)
             .get_mut::<UiAtlasImage>()
             .unwrap()
@@ -209,7 +219,7 @@ mod tests {
         app.update();
 
         let new_image_handles = app
-            .world
+            .world()
             .get_resource::<UiAtlasImageMap>()
             .unwrap()
             .get(&texture_atlas)
@@ -217,11 +227,11 @@ mod tests {
 
         // Test the entity's UiImage *changed* appropriately
         assert_eq!(
-            app.world
+            app.world()
                 .entity(ui_atlas_image_entity)
-                .get::<UiImage>()
+                .get::<ImageNode>()
                 .unwrap()
-                .texture,
+                .image,
             image_handles[2]
         );
 

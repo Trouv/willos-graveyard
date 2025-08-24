@@ -244,13 +244,14 @@ mod tests {
     use crate::{graveyard::volatile::Volatile, sokoban::Direction};
 
     use super::*;
-    use bevy::reflect::Enum;
+    use bevy::{asset::uuid::Uuid, reflect::Enum, state::app::StatesPlugin};
     use rand::prelude::*;
 
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_state::<GameState>()
+        app.add_plugins(StatesPlugin)
+            .init_state::<GameState>()
             .add_plugins(ControlDisplayPlugin)
             .insert_resource(PlayZonePortion(0.5));
 
@@ -260,8 +261,18 @@ mod tests {
     fn asset_setup(app: &mut App) -> ControlDisplayAssets {
         let mut rng = rand::thread_rng();
         let control_display_assets = ControlDisplayAssets {
-            movement_table_actions_layout: Handle::weak_from_u128(rng.gen()),
-            graveyard_actions_layout: Handle::weak_from_u128(rng.gen()),
+            movement_table_actions: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
+            movement_table_actions_layout: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
+            graveyard_actions: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
+            graveyard_actions_layout: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
         };
 
         app.insert_resource(control_display_assets.clone());
@@ -386,13 +397,13 @@ mod tests {
     fn initial_state_changes(app: &mut App) {
         app.update();
 
-        app.world
-            .insert_resource(NextState(Some(GameState::LevelTransition)));
+        app.world_mut()
+            .insert_resource(NextState::Pending(GameState::LevelTransition));
 
         app.update();
 
-        app.world
-            .insert_resource(NextState(Some(GameState::Graveyard)));
+        app.world_mut()
+            .insert_resource(NextState::Pending(GameState::Graveyard));
 
         app.update();
     }
@@ -401,9 +412,9 @@ mod tests {
         app: &mut App,
         action: A,
     ) -> &IconButton {
-        app.world
+        app.world_mut()
             .query::<(&IconButton, &UiAction<A>)>()
-            .iter(&app.world)
+            .iter(&app.world())
             .find(|(_, a)| ***a == action)
             .map(|(i, _)| i)
             .unwrap()
@@ -413,12 +424,13 @@ mod tests {
     fn plugin_spawns_all_buttons() {
         let mut app = app_setup();
         let assets = asset_setup(&mut app);
-        GravestoneMovementTilePairTestSpawner::new_valid().spawn(&mut app.world);
+        GravestoneMovementTilePairTestSpawner::new_valid().spawn(&mut app.world_mut());
         initial_state_changes(&mut app);
 
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::Northwest),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 22
             })
@@ -427,6 +439,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 20
             })
@@ -435,6 +448,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::Northeast),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 26
             })
@@ -443,6 +457,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::West),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 40
             }),
@@ -451,6 +466,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::South),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 60
             }),
@@ -459,6 +475,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::East),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 80
             }),
@@ -467,6 +484,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveyardAction::Undo),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.graveyard_actions.clone(),
                 texture_atlas: assets.graveyard_actions_layout.clone(),
                 index: 0
             }),
@@ -475,6 +493,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveyardAction::Restart),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.graveyard_actions.clone(),
                 texture_atlas: assets.graveyard_actions_layout.clone(),
                 index: 1
             }),
@@ -483,6 +502,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveyardAction::Pause),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.graveyard_actions.clone(),
                 texture_atlas: assets.graveyard_actions_layout.clone(),
                 index: 2
             }),
@@ -494,13 +514,14 @@ mod tests {
         let mut app = app_setup();
         let assets = asset_setup(&mut app);
         let spawned_gravestone_movement_tile_pairs =
-            GravestoneMovementTilePairTestSpawner::new_valid().spawn(&mut app.world);
+            GravestoneMovementTilePairTestSpawner::new_valid().spawn(app.world_mut());
         initial_state_changes(&mut app);
 
         // check initial values of a couple buttons
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 20
             })
@@ -509,6 +530,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::West),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 40
             }),
@@ -516,7 +538,7 @@ mod tests {
 
         // change the movement table and check those buttons again
         let mut north_grave = app
-            .world
+            .world_mut()
             .entity_mut(spawned_gravestone_movement_tile_pairs.north_pair.gravestone);
 
         let target_movement_tile = MovementTile::new(Direction::Up, Direction::Down);
@@ -524,11 +546,11 @@ mod tests {
         *north_grave.get_mut::<GridCoords>().unwrap() =
             hash_movement_to_grid_coords(&target_movement_tile);
 
-        app.world
+        app.world_mut()
             .spawn(hash_movement_to_grid_coords(&target_movement_tile))
             .insert(target_movement_tile);
 
-        app.world
+        app.world_mut()
             .despawn(spawned_gravestone_movement_tile_pairs.west_pair.gravestone);
 
         app.update();
@@ -536,6 +558,7 @@ mod tests {
         assert_eq!(
             get_icon_button_for_action(&mut app, GraveId::North),
             &IconButton::AtlasImageIcon(UiAtlasImage {
+                image: assets.movement_table_actions.clone(),
                 texture_atlas: assets.movement_table_actions_layout.clone(),
                 index: 24
             })

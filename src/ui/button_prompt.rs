@@ -116,6 +116,7 @@ fn spawn_button_prompt<T, F>(
 #[cfg(test)]
 mod tests {
     use crate::ui::action::UiActionPlugin;
+    use bevy::asset::uuid::Uuid;
     use rand::prelude::*;
 
     use super::*;
@@ -140,7 +141,12 @@ mod tests {
     fn asset_setup(app: &mut App) -> ButtonPromptAssets {
         let mut rng = rand::thread_rng();
         let button_prompt_assets = ButtonPromptAssets {
-            key_code_icons_atlas: Handle::weak_from_u128(rng.gen()),
+            key_code_icons_image: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
+            key_code_icons_atlas: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
         };
 
         app.insert_resource(button_prompt_assets.clone());
@@ -150,26 +156,26 @@ mod tests {
 
     fn input_map_setup(app: &mut App) {
         let input_map = InputMap::<MyAction>::new([
-            (KeyCode::Space, MyAction::Jump),
-            (KeyCode::F, MyAction::Shoot),
+            (MyAction::Jump, KeyCode::Space),
+            (MyAction::Shoot, KeyCode::KeyF),
         ]);
 
         app.insert_resource(input_map);
     }
 
     fn spawn_button(app: &mut App, action: MyAction) -> Entity {
-        app.world
+        app.world_mut()
             .spawn(UiAction(action))
-            .insert(ButtonBundle::default())
+            .insert(Button::default())
             .id()
     }
 
     fn get_child_component<C: Component>(app: &mut App, entity: Entity) -> &C {
-        let mut children = app.world.query::<(&C, &Parent)>();
+        let mut children = app.world_mut().query::<(&C, &ChildOf)>();
 
         children
-            .iter(&app.world)
-            .find(|(_, p)| p.get() == entity)
+            .iter(&app.world())
+            .find(|(_, p)| p.parent() == entity)
             .map(|(c, _)| c)
             .unwrap()
     }
@@ -190,8 +196,9 @@ mod tests {
         assert_eq!(
             *jump_button_prompt,
             UiAtlasImage {
+                image: assets.key_code_icons_image.clone(),
                 texture_atlas: assets.key_code_icons_atlas.clone(),
-                index: 76
+                index: 63
             }
         );
 
@@ -200,8 +207,9 @@ mod tests {
         assert_eq!(
             *shoot_button_prompt,
             UiAtlasImage {
+                image: assets.key_code_icons_image,
                 texture_atlas: assets.key_code_icons_atlas,
-                index: 15
+                index: 25
             }
         );
     }
@@ -222,14 +230,15 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
+                image: assets.key_code_icons_image.clone(),
                 texture_atlas: assets.key_code_icons_atlas.clone(),
-                index: 76
+                index: 63
             }
         );
 
         // change its action and check its image again
 
-        *app.world
+        *app.world_mut()
             .entity_mut(button_entity)
             .get_mut::<UiAction<MyAction>>()
             .unwrap() = UiAction(MyAction::Shoot);
@@ -241,8 +250,9 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
+                image: assets.key_code_icons_image.clone(),
                 texture_atlas: assets.key_code_icons_atlas.clone(),
-                index: 15
+                index: 25
             }
         );
     }
@@ -263,19 +273,20 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
+                image: assets.key_code_icons_image.clone(),
                 texture_atlas: assets.key_code_icons_atlas.clone(),
-                index: 76
+                index: 63
             }
         );
 
         // change the input map and check its image again
 
-        let mut input_map = app.world.get_resource_mut::<InputMap<MyAction>>().unwrap();
-        input_map.clear_action(MyAction::Jump);
-        input_map.insert(
-            UserInput::Single(InputKind::Keyboard(KeyCode::W)),
-            MyAction::Jump,
-        );
+        let mut input_map = app
+            .world_mut()
+            .get_resource_mut::<InputMap<MyAction>>()
+            .unwrap();
+        input_map.clear_action(&MyAction::Jump);
+        input_map.insert(MyAction::Jump, KeyCode::KeyW);
 
         app.update();
 
@@ -284,8 +295,9 @@ mod tests {
         assert_eq!(
             *button_prompt,
             UiAtlasImage {
+                image: assets.key_code_icons_image.clone(),
                 texture_atlas: assets.key_code_icons_atlas.clone(),
-                index: 32
+                index: 42
             }
         );
     }
