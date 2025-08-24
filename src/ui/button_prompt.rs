@@ -87,7 +87,7 @@ fn spawn_button_prompt<T, F>(
             .get_buttonlike(action)
             .iter()
             .flat_map(|inputs| inputs.iter())
-            .find_map(|i| i.as_any().downcast_ref::<KeyCode>())
+            .find_map(|i| i.clone().into_any().downcast::<KeyCode>().ok())
         {
             commands.entity(entity).with_children(|parent| {
                 parent
