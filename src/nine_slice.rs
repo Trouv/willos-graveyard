@@ -74,7 +74,7 @@ fn push_nine_slice_row_data(
     middle_count: u32,
 ) {
     for y in 0..row_height {
-        for x in 0..left_rect.width() as u32 {
+        for x in 0..left_rect.width() {
             let coord = left_rect.min + UVec2::new(x, y);
             if let Some(pixel) = get_pixel(image, coord) {
                 buffer.extend(pixel);
@@ -82,7 +82,7 @@ fn push_nine_slice_row_data(
         }
 
         for _ in 0..middle_count {
-            for x in 0..middle_rect.width() as u32 {
+            for x in 0..middle_rect.width() {
                 let coord = middle_rect.min + UVec2::new(x, y);
                 if let Some(pixel) = get_pixel(image, coord) {
                     buffer.extend(pixel);
@@ -90,7 +90,7 @@ fn push_nine_slice_row_data(
             }
         }
 
-        for x in 0..right_rect.width() as u32 {
+        for x in 0..right_rect.width() {
             let coord = right_rect.min + UVec2::new(x, y);
             if let Some(pixel) = get_pixel(image, coord) {
                 buffer.extend(pixel);
@@ -136,7 +136,7 @@ pub fn generate_nineslice_image(
         top_left_rect,
         top_rect,
         top_right_rect,
-        top_left_rect.height() as u32,
+        top_left_rect.height(),
         size.inner_width,
     );
 
@@ -147,7 +147,7 @@ pub fn generate_nineslice_image(
             left_rect,
             center_rect,
             right_rect,
-            center_rect.height() as u32,
+            center_rect.height(),
             size.inner_width,
         );
     }
@@ -158,7 +158,7 @@ pub fn generate_nineslice_image(
         bottom_left_rect,
         bottom_rect,
         bottom_right_rect,
-        bottom_right_rect.height() as u32,
+        bottom_right_rect.height(),
         size.inner_width,
     );
 

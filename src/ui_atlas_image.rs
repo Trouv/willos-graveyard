@@ -63,10 +63,10 @@ fn resolve_ui_atlas_image(
                     .map(|rect| {
                         let crop = Image::from_dynamic(
                             dynamic_image.crop_imm(
-                                rect.min.x as u32,
-                                rect.min.y as u32,
-                                rect.width() as u32,
-                                rect.height() as u32,
+                                rect.min.x,
+                                rect.min.y,
+                                rect.width(),
+                                rect.height(),
                             ),
                             is_srgb,
                             RenderAssetUsages::RENDER_WORLD,
