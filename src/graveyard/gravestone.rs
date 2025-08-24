@@ -181,50 +181,53 @@ fn spawn_gravestone_body(
     input_map: Res<InputMap<GraveId>>,
 ) {
     for (entity, grave_id) in gravestones.iter() {
-        commands.entity(entity).with_children(|parent| {
-            let dist: Vec<usize> = (1..(settings.gravestone_indices.len() + 1))
-                .map(|x| x * x)
-                .rev()
-                .collect();
+        commands
+            .entity(entity)
+            .insert(Visibility::Inherited)
+            .with_children(|parent| {
+                let dist: Vec<usize> = (1..(settings.gravestone_indices.len() + 1))
+                    .map(|x| x * x)
+                    .rev()
+                    .collect();
 
-            let dist = WeightedIndex::new(dist).unwrap();
+                let dist = WeightedIndex::new(dist).unwrap();
 
-            let mut rng = rand::thread_rng();
+                let mut rng = rand::thread_rng();
 
-            // body entity
-            parent.spawn((
-                Sprite {
-                    image: assets.grave_bodies.clone(),
-                    texture_atlas: Some(TextureAtlas {
-                        layout: assets.grave_bodies_layout.clone(),
-                        index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
-                            [dist.sample(&mut rng)],
-                    }),
-                    ..default()
-                },
-                Transform::from_translation(settings.gravestone_translation),
-            ));
-
-            // icon entity
-            if let Some(key_code) = input_map
-                .get_buttonlike(grave_id)
-                .iter()
-                .flat_map(|inputs| inputs.iter())
-                .find_map(|i| i.as_any().downcast_ref::<KeyCode>())
-            {
+                // body entity
                 parent.spawn((
                     Sprite {
-                        image: assets.key_code_icons.clone(),
+                        image: assets.grave_bodies.clone(),
                         texture_atlas: Some(TextureAtlas {
-                            layout: assets.key_code_icons_layout.clone(),
-                            index: key_code.variant_index(),
+                            layout: assets.grave_bodies_layout.clone(),
+                            index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
+                                [dist.sample(&mut rng)],
                         }),
                         ..default()
                     },
-                    Transform::from_translation(settings.icon_translation),
+                    Transform::from_translation(settings.gravestone_translation),
                 ));
-            }
-        });
+
+                // icon entity
+                if let Some(key_code) = input_map
+                    .get_buttonlike(grave_id)
+                    .iter()
+                    .flat_map(|inputs| inputs.iter())
+                    .find_map(|i| i.clone().into_any().downcast::<KeyCode>().ok())
+                {
+                    parent.spawn((
+                        Sprite {
+                            image: assets.key_code_icons.clone(),
+                            texture_atlas: Some(TextureAtlas {
+                                layout: assets.key_code_icons_layout.clone(),
+                                index: key_code.variant_index(),
+                            }),
+                            ..default()
+                        },
+                        Transform::from_translation(settings.icon_translation),
+                    ));
+                }
+            });
     }
 }
 
