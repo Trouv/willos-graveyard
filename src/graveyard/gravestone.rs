@@ -16,7 +16,7 @@ use crate::{
 use bevy::{prelude::*, reflect::Enum};
 use bevy_asset_loader::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use leafwing_input_manager::{prelude::*, user_input::InputKind};
+use leafwing_input_manager::prelude::*;
 use rand::{distributions::WeightedIndex, prelude::*};
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader, ops::Range};
@@ -68,12 +68,14 @@ impl Plugin for GravestonePlugin {
 /// Asset collection for loading assets relevant to gravestones and gravestone controls.
 #[derive(Debug, Default, AssetCollection, Resource)]
 pub struct GravestoneAssets {
-    #[asset(texture_atlas(tile_size_x = 32., tile_size_y = 32., columns = 10, rows = 2))]
+    #[asset(texture_atlas(tile_size_x = 32, tile_size_y = 32, columns = 10, rows = 2))]
+    grave_bodies_layout: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/graves-Sheet.png")]
-    grave_bodies: Handle<TextureAtlas>,
-    #[asset(texture_atlas(tile_size_x = 16., tile_size_y = 16., columns = 16, rows = 11))]
+    grave_bodies: Handle<Image>,
+    #[asset(texture_atlas(tile_size_x = 16, tile_size_y = 16, columns = 16, rows = 11))]
+    key_code_icons_layout: Handle<TextureAtlasLayout>,
     #[asset(path = "textures/key-code-icons.png")]
-    key_code_icons: Handle<TextureAtlas>,
+    key_code_icons: Handle<Image>,
 }
 
 #[derive(Debug, Resource)]
@@ -179,46 +181,53 @@ fn spawn_gravestone_body(
     input_map: Res<InputMap<GraveId>>,
 ) {
     for (entity, grave_id) in gravestones.iter() {
-        commands.entity(entity).with_children(|parent| {
-            let dist: Vec<usize> = (1..(settings.gravestone_indices.len() + 1))
-                .map(|x| x * x)
-                .rev()
-                .collect();
+        commands
+            .entity(entity)
+            .insert(Visibility::Inherited)
+            .with_children(|parent| {
+                let dist: Vec<usize> = (1..(settings.gravestone_indices.len() + 1))
+                    .map(|x| x * x)
+                    .rev()
+                    .collect();
 
-            let dist = WeightedIndex::new(dist).unwrap();
+                let dist = WeightedIndex::new(dist).unwrap();
 
-            let mut rng = rand::thread_rng();
+                let mut rng = rand::thread_rng();
 
-            // body entity
-            parent.spawn(SpriteSheetBundle {
-                sprite: TextureAtlasSprite {
-                    index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
-                        [dist.sample(&mut rng)],
-                    ..default()
-                },
-                texture_atlas: assets.grave_bodies.clone(),
-                transform: Transform::from_translation(settings.gravestone_translation),
-                ..default()
-            });
-
-            // icon entity
-            if let Some(UserInput::Single(InputKind::Keyboard(key_code))) = input_map
-                .get(*grave_id)
-                .iter()
-                .flat_map(|inputs| inputs.iter())
-                .find(|i| matches!(i, UserInput::Single(InputKind::Keyboard(_))))
-            {
-                parent.spawn(SpriteSheetBundle {
-                    sprite: TextureAtlasSprite {
-                        index: key_code.variant_index(),
+                // body entity
+                parent.spawn((
+                    Sprite {
+                        image: assets.grave_bodies.clone(),
+                        texture_atlas: Some(TextureAtlas {
+                            layout: assets.grave_bodies_layout.clone(),
+                            index: settings.gravestone_indices.clone().collect::<Vec<usize>>()
+                                [dist.sample(&mut rng)],
+                        }),
                         ..default()
                     },
-                    texture_atlas: assets.key_code_icons.clone(),
-                    transform: Transform::from_translation(settings.icon_translation),
-                    ..default()
-                });
-            }
-        });
+                    Transform::from_translation(settings.gravestone_translation),
+                ));
+
+                // icon entity
+                if let Some(key_code) = input_map
+                    .get_buttonlike(grave_id)
+                    .iter()
+                    .flat_map(|inputs| inputs.iter())
+                    .find_map(|i| i.clone().into_any().downcast::<KeyCode>().ok())
+                {
+                    parent.spawn((
+                        Sprite {
+                            image: assets.key_code_icons.clone(),
+                            texture_atlas: Some(TextureAtlas {
+                                layout: assets.key_code_icons_layout.clone(),
+                                index: key_code.variant_index(),
+                            }),
+                            ..default()
+                        },
+                        Transform::from_translation(settings.icon_translation),
+                    ));
+                }
+            });
     }
 }
 
@@ -252,23 +261,23 @@ fn gravestone_input(
 ) {
     for mut willo in willo_query.iter_mut() {
         if *willo == WilloState::Waiting {
-            if grave_input.just_pressed(GraveId::Northwest) {
-                history_commands.send(HistoryCommands::Record);
+            if grave_input.just_pressed(&GraveId::Northwest) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::Northwest)
-            } else if grave_input.just_pressed(GraveId::North) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::North) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::North)
-            } else if grave_input.just_pressed(GraveId::Northeast) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::Northeast) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::Northeast)
-            } else if grave_input.just_pressed(GraveId::West) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::West) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::West)
-            } else if grave_input.just_pressed(GraveId::South) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::South) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::South)
-            } else if grave_input.just_pressed(GraveId::East) {
-                history_commands.send(HistoryCommands::Record);
+            } else if grave_input.just_pressed(&GraveId::East) {
+                history_commands.write(HistoryCommands::Record);
                 *willo = WilloState::RankMove(GraveId::East)
             }
         }

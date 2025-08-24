@@ -34,24 +34,25 @@ impl Plugin for IconButtonPlugin {
 ///
 /// Currently, the only metadata needed is the image to use as an icon.
 #[derive(Debug, Component)]
+#[require(Button)]
 pub enum IconButton {
     /// Button with all other elements, but no icon.
     NoIcon,
     /// Use a simple Image for the button's icon.
-    ImageIcon(UiImage),
+    ImageIcon(ImageNode),
     /// Use a texture atlas + index for the button's icon.
     AtlasImageIcon(UiAtlasImage),
 }
 
-// PartialEq is useful for testing, but UiImage does not implement it.
+// PartialEq is useful for testing, but ImageNode does not implement it.
 // So, this trivial manual implementation is provided.
 impl PartialEq for IconButton {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (IconButton::NoIcon, IconButton::NoIcon) => true,
             (
-                IconButton::ImageIcon(UiImage { texture: s, .. }),
-                IconButton::ImageIcon(UiImage { texture: o, .. }),
+                IconButton::ImageIcon(ImageNode { image: s, .. }),
+                IconButton::ImageIcon(ImageNode { image: o, .. }),
             ) => s == o,
             (IconButton::AtlasImageIcon(s), IconButton::AtlasImageIcon(o)) => s == o,
             _ => false,
@@ -62,6 +63,7 @@ impl PartialEq for IconButton {
 impl Eq for IconButton {}
 
 #[derive(Debug, Component)]
+#[require(Button, PreviousComponent<Interaction>)]
 struct IconButtonElement;
 
 /// Bundle containing all components necessary for a functional IconButton.
@@ -70,7 +72,7 @@ struct IconButtonElement;
 #[derive(Debug, Bundle)]
 pub struct IconButtonBundle {
     icon_button: IconButton,
-    button_bundle: ButtonBundle,
+    node: Node,
     previous_interaction: PreviousComponent<Interaction>,
 }
 
@@ -79,13 +81,9 @@ impl IconButtonBundle {
     pub fn new(icon_button: IconButton) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
-            button_bundle: ButtonBundle {
-                style: Style {
-                    flex_grow: 1.,
-                    aspect_ratio: Some(1.),
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::NONE),
+            node: Node {
+                flex_grow: 1.,
+                aspect_ratio: Some(1.),
                 ..default()
             },
             previous_interaction: PreviousComponent::<Interaction>::default(),
@@ -96,14 +94,10 @@ impl IconButtonBundle {
     pub fn new_with_size(icon_button: IconButton, width: Val, height: Val) -> IconButtonBundle {
         IconButtonBundle {
             icon_button,
-            button_bundle: ButtonBundle {
-                style: Style {
-                    width,
-                    height,
-                    aspect_ratio: Some(1.),
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::NONE),
+            node: Node {
+                width,
+                height,
+                aspect_ratio: Some(1.),
                 ..default()
             },
             previous_interaction: PreviousComponent::<Interaction>::default(),
@@ -123,17 +117,13 @@ impl IconButtonBundle {
         } = position;
         IconButtonBundle {
             icon_button,
-            button_bundle: ButtonBundle {
-                style: Style {
-                    position_type: PositionType::Absolute,
-                    left,
-                    right,
-                    top,
-                    bottom,
-                    aspect_ratio: Some(1.),
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::NONE),
+            node: Node {
+                position_type: PositionType::Absolute,
+                left,
+                right,
+                top,
+                bottom,
+                aspect_ratio: Some(1.),
                 ..default()
             },
             previous_interaction: PreviousComponent::<Interaction>::default(),
@@ -153,22 +143,26 @@ pub struct IconButtonAssets {
 fn spawn_icon_button_elements(
     mut commands: Commands,
     icon_buttons: Query<(Entity, &IconButton), Changed<IconButton>>,
-    icon_button_elements: Query<(Entity, &Parent), With<IconButtonElement>>,
+    icon_button_elements: Query<(Entity, &ChildOf), With<IconButtonElement>>,
     assets: Res<IconButtonAssets>,
 ) {
     for (entity, icon_button) in &icon_buttons {
         icon_button_elements
             .iter()
-            .filter(|(_, p)| p.get() == entity)
-            .for_each(|(e, _)| commands.entity(e).despawn_recursive());
+            .filter(|(_, p)| p.parent() == entity)
+            .for_each(|(e, _)| commands.entity(e).despawn());
 
         commands.entity(entity).with_children(|parent| {
             // Radial
             parent
                 .spawn(ButtonRadial)
-                .insert(ImageBundle {
-                    image: UiImage::new(assets.radial.clone()),
-                    style: Style {
+                .insert((
+                    ImageNode {
+                        image: assets.radial.clone(),
+                        color: Color::NONE,
+                        ..default()
+                    },
+                    Node {
                         position_type: PositionType::Absolute,
                         left: Val::Percent(12.5),
                         right: Val::Percent(12.5),
@@ -176,17 +170,16 @@ fn spawn_icon_button_elements(
                         bottom: Val::Percent(12.5),
                         ..default()
                     },
-                    focus_policy: FocusPolicy::Pass,
-                    background_color: BackgroundColor(Color::NONE),
-                    ..default()
-                })
+                    FocusPolicy::Pass,
+                    BackgroundColor(Color::NONE),
+                ))
                 .insert(IconButtonElement);
 
             // Outline
             parent
-                .spawn(ImageBundle {
-                    image: UiImage::new(assets.outline.clone()),
-                    style: Style {
+                .spawn((
+                    ImageNode::new(assets.outline.clone()),
+                    Node {
                         position_type: PositionType::Absolute,
                         left: Val::Percent(0.),
                         right: Val::Percent(0.),
@@ -194,14 +187,13 @@ fn spawn_icon_button_elements(
                         bottom: Val::Percent(0.),
                         ..default()
                     },
-                    focus_policy: FocusPolicy::Pass,
-                    ..default()
-                })
+                    FocusPolicy::Pass,
+                ))
                 .insert(IconButtonElement);
 
             // Icon
-            let mut icon_entity = parent.spawn(ImageBundle {
-                style: Style {
+            let mut icon_entity = parent.spawn((
+                Node {
                     position_type: PositionType::Absolute,
                     left: Val::Percent(0.),
                     right: Val::Percent(0.),
@@ -209,9 +201,8 @@ fn spawn_icon_button_elements(
                     bottom: Val::Percent(0.),
                     ..default()
                 },
-                focus_policy: FocusPolicy::Pass,
-                ..default()
-            });
+                FocusPolicy::Pass,
+            ));
 
             icon_entity.insert(IconButtonElement);
 
@@ -227,14 +218,15 @@ fn spawn_icon_button_elements(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use bevy::{asset::uuid::Uuid, state::app::StatesPlugin};
     use rand::prelude::*;
 
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_plugins((IconButtonPlugin, HierarchyPlugin))
-            .add_state::<GameState>()
-            .insert_resource(NextState(Some(GameState::LevelTransition)));
+        app.add_plugins((StatesPlugin, IconButtonPlugin))
+            .init_state::<GameState>()
+            .insert_resource(NextState::Pending(GameState::LevelTransition));
 
         app
     }
@@ -242,8 +234,12 @@ mod tests {
     fn asset_collection_setup(app: &mut App) -> IconButtonAssets {
         let mut rng = rand::thread_rng();
         let assets = IconButtonAssets {
-            outline: Handle::weak_from_u128(rng.gen()),
-            radial: Handle::weak_from_u128(rng.gen()),
+            outline: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
+            radial: Handle::Weak(AssetId::Uuid {
+                uuid: Uuid::from_u128(rng.gen()),
+            }),
         };
 
         app.insert_resource(assets.clone());
@@ -252,7 +248,9 @@ mod tests {
     }
 
     fn spawn_icon_button(app: &mut App, icon_button: IconButton) -> Entity {
-        app.world.spawn(IconButtonBundle::new(icon_button)).id()
+        app.world_mut()
+            .spawn(IconButtonBundle::new(icon_button))
+            .id()
     }
 
     #[test]
@@ -261,27 +259,31 @@ mod tests {
         let asset_collection = asset_collection_setup(&mut app);
 
         let mut rng = rand::thread_rng();
-        let icon = Handle::weak_from_u128(rng.gen());
-        let icon_button_entity =
-            spawn_icon_button(&mut app, IconButton::ImageIcon(UiImage::new(icon.clone())));
+        let icon = Handle::Weak(AssetId::Uuid {
+            uuid: Uuid::from_u128(rng.gen()),
+        });
+        let icon_button_entity = spawn_icon_button(
+            &mut app,
+            IconButton::ImageIcon(ImageNode::new(icon.clone())),
+        );
 
         app.update();
 
-        let mut children = app.world.query::<(&UiImage, &Parent)>();
+        let mut children = app.world_mut().query::<(&ImageNode, &ChildOf)>();
 
         let children: Vec<_> = children
-            .iter(&app.world)
-            .filter(|(_, p)| p.get() == icon_button_entity)
+            .iter(&app.world())
+            .filter(|(_, p)| p.parent() == icon_button_entity)
             .map(|(i, _)| i)
             .collect();
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[0].texture, asset_collection.radial);
+        assert_eq!(children[0].image, asset_collection.outline);
 
-        assert_eq!(children[1].texture, asset_collection.outline);
+        assert_eq!(children[1].image, icon);
 
-        assert_eq!(children[2].texture, icon);
+        assert_eq!(children[2].image, asset_collection.radial);
     }
 
     #[test]
@@ -290,11 +292,17 @@ mod tests {
         let asset_collection = asset_collection_setup(&mut app);
         let mut rng = rand::thread_rng();
 
-        let icon = Handle::weak_from_u128(rng.gen());
+        let icon = Handle::Weak(AssetId::Uuid {
+            uuid: Uuid::from_u128(rng.gen()),
+        });
+        let layout = Handle::Weak(AssetId::Uuid {
+            uuid: Uuid::from_u128(rng.gen()),
+        });
         let icon_button_entity = spawn_icon_button(
             &mut app,
             IconButton::AtlasImageIcon(UiAtlasImage {
-                texture_atlas: icon.clone(),
+                image: icon.clone(),
+                texture_atlas: layout.clone(),
                 index: 2,
             }),
         );
@@ -302,22 +310,23 @@ mod tests {
         app.update();
 
         let mut children = app
-            .world
-            .query::<(Option<&UiAtlasImage>, &UiImage, &Parent)>();
+            .world_mut()
+            .query::<(Option<&UiAtlasImage>, Option<&ImageNode>, &ChildOf)>();
 
         let children: Vec<_> = children
-            .iter(&app.world)
-            .filter(|(.., p)| p.get() == icon_button_entity)
+            .iter(&app.world())
+            .filter(|(.., p)| p.parent() == icon_button_entity)
             .map(|(a, i, _)| (a, i))
             .collect();
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[0].1.texture, asset_collection.radial);
+        assert_eq!(children[0].1.unwrap().image, asset_collection.outline);
 
-        assert_eq!(children[1].1.texture, asset_collection.outline);
+        assert_eq!(children[1].0.unwrap().image, icon);
+        assert_eq!(children[1].0.unwrap().texture_atlas, layout);
 
-        assert_eq!(children[2].0.unwrap().texture_atlas, icon);
+        assert_eq!(children[2].1.unwrap().image, asset_collection.radial);
     }
 
     #[test]
@@ -326,46 +335,50 @@ mod tests {
         asset_collection_setup(&mut app);
 
         let mut rng = rand::thread_rng();
-        let first_icon = Handle::weak_from_u128(rng.gen());
+        let first_icon = Handle::Weak(AssetId::Uuid {
+            uuid: Uuid::from_u128(rng.gen()),
+        });
         let icon_button_entity = spawn_icon_button(
             &mut app,
-            IconButton::ImageIcon(UiImage::new(first_icon.clone())),
+            IconButton::ImageIcon(ImageNode::new(first_icon.clone())),
         );
 
         app.update();
 
-        let mut children = app.world.query::<(&UiImage, &Parent)>();
+        let mut children = app.world_mut().query::<(&ImageNode, &ChildOf)>();
 
         let children: Vec<_> = children
-            .iter(&app.world)
-            .filter(|(_, p)| p.get() == icon_button_entity)
+            .iter(&app.world())
+            .filter(|(_, p)| p.parent() == icon_button_entity)
             .map(|(i, _)| i)
             .collect();
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[2].texture, first_icon);
+        assert_eq!(children[1].image, first_icon);
 
         // Change the component
-        let second_icon = Handle::weak_from_u128(rng.gen());
-        *app.world
+        let second_icon = Handle::Weak(AssetId::Uuid {
+            uuid: Uuid::from_u128(rng.gen()),
+        });
+        *app.world_mut()
             .entity_mut(icon_button_entity)
             .get_mut::<IconButton>()
-            .unwrap() = IconButton::ImageIcon(UiImage::new(second_icon.clone()));
+            .unwrap() = IconButton::ImageIcon(ImageNode::new(second_icon.clone()));
 
         app.update();
 
-        let mut children = app.world.query::<(&UiImage, &Parent)>();
+        let mut children = app.world_mut().query::<(&ImageNode, &ChildOf)>();
 
         let children: Vec<_> = children
-            .iter(&app.world)
-            .filter(|(_, p)| p.get() == icon_button_entity)
+            .iter(&app.world())
+            .filter(|(_, p)| p.parent() == icon_button_entity)
             .map(|(i, _)| i)
             .collect();
 
         assert_eq!(children.len(), 3);
 
-        assert_eq!(children[2].texture, second_icon);
+        assert_eq!(children[1].image, second_icon);
     }
 
     #[test]
@@ -374,26 +387,28 @@ mod tests {
         asset_collection_setup(&mut app);
 
         let mut rng = rand::thread_rng();
-        let first_icon = Handle::weak_from_u128(rng.gen());
+        let first_icon = Handle::Weak(AssetId::Uuid {
+            uuid: Uuid::from_u128(rng.gen()),
+        });
 
         let icon_button_entity = spawn_icon_button(
             &mut app,
-            IconButton::ImageIcon(UiImage::new(first_icon.clone())),
+            IconButton::ImageIcon(ImageNode::new(first_icon.clone())),
         );
 
-        let additional_child_entity = app.world.spawn_empty().id();
+        let additional_child_entity = app.world_mut().spawn_empty().id();
 
-        app.world
+        app.world_mut()
             .entity_mut(icon_button_entity)
-            .push_children(&[additional_child_entity]);
+            .add_children(&[additional_child_entity]);
 
         app.update();
 
-        let mut children = app.world.query::<(Entity, &Parent)>();
+        let mut children = app.world_mut().query::<(Entity, &ChildOf)>();
 
         let children: Vec<_> = children
-            .iter(&app.world)
-            .filter(|(_, p)| p.get() == icon_button_entity)
+            .iter(&app.world())
+            .filter(|(_, p)| p.parent() == icon_button_entity)
             .map(|(e, _)| e)
             .collect();
 

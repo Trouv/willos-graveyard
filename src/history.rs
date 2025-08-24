@@ -1,5 +1,5 @@
 //! Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
-use bevy::prelude::*;
+use bevy::{ecs::component::Mutable, prelude::*};
 use std::marker::PhantomData;
 
 /// Plugin that tracks history, rewinds, and resets gamestate for arbitrary components.
@@ -20,7 +20,7 @@ impl<C: Component + Clone, S: States> HistoryPlugin<C, S> {
     }
 }
 
-impl<C: Component + Clone, S: States> Plugin for HistoryPlugin<C, S> {
+impl<C: Component<Mutability = Mutable> + Clone, S: States> Plugin for HistoryPlugin<C, S> {
     fn build(&self, app: &mut App) {
         app.add_event::<HistoryCommands>().add_systems(
             Update,
@@ -54,7 +54,7 @@ pub struct FlushHistoryCommands;
 #[derive(Clone, PartialEq, Eq, Debug, Default, Component, Deref, DerefMut)]
 pub struct History<C: Component + Clone>(Vec<C>);
 
-fn flush_history_commands<C: Component + Clone>(
+fn flush_history_commands<C: Component<Mutability = Mutable> + Clone>(
     mut history_query: Query<(&mut History<C>, &mut C)>,
     mut history_commands: EventReader<HistoryCommands>,
 ) {

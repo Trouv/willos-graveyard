@@ -54,8 +54,8 @@ struct GoalBundle {
     #[grid_coords]
     grid_coords: GridCoords,
     goal: Goal,
-    #[sprite_sheet_bundle]
-    sprite_sheet_bundle: SpriteSheetBundle,
+    #[sprite_sheet]
+    sprite_sheet_bundle: Sprite,
 }
 
 /// Resource for defining the visual behavior of goal ghosts.
@@ -71,7 +71,7 @@ struct GoalGhostSettings {
     none_frame_index: usize,
     num_columns: usize,
     num_rows: usize,
-    atlas: Option<Handle<TextureAtlas>>,
+    atlas: Option<Handle<TextureAtlasLayout>>,
 }
 
 impl Default for GoalGhostSettings {
@@ -178,7 +178,7 @@ fn check_goal(
                 if !goal.met {
                     goal.met = true;
 
-                    goal_events.send(GoalEvent::Met {
+                    goal_events.write(GoalEvent::Met {
                         stone_entity,
                         goal_entity,
                     });
@@ -191,7 +191,7 @@ fn check_goal(
             level_goal_met = false;
 
             if goal.met {
-                goal_events.send(GoalEvent::UnMet { goal_entity });
+                goal_events.write(GoalEvent::UnMet { goal_entity });
                 goal.met = false;
             }
         }
@@ -215,10 +215,10 @@ fn check_goal(
             commands.insert_resource(TransitionTo(LevelSelection::index(level_index + 1)));
         }
 
-        commands.spawn(AudioBundle {
-            source: asset_holder.victory_sound.clone(),
-            settings: PlaybackSettings::DESPAWN,
-        });
+        commands.spawn((
+            AudioPlayer::new(asset_holder.victory_sound.clone()),
+            PlaybackSettings::DESPAWN,
+        ));
     }
 }
 fn goal_ghost_event_sugar(
@@ -244,11 +244,15 @@ fn goal_ghost_event_sugar(
 }
 
 fn goal_ghost_animation(
-    mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut TextureAtlasSprite)>,
+    mut goal_ghost_query: Query<(&mut GoalGhostAnimation, &mut Sprite)>,
     goal_ghost_settings: Res<GoalGhostSettings>,
     time: Res<Time>,
 ) {
     for (mut animation, mut sprite) in goal_ghost_query.iter_mut() {
+        let Some(sprite) = sprite.texture_atlas.as_mut() else {
+            continue;
+        };
+
         animation.frame_timer.tick(time.delta());
 
         if animation.frame_timer.finished() {
@@ -354,18 +358,18 @@ fn spawn_goal_ghosts(
     goals: Query<Entity, Added<Goal>>,
     mut goal_ghost_settings: ResMut<GoalGhostSettings>,
     asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     for goal_entity in goals.iter() {
+        let image_handle = asset_server.load("textures/animations/goal_ghost-Sheet.png");
+
         let atlas_handle = match &goal_ghost_settings.atlas {
             Some(atlas) => atlas.clone(),
             None => {
-                let image_handle = asset_server.load("textures/animations/goal_ghost-Sheet.png");
-                let texture_atlas = TextureAtlas::from_grid(
-                    image_handle,
-                    Vec2::splat(32.),
-                    goal_ghost_settings.num_columns,
-                    goal_ghost_settings.num_rows,
+                let texture_atlas = TextureAtlasLayout::from_grid(
+                    UVec2::splat(32),
+                    goal_ghost_settings.num_columns as u32,
+                    goal_ghost_settings.num_rows as u32,
                     None,
                     None,
                 );
@@ -377,9 +381,12 @@ fn spawn_goal_ghosts(
         };
 
         let ghost_entity = commands
-            .spawn(SpriteSheetBundle {
-                texture_atlas: atlas_handle,
-                transform: Transform::from_xyz(0., 1., 2.5),
+            .spawn(Sprite {
+                image: image_handle,
+                texture_atlas: Some(TextureAtlas {
+                    layout: atlas_handle,
+                    ..default()
+                }),
                 ..default()
             })
             .insert(GoalGhostAnimation::new(

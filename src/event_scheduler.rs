@@ -86,7 +86,7 @@ fn fire_scheduled_events<E>(
             timer.tick(time.delta());
 
             if timer.finished() {
-                writer.send(event);
+                writer.write(event);
                 None
             } else {
                 Some((event, timer))

@@ -21,17 +21,18 @@ pub struct TextButton;
 ///
 /// To give this button simple functionality, consider inserting a [crate::ui::actions::UiAction].
 #[allow(dead_code)]
-pub fn spawn<'w, 's, 'a, S: Into<String>>(
-    child_builder: &'a mut ChildBuilder<'w, 's, '_>,
+pub fn spawn<'c, 'w, S: Into<String>>(
+    child_builder: &'c mut ChildSpawnerCommands<'w>,
     button_text: S,
     asset_holder: &AssetHolder,
     margin: Val,
     font_size: FontSize,
-) -> EntityCommands<'w, 's, 'a> {
+) -> EntityCommands<'c> {
     // Assigning the initial spawn to a variable is important for being able to return the
     // EntityCommands
-    let mut e = child_builder.spawn(ButtonBundle {
-        style: Style {
+    let mut e = child_builder.spawn((
+        Button,
+        Node {
             flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
@@ -45,9 +46,8 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
             },
             ..default()
         },
-        background_color: BackgroundColor(Color::NONE),
-        ..default()
-    });
+        BackgroundColor(Color::NONE),
+    ));
 
     // PreviousComponent for tracking interaction changes, useful for detecting button presses
     e.insert(TextButton)
@@ -56,9 +56,9 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
     e.with_children(|button| {
         // spawn the background/highlight radial
         button
-            .spawn(ImageBundle {
-                image: UiImage::new(asset_holder.button_radial.clone()),
-                style: Style {
+            .spawn((
+                ImageNode::new(asset_holder.button_radial.clone()),
+                Node {
                     position_type: PositionType::Absolute,
                     left: Val::Percent(15.),
                     top: Val::Percent(15.),
@@ -66,23 +66,19 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
                     height: Val::Percent(70.),
                     ..default()
                 },
-                focus_policy: FocusPolicy::Pass,
-                ..default()
-            })
+                FocusPolicy::Pass,
+            ))
             .insert(ButtonRadial);
 
         // spawn the text
         button
-            .spawn(TextBundle::from_section(
-                button_text,
-                TextStyle {
-                    font: asset_holder.font.clone(),
-                    color: Color::WHITE,
-                    ..default()
-                },
+            .spawn((
+                Text(button_text.into()),
+                TextFont::from_font(asset_holder.font.clone()),
+                TextColor(Color::WHITE),
             ))
             .insert(FontScale::from(font_size))
-            .insert(Style {
+            .insert(Node {
                 margin: UiRect {
                     top: Val::Px(4.),
                     bottom: Val::Px(4.),
@@ -92,16 +88,15 @@ pub fn spawn<'w, 's, 'a, S: Into<String>>(
             });
 
         // spawn the underline decoration
-        button.spawn(ImageBundle {
-            image: UiImage::new(asset_holder.button_underline.clone()),
-            style: Style {
+        button.spawn((
+            ImageNode::new(asset_holder.button_underline.clone()),
+            Node {
                 height: Val::Percent(100. / 3.),
                 aspect_ratio: Some(4.),
                 ..default()
             },
-            focus_policy: FocusPolicy::Pass,
-            ..default()
-        });
+            FocusPolicy::Pass,
+        ));
     });
 
     e

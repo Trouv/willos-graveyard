@@ -9,7 +9,7 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::{Ease, EaseFunction, *};
 use bevy_ecs_ldtk::prelude::*;
 use bevy_ecs_tilemap::tiles::TileVisible;
 use std::time::Duration;
@@ -61,10 +61,10 @@ fn check_death(
     mut willo_query: Query<(&mut WilloState, &Volatile), Changed<Volatile>>,
     mut death_event_writer: EventWriter<ExorcismEvent>,
 ) {
-    if let Ok((mut willo, volatile)) = willo_query.get_single_mut() {
+    if let Ok((mut willo, volatile)) = willo_query.single_mut() {
         if !volatile.is_solid() && *willo != WilloState::Dead {
             *willo = WilloState::Dead;
-            death_event_writer.send(ExorcismEvent);
+            death_event_writer.write(ExorcismEvent);
         }
     }
 }
@@ -88,15 +88,15 @@ fn spawn_death_card(
         if *state == WilloState::Dead && *last_state != WilloState::Dead {
             // Player just died
             commands
-                .spawn(NodeBundle {
-                    background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.9)),
+                .spawn((
+                    Node::default(),
+                    BackgroundColor(Color::srgba(0., 0., 0., 0.9)),
                     // The color renders before the transform is updated, so it needs to be
                     // invisible for the first update
-                    visibility: Visibility::Hidden,
-                    ..Default::default()
-                })
+                    Visibility::Hidden,
+                ))
                 .insert(
-                    Style {
+                    Node {
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         position_type: PositionType::Absolute,
@@ -108,7 +108,7 @@ fn spawn_death_card(
                         ..Default::default()
                     }
                     .ease_to(
-                        Style {
+                        Node {
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
                             position_type: PositionType::Absolute,
@@ -128,24 +128,19 @@ fn spawn_death_card(
                 .insert(ExorcismCard)
                 .with_children(|parent| {
                     parent
-                        .spawn(TextBundle {
-                            text: Text::from_section(
-                                "EXORCISED\n\nR to restart\nZ to undo",
-                                TextStyle {
-                                    font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                    color: Color::WHITE,
-                                    ..default()
-                                },
-                            )
-                            .with_alignment(TextAlignment::Center),
-                            ..Default::default()
-                        })
+                        .spawn((
+                            Text("EXORCISED\n\nR to restart\nZ to undo".to_string()),
+                            TextFont::from_font(
+                                assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
+                            ),
+                            TextColor(Color::WHITE),
+                        ))
                         .insert(FontScale::from(FontSize::Medium));
                 });
         } else if *state != WilloState::Dead && *last_state == WilloState::Dead {
             // Player just un-died
-            if let Ok(entity) = death_cards.get_single() {
-                commands.entity(entity).despawn_recursive();
+            if let Ok(entity) = death_cards.single() {
+                commands.entity(entity).despawn();
             }
         }
 

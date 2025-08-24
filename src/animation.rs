@@ -1,6 +1,6 @@
 //! Plugin providing functionality for basic sprite sheet animations.
 use crate::from_component::{FromComponentPlugin, FromComponentSet};
-use bevy::prelude::*;
+use bevy::{ecs::component::Mutable, prelude::*};
 use std::{marker::PhantomData, ops::Range};
 
 /// Set used by animation systems.
@@ -52,12 +52,15 @@ pub struct SpriteSheetAnimation {
 }
 
 fn sprite_sheet_animation(
-    mut query: Query<(Entity, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
+    mut query: Query<(Entity, &mut Sprite, &mut SpriteSheetAnimation)>,
     time: Res<Time>,
     mut event_writer: EventWriter<AnimationEvent>,
 ) {
     for (entity, mut sprite, mut sprite_sheet_animation) in query.iter_mut() {
         sprite_sheet_animation.frame_timer.tick(time.delta());
+        let Some(sprite) = sprite.texture_atlas.as_mut() else {
+            continue;
+        };
 
         if sprite_sheet_animation.frame_timer.just_finished() {
             sprite.index += 1;
@@ -67,7 +70,7 @@ fn sprite_sheet_animation(
                     sprite.index = sprite_sheet_animation.indices.start;
                 } else {
                     sprite.index = sprite_sheet_animation.indices.end - 1;
-                    event_writer.send(AnimationEvent::Finished(entity));
+                    event_writer.write(AnimationEvent::Finished(entity));
                 }
             }
         }
@@ -75,12 +78,12 @@ fn sprite_sheet_animation(
 }
 
 fn set_initial_sprite_index(
-    mut query: Query<
-        (&mut TextureAtlasSprite, &SpriteSheetAnimation),
-        Changed<SpriteSheetAnimation>,
-    >,
+    mut query: Query<(&mut Sprite, &SpriteSheetAnimation), Changed<SpriteSheetAnimation>>,
 ) {
     for (mut sprite, sprite_sheet_animation) in query.iter_mut() {
+        let Some(sprite) = sprite.texture_atlas.as_mut() else {
+            continue;
+        };
         let indices = &sprite_sheet_animation.indices;
         if sprite.index < indices.start || sprite.index > indices.end {
             sprite.index = indices.start;
@@ -102,14 +105,26 @@ fn set_initial_sprite_index(
 ///    Simply point an animation state to itself when it is complete.
 pub struct FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     from_type: PhantomData<F>,
 }
 
 impl<F> FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     /// Basic constructor for [FromComponentAnimator].
     pub fn new() -> Self {
@@ -119,7 +134,13 @@ where
 
 impl<F> Default for FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     fn default() -> Self {
         FromComponentAnimator {
@@ -130,7 +151,13 @@ where
 
 impl<F> Plugin for FromComponentAnimator<F>
 where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     fn build(&self, app: &mut App) {
         app.add_plugins(FromComponentPlugin::<F, SpriteSheetAnimation>::new())
@@ -139,10 +166,16 @@ where
 }
 
 fn animation_finisher<F>(
-    mut query: Query<(&mut F, &mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
+    mut query: Query<(&mut F, &mut Sprite, &mut SpriteSheetAnimation)>,
     mut event_reader: EventReader<AnimationEvent>,
 ) where
-    F: Into<SpriteSheetAnimation> + Component + 'static + Send + Sync + Clone + Iterator<Item = F>,
+    F: Into<SpriteSheetAnimation>
+        + Component<Mutability = Mutable>
+        + 'static
+        + Send
+        + Sync
+        + Clone
+        + Iterator<Item = F>,
 {
     for event in event_reader.read() {
         match event {
@@ -150,6 +183,9 @@ fn animation_finisher<F>(
                 if let Ok((mut from, mut sprite, mut sprite_sheet_animation)) =
                     query.get_mut(*entity)
                 {
+                    let Some(sprite) = sprite.texture_atlas.as_mut() else {
+                        continue;
+                    };
                     *from = from.next().unwrap();
                     *sprite_sheet_animation = from.clone().into();
                     sprite.index = sprite_sheet_animation.indices.start;

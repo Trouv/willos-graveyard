@@ -1,10 +1,9 @@
 //! Utilities for generating nine-slice images from texture atlases.
 use bevy::{
+    asset::RenderAssetUsages,
+    image::TextureFormatPixelInfo,
     prelude::*,
-    render::{
-        render_resource::{Extent3d, TextureDimension},
-        texture::TextureFormatPixelInfo,
-    },
+    render::render_resource::{Extent3d, TextureDimension},
 };
 use thiserror::Error;
 
@@ -53,40 +52,49 @@ impl From<NineSliceSize> for UVec2 {
     }
 }
 
-fn get_pixel(image: &Image, coords: UVec2) -> &[u8] {
+fn get_pixel(image: &Image, coords: UVec2) -> Option<&[u8]> {
     let pixel_size_in_bytes = image.texture_descriptor.format.pixel_size();
 
     let pixel_start = coords.y as usize * image.size().x as usize * pixel_size_in_bytes
         + coords.x as usize * pixel_size_in_bytes;
 
-    &image.data[pixel_start..(pixel_start + pixel_size_in_bytes)]
+    image
+        .data
+        .as_ref()
+        .map(|d| &d[pixel_start..(pixel_start + pixel_size_in_bytes)])
 }
 
 fn push_nine_slice_row_data(
     buffer: &mut Vec<u8>,
     image: &Image,
-    left_rect: Rect,
-    middle_rect: Rect,
-    right_rect: Rect,
+    left_rect: URect,
+    middle_rect: URect,
+    right_rect: URect,
     row_height: u32,
     middle_count: u32,
 ) {
     for y in 0..row_height {
-        for x in 0..left_rect.width() as u32 {
-            let coord = left_rect.min.as_uvec2() + UVec2::new(x, y);
-            buffer.extend(get_pixel(image, coord));
-        }
-
-        for _ in 0..middle_count {
-            for x in 0..middle_rect.width() as u32 {
-                let coord = middle_rect.min.as_uvec2() + UVec2::new(x, y);
-                buffer.extend(get_pixel(image, coord));
+        for x in 0..left_rect.width() {
+            let coord = left_rect.min + UVec2::new(x, y);
+            if let Some(pixel) = get_pixel(image, coord) {
+                buffer.extend(pixel);
             }
         }
 
-        for x in 0..right_rect.width() as u32 {
-            let coord = right_rect.min.as_uvec2() + UVec2::new(x, y);
-            buffer.extend(get_pixel(image, coord));
+        for _ in 0..middle_count {
+            for x in 0..middle_rect.width() {
+                let coord = middle_rect.min + UVec2::new(x, y);
+                if let Some(pixel) = get_pixel(image, coord) {
+                    buffer.extend(pixel);
+                }
+            }
+        }
+
+        for x in 0..right_rect.width() {
+            let coord = right_rect.min + UVec2::new(x, y);
+            if let Some(pixel) = get_pixel(image, coord) {
+                buffer.extend(pixel);
+            }
         }
     }
 }
@@ -95,7 +103,8 @@ fn push_nine_slice_row_data(
 pub fn generate_nineslice_image(
     size: NineSliceSize,
     NineSliceIndex { indices }: NineSliceIndex,
-    source_atlas: &TextureAtlas,
+    source_atlas: &TextureAtlasLayout,
+    image_handle: &Handle<Image>,
     images: &mut Assets<Image>,
 ) -> Result<Handle<Image>> {
     let top_left_rect = source_atlas.textures[indices[0]];
@@ -109,12 +118,11 @@ pub fn generate_nineslice_image(
     let bottom_right_rect = source_atlas.textures[indices[8]];
 
     let source_image = images
-        .get(&source_atlas.texture)
+        .get(image_handle)
         .ok_or(NineSliceError::ImageNotFound)?;
 
-    let image_size = top_left_rect.size().as_uvec2()
-        + (UVec2::from(size) * center_rect.size().as_uvec2())
-        + bottom_right_rect.size().as_uvec2();
+    let image_size =
+        top_left_rect.size() + (UVec2::from(size) * center_rect.size()) + bottom_right_rect.size();
 
     let texture_dimension = TextureDimension::D2;
 
@@ -128,7 +136,7 @@ pub fn generate_nineslice_image(
         top_left_rect,
         top_rect,
         top_right_rect,
-        top_left_rect.height() as u32,
+        top_left_rect.height(),
         size.inner_width,
     );
 
@@ -139,7 +147,7 @@ pub fn generate_nineslice_image(
             left_rect,
             center_rect,
             right_rect,
-            center_rect.height() as u32,
+            center_rect.height(),
             size.inner_width,
         );
     }
@@ -150,7 +158,7 @@ pub fn generate_nineslice_image(
         bottom_left_rect,
         bottom_rect,
         bottom_right_rect,
-        bottom_right_rect.height() as u32,
+        bottom_right_rect.height(),
         size.inner_width,
     );
 
@@ -163,6 +171,7 @@ pub fn generate_nineslice_image(
         texture_dimension,
         data,
         texture_format,
+        RenderAssetUsages::all(),
     );
 
     Ok(images.add(image))
@@ -173,52 +182,51 @@ pub fn generate_nineslice_image(
 /// The `left`, `right`, `top` and `bottom` arguments represent the locations of the slices in
 /// terms of their distance from the border.
 pub fn texture_atlas_from_nine_slice(
-    texture: Handle<Image>,
-    dimensions: Vec2,
-    left: f32,
-    right: f32,
-    top: f32,
-    bottom: f32,
-) -> TextureAtlas {
-    let mut texture_atlas = TextureAtlas::new_empty(texture, dimensions);
+    dimensions: UVec2,
+    left: u32,
+    right: u32,
+    top: u32,
+    bottom: u32,
+) -> TextureAtlasLayout {
+    let mut texture_atlas = TextureAtlasLayout::new_empty(dimensions);
 
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(0., 0.),
-        max: Vec2::new(left, top),
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(0, 0),
+        max: UVec2::new(left, top),
     });
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(left, 0.),
-        max: Vec2::new(dimensions.x - right, top),
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(left, 0),
+        max: UVec2::new(dimensions.x - right, top),
     });
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(dimensions.x - right, 0.),
-        max: Vec2::new(dimensions.x, top),
-    });
-
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(0., top),
-        max: Vec2::new(left, dimensions.y - bottom),
-    });
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(left, top),
-        max: Vec2::new(dimensions.x - right, dimensions.y - bottom),
-    });
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(dimensions.x - right, top),
-        max: Vec2::new(dimensions.x, dimensions.y - bottom),
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(dimensions.x - right, 0),
+        max: UVec2::new(dimensions.x, top),
     });
 
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(0., dimensions.y - bottom),
-        max: Vec2::new(left, dimensions.y),
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(0, top),
+        max: UVec2::new(left, dimensions.y - bottom),
     });
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(left, dimensions.y - bottom),
-        max: Vec2::new(dimensions.x - right, dimensions.y),
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(left, top),
+        max: UVec2::new(dimensions.x - right, dimensions.y - bottom),
     });
-    texture_atlas.textures.push(Rect {
-        min: Vec2::new(dimensions.x - right, dimensions.y - bottom),
-        max: Vec2::new(dimensions.x, dimensions.y),
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(dimensions.x - right, top),
+        max: UVec2::new(dimensions.x, dimensions.y - bottom),
+    });
+
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(0, dimensions.y - bottom),
+        max: UVec2::new(left, dimensions.y),
+    });
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(left, dimensions.y - bottom),
+        max: UVec2::new(dimensions.x - right, dimensions.y),
+    });
+    texture_atlas.textures.push(URect {
+        min: UVec2::new(dimensions.x - right, dimensions.y - bottom),
+        max: UVec2::new(dimensions.x, dimensions.y),
     });
 
     texture_atlas

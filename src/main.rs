@@ -59,54 +59,61 @@ fn main() {
 
     let mut app = App::new();
 
-    app.insert_resource(Msaa::Off)
-        .insert_resource(AssetMetaCheck::Never)
-        .add_plugins((
-            DefaultPlugins
-                .set(ImagePlugin::default_nearest())
-                .set(WindowPlugin {
-                    primary_window: Some(Window {
-                        fit_canvas_to_parent: true,
-                        canvas: Some("#bevy".to_string()),
-                        ..default()
-                    }),
-
+    app.add_plugins((
+        DefaultPlugins
+            .set(ImagePlugin::default_nearest())
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    fit_canvas_to_parent: true,
+                    canvas: Some("#bevy".to_string()),
                     ..default()
                 }),
-            EasingsPlugin,
-            LdtkPlugin,
-        ))
-        .insert_resource(LdtkSettings {
-            set_clear_color: SetClearColor::FromEditorBackground,
-            ..default()
-        })
-        .add_state::<GameState>()
-        .add_loading_state(
-            LoadingState::new(GameState::AssetLoading)
-                .continue_to_state(GameState::LevelTransition)
-                .load_collection::<AssetHolder>()
-                .load_collection::<graveyard::gravestone::GravestoneAssets>()
-                .load_collection::<graveyard::control_display::ControlDisplayAssets>()
-                .load_collection::<ui::icon_button::IconButtonAssets>()
-                .load_collection::<ui::button_prompt::ButtonPromptAssets>(),
-        )
-        .add_plugins((
-            graveyard::GraveyardPlugin,
-            SpriteSheetAnimationPlugin,
-            ui::UiPlugin,
-            level_select::LevelSelectPlugin,
-            camera::CameraPlugin,
-            level_transition::LevelTransitionPlugin,
-        ))
-        .insert_resource(level_selection.clone())
-        .insert_resource(level_transition::TransitionTo(level_selection));
+
+                ..default()
+            })
+            .set(AssetPlugin {
+                meta_check: AssetMetaCheck::Never,
+                ..default()
+            }),
+        EasingsPlugin::default(),
+        LdtkPlugin,
+    ))
+    .insert_resource(LdtkSettings {
+        set_clear_color: SetClearColor::FromEditorBackground,
+        ..default()
+    })
+    .init_state::<GameState>()
+    .add_loading_state(
+        LoadingState::new(GameState::AssetLoading)
+            .continue_to_state(GameState::LevelTransition)
+            .load_collection::<AssetHolder>()
+            .load_collection::<graveyard::gravestone::GravestoneAssets>()
+            .load_collection::<graveyard::control_display::ControlDisplayAssets>()
+            .load_collection::<ui::icon_button::IconButtonAssets>()
+            .load_collection::<ui::button_prompt::ButtonPromptAssets>(),
+    )
+    .add_plugins((
+        graveyard::GraveyardPlugin,
+        SpriteSheetAnimationPlugin,
+        ui::UiPlugin,
+        level_select::LevelSelectPlugin,
+        camera::CameraPlugin,
+        level_transition::LevelTransitionPlugin,
+    ))
+    .insert_resource(level_selection.clone())
+    .insert_resource(level_transition::TransitionTo(level_selection));
 
     #[cfg(feature = "inspector")]
     {
-        app.add_plugins(WorldInspectorPlugin::new());
+        use bevy_inspector_egui::bevy_egui::EguiPlugin;
+
+        app.add_plugins(EguiPlugin {
+            enable_multipass_for_primary_context: true,
+        })
+        .add_plugins(WorldInspectorPlugin::new());
     }
 
-    app.run()
+    app.run();
 }
 
 /// Asset collection loaded during the `GameState::AssetLoading` state.

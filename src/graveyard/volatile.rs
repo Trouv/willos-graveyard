@@ -108,14 +108,18 @@ fn sublimation(
 
 #[cfg(test)]
 mod tests {
+    use bevy::state::app::StatesPlugin;
+
     use super::*;
 
     fn app_setup() -> App {
         let mut app = App::new();
 
-        app.add_state::<GameState>().add_plugins(VolatilePlugin);
-        app.world
-            .insert_resource(NextState(Some(GameState::Graveyard)));
+        app.add_plugins(StatesPlugin)
+            .init_state::<GameState>()
+            .add_plugins(VolatilePlugin);
+        app.world_mut()
+            .insert_resource(NextState::Pending(GameState::Graveyard));
         app.update();
 
         app
@@ -139,7 +143,7 @@ mod tests {
         fn spawn(self, app: &mut App) -> [Entity; N] {
             let entities = self
                 .volatiles
-                .map(|volatile_bundle| app.world.spawn(volatile_bundle).id());
+                .map(|volatile_bundle| app.world_mut().spawn(volatile_bundle).id());
 
             app.update();
 
@@ -156,19 +160,19 @@ mod tests {
         let [bottom, _] = SpawnVolatilesParams::<2>::new().spawn(&mut app);
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Solid));
 
-        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+        app.world_mut().get_mut::<GridCoords>(bottom).unwrap().y += 1;
 
         app.update();
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Sublimated));
     }
 
@@ -180,14 +184,14 @@ mod tests {
 
         let [bottom, _] = SpawnVolatilesParams::<2>::new().spawn(&mut app);
 
-        app.world.get_mut::<GridCoords>(bottom).unwrap().y -= 1;
+        app.world_mut().get_mut::<GridCoords>(bottom).unwrap().y -= 1;
 
         app.update();
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Solid));
     }
 
@@ -201,15 +205,15 @@ mod tests {
         spawn_params.volatiles[0].1 = Volatile::Sublimated;
         let [bottom, top] = spawn_params.spawn(&mut app);
 
-        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+        app.world_mut().get_mut::<GridCoords>(bottom).unwrap().y += 1;
 
         app.update();
 
         assert_eq!(
-            app.world.get::<Volatile>(bottom).unwrap(),
+            app.world().get::<Volatile>(bottom).unwrap(),
             &Volatile::Sublimated
         );
-        assert_eq!(app.world.get::<Volatile>(top).unwrap(), &Volatile::Solid);
+        assert_eq!(app.world().get::<Volatile>(top).unwrap(), &Volatile::Solid);
     }
 
     #[test]
@@ -222,13 +226,16 @@ mod tests {
         spawn_params.volatiles[1].1 = Volatile::Sublimated;
         let [bottom, top] = spawn_params.spawn(&mut app);
 
-        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+        app.world_mut().get_mut::<GridCoords>(bottom).unwrap().y += 1;
 
         app.update();
 
-        assert_eq!(app.world.get::<Volatile>(bottom).unwrap(), &Volatile::Solid);
         assert_eq!(
-            app.world.get::<Volatile>(top).unwrap(),
+            app.world().get::<Volatile>(bottom).unwrap(),
+            &Volatile::Solid
+        );
+        assert_eq!(
+            app.world().get::<Volatile>(top).unwrap(),
             &Volatile::Sublimated
         );
     }
@@ -245,14 +252,14 @@ mod tests {
             .map(|(grid_coords, _)| (grid_coords, Volatile::Sublimated));
         let [bottom, _] = spawn_params.spawn(&mut app);
 
-        app.world.get_mut::<GridCoords>(bottom).unwrap().y += 1;
+        app.world_mut().get_mut::<GridCoords>(bottom).unwrap().y += 1;
 
         app.update();
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Sublimated));
     }
 
@@ -264,15 +271,15 @@ mod tests {
 
         let [bottom, top] = SpawnVolatilesParams::<2>::new().spawn(&mut app);
 
-        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
-        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
+        *app.world_mut().get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
+        *app.world_mut().get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
 
         app.update();
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Sublimated));
     }
 
@@ -286,16 +293,16 @@ mod tests {
         spawn_params.volatiles[0].1 = Volatile::Sublimated;
         let [bottom, top] = spawn_params.spawn(&mut app);
 
-        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
-        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
+        *app.world_mut().get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
+        *app.world_mut().get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
 
         app.update();
 
         assert_eq!(
-            app.world.get::<Volatile>(bottom).unwrap(),
+            app.world().get::<Volatile>(bottom).unwrap(),
             &Volatile::Sublimated
         );
-        assert_eq!(app.world.get::<Volatile>(top).unwrap(), &Volatile::Solid);
+        assert_eq!(app.world().get::<Volatile>(top).unwrap(), &Volatile::Solid);
     }
 
     #[test]
@@ -310,15 +317,15 @@ mod tests {
             .map(|(grid_coords, _)| (grid_coords, Volatile::Sublimated));
         let [bottom, top] = spawn_params.spawn(&mut app);
 
-        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
-        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
+        *app.world_mut().get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(10, 10);
+        *app.world_mut().get_mut::<GridCoords>(top).unwrap() = GridCoords::new(10, 10);
 
         app.update();
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Sublimated));
     }
 
@@ -330,18 +337,21 @@ mod tests {
 
         let [bottom, middle, top] = SpawnVolatilesParams::<3>::new().spawn(&mut app);
 
-        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(0, 1);
-        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(0, 1);
+        *app.world_mut().get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(0, 1);
+        *app.world_mut().get_mut::<GridCoords>(top).unwrap() = GridCoords::new(0, 1);
 
         app.update();
 
         assert_eq!(
-            app.world.get::<Volatile>(bottom).unwrap(),
+            app.world().get::<Volatile>(bottom).unwrap(),
             &Volatile::Sublimated
         );
-        assert_eq!(app.world.get::<Volatile>(middle).unwrap(), &Volatile::Solid);
         assert_eq!(
-            app.world.get::<Volatile>(top).unwrap(),
+            app.world().get::<Volatile>(middle).unwrap(),
+            &Volatile::Solid
+        );
+        assert_eq!(
+            app.world().get::<Volatile>(top).unwrap(),
             &Volatile::Sublimated
         );
     }
@@ -356,15 +366,15 @@ mod tests {
         spawn_params.volatiles[0].1 = Volatile::Sublimated;
         let [bottom, _, top] = spawn_params.spawn(&mut app);
 
-        *app.world.get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(0, 1);
-        *app.world.get_mut::<GridCoords>(top).unwrap() = GridCoords::new(0, 1);
+        *app.world_mut().get_mut::<GridCoords>(bottom).unwrap() = GridCoords::new(0, 1);
+        *app.world_mut().get_mut::<GridCoords>(top).unwrap() = GridCoords::new(0, 1);
 
         app.update();
 
         assert!(app
-            .world
+            .world_mut()
             .query::<&Volatile>()
-            .iter(&app.world)
+            .iter(&app.world())
             .all(|volatile| volatile == &Volatile::Sublimated));
     }
 }

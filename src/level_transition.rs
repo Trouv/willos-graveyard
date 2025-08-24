@@ -8,7 +8,7 @@ use crate::{
     AssetHolder, GameState,
 };
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::{Ease, EaseFunction, *};
 use bevy_ecs_ldtk::prelude::*;
 use std::time::Duration;
 
@@ -29,7 +29,7 @@ impl Plugin for LevelTransitionPlugin {
                 trigger_level_transition_state
                     .run_if(not(in_state(GameState::AssetLoading)))
                     .run_if(not(in_state(GameState::LevelTransition)))
-                    .run_if(resource_added::<TransitionTo>()),
+                    .run_if(resource_added::<TransitionTo>),
             )
             .add_systems(
                 OnExit(GameState::LevelTransition),
@@ -45,7 +45,7 @@ impl Plugin for LevelTransitionPlugin {
                 Update,
                 LevelTransitionSystemSet::OnLevelCardEvent
                     .run_if(in_state(GameState::LevelTransition))
-                    .run_if(on_event::<LevelCardEvent>()),
+                    .run_if(on_event::<LevelCardEvent>),
             )
             // level_card_update should be performed during both graveyard and level transition
             // states since it cleans up the level card after it's done falling during the graveyard
@@ -54,7 +54,7 @@ impl Plugin for LevelTransitionPlugin {
                 Update,
                 level_card_update
                     .run_if(in_state(GameState::Graveyard))
-                    .run_if(on_event::<LevelCardEvent>()),
+                    .run_if(on_event::<LevelCardEvent>),
             );
     }
 }
@@ -119,14 +119,7 @@ fn spawn_level_card(
         }
     }
 
-    let level_card_atlas = texture_atlas_from_nine_slice(
-        asset_holder.tarot_sheet.clone(),
-        Vec2::splat(64.),
-        16.,
-        16.,
-        16.,
-        16.,
-    );
+    let level_card_atlas = texture_atlas_from_nine_slice(UVec2::splat(64), 16, 16, 16, 16);
     let level_card_texture = generate_nineslice_image(
         NineSliceSize {
             inner_width: 8,
@@ -134,17 +127,15 @@ fn spawn_level_card(
         },
         NineSliceIndex::default(),
         &level_card_atlas,
+        &asset_holder.tarot_sheet,
         &mut images,
     )
     .unwrap();
 
     commands
-        .spawn(ImageBundle {
-            image: UiImage::new(level_card_texture),
-            ..Default::default()
-        })
+        .spawn(ImageNode::new(level_card_texture))
         .insert(
-            Style {
+            Node {
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
                 position_type: PositionType::Absolute,
@@ -156,7 +147,7 @@ fn spawn_level_card(
                 ..Default::default()
             }
             .ease_to(
-                Style {
+                Node {
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     position_type: PositionType::Absolute,
@@ -176,32 +167,19 @@ fn spawn_level_card(
         .with_children(|parent| {
             if let Some(level_num) = level_num {
                 parent
-                    .spawn(TextBundle {
-                        text: Text::from_section(
-                            format!("#{level_num}"),
-                            TextStyle {
-                                font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                                color: Color::WHITE,
-                                ..default()
-                            },
-                        )
-                        .with_alignment(TextAlignment::Center),
-                        ..Default::default()
-                    })
+                    .spawn((
+                        Text(format!("#{level_num}")),
+                        TextFont::from_font(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
+                        TextColor(Color::WHITE),
+                    ))
                     .insert(FontScale::from(FontSize::Huge));
             }
             parent
-                .spawn(TextBundle {
-                    text: Text::from_section(
-                        title,
-                        TextStyle {
-                            font: assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf"),
-                            color: Color::WHITE,
-                            ..default()
-                        },
-                    ),
-                    ..Default::default()
-                })
+                .spawn((
+                    Text(title),
+                    TextFont::from_font(assets.load("fonts/WayfarersToyBoxRegular-gxxER.ttf")),
+                    TextColor(Color::WHITE),
+                ))
                 .insert(FontScale::from(FontSize::Medium));
         })
         .insert(LevelCard);
@@ -225,7 +203,7 @@ fn load_next_level(
                 *level_selection = transition_to.0.clone()
             } else {
                 commands.spawn(LdtkWorldBundle {
-                    ldtk_handle: asset_holder.ldtk.clone(),
+                    ldtk_handle: asset_holder.ldtk.clone().into(),
                     transform: Transform::from_xyz(32., 32., 0.),
                     ..Default::default()
                 });
@@ -239,7 +217,7 @@ fn load_next_level(
 fn level_card_update(
     mut commands: Commands,
     mut next_state: ResMut<NextState<GameState>>,
-    mut card_query: Query<(Entity, &mut Style), With<LevelCard>>,
+    mut card_query: Query<(Entity, &mut Node), With<LevelCard>>,
     mut level_card_events: EventReader<LevelCardEvent>,
 ) {
     for event in level_card_events.read() {
@@ -247,7 +225,7 @@ fn level_card_update(
             match event {
                 LevelCardEvent::Fall => {
                     commands.entity(entity).insert(style.clone().ease_to(
-                        Style {
+                        Node {
                             top: Val::Percent(100.),
                             left: Val::Percent(0.),
                             ..style.clone()
@@ -262,7 +240,7 @@ fn level_card_update(
                 }
                 LevelCardEvent::Despawn => {
                     // SELF DESTRUCT
-                    commands.entity(entity).despawn_recursive();
+                    commands.entity(entity).despawn();
                 }
                 _ => (),
             }

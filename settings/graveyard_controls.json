@@ -1,40 +1,31 @@
 {
-  "map": {
+  "buttonlike_map": {
     "Undo": [
       {
-        "Single": {
-          "Keyboard": "Z"
-        }
+        "KeyCode": "KeyZ"
       },
       {
-        "Single": {
-          "GamepadButton": "LeftTrigger2"
-        }
+        "GamepadButton": "LeftTrigger2"
       }
     ],
     "Restart": [
       {
-        "Single": {
-          "Keyboard": "R"
-        }
+        "KeyCode": "KeyR"
       },
       {
-        "Single": {
-          "GamepadButton": "RightTrigger2"
-        }
+        "GamepadButton": "RightTrigger2"
       }
     ],
     "Pause": [
       {
-        "Single": {
-          "Keyboard": "Escape"
-        }
+        "KeyCode": "Escape"
       },
       {
-        "Single": {
-          "GamepadButton": "Start"
-        }
+        "GamepadButton": "Start"
       }
     ]
-  }
+  },
+  "axislike_map": {},
+  "dual_axislike_map": {},
+  "triple_axislike_map": {}
 }
